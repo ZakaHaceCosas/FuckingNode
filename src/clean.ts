@@ -1,6 +1,6 @@
 import { GetPath, LogStuff } from "./constants.ts";
 
-export default async function FuckingNodeCleaner() {
+export default async function FuckingNodeCleaner(verbose: boolean) {
     try {
         // make the dir just in case
         await Deno.mkdir(GetPath("BASE"), { recursive: true });
@@ -57,9 +57,11 @@ export default async function FuckingNodeCleaner() {
 
                 try {
                     if (await Deno.stat(".fknodeignore")) {
-                        await LogStuff(
-                            `🚨 This motherfucker (${motherfucker}) is protected by fucking divine protection (.fknodeignore file). Cannot clean it.`,
-                        );
+                        if (verbose) {
+                            await LogStuff(
+                                `🚨 This motherfucker (${motherfucker}) is protected by fucking divine protection (.fknodeignore file). Cannot clean it.`,
+                            );
+                        }
                         results.push({
                             path: motherfucker,
                             status: "Protected",
@@ -198,10 +200,12 @@ export default async function FuckingNodeCleaner() {
             `✅ All your motherfucking Node projects have been cleaned! Back to ${originalLocation}.`,
         );
 
-        // shows a report
-        await LogStuff("📊 Report:");
-        for (const result of results) {
-            await LogStuff(`${result.path} -> ${result.status}`);
+        if (verbose) {
+            // shows a report
+            await LogStuff("📊 Report:");
+            for (const result of results) {
+                await LogStuff(`${result.path} -> ${result.status}`);
+            }
         }
         await LogStuff(
             `✅ Cleaning completed at ${new Date().toLocaleString()}`,
