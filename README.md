@@ -1,12 +1,14 @@
-# FuckingNode
+# F*ckingNode
 
 ## Abstract
 
-Tired of the amount of disk space that Node projects and their ~~motherfucking~~ `node_modules` directories were taking on my PC, I once switched to `pnpm` (greatest decision I've taken in years) and I _manually removed all `node_modules` folders_ and started _manually `pnpm prune`-ing all of my projects_.
+Tired of the amount of disk space that Node projects and their ~~motherf*cking~~ `node_modules` directories were taking on my PC, I once switched to `pnpm` (greatest decision I've taken in years). I started manually remove all `node_modules` folders and `pnpm prune` all of my projects.
 
-This was time consuming, but the amount of saved save felt worth it (just the day I replaced all `node_modules` with pnpm I freed like 11 GB from my SSD), until I had the good idea of making a PowerShell script to automate the process.
+This was time consuming, but it - just the day I got pnpm and did a `node_modules` cleanup I recovered ~11 GB of space.
 
-The idea has helped me so much I turned that `ps1` code into a functional desktop app using TypeScript and ~~Node backwards~~ Deno: **FuckingNode** (yes i'm calling it like that and i'm shipping that to production, don't question me).
+One day I had the good idea of making a PowerShell script to automate the process - that has helped me so much I turned that `ps1` code into a desktop app using TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
+<!-- markdownlint-disable-next-line -->
+> ###### (yes i'm calling it like that and i'm shipping that to production, don't question me)
 
 ## Installation
 
@@ -15,7 +17,7 @@ Currently only Windows is supported. I'll look onto Linux, which I'd love to sup
 1. Download the `.exe` from the GitHub releases page.
 2. Add it somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
 3. Enter Windows search and write "Edit environment variables for your account". A modal will open.
-4. You'll see two lists, both having a "Path" entry. Click on each one, then click edit, then New, and then write the path you saved FuckingNode to (e.g. `C:\Scripts\FuckingNode.exe`).
+4. You'll see two lists, both having a "Path" entry. Click on each one, then click edit, then New, and then write the path you saved F*ckingNode to (e.g. `C:\Scripts\FuckingNode.exe`).
 5. Restart your terminal if it was open.
 6. Done! `fuckingnode` command will now work from your terminal.
 
@@ -24,7 +26,7 @@ Currently only Windows is supported. I'll look onto Linux, which I'd love to sup
 ### Cleaner
 
 - `fuckingnode clean` - does the obvious.
-- `fuckingnode clean --update` - does the obvious + updates your dependencies.
+- `fuckingnode clean --update` - does the obvious + updates your deps.
 
 ### Manager
 
@@ -41,9 +43,9 @@ Currently only Windows is supported. I'll look onto Linux, which I'd love to sup
 And that's it for now.
 
 > [!TIP]
-> If for whatever reason you want to exclude a project but not remove it from your list (I don't know, maybe you _temporarily_ don't want anyone to update deps for that specific project), create an empty `.fknodeignore` file in the root of the project and FuckingNode will ignore it.
+> If for whatever reason you want to exclude a project but not remove it from your list (idk, maybe you _temporarily_ don't want anyone to update deps for that specific project), create an empty `.fknodeignore` file in the root of the project and F*ckingNode will ignore it.
 
-----
+---
 
 Hope those motherfuckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue (or make a PR which would be awesome :smile:).
 
