@@ -1,6 +1,6 @@
 import FuckingNodeCleaner from "./clean.ts";
 import FuckingNodeManager from "./manage.ts";
-import { VERSION, FreshSetup } from "./constants.ts";
+import { FreshSetup, VERSION } from "./constants.ts";
 
 const [command] = Deno.args;
 const isVerbose = Deno.args[1] === "--verbose";

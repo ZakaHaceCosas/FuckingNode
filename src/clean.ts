@@ -198,10 +198,11 @@ export default async function FuckingNodeCleaner(verbose: boolean) {
             for (const result of results) {
                 await LogStuff(`${result.path} -> ${result.status}`);
             }
+
+            await LogStuff(
+                `✅ Cleaning completed at ${new Date().toLocaleString()}`,
+            );
         }
-        await LogStuff(
-            `✅ Cleaning completed at ${new Date().toLocaleString()}`,
-        );
         Deno.exit(0);
     } catch (e) {
         await LogStuff("Some error happened: " + e);
