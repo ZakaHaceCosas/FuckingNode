@@ -10,7 +10,7 @@ export function GetPath(path: "BASE" | "MOTHERFUCKERS" | "LOGS"): string {
         Deno.exit(1);
     }
 
-    const BASE_DIR = `${appDataPath}/FuckingNode-${VERSION}/`;
+    const BASE_DIR = `${appDataPath}/FuckingNode/`;
     const MOTHERFUCKERS_DIR = `${BASE_DIR}/fuckingNode-motherfuckers.txt`;
     const LOGS_DIR = `${BASE_DIR}/fuckingNode-Logs.log`;
 
