@@ -1,0 +1,5 @@
+# stuff i dont want to commit
+.command
+**.xp.ts
+# compiled executable
+**.exe
