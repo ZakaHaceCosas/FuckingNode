@@ -1,6 +1,6 @@
 import { GetPath, LogStuff } from "./constants.ts";
 
-export default async function FuckingNodeCleaner(verbose: boolean) {
+export default async function FuckingNodeCleaner(verbose: boolean, update: boolean) {
     try {
         // original path
         const originalLocation = Deno.cwd();
@@ -19,9 +19,6 @@ export default async function FuckingNodeCleaner(verbose: boolean) {
             );
             Deno.exit(1);
         }
-
-        // check for update flag
-        const updateFlag = Deno.args.includes("--update");
 
         if (motherFuckers.length === 0) {
             await LogStuff(
@@ -65,7 +62,7 @@ export default async function FuckingNodeCleaner(verbose: boolean) {
                 }
 
                 if (await Deno.stat("pnpm-lock.yaml")) {
-                    if (updateFlag) {
+                    if (update) {
                         await LogStuff(
                             `📦 Updating and using pnpm for ${motherfucker}.`,
                         );
@@ -100,7 +97,7 @@ export default async function FuckingNodeCleaner(verbose: boolean) {
                     );
                     await LogStuff(`📦 pnpm prune: ${pruneStdout}`);
                 } else if (await Deno.stat("package-lock.json")) {
-                    if (updateFlag) {
+                    if (update) {
                         await LogStuff(
                             `📦 Updating and using npm for ${motherfucker}.`,
                         );
@@ -133,7 +130,7 @@ export default async function FuckingNodeCleaner(verbose: boolean) {
                     );
                     await LogStuff(`📦 npm prune: ${pruneStdout}`);
                 } else if (await Deno.stat("yarn.lock")) {
-                    if (updateFlag) {
+                    if (update) {
                         await LogStuff(
                             `📦 Updating and using Yarn for ${motherfucker}.`,
                         );

@@ -4,11 +4,12 @@ import { FreshSetup, VERSION } from "./constants.ts";
 
 const [command] = Deno.args;
 const isVerbose = Deno.args[1].toLowerCase() === "--verbose";
+const wantsToUpdate = Deno.args[2].toLowerCase() === "--update";
 
 switch (command.toLowerCase()) {
     case "clean":
         await FreshSetup();
-        await FuckingNodeCleaner(isVerbose);
+        await FuckingNodeCleaner(isVerbose, wantsToUpdate);
         break;
     case "manager":
         await FreshSetup();
