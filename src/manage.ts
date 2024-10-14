@@ -1,4 +1,4 @@
-import { FreshSetup, GetPath, LogStuff } from "./constants.ts";
+import { GetPath, LogStuff } from "./constants.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {
@@ -82,8 +82,6 @@ async function listEntries() {
 
 // run functions based on args
 export default async function FuckingNodeManager(args: string[]) {
-    await FreshSetup();
-
     if (args.length === 0 || args.length === 1) {
         // 1 argument equals "manager" with no arg, so it also flags the noArgument error
         Error("noArgument");
