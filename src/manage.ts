@@ -2,18 +2,18 @@ import { FreshSetup, GetPath, LogStuff } from "./constants.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {
+    const usage = "Usage: fuckingNode manager add `projectPathHere` / remove `projectPathHere` / list";
+
     switch (errorCode) {
         case "noArgument":
             await LogStuff(
-                "Why didn't ya provide an argument? Usage: fuckingNode manager add `projectPathHere` / remove `projectPathHere` / list",
+                "Why didn't ya provide an argument? " + usage,
             );
             break;
         case "invalidArgument":
             await LogStuff(
-                "BRO IT'S SO MOTHERFUCKING EASY!!1!1 Usage: fuckingNode manager add `projectPathHere` / remove `projectPathHere` / list",
-            );
-            await LogStuff(
-                "\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where package-lock.json / pnpm-lock.yaml lives.",
+                "BRO IT'S SO MOTHERFUCKING EASY!!1!1 " + usage +
+                    "\n\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where package-lock.json / pnpm-lock.yaml lives.",
             );
             break;
     }
@@ -64,7 +64,7 @@ async function removeEntry(entry: string) {
         }
     } else {
         await LogStuff(
-            `Bruh, that mf doesn't exist yet. Another typo? You wrote: ${entry}`,
+            `Bruh, that mf doesn't exist yet.\nAnother typo? You wrote: ${entry}`,
         );
     }
 }
@@ -101,7 +101,6 @@ export default async function FuckingNodeManager(args: string[]) {
                 Error("invalidArgument");
             }
             break;
-
         case "remove":
             if (entry) {
                 await removeEntry(entry);
@@ -109,11 +108,9 @@ export default async function FuckingNodeManager(args: string[]) {
                 Error("invalidArgument");
             }
             break;
-
         case "list":
             await listEntries();
             break;
-
         default:
             Error("invalidArgument");
             Deno.exit(1);

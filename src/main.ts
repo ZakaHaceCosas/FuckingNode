@@ -3,9 +3,9 @@ import FuckingNodeManager from "./manage.ts";
 import { FreshSetup, VERSION } from "./constants.ts";
 
 const [command] = Deno.args;
-const isVerbose = Deno.args[1] === "--verbose";
+const isVerbose = Deno.args[1].toLowerCase() === "--verbose";
 
-switch (command) {
+switch (command.toLowerCase()) {
     case "clean":
         await FreshSetup();
         await FuckingNodeCleaner(isVerbose);
