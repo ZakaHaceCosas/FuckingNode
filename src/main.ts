@@ -1,12 +1,12 @@
 import FuckingNodeCleaner from "./clean.ts";
 import FuckingNodeManager from "./manage.ts";
-import { FreshSetup, VERSION } from "./constants.ts";
+import { FreshSetup, VERSION, HELP } from "./constants.ts";
 
 const [command] = Deno.args;
 const flags = Deno.args.map((arg) => {
-    return arg.toLowerCase()}
-);
-const isVerbose = flags.includes("--verbose")
+    return arg.toLowerCase();
+});
+const isVerbose = flags.includes("--verbose");
 const wantsToUpdate = flags.includes("--update");
 
 switch (command.toLowerCase()) {
@@ -20,6 +20,9 @@ switch (command.toLowerCase()) {
         break;
     case "--version":
         console.log(VERSION);
+        break;
+    case "--help":
+        console.log(HELP);
         break;
     default:
         console.error("Unknown command. Use 'clean' or 'manager'.");

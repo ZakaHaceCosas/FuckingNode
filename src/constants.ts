@@ -1,6 +1,20 @@
 // app version
 export const VERSION = "1.0.1";
 
+const _USAGE = {
+    clean: "    clean   [--update] [--verbose]",
+    add: "    manager add <item> | remove <item> | list",
+    version: "            [--version]"
+}
+const USAGE = _USAGE.clean + "\n" + _USAGE.add + "\n" + _USAGE.version
+const _OPTIONS = {
+    update: "    --update     Update all your projects before cleaning them.",
+    verbose: "    --verbose    Show more detailed ('verbose') logs.",
+    version: "    --version    Show the version of FuckingNode you're currently on."
+}
+const OPTIONS = _OPTIONS.update + "\n" + _OPTIONS.verbose + "\n" + _OPTIONS.version
+export const HELP = "Usage: fuckingnode\n" + USAGE + "\n\nOptions:\n" + OPTIONS
+
 export function GetPath(path: "BASE" | "MOTHERFUCKERS" | "LOGS"): string {
     const appDataPath = Deno.env.get("APPDATA");
     if (!appDataPath) {
