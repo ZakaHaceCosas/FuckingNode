@@ -2,20 +2,12 @@ import { GetPath, LogStuff } from "./constants.ts";
 
 export default async function FuckingNodeCleaner(verbose: boolean) {
     try {
-        // make the dir just in case
-        await Deno.mkdir(GetPath("BASE"), { recursive: true });
-
         // original path
         const originalLocation = Deno.cwd();
 
         // read all motherfuckers
         let motherFuckers: string[] = [];
         try {
-            if (!(await Deno.stat(GetPath("MOTHERFUCKERS")))) {
-                // we create the file inside of a catch, as if it doesn't exist we'll get an error
-                await Deno.writeTextFile(GetPath("MOTHERFUCKERS"), "");
-            }
-
             const data = await Deno.readTextFile(GetPath("MOTHERFUCKERS"));
             motherFuckers = data
                 .split("\n")
