@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `--verbose` flag to the `clean` command. Some logs are now hidden behind this flag.
 - Fixed the app losing data from one version to another (now it uses `APPDATA/FuckingNode/*` instead of
   `APPDATA/FuckingNode-VERSION/*` to store data).
+- Remove case sensitivity from some arguments.
 
 ## [1.0.0] - 14-10-2024
 
