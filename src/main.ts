@@ -25,6 +25,6 @@ switch (command.toLowerCase()) {
         console.log(HELP);
         break;
     default:
-        console.error("Unknown command. Use 'clean' or 'manager'.");
+        console.error("Unknown command. Use 'clean' or 'manager'. Use 'fuckingnode --help' to see the list of commands.");
         Deno.exit(1);
 }
