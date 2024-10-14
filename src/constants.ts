@@ -5,7 +5,7 @@ export function GetPath(path: "BASE" | "MOTHERFUCKERS" | "LOGS"): string {
     const appDataPath = Deno.env.get("APPDATA");
     if (!appDataPath) {
         console.error(
-            "Motherfucking APPDATA variable not found. Something seriously went motherfucking wrong."
+            "Motherfucking APPDATA variable not found. Something seriously went motherfucking wrong.",
         );
         Deno.exit(1);
     }
@@ -52,7 +52,7 @@ export async function FreshSetup(): Promise<void> {
 export async function LogStuff(message: string) {
     console.log(message);
     try {
-        const logged = `${message} ... @ ${new Date().toLocaleString()}` + "\n"
+        const logged = `${message} ... @ ${new Date().toLocaleString()}` + "\n";
 
         await Deno.writeTextFile(GetPath("LOGS"), logged, {
             append: true,

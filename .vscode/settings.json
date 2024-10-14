@@ -8,5 +8,6 @@
         "fuckingnode",
         "motherf"
     ],
-    "deno.enable": true
+    "deno.enable": true,
+    "editor.formatOnSave": false
 }

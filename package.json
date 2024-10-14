@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "format": "deno fmt --indent-width 4 --line-width 120"
+    }
+}

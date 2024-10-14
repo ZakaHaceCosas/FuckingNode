@@ -14,18 +14,16 @@ export default async function FuckingNodeCleaner() {
             if (!(await Deno.stat(GetPath("MOTHERFUCKERS")))) {
                 // we create the file inside of a catch, as if it doesn't exist we'll get an error
                 await Deno.writeTextFile(GetPath("MOTHERFUCKERS"), "");
-            };
+            }
 
-            const data = await Deno.readTextFile(
-                GetPath("MOTHERFUCKERS")
-            );
+            const data = await Deno.readTextFile(GetPath("MOTHERFUCKERS"));
             motherFuckers = data
                 .split("\n")
                 .map((line) => line.trim().replace(/,$/, ""))
                 .filter((line) => line.length > 0);
         } catch (e) {
             await LogStuff(
-                `Motherfucking error reading your motherfucking list of motherfuckers: ${e}`
+                `Motherfucking error reading your motherfucking list of motherfuckers: ${e}`,
             );
             Deno.exit(1);
         }
@@ -34,8 +32,10 @@ export default async function FuckingNodeCleaner() {
         const updateFlag = Deno.args.includes("--update");
 
         if (motherFuckers.length === 0) {
-            await LogStuff("🌚 There isn't any motherfucker over here... yet...")
-            return
+            await LogStuff(
+                "🌚 There isn't any motherfucker over here... yet...",
+            );
+            return;
         }
 
         await LogStuff(`🔄 Cleaning started at ${new Date().toLocaleString()}`);
@@ -51,14 +51,19 @@ export default async function FuckingNodeCleaner() {
 
             try {
                 Deno.chdir(motherfucker);
-                await LogStuff(`🔄 Cleaning the ${motherfucker} motherfucker...`);
+                await LogStuff(
+                    `🔄 Cleaning the ${motherfucker} motherfucker...`,
+                );
 
                 try {
                     if (await Deno.stat(".fknodeignore")) {
                         await LogStuff(
-                            `🚨 This motherfucker (${motherfucker}) is protected by fucking divine protection (.fknodeignore file). Cannot clean it.`
+                            `🚨 This motherfucker (${motherfucker}) is protected by fucking divine protection (.fknodeignore file). Cannot clean it.`,
                         );
-                        results.push({ path: motherfucker, status: "Protected" });
+                        results.push({
+                            path: motherfucker,
+                            status: "Protected",
+                        });
                         continue;
                     }
                 } catch {
@@ -68,7 +73,7 @@ export default async function FuckingNodeCleaner() {
                 if (await Deno.stat("pnpm-lock.yaml")) {
                     if (updateFlag) {
                         await LogStuff(
-                            `📦 Updating and using pnpm for ${motherfucker}.`
+                            `📦 Updating and using pnpm for ${motherfucker}.`,
                         );
                         const updateCmd = new Deno.Command("pnpm", {
                             args: ["update"],
@@ -76,32 +81,34 @@ export default async function FuckingNodeCleaner() {
                         const updateOutput = await updateCmd.output();
                         if (!updateOutput.success) {
                             throw new Error(
-                                `some motherfucker called 'pnpm update' gave error at ${motherfucker}`
+                                `some motherfucker called 'pnpm update' gave error at ${motherfucker}`,
                             );
                         }
                         const updateStdout = new TextDecoder().decode(
-                            updateOutput.stdout
+                            updateOutput.stdout,
                         );
                         await LogStuff(`📦 pnpm update: ${updateStdout}`);
                     }
-                    await LogStuff(`📦 Pruning using pnpm for ${motherfucker}.`);
+                    await LogStuff(
+                        `📦 Pruning using pnpm for ${motherfucker}.`,
+                    );
                     const pruneCmd = new Deno.Command("pnpm", {
                         args: ["store", "prune"],
                     });
                     const pruneOutput = await pruneCmd.output();
                     if (!pruneOutput.success) {
                         throw new Error(
-                            `some motherfucker called 'pnpm prune' gave error at ${motherfucker}`
+                            `some motherfucker called 'pnpm prune' gave error at ${motherfucker}`,
                         );
                     }
                     const pruneStdout = new TextDecoder().decode(
-                        pruneOutput.stdout
+                        pruneOutput.stdout,
                     );
                     await LogStuff(`📦 pnpm prune: ${pruneStdout}`);
                 } else if (await Deno.stat("package-lock.json")) {
                     if (updateFlag) {
                         await LogStuff(
-                            `📦 Updating and using npm for ${motherfucker}.`
+                            `📦 Updating and using npm for ${motherfucker}.`,
                         );
                         const updateCmd = new Deno.Command("npm", {
                             args: ["update"],
@@ -109,11 +116,11 @@ export default async function FuckingNodeCleaner() {
                         const updateOutput = await updateCmd.output();
                         if (!updateOutput.success) {
                             throw new Error(
-                                `some motherfucker called 'npm update' gave error at ${motherfucker}`
+                                `some motherfucker called 'npm update' gave error at ${motherfucker}`,
                             );
                         }
                         const updateStdout = new TextDecoder().decode(
-                            updateOutput.stdout
+                            updateOutput.stdout,
                         );
                         await LogStuff(`📦 npm update: ${updateStdout}`);
                     }
@@ -124,17 +131,17 @@ export default async function FuckingNodeCleaner() {
                     const pruneOutput = await pruneCmd.output();
                     if (!pruneOutput.success) {
                         throw new Error(
-                            `some motherfucker called 'npm prune' gave error at ${motherfucker}`
+                            `some motherfucker called 'npm prune' gave error at ${motherfucker}`,
                         );
                     }
                     const pruneStdout = new TextDecoder().decode(
-                        pruneOutput.stdout
+                        pruneOutput.stdout,
                     );
                     await LogStuff(`📦 npm prune: ${pruneStdout}`);
                 } else if (await Deno.stat("yarn.lock")) {
                     if (updateFlag) {
                         await LogStuff(
-                            `📦 Updating and using Yarn for ${motherfucker}.`
+                            `📦 Updating and using Yarn for ${motherfucker}.`,
                         );
                         const upgradeCmd = new Deno.Command("yarn", {
                             args: ["upgrade"],
@@ -142,42 +149,44 @@ export default async function FuckingNodeCleaner() {
                         const upgradeOutput = await upgradeCmd.output();
                         if (!upgradeOutput.success) {
                             throw new Error(
-                                `some motherfucker called 'yarn upgrade' gave error at ${motherfucker}`
+                                `some motherfucker called 'yarn upgrade' gave error at ${motherfucker}`,
                             );
                         }
                         const upgradeStdout = new TextDecoder().decode(
-                            upgradeOutput.stdout
+                            upgradeOutput.stdout,
                         );
                         await LogStuff(`📦 yarn upgrade: ${upgradeStdout}`);
                     }
-                    await LogStuff(`📦 Pruning using Yarn for ${motherfucker}.`);
+                    await LogStuff(
+                        `📦 Pruning using Yarn for ${motherfucker}.`,
+                    );
                     const autocleanCmd = new Deno.Command("yarn", {
                         args: ["autoclean", "--force"],
                     });
                     const autocleanOutput = await autocleanCmd.output();
                     if (!autocleanOutput.success) {
                         throw new Error(
-                            `some motherfucker called 'yarn autoclean' gave error at ${motherfucker}`
+                            `some motherfucker called 'yarn autoclean' gave error at ${motherfucker}`,
                         );
                     }
                     const autocleanStdout = new TextDecoder().decode(
-                        autocleanOutput.stdout
+                        autocleanOutput.stdout,
                     );
                     await LogStuff(`📦 yarn autoclean: ${autocleanStdout}`);
                 } else if (await Deno.stat("package.json")) {
                     await LogStuff(
-                        `⚠️ ${motherfucker} has a package.json but not a lockfile. Can't fucking clean.`
+                        `⚠️ ${motherfucker} has a package.json but not a lockfile. Can't fucking clean.`,
                     );
                 } else {
                     await LogStuff(
-                        `⚠️ Neither pnpm-lock.yaml nor package-lock.json nor yarn.lock were found at the motherfucking ${motherfucker}. Skipping this motherfucker...`
+                        `⚠️ Neither pnpm-lock.yaml nor package-lock.json nor yarn.lock were found at the motherfucking ${motherfucker}. Skipping this motherfucker...`,
                     );
                 }
 
                 results.push({ path: motherfucker, status: "Success" });
             } catch (err) {
                 await LogStuff(
-                    `❌ Error while processing ${motherfucker} -> ${err}`
+                    `❌ Error while processing ${motherfucker} -> ${err}`,
                 );
                 results.push({ path: motherfucker, status: "Failed" });
             }
@@ -186,7 +195,7 @@ export default async function FuckingNodeCleaner() {
         // go back home
         Deno.chdir(originalLocation);
         await LogStuff(
-            `✅ All your motherfucking Node projects have been cleaned! Back to ${originalLocation}.`
+            `✅ All your motherfucking Node projects have been cleaned! Back to ${originalLocation}.`,
         );
 
         // shows a report
@@ -194,7 +203,9 @@ export default async function FuckingNodeCleaner() {
         for (const result of results) {
             await LogStuff(`${result.path} -> ${result.status}`);
         }
-        await LogStuff(`✅ Cleaning completed at ${new Date().toLocaleString()}`);
+        await LogStuff(
+            `✅ Cleaning completed at ${new Date().toLocaleString()}`,
+        );
         Deno.exit(0);
     } catch (e) {
         await LogStuff("Some error happened: " + e);

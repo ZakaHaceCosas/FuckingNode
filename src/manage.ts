@@ -5,15 +5,15 @@ async function Error(errorCode: "noArgument" | "invalidArgument") {
     switch (errorCode) {
         case "noArgument":
             await LogStuff(
-                "Why didn't ya provide an argument? Usage: fuckingNode manager add `projectPathHere` / remove `projectPathHere` / list"
+                "Why didn't ya provide an argument? Usage: fuckingNode manager add `projectPathHere` / remove `projectPathHere` / list",
             );
             break;
         case "invalidArgument":
             await LogStuff(
-                "BRO IT'S SO MOTHERFUCKING EASY!!1!1 Usage: fuckingNode manager add `projectPathHere` / remove `projectPathHere` / list"
+                "BRO IT'S SO MOTHERFUCKING EASY!!1!1 Usage: fuckingNode manager add `projectPathHere` / remove `projectPathHere` / list",
             );
             await LogStuff(
-                "\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where package-lock.json / pnpm-lock.yaml lives."
+                "\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where package-lock.json / pnpm-lock.yaml lives.",
             );
             break;
     }
@@ -26,7 +26,7 @@ async function getList() {
         return content.split("\n").filter(Boolean);
     } catch (error) {
         await LogStuff(
-            `Failed to read the file: ${GetPath("MOTHERFUCKERS")} - ${error}`
+            `Failed to read the file: ${GetPath("MOTHERFUCKERS")} - ${error}`,
         );
         Deno.exit(1);
     }
@@ -53,10 +53,10 @@ async function removeEntry(entry: string) {
         if (list.length > 0) {
             await Deno.writeTextFile(
                 GetPath("MOTHERFUCKERS"),
-                list.join("\n") + "\n"
+                list.join("\n") + "\n",
             );
             await LogStuff(
-                `Let me guess: ${entry} was another "revolutionary cutting edge project" that you're now removing, right?`
+                `Let me guess: ${entry} was another "revolutionary cutting edge project" that you're now removing, right?`,
             );
         } else {
             await Deno.remove(GetPath("MOTHERFUCKERS"));
@@ -64,7 +64,7 @@ async function removeEntry(entry: string) {
         }
     } else {
         await LogStuff(
-            `Bruh, that mf doesn't exist yet. Another typo? You wrote: ${entry}`
+            `Bruh, that mf doesn't exist yet. Another typo? You wrote: ${entry}`,
         );
     }
 }
