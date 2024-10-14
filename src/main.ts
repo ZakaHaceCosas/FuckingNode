@@ -3,8 +3,11 @@ import FuckingNodeManager from "./manage.ts";
 import { FreshSetup, VERSION } from "./constants.ts";
 
 const [command] = Deno.args;
-const isVerbose = Deno.args[1].toLowerCase() === "--verbose";
-const wantsToUpdate = Deno.args[2].toLowerCase() === "--update";
+const flags = Deno.args.map((arg) => {
+    return arg.toLowerCase()}
+);
+const isVerbose = flags.includes("--verbose")
+const wantsToUpdate = flags.includes("--update");
 
 switch (command.toLowerCase()) {
     case "clean":
