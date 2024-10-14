@@ -1,5 +1,5 @@
 // app version
-export const VERSION = "0.1.0";
+export const VERSION = "1.0.1";
 
 export function GetPath(path: "BASE" | "MOTHERFUCKERS" | "LOGS"): string {
     const appDataPath = Deno.env.get("APPDATA");
