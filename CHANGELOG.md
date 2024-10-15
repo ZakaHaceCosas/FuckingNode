@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `--maxim` flag to the `clean` command. It will _take cleaning to the max_ (AKA removing `node_modules/`
   entirely).
 
+### Fixed
+
+- If you didn't enter any argument (just running `fuckingnode`), you got a TypeError instead of "Unknown command...". This was fixed.
+
 ## [1.0.1] 14-10-2024 <!-- two releases in a day, lol -->
 
 ### Added
