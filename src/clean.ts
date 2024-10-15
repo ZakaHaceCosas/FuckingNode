@@ -31,7 +31,8 @@ async function CleanMotherfucker(
 
     if (shouldUpdate) {
         await LogStuff(
-            `📦 Updating and using ${baseCommand} for ${motherfuckerInQuestion}.`,
+            `Updating and using ${baseCommand} for ${motherfuckerInQuestion}.`,
+            "package",
         );
         const updateCmd = new Deno.Command(baseCommand, {
             args: updateArg,
@@ -43,11 +44,12 @@ async function CleanMotherfucker(
             );
         }
         const updateStdout = new TextDecoder().decode(updateOutput.stdout);
-        await LogStuff(`📦 ${baseCommand + " " + updateArg}: ${updateStdout}`);
+        await LogStuff(`${baseCommand + " " + updateArg}: ${updateStdout}`, "package");
     }
     if (!shouldMaxim) {
         await LogStuff(
-            `📦 Pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
+            `Pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
+            "package",
         );
         const pruneCmd = new Deno.Command(baseCommand, {
             args: pruneArg,
@@ -59,22 +61,24 @@ async function CleanMotherfucker(
             );
         }
         const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
-        await LogStuff(`📦 ${baseCommand + " " + pruneArg}: ${pruneStdout}`);
+        await LogStuff(`${baseCommand + " " + pruneArg}: ${pruneStdout}`, "package");
     } else if (shouldMaxim) {
         const maximPath = `${motherfuckerInQuestion}/node_modules`;
 
         await LogStuff(
-            `🗑 Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
+            `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
+            "trash",
         );
         try {
             await Deno.stat(maximPath);
             await Deno.remove(maximPath, {
                 recursive: true,
             });
-            await LogStuff(`✔ Maxim pruned ${motherfuckerInQuestion}.`);
+            await LogStuff(`Maxim pruned ${motherfuckerInQuestion}.`, "tick-clear");
         } catch {
             await LogStuff(
-                `😐 An unknown error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this motherfucker...`,
+                `An unknown error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this motherfucker...`,
+                "bruh",
             );
         }
     }
@@ -106,7 +110,8 @@ export default async function FuckingNodeCleaner(
 
         if (motherFuckers.length === 0) {
             await LogStuff(
-                "🌚 There isn't any motherfucker over here... yet...",
+                "There isn't any motherfucker over here... yet...",
+                "moon-face",
             );
             return;
         }
@@ -120,13 +125,13 @@ export default async function FuckingNodeCleaner(
             maximForReal = false;
         }
 
-        if (verbose) await LogStuff(`🔄 Cleaning started at ${new Date().toLocaleString()}`);
+        if (verbose) await LogStuff(`Cleaning started at ${new Date().toLocaleString()}`, "working");
 
         const results: { path: string; status: string }[] = [];
 
         for (const motherfucker of motherFuckers) {
             if (!(await Deno.stat(motherfucker))) {
-                await LogStuff(`❌ Path not found: ${motherfucker}`);
+                await LogStuff(`Path not found: ${motherfucker}`, "error");
                 results.push({ path: motherfucker, status: "Not found" });
                 continue;
             }
@@ -134,14 +139,16 @@ export default async function FuckingNodeCleaner(
             try {
                 Deno.chdir(motherfucker);
                 await LogStuff(
-                    `🔄 Cleaning the ${motherfucker} motherfucker...`,
+                    `Cleaning the ${motherfucker} motherfucker...`,
+                    "working",
                 );
 
                 try {
                     if (await Deno.stat(".fknodeignore")) {
                         if (verbose) {
                             await LogStuff(
-                                `🚨 This motherfucker (${motherfucker}) is protected by fucking divine protection (.fknodeignore file). Cannot clean it.`,
+                                `This motherfucker (${motherfucker}) is protected by fucking divine protection (.fknodeignore file). Cannot clean it.`,
+                                "heads-up",
                             );
                         }
                         results.push({
@@ -177,18 +184,21 @@ export default async function FuckingNodeCleaner(
                     );
                 } else if (await Deno.stat("package.json")) {
                     await LogStuff(
-                        `⚠️ ${motherfucker} has a package.json but not a lockfile. Can't fucking clean.`,
+                        `${motherfucker} has a package.json but not a lockfile. Can't fucking clean.`,
+                        "warn",
                     );
                 } else {
                     await LogStuff(
-                        `⚠️ Neither pnpm-lock.yaml nor package-lock.json nor yarn.lock were found at the motherfucking ${motherfucker}. Skipping this motherfucker...`,
+                        `Neither pnpm-lock.yaml nor package-lock.json nor yarn.lock were found at the motherfucking ${motherfucker}. Skipping this motherfucker...`,
+                        "warn",
                     );
                 }
 
                 results.push({ path: motherfucker, status: "Success" });
             } catch (err) {
                 await LogStuff(
-                    `❌ Error while processing ${motherfucker} -> ${err}`,
+                    `Error while processing ${motherfucker} -> ${err}`,
+                    "error",
                 );
                 results.push({ path: motherfucker, status: "Failed" });
             }
@@ -197,18 +207,20 @@ export default async function FuckingNodeCleaner(
         // go back home
         Deno.chdir(originalLocation);
         await LogStuff(
-            `✅ All your motherfucking Node projects have been cleaned! Back to ${originalLocation}.`,
+            `All your motherfucking Node projects have been cleaned! Back to ${originalLocation}.`,
+            "tick",
         );
 
         if (verbose) {
             // shows a report
-            await LogStuff("📊 Report:");
+            await LogStuff("Report:", "chart");
             for (const result of results) {
                 await LogStuff(`${result.path} -> ${result.status}`);
             }
 
             await LogStuff(
-                `✅ Cleaning completed at ${new Date().toLocaleString()}`,
+                `Cleaning completed at ${new Date().toLocaleString()}`,
+                "tick",
             );
         }
         Deno.exit(0);

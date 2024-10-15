@@ -5,10 +5,12 @@
         "Bruh",
         "cking",
         "Deno",
+        "Emojify",
         "fknodeignore",
         "fuckingnode",
         "motherf"
     ],
     "deno.enable": true,
-    "editor.formatOnSave": false
+    "editor.formatOnSave": false,
+    "editor.wordWrap": "on"
 }

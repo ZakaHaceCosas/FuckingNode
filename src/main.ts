@@ -1,6 +1,6 @@
 import FuckingNodeCleaner from "./clean.ts";
 import FuckingNodeManager from "./manage.ts";
-import { FreshSetup, HELP, VERSION } from "./constants.ts";
+import { FreshSetup, HELP, LogStuff, VERSION } from "./constants.ts";
 
 const [command] = Deno.args;
 const flags = Deno.args.map((arg) => {
@@ -23,11 +23,12 @@ switch (command ? command.toLowerCase() : "") {
         console.log(VERSION);
         break;
     case "--help":
-        console.log(HELP);
+        await LogStuff(HELP, "bulb");
         break;
     default:
-        console.error(
+        await LogStuff(
             "Unknown command. Use 'clean' or 'manager'. Use 'fuckingnode --help' to see the list of commands.",
+            "what",
         );
         Deno.exit(1);
 }
