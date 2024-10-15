@@ -120,7 +120,7 @@ export default async function FuckingNodeCleaner(
             maximForReal = false;
         }
 
-        await LogStuff(`🔄 Cleaning started at ${new Date().toLocaleString()}`);
+        if (verbose) await LogStuff(`🔄 Cleaning started at ${new Date().toLocaleString()}`);
 
         const results: { path: string; status: string }[] = [];
 
