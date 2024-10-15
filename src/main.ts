@@ -8,11 +8,12 @@ const flags = Deno.args.map((arg) => {
 });
 const isVerbose = flags.includes("--verbose");
 const wantsToUpdate = flags.includes("--update");
+const wantsMaxim = flags.includes("--maxim");
 
 switch (command.toLowerCase()) {
     case "clean":
         await FreshSetup();
-        await FuckingNodeCleaner(isVerbose, wantsToUpdate);
+        await FuckingNodeCleaner(isVerbose, wantsToUpdate, wantsMaxim);
         break;
     case "manager":
         await FreshSetup();

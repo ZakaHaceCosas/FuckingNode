@@ -2,8 +2,9 @@ import { GetPath, LogStuff, type SUPPORTED_LOCKFILE } from "./constants.ts";
 
 async function CleanMotherfucker(
     lockfile: SUPPORTED_LOCKFILE,
-    shouldUpdate: boolean,
     motherfuckerInQuestion: string,
+    shouldUpdate: boolean,
+    shouldMaxim: boolean,
 ) {
     let baseCommand: string;
     let pruneArg: string[];
@@ -44,25 +45,45 @@ async function CleanMotherfucker(
         const updateStdout = new TextDecoder().decode(updateOutput.stdout);
         await LogStuff(`📦 ${baseCommand + " " + updateArg}: ${updateStdout}`);
     }
-    await LogStuff(
-        `📦 Pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
-    );
-    const pruneCmd = new Deno.Command(baseCommand, {
-        args: pruneArg,
-    });
-    const pruneOutput = await pruneCmd.output();
-    if (!pruneOutput.success) {
-        throw new Error(
-            `pruning ${motherfuckerInQuestion} gave an unknown error`,
+    if (!shouldMaxim) {
+        await LogStuff(
+            `📦 Pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
         );
+        const pruneCmd = new Deno.Command(baseCommand, {
+            args: pruneArg,
+        });
+        const pruneOutput = await pruneCmd.output();
+        if (!pruneOutput.success) {
+            throw new Error(
+                `pruning ${motherfuckerInQuestion} gave an unknown error`,
+            );
+        }
+        const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
+        await LogStuff(`📦 ${baseCommand + " " + pruneArg}: ${pruneStdout}`);
+    } else if (shouldMaxim) {
+        const maximPath = `${motherfuckerInQuestion}/node_modules`;
+
+        await LogStuff(
+            `🗑 Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
+        );
+        try {
+            await Deno.stat(maximPath);
+            await Deno.remove(maximPath, {
+                recursive: true,
+            });
+            await LogStuff(`✔ Maxim pruned ${motherfuckerInQuestion}.`);
+        } catch {
+            await LogStuff(
+                `😐 An unknown error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this motherfucker...`,
+            );
+        }
     }
-    const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
-    await LogStuff(`📦 ${baseCommand + " " + pruneArg}: ${pruneStdout}`);
 }
 
 export default async function FuckingNodeCleaner(
     verbose: boolean,
     update: boolean,
+    maxim: boolean,
 ) {
     try {
         // original path
@@ -88,6 +109,15 @@ export default async function FuckingNodeCleaner(
                 "🌚 There isn't any motherfucker over here... yet...",
             );
             return;
+        }
+
+        let maximForReal: boolean;
+        if (maxim) {
+            maximForReal = confirm(
+                "⚠ Are you sure you want to use maxim cleaning? It will recursively remove the contents of node_modules for ALL projects from your list.",
+            );
+        } else {
+            maximForReal = false;
         }
 
         await LogStuff(`🔄 Cleaning started at ${new Date().toLocaleString()}`);
@@ -127,17 +157,24 @@ export default async function FuckingNodeCleaner(
                 if (await Deno.stat("pnpm-lock.yaml")) {
                     await CleanMotherfucker(
                         "pnpm-lock.yaml",
-                        update,
                         motherfucker,
+                        update,
+                        maximForReal,
                     );
                 } else if (await Deno.stat("package-lock.json")) {
                     await CleanMotherfucker(
                         "package-lock.json",
-                        update,
                         motherfucker,
+                        update,
+                        maximForReal,
                     );
                 } else if (await Deno.stat("yarn.lock")) {
-                    await CleanMotherfucker("yarn.lock", update, motherfucker);
+                    await CleanMotherfucker(
+                        "yarn.lock",
+                        motherfucker,
+                        update,
+                        maximForReal,
+                    );
                 } else if (await Deno.stat("package.json")) {
                     await LogStuff(
                         `⚠️ ${motherfucker} has a package.json but not a lockfile. Can't fucking clean.`,
