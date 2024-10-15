@@ -1,5 +1,11 @@
 import { VERSION } from "./constants.ts";
-import { type GITHUB_RELEASE, type RIGHT_NOW_DATE, RIGHT_NOW_DATE_REGEX, type SUPPORTED_EMOJIS } from "./types.ts";
+import {
+    type GITHUB_RELEASE,
+    type RIGHT_NOW_DATE,
+    RIGHT_NOW_DATE_REGEX,
+    type SUPPORTED_EMOJIS,
+    type UPDATE_FILE,
+} from "./types.ts";
 
 // function to log messages
 export async function LogStuff(
@@ -25,7 +31,7 @@ export async function LogStuff(
 
 // get path (a constant if you think abt it)
 export function GetPath(
-    path: "BASE" | "MOTHERFUCKERS" | "LOGS" | "LAST_UPDATE",
+    path: "BASE" | "MOTHERFUCKERS" | "LOGS" | "UPDATES",
 ): string {
     const appDataPath = Deno.env.get("APPDATA");
     if (!appDataPath) {
@@ -38,7 +44,7 @@ export function GetPath(
     const BASE_DIR = `${appDataPath}/FuckingNode/`;
     const MOTHERFUCKERS_DIR = `${BASE_DIR}/fuckingNode-motherfuckers.txt`;
     const LOGS_DIR = `${BASE_DIR}/fuckingNode-Logs.log`;
-    const LAST_UPDATE_DIR = `${BASE_DIR}/fuckingNode-LastUpdate.txt`;
+    const UPDATES_DIR = `${BASE_DIR}/fuckingNode-updates.txt`;
 
     switch (path) {
         case "BASE":
@@ -47,8 +53,8 @@ export function GetPath(
             return MOTHERFUCKERS_DIR;
         case "LOGS":
             return LOGS_DIR;
-        case "LAST_UPDATE":
-            return LAST_UPDATE_DIR;
+        case "UPDATES":
+            return UPDATES_DIR;
         default:
             throw new Error("Invalid path requested");
     }
@@ -154,16 +160,30 @@ export async function CheckForUpdates() {
     let needsToWait: boolean = true;
 
     try {
-        await Deno.stat(GetPath("LAST_UPDATE"));
+        await Deno.stat(GetPath("UPDATES"));
     } catch {
-        Deno.writeTextFile(GetPath("LAST_UPDATE"), GetDateNow());
+        const dataToWrite: UPDATE_FILE = {
+            isUpToDate: true,
+            lastVer: VERSION,
+            lastCheck: GetDateNow(),
+        };
+
+        Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite));
         needsToWait = false;
     }
-    const lastCheckContent = await Deno.readTextFile(GetPath("LAST_UPDATE"));
-    const lastCheck: RIGHT_NOW_DATE = lastCheckContent as RIGHT_NOW_DATE;
-    if (!RIGHT_NOW_DATE_REGEX.test(lastCheck)) {
+
+    const updateFileContent = await Deno.readTextFile(GetPath("UPDATES"));
+    const updateFile: UPDATE_FILE = JSON.parse(updateFileContent);
+    if (!RIGHT_NOW_DATE_REGEX.test(updateFile.lastCheck)) {
         throw new Error(
-            "Unable to parse date of last update. Got " + lastCheck + ".",
+            "Unable to parse date of last update. Got " + updateFile.lastCheck + ".",
+        );
+    }
+
+    if (!updateFile.isUpToDate) {
+        await LogStuff(
+            "There's a new version! " + updateFile.lastVer + ". Consider updating from the GitHub repo.",
+            "bulb",
         );
     }
 
@@ -173,7 +193,7 @@ export async function CheckForUpdates() {
         const currentCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(
             GetDateNow(),
         );
-        const lastCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(lastCheck);
+        const lastCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(updateFile.lastCheck);
 
         if (!(currentCompatibleDate > lastCompatibleDate)) return; // no need to update
 
@@ -204,9 +224,16 @@ export async function CheckForUpdates() {
 
         const content: GITHUB_RELEASE = await response.json();
 
-        Deno.writeTextFile(GetPath("LAST_UPDATE"), GetDateNow()); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
+        const isUpToDate = CompareSemver(content.tag_name, VERSION) === 0;
 
-        if (CompareSemver(content.tag_name, VERSION) === 0) {
+        const dataToWrite: UPDATE_FILE = {
+            isUpToDate: isUpToDate,
+            lastVer: content.tag_name,
+            lastCheck: GetDateNow(),
+        };
+        Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
+
+        if (isUpToDate) {
             return;
         } // we're up to date
 

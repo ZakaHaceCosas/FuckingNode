@@ -27,7 +27,17 @@ export type SUPPORTED_EMOJIS =
     | "trash"
     | "chart";
 
+// semver
+type SemVer = `${number}.${number}.${number}`; // always SemVer compliant (1.2.3, 1.0.34, etc...)
+
 // github api response
 export interface GITHUB_RELEASE {
-    tag_name: `${number}.${number}.${number}`; // always SemVer compliant (1.2.3, 1.0.34, etc...)
+    tag_name: SemVer;
+}
+
+// update file
+export interface UPDATE_FILE {
+    lastCheck: RIGHT_NOW_DATE;
+    isUpToDate: boolean;
+    lastVer: SemVer;
 }
