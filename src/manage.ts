@@ -35,38 +35,49 @@ async function getList() {
     }
 }
 
+// parse entry
+function parseEntry(entry: string): string {
+    const cleanEntry = entry.trimEnd().trimStart();
+    let cleanerEntry: string;
+    if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
+        cleanerEntry = entry.trimEnd().trimStart().slice(0, -1);
+    } else {
+        cleanerEntry = entry.trimEnd().trimStart();
+    }
+
+    return cleanerEntry;
+}
+
 // write new entry to file
 async function addEntry(entry: string) {
+    const workingEntry = parseEntry(entry);
     const list = await getList();
-    if (list.includes(entry)) {
-        await LogStuff(`Bruh, you already added this motherfucker! ${entry}`, "error");
+    if (list.includes(workingEntry)) {
+        await LogStuff(`Bruh, you already added this motherfucker! ${workingEntry}`, "error");
     } else {
-        const cleanEntry = entry.trimEnd().trimStart();
-        let cleanerEntry: string;
-        if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
-            cleanerEntry = entry.trimEnd().trimStart().slice(0, -1);
-        } else {
-            cleanerEntry = entry.trimEnd().trimStart();
-        }
-        await Deno.writeTextFile(GetPath("MOTHERFUCKERS"), `${cleanerEntry}\n`, {
+        await Deno.writeTextFile(GetPath("MOTHERFUCKERS"), `${parseEntry(workingEntry)}\n`, {
             append: true,
         });
-        await LogStuff(`Congrats! ${cleanerEntry} was added to your list. One mf less to care about!`, "tick-clear");
+        await LogStuff(
+            `Congrats! ${parseEntry(workingEntry)} was added to your list. One mf less to care about!`,
+            "tick-clear",
+        );
     }
 }
 
 // remove entry from file
 async function removeEntry(entry: string) {
+    const workingEntry = parseEntry(entry);
     let list = await getList();
-    if (list.includes(entry)) {
-        list = list.filter((item) => item !== entry);
+    if (list.includes(workingEntry)) {
+        list = list.filter((item) => item !== workingEntry);
         if (list.length > 0) {
             await Deno.writeTextFile(
                 GetPath("MOTHERFUCKERS"),
                 list.join("\n") + "\n",
             );
             await LogStuff(
-                `Let me guess: ${entry} was another "revolutionary cutting edge project" that you're now removing, right?`,
+                `Let me guess: ${workingEntry} was another "revolutionary cutting edge project" that you're now removing, right?`,
                 "tick-clear",
             );
         } else {
@@ -75,7 +86,7 @@ async function removeEntry(entry: string) {
         }
     } else {
         await LogStuff(
-            `Bruh, that mf doesn't exist yet.\nAnother typo? You wrote: ${entry}`,
+            `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry} (PS. You wrote: ${entry} - input sometimes gets cleaned up)`,
             "error",
         );
     }
