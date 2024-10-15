@@ -1,7 +1,6 @@
 import { VERSION } from "./constants.ts";
 import { type GITHUB_RELEASE, type RIGHT_NOW_DATE, RIGHT_NOW_DATE_REGEX, type SUPPORTED_EMOJIS } from "./types.ts";
 
-
 // function to log messages
 export async function LogStuff(
     message: string,
@@ -150,13 +149,16 @@ function CompareSemver(versionA: string, versionB: string): number {
     return patchA - patchB;
 }
 
+// check for updates
 export async function CheckForUpdates() {
+    let needsToWait: boolean = true;
+
     try {
         await Deno.stat(GetPath("LAST_UPDATE"));
     } catch {
         Deno.writeTextFile(GetPath("LAST_UPDATE"), GetDateNow());
+        needsToWait = false;
     }
-    console.log(GetPath("LAST_UPDATE"));
     const lastCheckContent = await Deno.readTextFile(GetPath("LAST_UPDATE"));
     const lastCheck: RIGHT_NOW_DATE = lastCheckContent as RIGHT_NOW_DATE;
     if (!RIGHT_NOW_DATE_REGEX.test(lastCheck)) {
@@ -165,20 +167,24 @@ export async function CheckForUpdates() {
         );
     }
 
-    const currentCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(
-        GetDateNow(),
-    );
-    const lastCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(lastCheck);
+    let needsToCheck = true;
 
-    if (!(currentCompatibleDate > lastCompatibleDate)) return; // no need to update
+    if (needsToWait) {
+        const currentCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(
+            GetDateNow(),
+        );
+        const lastCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(lastCheck);
 
-    // 7 days
-    const differenceInMilliseconds = currentCompatibleDate.getTime() - lastCompatibleDate.getTime();
+        if (!(currentCompatibleDate > lastCompatibleDate)) return; // no need to update
 
-    // actually 7 days and not 7 days in milliseconds
-    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+        // 7 days
+        const differenceInMilliseconds = currentCompatibleDate.getTime() - lastCompatibleDate.getTime();
 
-    const needsToCheck = differenceInDays > 7;
+        // actually 7 days and not 7 days in milliseconds
+        const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+        needsToCheck = differenceInDays >= 7;
+    }
 
     if (!needsToCheck) return; // no need to update
 
