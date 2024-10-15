@@ -91,16 +91,18 @@ export async function FreshSetup(): Promise<void> {
 }
 
 // function to log messages
-export async function LogStuff(message: string, emoji?: SUPPORTED_EMOJIS) {
+export async function LogStuff(message: string, emoji?: SUPPORTED_EMOJIS, silent?: boolean) {
     const finalMessage = emoji ? Emojify(message, emoji) : message;
     console.log(finalMessage);
 
     try {
         const logged = `${finalMessage} ... @ ${new Date().toLocaleString()}` + "\n";
 
-        await Deno.writeTextFile(GetPath("LOGS"), logged, {
-            append: true,
-        });
+        if (!silent) {
+            await Deno.writeTextFile(GetPath("LOGS"), logged, {
+                append: true,
+            });
+        }
     } catch (e) {
         console.error(`Error logging stuff: ${e}`);
     }

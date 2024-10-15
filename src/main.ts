@@ -23,12 +23,13 @@ switch (command ? command.toLowerCase() : "") {
         console.log(VERSION);
         break;
     case "--help":
-        await LogStuff(HELP, "bulb");
+        await LogStuff(HELP, "bulb", true);
         break;
     default:
         await LogStuff(
             "Unknown command. Use 'clean' or 'manager'. Use 'fuckingnode --help' to see the list of commands.",
             "what",
+            true,
         );
         Deno.exit(1);
 }
