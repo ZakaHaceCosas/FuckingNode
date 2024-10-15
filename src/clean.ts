@@ -7,22 +7,22 @@ async function CleanMotherfucker(
     shouldMaxim: boolean,
 ) {
     let baseCommand: string;
-    let pruneArg: string[];
+    let pruneArgs: string[][];
     let updateArg: string[];
     switch (lockfile) {
         case "package-lock.json":
             baseCommand = "npm";
-            pruneArg = ["prune"];
+            pruneArgs = [["dedupe"], ["prune"]];
             updateArg = ["update"];
             break;
         case "pnpm-lock.yaml":
             baseCommand = "pnpm";
-            pruneArg = ["store", "prune"];
+            pruneArgs = [["dedupe"], ["prune"], ["store", "prune"]];
             updateArg = ["update"];
             break;
         case "yarn.lock":
             baseCommand = "yarn";
-            pruneArg = ["autoclean", "--force"];
+            pruneArgs = [["autoclean", "--force"]];
             updateArg = ["upgrade"];
             break;
         default:
@@ -51,17 +51,19 @@ async function CleanMotherfucker(
             `Pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
             "package",
         );
-        const pruneCmd = new Deno.Command(baseCommand, {
-            args: pruneArg,
-        });
-        const pruneOutput = await pruneCmd.output();
-        if (!pruneOutput.success) {
-            throw new Error(
-                `pruning ${motherfuckerInQuestion} gave an unknown error`,
-            );
+        for (const pruneArg of pruneArgs) {
+            const pruneCmd = new Deno.Command(baseCommand, {
+                args: pruneArg,
+            });
+            const pruneOutput = await pruneCmd.output();
+            if (!pruneOutput.success) {
+                throw new Error(
+                    `pruning ${motherfuckerInQuestion} gave an unknown error`,
+                );
+            }
+            const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
+            await LogStuff(`${baseCommand + " " + pruneArg}: ${pruneStdout}`, "package");
         }
-        const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
-        await LogStuff(`${baseCommand + " " + pruneArg}: ${pruneStdout}`, "package");
     } else if (shouldMaxim) {
         const maximPath = `${motherfuckerInQuestion}/node_modules`;
 
