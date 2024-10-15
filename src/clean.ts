@@ -1,6 +1,69 @@
-import { GetPath, LogStuff } from "./constants.ts";
+import { GetPath, LogStuff, type SUPPORTED_LOCKFILE } from "./constants.ts";
 
-export default async function FuckingNodeCleaner(verbose: boolean, update: boolean) {
+async function CleanMotherfucker(
+    lockfile: SUPPORTED_LOCKFILE,
+    shouldUpdate: boolean,
+    motherfuckerInQuestion: string,
+) {
+    let baseCommand: string;
+    let pruneArg: string[];
+    let updateArg: string[];
+    switch (lockfile) {
+        case "package-lock.json":
+            baseCommand = "npm";
+            pruneArg = ["prune"];
+            updateArg = ["update"];
+            break;
+        case "pnpm-lock.yaml":
+            baseCommand = "pnpm";
+            pruneArg = ["store", "prune"];
+            updateArg = ["update"];
+            break;
+        case "yarn.lock":
+            baseCommand = "yarn";
+            pruneArg = ["autoclean", "--force"];
+            updateArg = ["upgrade"];
+            break;
+        default:
+            throw new Error("Invalid lockfile provided");
+    }
+
+    if (shouldUpdate) {
+        await LogStuff(
+            `📦 Updating and using ${baseCommand} for ${motherfuckerInQuestion}.`,
+        );
+        const updateCmd = new Deno.Command(baseCommand, {
+            args: updateArg,
+        });
+        const updateOutput = await updateCmd.output();
+        if (!updateOutput.success) {
+            throw new Error(
+                `updating ${motherfuckerInQuestion} gave an unknown error`,
+            );
+        }
+        const updateStdout = new TextDecoder().decode(updateOutput.stdout);
+        await LogStuff(`📦 ${baseCommand + " " + updateArg}: ${updateStdout}`);
+    }
+    await LogStuff(
+        `📦 Pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
+    );
+    const pruneCmd = new Deno.Command(baseCommand, {
+        args: pruneArg,
+    });
+    const pruneOutput = await pruneCmd.output();
+    if (!pruneOutput.success) {
+        throw new Error(
+            `pruning ${motherfuckerInQuestion} gave an unknown error`,
+        );
+    }
+    const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
+    await LogStuff(`📦 ${baseCommand + " " + pruneArg}: ${pruneStdout}`);
+}
+
+export default async function FuckingNodeCleaner(
+    verbose: boolean,
+    update: boolean,
+) {
     try {
         // original path
         const originalLocation = Deno.cwd();
@@ -62,108 +125,19 @@ export default async function FuckingNodeCleaner(verbose: boolean, update: boole
                 }
 
                 if (await Deno.stat("pnpm-lock.yaml")) {
-                    if (update) {
-                        await LogStuff(
-                            `📦 Updating and using pnpm for ${motherfucker}.`,
-                        );
-                        const updateCmd = new Deno.Command("pnpm", {
-                            args: ["update"],
-                        });
-                        const updateOutput = await updateCmd.output();
-                        if (!updateOutput.success) {
-                            throw new Error(
-                                `some motherfucker called 'pnpm update' gave error at ${motherfucker}`,
-                            );
-                        }
-                        const updateStdout = new TextDecoder().decode(
-                            updateOutput.stdout,
-                        );
-                        await LogStuff(`📦 pnpm update: ${updateStdout}`);
-                    }
-                    await LogStuff(
-                        `📦 Pruning using pnpm for ${motherfucker}.`,
+                    await CleanMotherfucker(
+                        "pnpm-lock.yaml",
+                        update,
+                        motherfucker,
                     );
-                    const pruneCmd = new Deno.Command("pnpm", {
-                        args: ["store", "prune"],
-                    });
-                    const pruneOutput = await pruneCmd.output();
-                    if (!pruneOutput.success) {
-                        throw new Error(
-                            `some motherfucker called 'pnpm prune' gave error at ${motherfucker}`,
-                        );
-                    }
-                    const pruneStdout = new TextDecoder().decode(
-                        pruneOutput.stdout,
-                    );
-                    await LogStuff(`📦 pnpm prune: ${pruneStdout}`);
                 } else if (await Deno.stat("package-lock.json")) {
-                    if (update) {
-                        await LogStuff(
-                            `📦 Updating and using npm for ${motherfucker}.`,
-                        );
-                        const updateCmd = new Deno.Command("npm", {
-                            args: ["update"],
-                        });
-                        const updateOutput = await updateCmd.output();
-                        if (!updateOutput.success) {
-                            throw new Error(
-                                `some motherfucker called 'npm update' gave error at ${motherfucker}`,
-                            );
-                        }
-                        const updateStdout = new TextDecoder().decode(
-                            updateOutput.stdout,
-                        );
-                        await LogStuff(`📦 npm update: ${updateStdout}`);
-                    }
-                    await LogStuff(`📦 Pruning using npm for ${motherfucker}.`);
-                    const pruneCmd = new Deno.Command("npm", {
-                        args: ["prune"],
-                    });
-                    const pruneOutput = await pruneCmd.output();
-                    if (!pruneOutput.success) {
-                        throw new Error(
-                            `some motherfucker called 'npm prune' gave error at ${motherfucker}`,
-                        );
-                    }
-                    const pruneStdout = new TextDecoder().decode(
-                        pruneOutput.stdout,
+                    await CleanMotherfucker(
+                        "package-lock.json",
+                        update,
+                        motherfucker,
                     );
-                    await LogStuff(`📦 npm prune: ${pruneStdout}`);
                 } else if (await Deno.stat("yarn.lock")) {
-                    if (update) {
-                        await LogStuff(
-                            `📦 Updating and using Yarn for ${motherfucker}.`,
-                        );
-                        const upgradeCmd = new Deno.Command("yarn", {
-                            args: ["upgrade"],
-                        });
-                        const upgradeOutput = await upgradeCmd.output();
-                        if (!upgradeOutput.success) {
-                            throw new Error(
-                                `some motherfucker called 'yarn upgrade' gave error at ${motherfucker}`,
-                            );
-                        }
-                        const upgradeStdout = new TextDecoder().decode(
-                            upgradeOutput.stdout,
-                        );
-                        await LogStuff(`📦 yarn upgrade: ${upgradeStdout}`);
-                    }
-                    await LogStuff(
-                        `📦 Pruning using Yarn for ${motherfucker}.`,
-                    );
-                    const autocleanCmd = new Deno.Command("yarn", {
-                        args: ["autoclean", "--force"],
-                    });
-                    const autocleanOutput = await autocleanCmd.output();
-                    if (!autocleanOutput.success) {
-                        throw new Error(
-                            `some motherfucker called 'yarn autoclean' gave error at ${motherfucker}`,
-                        );
-                    }
-                    const autocleanStdout = new TextDecoder().decode(
-                        autocleanOutput.stdout,
-                    );
-                    await LogStuff(`📦 yarn autoclean: ${autocleanStdout}`);
+                    await CleanMotherfucker("yarn.lock", update, motherfucker);
                 } else if (await Deno.stat("package.json")) {
                     await LogStuff(
                         `⚠️ ${motherfucker} has a package.json but not a lockfile. Can't fucking clean.`,

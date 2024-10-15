@@ -1,6 +1,10 @@
 // app version
 export const VERSION = "1.0.1";
 
+// supported lockfile types
+export type SUPPORTED_LOCKFILE = "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock";
+
+// help
 const _USAGE = {
     clean: "    clean   [--update] [--verbose]",
     add: "    manager add <item> | remove <item> | list",
@@ -15,6 +19,7 @@ const _OPTIONS = {
 const OPTIONS = _OPTIONS.update + "\n" + _OPTIONS.verbose + "\n" + _OPTIONS.version;
 export const HELP = "Usage: fuckingnode\n" + USAGE + "\n\nOptions:\n" + OPTIONS;
 
+// get path (a constant if you think abt it)
 export function GetPath(path: "BASE" | "MOTHERFUCKERS" | "LOGS"): string {
     const appDataPath = Deno.env.get("APPDATA");
     if (!appDataPath) {
