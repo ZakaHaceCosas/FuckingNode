@@ -1,6 +1,7 @@
 import FuckingNodeCleaner from "./clean.ts";
 import FuckingNodeManager from "./manage.ts";
-import { CheckForUpdates, FreshSetup, HELP, LogStuff, VERSION } from "./constants.ts";
+import { HELP, VERSION } from "./constants.ts";
+import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
 
 const [command] = Deno.args;
 const flags = Deno.args.map((arg) => {

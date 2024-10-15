@@ -1,4 +1,4 @@
-import { GetPath, LogStuff } from "./constants.ts";
+import { GetPath, LogStuff } from "./functions.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {

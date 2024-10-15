@@ -1,4 +1,5 @@
-import { GetPath, LogStuff, type SUPPORTED_LOCKFILE } from "./constants.ts";
+import { GetPath, LogStuff } from "./functions.ts";
+import { type SUPPORTED_LOCKFILE } from "./types.ts";
 
 async function CleanMotherfucker(
     lockfile: SUPPORTED_LOCKFILE,
