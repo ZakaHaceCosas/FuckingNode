@@ -7,13 +7,14 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## Unreleased <!-- 1.0.2 -->
 
 ### Added
 
 - Added `--maxim` flag to the `clean` command. It will _take cleaning to the max_ (AKA removing `node_modules/`
   entirely).
 - Now the cleaner uses additional commands, like `dedupe`, for more in-depth cleaning.
+- Now it's capable of checking for updates by itself. Does it only once every 7 days to save up on the user's resources.
 
 ### Changed
 
