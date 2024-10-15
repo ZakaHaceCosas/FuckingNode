@@ -1,6 +1,6 @@
 import FuckingNodeCleaner from "./clean.ts";
 import FuckingNodeManager from "./manage.ts";
-import { FreshSetup, HELP, LogStuff, VERSION } from "./constants.ts";
+import { CheckForUpdates, FreshSetup, HELP, LogStuff, VERSION } from "./constants.ts";
 
 const [command] = Deno.args;
 const flags = Deno.args.map((arg) => {
@@ -12,17 +12,21 @@ const wantsMaxim = flags.includes("--maxim");
 
 switch (command ? command.toLowerCase() : "") {
     case "clean":
+        await CheckForUpdates();
         await FreshSetup();
         await FuckingNodeCleaner(isVerbose, wantsToUpdate, wantsMaxim);
         break;
     case "manager":
+        await CheckForUpdates();
         await FreshSetup();
         await FuckingNodeManager(Deno.args);
         break;
     case "--version":
+        await CheckForUpdates();
         console.log(VERSION);
         break;
     case "--help":
+        await CheckForUpdates();
         await LogStuff(HELP, "bulb", true);
         break;
     default:
