@@ -21,8 +21,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- If you didn't enter any argument (just running `fuckingnode`), you got a TypeError instead of "Unknown command...".
-  This was fixed.
+- If you just run `fuckingnode` with no args, you got a TypeError instead of "Unknown command...". This was fixed.
+- Now the path you provide for add / remove gets a bit of purification (removing trailing spaces & trailing `/`) to
+  avoid issues.
 
 ## [1.0.1] 14-10-2024 <!-- two releases in a day, lol -->
 

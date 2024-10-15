@@ -41,10 +41,17 @@ async function addEntry(entry: string) {
     if (list.includes(entry)) {
         await LogStuff(`Bruh, you already added this motherfucker! ${entry}`, "error");
     } else {
-        await Deno.writeTextFile(GetPath("MOTHERFUCKERS"), `${entry}\n`, {
+        const cleanEntry = entry.trimEnd().trimStart();
+        let cleanerEntry: string;
+        if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
+            cleanerEntry = entry.trimEnd().trimStart().slice(0, -1);
+        } else {
+            cleanerEntry = entry.trimEnd().trimStart();
+        }
+        await Deno.writeTextFile(GetPath("MOTHERFUCKERS"), `${cleanerEntry}\n`, {
             append: true,
         });
-        await LogStuff(`Congrats! ${entry} was added to your list. One mf less to care about!`, "tick-clear");
+        await LogStuff(`Congrats! ${cleanerEntry} was added to your list. One mf less to care about!`, "tick-clear");
     }
 }
 
