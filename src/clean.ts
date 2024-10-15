@@ -44,7 +44,10 @@ async function CleanMotherfucker(
             );
         }
         const updateStdout = new TextDecoder().decode(updateOutput.stdout);
-        await LogStuff(`${baseCommand + " " + updateArg}: ${updateStdout}`, "package");
+        await LogStuff(
+            `${baseCommand + " " + updateArg}: ${updateStdout}`,
+            "package",
+        );
     }
     if (!shouldMaxim) {
         await LogStuff(
@@ -62,7 +65,10 @@ async function CleanMotherfucker(
                 );
             }
             const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
-            await LogStuff(`${baseCommand + " " + pruneArg}: ${pruneStdout}`, "package");
+            await LogStuff(
+                `${baseCommand + " " + pruneArg}: ${pruneStdout}`,
+                "package",
+            );
         }
     } else if (shouldMaxim) {
         const maximPath = `${motherfuckerInQuestion}/node_modules`;
@@ -76,7 +82,10 @@ async function CleanMotherfucker(
             await Deno.remove(maximPath, {
                 recursive: true,
             });
-            await LogStuff(`Maxim pruned ${motherfuckerInQuestion}.`, "tick-clear");
+            await LogStuff(
+                `Maxim pruned ${motherfuckerInQuestion}.`,
+                "tick-clear",
+            );
         } catch {
             await LogStuff(
                 `An unknown error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this motherfucker...`,
@@ -127,7 +136,12 @@ export default async function FuckingNodeCleaner(
             maximForReal = false;
         }
 
-        if (verbose) await LogStuff(`Cleaning started at ${new Date().toLocaleString()}`, "working");
+        if (verbose) {
+            await LogStuff(
+                `Cleaning started at ${new Date().toLocaleString()}`,
+                "working",
+            );
+        }
 
         const results: { path: string; status: string }[] = [];
 
