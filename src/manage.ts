@@ -86,7 +86,7 @@ async function removeEntry(entry: string) {
         }
     } else {
         await LogStuff(
-            `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry} (PS. You wrote: ${entry} - input sometimes gets cleaned up)`,
+            `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry}\n(PS. You wrote: ${entry} - input sometimes gets cleaned up)`,
             "error",
         );
     }
