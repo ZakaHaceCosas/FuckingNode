@@ -32,18 +32,24 @@ Currently only Windows is supported. I'll look onto Linux, which I'd love to sup
 
 - `fuckingnode clean` - does the obvious.
 - `fuckingnode clean --update` - does the obvious + updates your deps.
+- `fuckingnode clean --verbose` - does the obvious with some extra logs.
+- `fuckingnode clean --maxim` - does a "maxim" cleanup (AKA instead of using npm / pnpm / yarn cleanup commands,
+  directly removes the `node_modules` directory).
 
 ### Manager
 
 > [!NOTE]
 > FuckingNode has a list of all paths to projects it should clean - it's you who has to maintain it:
+>
+> Keep in mind paths should point to the root, where you have `/package.json`, `/lockfile`[^1], and `/node_modules`.
 
 - `fuckingnode manager list` - lists all projects.
 - `fuckingnode manager add <path>` - adds a project.
 - `fuckingnode manager remove <path>` - removes a project.
 
-> [!NOTE]
-> Keep in mind paths should point to the root, where you have `/package.json`, `/lockfile`[^1], and `/node_modules`.
+### Others
+
+- `fuckingnode --help` and `fuckingnode --version` - both do the obvious.
 
 And that's it for now.
 
@@ -54,14 +60,9 @@ And that's it for now.
 
 ---
 
-Hope those motherfuckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue
+Hope those motherf*ckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue
 (or make a PR which would be awesome :smile:).
 
 Cya!
 
 [^1]: npm, pnpm, and yarn are supported, each one having it's own lockfile.
-
-<!--
-command
-deno fmt --indent-width 4 --line-width 120
- -->
