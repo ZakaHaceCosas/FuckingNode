@@ -3,9 +3,9 @@ import {
     type GITHUB_RELEASE,
     type RIGHT_NOW_DATE,
     RIGHT_NOW_DATE_REGEX,
+    type SemVer,
     type SUPPORTED_EMOJIS,
     type UPDATE_FILE,
-    type SemVer
 } from "./types.ts";
 
 // function to log messages
@@ -164,10 +164,10 @@ export async function CheckForUpdates() {
     let needsToWait: boolean = true;
     const tellAboutUpdate = async (newVer: SemVer) => {
         await LogStuff(
-            "There's a new version! " + newVer + ". Consider updating from the GitHub repo. You're on " + VERSION + ", btw.",
+            `There's a new version! ${newVer}. Consider downloading it from GitHub. You're on ${VERSION}, btw.`,
             "bulb",
         );
-    }
+    };
 
     try {
         await Deno.stat(GetPath("UPDATES"));
@@ -240,11 +240,9 @@ export async function CheckForUpdates() {
         };
         Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
 
-        if (isUpToDate) {
-            return;
+        if (!isUpToDate) {
+            await tellAboutUpdate(updateFile.lastVer);
         } // we're up to date
-
-        await tellAboutUpdate(updateFile.lastVer);
     } catch (e) {
         throw new Error("Error checking for updates: " + e);
     }
