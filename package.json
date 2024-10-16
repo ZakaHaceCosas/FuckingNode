@@ -1,5 +1,6 @@
 {
     "scripts": {
-        "format": "deno fmt --indent-width 4 --line-width 120"
+        "format": "deno fmt --indent-width 4 --line-width 120",
+        "compile": "deno compile --allow-read --allow-write --allow-env --allow-run --target x86_64-pc-windows-msvc --output FuckingNode.exe src/main.ts"
     }
 }
