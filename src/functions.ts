@@ -178,7 +178,7 @@ export async function CheckForUpdates() {
             lastCheck: GetDateNow(),
         };
 
-        Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite));
+        await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite));
         needsToWait = false;
     }
 
@@ -238,7 +238,7 @@ export async function CheckForUpdates() {
             lastVer: content.tag_name,
             lastCheck: GetDateNow(),
         };
-        Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
+        await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
 
         if (!isUpToDate) {
             await tellAboutUpdate(updateFile.lastVer);
