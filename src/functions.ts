@@ -241,7 +241,7 @@ export async function CheckForUpdates() {
         await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
 
         if (!isUpToDate) {
-            await tellAboutUpdate(updateFile.lastVer);
+            await tellAboutUpdate(content.tag_name);
         } // we're up to date
     } catch (e) {
         throw new Error("Error checking for updates: " + e);
