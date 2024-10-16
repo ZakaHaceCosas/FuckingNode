@@ -28,7 +28,7 @@ export type SUPPORTED_EMOJIS =
     | "chart";
 
 // semver
-type SemVer = `${number}.${number}.${number}`; // always SemVer compliant (1.2.3, 1.0.34, etc...)
+export type SemVer = `${number}.${number}.${number}`; // always SemVer compliant (1.2.3, 1.0.34, etc...)
 
 // github api response
 export interface GITHUB_RELEASE {

@@ -5,6 +5,7 @@ import {
     RIGHT_NOW_DATE_REGEX,
     type SUPPORTED_EMOJIS,
     type UPDATE_FILE,
+    type SemVer
 } from "./types.ts";
 
 // function to log messages
@@ -158,6 +159,12 @@ function CompareSemver(versionA: string, versionB: string): number {
 // check for updates
 export async function CheckForUpdates() {
     let needsToWait: boolean = true;
+    const tellAboutUpdate = async (newVer: SemVer) => {
+        await LogStuff(
+            "There's a new version! " + newVer + ". Consider updating from the GitHub repo. You're on " + VERSION + ", btw.",
+            "bulb",
+        );
+    }
 
     try {
         await Deno.stat(GetPath("UPDATES"));
@@ -181,10 +188,7 @@ export async function CheckForUpdates() {
     }
 
     if (!updateFile.isUpToDate) {
-        await LogStuff(
-            "There's a new version! " + updateFile.lastVer + ". Consider updating from the GitHub repo.",
-            "bulb",
-        );
+        await tellAboutUpdate(updateFile.lastVer);
     }
 
     let needsToCheck = true;
@@ -237,10 +241,7 @@ export async function CheckForUpdates() {
             return;
         } // we're up to date
 
-        await LogStuff(
-            "There's a new version! " + content.tag_name + ". Consider updating from the GitHub repo.",
-            "bulb",
-        );
+        await tellAboutUpdate(updateFile.lastVer);
     } catch (e) {
         throw new Error("Error checking for updates: " + e);
     }
