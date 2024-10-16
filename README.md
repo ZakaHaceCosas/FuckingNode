@@ -2,6 +2,9 @@
 
 # F*ckingNode
 
+> [!WARNING]
+> [The app is actually secure](https://www.virustotal.com/gui/file/182bf44c5ced202408a770e193f8f9bc2f9e6e49a867650d15ff6034aba37b0e?nocache=1). I don't know why it flags Windows Security as if it was a trojan or something.
+
 ## Abstract
 
 Tired of Node projects' ~~motherf*cking~~ `node_modules` directory and their space consumption, I once switched to
