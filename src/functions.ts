@@ -148,8 +148,11 @@ function MakeDateNowCompatibleWithJavaScriptsDate(
 
 // made by chatgpt i'll be honest
 function CompareSemver(versionA: string, versionB: string): number {
-    const [majorA, minorA, patchA] = versionA.split(".").map(Number);
-    const [majorB, minorB, patchB] = versionB.split(".").map(Number);
+    const [majorA = 0, minorA = 0, patchA = 0] = versionA.split(".").map(Number);
+    const [majorB = 0, minorB = 0, patchB = 0] = versionB.split(".").map(Number);
+
+    if (isNaN(majorA) || isNaN(minorA) || isNaN(patchA)) throw new Error("Invalid version format in " + versionA);
+    if (isNaN(majorB) || isNaN(minorB) || isNaN(patchB)) throw new Error("Invalid version format in " + versionB);
 
     if (majorA !== majorB) return majorA - majorB;
     if (minorA !== minorB) return minorA - minorB;
