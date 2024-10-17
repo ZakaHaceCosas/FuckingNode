@@ -1,3 +1,4 @@
+import { iLikeJs } from "./constants.ts";
 import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 
 // function to show messages
@@ -13,7 +14,7 @@ async function Error(errorCode: "noArgument" | "invalidArgument") {
             break;
         case "invalidArgument":
             await LogStuff(
-                "BRO IT'S SO MOTHERFUCKING EASY!!1!1 " + usage +
+                `BRO IT'S SO ${iLikeJs.mfn} EASY!!1!1` + usage +
                     "\n\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where package-lock.json / pnpm-lock.yaml lives.",
                 "warn",
             );
@@ -41,7 +42,7 @@ async function addEntry(entry: string) {
     if (list.includes(workingEntry)) {
         await LogStuff(`Bruh, you already added this motherfucker! ${workingEntry}`, "error");
     } else {
-        await Deno.writeTextFile(GetPath("MOTHERFUCKERS"), `${parseEntry(workingEntry)}\n`, {
+        await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${parseEntry(workingEntry)}\n`, {
             append: true,
         });
         await LogStuff(
@@ -59,7 +60,7 @@ async function removeEntry(entry: string) {
         list = list.filter((item) => item !== workingEntry);
         if (list.length > 0) {
             await Deno.writeTextFile(
-                GetPath("MOTHERFUCKERS"),
+                GetPath("MOTHERFKRS"),
                 list.join("\n") + "\n",
             );
             await LogStuff(
@@ -67,7 +68,7 @@ async function removeEntry(entry: string) {
                 "tick-clear",
             );
         } else {
-            await Deno.remove(GetPath("MOTHERFUCKERS"));
+            await Deno.remove(GetPath("MOTHERFKRS"));
             await LogStuff("Removed the last entry. The list is now empty.", "moon-face");
         }
     } else {
@@ -82,7 +83,7 @@ async function removeEntry(entry: string) {
 async function listEntries() {
     const list = await GetMotherfuckers();
     if (list.length > 0) {
-        await LogStuff("Here are the motherfuckers you added so far:\n", "bulb");
+        await LogStuff(`Here are the ${iLikeJs.mfs} you added so far:\n`, "bulb");
         list.forEach(async (entry) => await LogStuff(entry));
     } else {
         await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");

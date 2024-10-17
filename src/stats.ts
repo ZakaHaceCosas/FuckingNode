@@ -1,3 +1,4 @@
+import { iLikeJs } from "./constants.ts";
 import { GetDirSize, GetMotherfuckers, LogStuff } from "./functions.ts";
 
 export default async function GetFuckingStats(includeSelf: boolean) {
@@ -8,16 +9,17 @@ export default async function GetFuckingStats(includeSelf: boolean) {
             size += await GetDirSize(mf);
         }
 
-        let message: string = "Motherfucker.";
+        let message: string = iLikeJs.mf;
 
         if (size > 1000) {
-            message = "Big motherfucker.";
+            message = `Big ${iLikeJs.mf}.`;
         } else if (size > 3000) {
-            message = "Big ass motherfucker (we're over a GB!)";
+            message = `Giant ${iLikeJs.mf} (we're over a GB!)`;
         } else if (size > 9000) {
-            message = "Insanely motherfucking insane.";
+            message = `Insanely ${iLikeJs.mfn} insane.`;
         } else if (size > 9999) {
-            message = "WHAT THE FUCKING FUCK ARE YOU FUCKING CODING IN FUCKING THERE??";
+            message =
+                `WHAT THE ${iLikeJs.fkn.toUpperCase} ${iLikeJs.f.toUpperCase} ARE YOU ${iLikeJs.fkn.toUpperCase} CODING IN ${iLikeJs.fkn.toUpperCase} THERE??`;
         }
 
         await LogStuff(

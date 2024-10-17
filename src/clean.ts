@@ -1,3 +1,4 @@
+import { iLikeJs } from "./constants.ts";
 import { GetPath, LogStuff } from "./functions.ts";
 import { type SUPPORTED_LOCKFILE } from "./types.ts";
 
@@ -89,7 +90,7 @@ async function CleanMotherfucker(
             );
         } catch {
             await LogStuff(
-                `An unknown error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this motherfucker...`,
+                `An unknown error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${iLikeJs.mf}...`,
                 "bruh",
             );
         }
@@ -105,24 +106,24 @@ export default async function FuckingNodeCleaner(
         // original path
         const originalLocation = Deno.cwd();
 
-        // read all motherfuckers
+        // read all mfs
         let motherFuckers: string[] = [];
         try {
-            const data = await Deno.readTextFile(GetPath("MOTHERFUCKERS"));
+            const data = await Deno.readTextFile(GetPath("MOTHERFKRS"));
             motherFuckers = data
                 .split("\n")
                 .map((line) => line.trim().replace(/,$/, ""))
                 .filter((line) => line.length > 0);
         } catch (e) {
             await LogStuff(
-                `Motherfucking error reading your motherfucking list of motherfuckers: ${e}`,
+                `${iLikeJs.mfn} error reading your ${iLikeJs.mfn} list of ${iLikeJs.mfs}: ${e}`,
             );
             Deno.exit(1);
         }
 
         if (motherFuckers.length === 0) {
             await LogStuff(
-                "There isn't any motherfucker over here... yet...",
+                `There isn't any ${iLikeJs.mf} over here... yet...`,
                 "moon-face",
             );
             return;
@@ -156,7 +157,7 @@ export default async function FuckingNodeCleaner(
             try {
                 Deno.chdir(motherfucker);
                 await LogStuff(
-                    `Cleaning the ${motherfucker} motherfucker...`,
+                    `Cleaning the ${motherfucker} ${iLikeJs.mf}...`,
                     "working",
                 );
 
@@ -164,7 +165,7 @@ export default async function FuckingNodeCleaner(
                     if (await Deno.stat(".fknodeignore")) {
                         if (verbose) {
                             await LogStuff(
-                                `This motherfucker (${motherfucker}) is protected by fucking divine protection (.fknodeignore file). Cannot clean it.`,
+                                `This ${iLikeJs.mf} (${motherfucker}) is protected by ${iLikeJs.fkn} divine protection (.fknodeignore file). Cannot clean it.`,
                                 "heads-up",
                             );
                         }
@@ -201,12 +202,12 @@ export default async function FuckingNodeCleaner(
                     );
                 } else if (await Deno.stat("package.json")) {
                     await LogStuff(
-                        `${motherfucker} has a package.json but not a lockfile. Can't fucking clean.`,
+                        `${motherfucker} has a package.json but not a lockfile. Can't ${iLikeJs.fkn} clean.`,
                         "warn",
                     );
                 } else {
                     await LogStuff(
-                        `Neither pnpm-lock.yaml nor package-lock.json nor yarn.lock were found at the motherfucking ${motherfucker}. Skipping this motherfucker...`,
+                        `Neither pnpm-lock.yaml nor package-lock.json nor yarn.lock were found at the ${iLikeJs.mfn} ${motherfucker}. Skipping this ${iLikeJs.mf}...`,
                         "warn",
                     );
                 }
@@ -224,7 +225,7 @@ export default async function FuckingNodeCleaner(
         // go back home
         Deno.chdir(originalLocation);
         await LogStuff(
-            `All your motherfucking Node projects have been cleaned! Back to ${originalLocation}.`,
+            `All your ${iLikeJs.mfn} Node projects have been cleaned! Back to ${originalLocation}.`,
             "tick",
         );
 

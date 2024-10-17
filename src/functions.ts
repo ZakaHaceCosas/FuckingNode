@@ -1,4 +1,4 @@
-import { VERSION } from "./constants.ts";
+import { iLikeJs, VERSION } from "./constants.ts";
 import {
     type GITHUB_RELEASE,
     type RIGHT_NOW_DATE,
@@ -32,26 +32,27 @@ export async function LogStuff(
 
 // get path (a constant if you think abt it)
 export function GetPath(
-    path: "BASE" | "MOTHERFUCKERS" | "LOGS" | "UPDATES",
+    path: "BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES",
 ): string {
     const appDataPath = Deno.env.get("APPDATA");
     if (!appDataPath) {
         console.error(
-            "Motherfucking APPDATA variable not found. Something seriously went motherfucking wrong.",
+            `${iLikeJs.mfn} APPDATA variable not found. Something seriously went ${iLikeJs.mfly} wrong.`,
         );
         Deno.exit(1);
     }
 
+    // i don't know how to remove the f-word from here, i can't just put an asterisk in a file path
     const BASE_DIR = `${appDataPath}/FuckingNode/`;
-    const MOTHERFUCKERS_DIR = `${BASE_DIR}/fuckingNode-motherfuckers.txt`;
+    const MOTHERFKRS_DIR = `${BASE_DIR}/fuckingNode-motherfuckers.txt`;
     const LOGS_DIR = `${BASE_DIR}/fuckingNode-Logs.log`;
     const UPDATES_DIR = `${BASE_DIR}/fuckingNode-updates.txt`;
 
     switch (path) {
         case "BASE":
             return BASE_DIR;
-        case "MOTHERFUCKERS":
-            return MOTHERFUCKERS_DIR;
+        case "MOTHERFKRS":
+            return MOTHERFKRS_DIR;
         case "LOGS":
             return LOGS_DIR;
         case "UPDATES":
@@ -67,9 +68,9 @@ export async function FreshSetup(): Promise<void> {
         await Deno.mkdir(GetPath("BASE"), { recursive: true });
 
         try {
-            await Deno.stat(GetPath("MOTHERFUCKERS"));
+            await Deno.stat(GetPath("MOTHERFKRS"));
         } catch {
-            await Deno.writeTextFile(GetPath("MOTHERFUCKERS"), "");
+            await Deno.writeTextFile(GetPath("MOTHERFKRS"), "");
         }
 
         try {
@@ -78,7 +79,7 @@ export async function FreshSetup(): Promise<void> {
             await Deno.writeTextFile(GetPath("LOGS"), "");
         }
     } catch (error) {
-        await LogStuff(`Some motherfucking error happened trying to setup config files: ${error}`, "error");
+        await LogStuff(`Some ${iLikeJs.mfn} error happened trying to setup config files: ${error}`, "error");
         Deno.exit(1);
     }
 }
@@ -251,11 +252,11 @@ export async function CheckForUpdates() {
 // read file content
 export async function GetMotherfuckers() {
     try {
-        const content = await Deno.readTextFile(GetPath("MOTHERFUCKERS"));
+        const content = await Deno.readTextFile(GetPath("MOTHERFKRS"));
         return content.split("\n").filter(Boolean);
     } catch (error) {
         await LogStuff(
-            `Failed to read the file: ${GetPath("MOTHERFUCKERS")} - ${error}`,
+            `Failed to read the file: ${GetPath("MOTHERFKRS")} - ${error}`,
             "error",
         );
         Deno.exit(1);

@@ -16,7 +16,7 @@ const USAGE = _USAGE.clean +
     "\n" +
     _USAGE.help;
 const _OPTIONS = {
-    version: "    --version    Show the version of FuckingNode you're currently on.",
+    version: "    --version    Show the version of F*ckingNode you're currently on.",
 };
 const OPTIONS = _OPTIONS.version;
 const _CLEAN_OPTIONS = {
@@ -35,3 +35,51 @@ export const HELP = "Usage: fuckingnode\n" +
     CLEAN_OPTIONS +
     "\n\nOptions:\n" +
     OPTIONS;
+
+interface heLikesJs {
+    /**
+     * Base word. 4 letters.
+     *
+     * @type {string}
+     */
+    f: string;
+    /**
+     * Base word but with -ing.
+     *
+     * @type {string}
+     */
+    fkn: string;
+    /**
+     * Base word but mentioning his mother (-er).
+     *
+     * @type {string}
+     */
+    mf: string;
+    /**
+     * Plural for `mf`.
+     *
+     * @type {string}
+     */
+    mfs: string;
+    /**
+     * What we call a project that's made with NodeJS.
+     *
+     * @type {string}
+     */
+    mfn: string;
+    /**
+     * _"Something went **mother** + `fkn` + **ly**"_
+     *
+     * @type {string}
+     */
+    mfly: string;
+}
+
+export const iLikeJs: heLikesJs = {
+    f: "f*ck",
+    fkn: "f*cking",
+    mf: "m*therf*cker",
+    mfs: "m*therf*ckers",
+    mfn: "m*therf*cking",
+    mfly: "m*therf*ckingly",
+};
