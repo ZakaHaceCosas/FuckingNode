@@ -1,3 +1,6 @@
+// VOCAB CLEANUP STATUS
+// TEXT - CLEAN / VARS - NOT CLEAN
+
 import { iLikeJs } from "./constants.ts";
 import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 
@@ -40,7 +43,7 @@ async function addEntry(entry: string) {
     const workingEntry = parseEntry(entry);
     const list = await GetMotherfuckers();
     if (list.includes(workingEntry)) {
-        await LogStuff(`Bruh, you already added this motherfucker! ${workingEntry}`, "error");
+        await LogStuff(`Bruh, you already added this ${iLikeJs.mf}! ${workingEntry}`, "error");
     } else {
         await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${parseEntry(workingEntry)}\n`, {
             append: true,

@@ -1,3 +1,6 @@
+// VOCAB CLEANUP STATUS
+// TEXT - CLEAN / VARS - NOT CLEAN
+
 import { iLikeJs } from "./constants.ts";
 import { GetDirSize, GetMotherfuckers, LogStuff } from "./functions.ts";
 

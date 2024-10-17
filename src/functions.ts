@@ -1,3 +1,6 @@
+// VOCAB CLEANUP STATUS
+// TEXT - CLEAN / VARS - NOT CLEAN
+
 import { iLikeJs, VERSION } from "./constants.ts";
 import {
     type GITHUB_RELEASE,

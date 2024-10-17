@@ -1,3 +1,6 @@
+// VOCAB CLEANUP STATUS
+// TEXT - CLEAN / VARS - CLEAN
+
 // app version
 export const VERSION = "1.0.2";
 
@@ -50,7 +53,7 @@ interface heLikesJs {
      */
     fkn: string;
     /**
-     * Base word but mentioning his mother (-er).
+     * Noun. What we call a project that's made with NodeJS. Base word but mentioning his mother (-er).
      *
      * @type {string}
      */
@@ -62,7 +65,7 @@ interface heLikesJs {
      */
     mfs: string;
     /**
-     * What we call a project that's made with NodeJS.
+     * Adjective. What we describe a project that's made with NodeJS as.
      *
      * @type {string}
      */
