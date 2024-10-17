@@ -13,11 +13,10 @@ Tired of Node projects' ~~motherf*cking~~ `node_modules` directory and their spa
 of my projects.
 
 This was time consuming, but it felt worth it - just the day I got pnpm and did a `node_modules` cleanup I recovered ~11
-GB of space. Anyway, pne day I had the idea of automating the process with a PowerShell script, and it felt good - so
-good that I turned that `ps1` code into a desktop app using TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
+GB of space. Anyway, one day I had the idea of automating the process with a PowerShell script, and it felt good - so
+good that I turned that `ps1` code into a CLI app with TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
 
-<!-- deno-fmt-ignore -->
-> ###### (yes i'm calling it like that and i'm shipping that to production, don't question me)
+> ### (yes i'm calling it like that and i'm shipping that to production, don't question me)
 
 ## Installation
 
