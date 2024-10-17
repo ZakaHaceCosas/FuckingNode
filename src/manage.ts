@@ -1,6 +1,3 @@
-// VOCAB CLEANUP STATUS
-// TEXT - CLEAN / VARS - NOT CLEAN
-
 import { CliName, iLikeJs } from "./constants.ts";
 import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 

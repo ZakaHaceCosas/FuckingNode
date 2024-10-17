@@ -1,5 +1,3 @@
-// VOCAB CLEANUP STATUS
-// TEXT - CLEAN / VARS - NOT CLEAN
 import { iLikeJs } from "./constants.ts";
 import { GetPath, LogStuff } from "./functions.ts";
 import { type SUPPORTED_LOCKFILE } from "./types.ts";

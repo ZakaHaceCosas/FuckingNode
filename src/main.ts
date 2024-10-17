@@ -1,6 +1,3 @@
-// VOCAB CLEANUP STATUS
-// TEXT - CLEAN / VARS - "CLEAN" (somewhat)
-
 import FuckingNodeCleaner from "./clean.ts";
 import FuckingNodeManager from "./manage.ts";
 import { HELP, VERSION } from "./constants.ts";

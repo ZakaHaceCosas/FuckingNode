@@ -1,8 +1,13 @@
-// VOCAB CLEANUP STATUS
-// TEXT - CLEAN / VARS - CLEAN
-
 // app version
-export const VERSION = "1.0.2";
+
+import type { SemVer } from "./types.ts";
+
+/**
+ * Current version of the app
+ *
+ * @type {SemVer}
+ */
+export const VERSION: SemVer = "1.0.2";
 
 // help
 const _USAGE = {
@@ -42,6 +47,12 @@ export const HELP = "Usage: fuckingnode\n" +
     "\n\nAdditional flags:\n" +
     OPTIONS;
 
+/**
+ * Different variants of the f-word for in-app usage. Not fully "explicit" as an asterisk is used, like in f*ck.
+ *
+ * @interface heLikesJs
+ * @typedef {heLikesJs}
+ */
 interface heLikesJs {
     /**
      * Base word. 4 letters.
@@ -81,6 +92,11 @@ interface heLikesJs {
     mfly: string;
 }
 
+/**
+ * Different variants of the f-word for in-app usage. Not fully "explicit" as an asterisk is used, like in f*ck.
+ *
+ * @type {heLikesJs}
+ */
 export const iLikeJs: heLikesJs = {
     f: "f*ck",
     fkn: "f*cking",

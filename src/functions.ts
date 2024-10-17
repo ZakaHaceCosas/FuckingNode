@@ -1,6 +1,3 @@
-// VOCAB CLEANUP STATUS
-// TEXT - CLEAN / VARS - NOT CLEAN
-
 import { CliName, iLikeJs, VERSION } from "./constants.ts";
 import {
     type GITHUB_RELEASE,
@@ -11,12 +8,21 @@ import {
     type UPDATE_FILE,
 } from "./types.ts";
 
-// function to log messages
+/**
+ * Logs a message to the standard output and saves it to a `.log` file.
+ *
+ * @export
+ * @async
+ * @param {string} message The message to be logged.
+ * @param {?SUPPORTED_EMOJIS} [emoji] Additionally, add an emoji before the log.
+ * @param {?boolean} [silent] Optional. If true, log will be made without saving to the `.log` file.
+ * @returns {Promise<void>}
+ */
 export async function LogStuff(
     message: string,
     emoji?: SUPPORTED_EMOJIS,
     silent?: boolean,
-) {
+): Promise<void> {
     const finalMessage = emoji ? Emojify(message, emoji) : message;
     console.log(finalMessage);
 
@@ -33,7 +39,13 @@ export async function LogStuff(
     }
 }
 
-// get path (a constant if you think abt it)
+/**
+ * Returns file paths for all config files the app uses.
+ *
+ * @export
+ * @param {("BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES")} path What path you want.
+ * @returns {string} The path as a string.
+ */
 export function GetPath(
     path: "BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES",
 ): string {
@@ -65,7 +77,13 @@ export function GetPath(
     }
 }
 
-// create files if they don't exist (fresh setup)
+/**
+ * Check if config files are present, create them otherwise ("Fresh Setup").
+ *
+ * @export
+ * @async
+ * @returns {Promise<void>}
+ */
 export async function FreshSetup(): Promise<void> {
     try {
         await Deno.mkdir(GetPath("BASE"), { recursive: true });
@@ -87,7 +105,14 @@ export async function FreshSetup(): Promise<void> {
     }
 }
 
-// emojis
+/**
+ * Appends an emoji at the beginning of a message.
+ *
+ * @export
+ * @param {string} message Your message, e.g. `"hi chat"`.
+ * @param {SUPPORTED_EMOJIS} emoji What emoji you'd like to append, e.g. `"bruh"`.
+ * @returns {string} The message with your emoji, e.g. `"😐 hi chat"`.
+ */
 export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
     switch (emoji) {
         case "danger":
@@ -127,6 +152,12 @@ export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
     }
 }
 
+/**
+ * Gets the current date (at the moment the function is called) and returns it as a `RIGHT_NOW_DATE`.
+ *
+ * @export
+ * @returns {RIGHT_NOW_DATE}
+ */
 export function GetDateNow(): RIGHT_NOW_DATE {
     const now = new Date();
 
@@ -140,6 +171,12 @@ export function GetDateNow(): RIGHT_NOW_DATE {
     return formattedDate;
 }
 
+/**
+ * Takes a `RIGHT_NOW_DATE` and turns it into a JS `Date()` so code can interact with it.
+ *
+ * @param {RIGHT_NOW_DATE} dateString
+ * @returns {Date}
+ */
 function MakeDateNowCompatibleWithJavaScriptsDate(
     dateString: RIGHT_NOW_DATE,
 ): Date {
@@ -151,6 +188,13 @@ function MakeDateNowCompatibleWithJavaScriptsDate(
 }
 
 // made by chatgpt i'll be honest
+/**
+ * Compares two SemVer versions. Returns the difference between both, so if `versionB` is more recent than `versionA` you'll get a positive number, or you'll get 0 if they're equal.
+ *
+ * @param {string} versionA 1st version to compare.
+ * @param {string} versionB 2nd version to compare.
+ * @returns {number} The difference.
+ */
 function CompareSemver(versionA: string, versionB: string): number {
     const [majorA = 0, minorA = 0, patchA = 0] = versionA.split(".").map(Number);
     const [majorB = 0, minorB = 0, patchB = 0] = versionB.split(".").map(Number);
@@ -163,8 +207,14 @@ function CompareSemver(versionA: string, versionB: string): number {
     return patchA - patchB;
 }
 
-// check for updates
-export async function CheckForUpdates() {
+/**
+ * Checks for updates (in case it needs to do so).
+ *
+ * @export
+ * @async
+ * @returns {Promise<void>}
+ */
+export async function CheckForUpdates(): Promise<void> {
     let needsToWait: boolean = true;
     const tellAboutUpdate = async (newVer: SemVer) => {
         await LogStuff(
@@ -252,8 +302,14 @@ export async function CheckForUpdates() {
     }
 }
 
-// read file content
-export async function GetMotherfuckers() {
+/**
+ * Gets all the users projects and returns their paths as a `string[]`.
+ *
+ * @export
+ * @async
+ * @returns {Promise<string[]>}
+ */
+export async function GetMotherfuckers(): Promise<string[]> {
     try {
         const content = await Deno.readTextFile(GetPath("MOTHERFKRS"));
         return content.split("\n").filter(Boolean);
@@ -266,6 +322,14 @@ export async function GetMotherfuckers() {
     }
 }
 
+/**
+ * Gets the size in MBs of a DIR.
+ *
+ * @export
+ * @async
+ * @param {string} path Path to the directory.
+ * @returns {Promise<number>}
+ */
 export async function GetDirSize(path: string): Promise<number> {
     let totalSize: number = 0;
 
