@@ -165,7 +165,7 @@ export default async function FuckingNodeCleaner(
                     if (await Deno.stat(".fknodeignore")) {
                         if (verbose) {
                             await LogStuff(
-                                `This ${iLikeJs.mf} (${motherfucker}) is protected by ${iLikeJs.fkn} divine protection (.fknodeignore file). Cannot clean it.`,
+                                `This ${iLikeJs.mf} (${motherfucker}) is protected by ${iLikeJs.fkn} divine protection (.fknodeignore file). Cannot clean or update it.`,
                                 "heads-up",
                             );
                         }
