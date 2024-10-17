@@ -3,6 +3,9 @@ import { GetDirSize, GetMotherfuckers, LogStuff } from "./functions.ts";
 
 export default async function GetFuckingStats(includeSelf: boolean) {
     const mfs = await GetMotherfuckers();
+
+    let totalSpace: number = 0;
+
     for (const mf of mfs) {
         let size = await GetDirSize(`${mf}/node_modules`);
         if (includeSelf) {
@@ -25,5 +28,13 @@ export default async function GetFuckingStats(includeSelf: boolean) {
         await LogStuff(
             `${mf} is taking ${size} MB in your drive. ${message}`,
         );
+
+        totalSpace += size;
     }
+
+    console.log("\n") // glue stick fix
+    await LogStuff(
+        `In total, your ${iLikeJs.mfs} are taking up to ${totalSpace} MB.`,
+        "bruh",
+    );
 }
