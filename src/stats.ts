@@ -14,7 +14,9 @@ export default async function GetFuckingStats(includeSelf: boolean) {
 
         let message: string = iLikeJs.mf;
 
-        if (size > 1000) {
+        if (size < 100) {
+            message = "That's actually okay ngl.";
+        } else if (size > 1000) {
             message = `Big ${iLikeJs.mf}.`;
         } else if (size > 3000) {
             message = `Giant ${iLikeJs.mf} (we're over a GB!)`;
@@ -32,7 +34,7 @@ export default async function GetFuckingStats(includeSelf: boolean) {
         totalSpace += size;
     }
 
-    console.log("\n") // glue stick fix
+    console.log("\n"); // glue stick fix
     await LogStuff(
         `In total, your ${iLikeJs.mfs} are taking up to ${totalSpace} MB.`,
         "bruh",
