@@ -78,7 +78,7 @@ export async function FreshSetup(): Promise<void> {
             await Deno.writeTextFile(GetPath("LOGS"), "");
         }
     } catch (error) {
-        console.error(`Error with FreshSetup: ${error}`);
+        await LogStuff(`Some motherfucking error happened trying to setup config files: ${error}`, "error");
         Deno.exit(1);
     }
 }
@@ -246,4 +246,34 @@ export async function CheckForUpdates() {
     } catch (e) {
         throw new Error("Error checking for updates: " + e);
     }
+}
+
+// read file content
+export async function GetMotherfuckers() {
+    try {
+        const content = await Deno.readTextFile(GetPath("MOTHERFUCKERS"));
+        return content.split("\n").filter(Boolean);
+    } catch (error) {
+        await LogStuff(
+            `Failed to read the file: ${GetPath("MOTHERFUCKERS")} - ${error}`,
+            "error",
+        );
+        Deno.exit(1);
+    }
+}
+
+export async function GetDirSize(path: string): Promise<number> {
+    let totalSize: number = 0;
+
+    for await (const entry of Deno.readDir(path)) {
+        const fullPath = `${path}/${entry.name}`;
+        if (entry.isDirectory) {
+            totalSize += await GetDirSize(fullPath); // recursively calls itself
+        } else {
+            const fileInfo = await Deno.stat(fullPath);
+            totalSize += fileInfo.size; // increases the size
+        }
+    }
+
+    return parseFloat((totalSize / (1024 * 1024)).toFixed(3));
 }

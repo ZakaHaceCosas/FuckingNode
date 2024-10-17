@@ -1,4 +1,4 @@
-import { GetPath, LogStuff } from "./functions.ts";
+import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {
@@ -21,20 +21,6 @@ async function Error(errorCode: "noArgument" | "invalidArgument") {
     }
 }
 
-// read file content
-async function getList() {
-    try {
-        const content = await Deno.readTextFile(GetPath("MOTHERFUCKERS"));
-        return content.split("\n").filter(Boolean);
-    } catch (error) {
-        await LogStuff(
-            `Failed to read the file: ${GetPath("MOTHERFUCKERS")} - ${error}`,
-            "error",
-        );
-        Deno.exit(1);
-    }
-}
-
 // parse entry
 function parseEntry(entry: string): string {
     const cleanEntry = entry.trimEnd().trimStart();
@@ -51,7 +37,7 @@ function parseEntry(entry: string): string {
 // write new entry to file
 async function addEntry(entry: string) {
     const workingEntry = parseEntry(entry);
-    const list = await getList();
+    const list = await GetMotherfuckers();
     if (list.includes(workingEntry)) {
         await LogStuff(`Bruh, you already added this motherfucker! ${workingEntry}`, "error");
     } else {
@@ -68,7 +54,7 @@ async function addEntry(entry: string) {
 // remove entry from file
 async function removeEntry(entry: string) {
     const workingEntry = parseEntry(entry);
-    let list = await getList();
+    let list = await GetMotherfuckers();
     if (list.includes(workingEntry)) {
         list = list.filter((item) => item !== workingEntry);
         if (list.length > 0) {
@@ -94,7 +80,7 @@ async function removeEntry(entry: string) {
 
 // list entries
 async function listEntries() {
-    const list = await getList();
+    const list = await GetMotherfuckers();
     if (list.length > 0) {
         await LogStuff("Here are the motherfuckers you added so far:\n", "bulb");
         list.forEach(async (entry) => await LogStuff(entry));
