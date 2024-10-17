@@ -6,14 +6,17 @@ export const VERSION = "1.0.2";
 
 // help
 const _USAGE = {
-    clean: "    clean   [--update] [--verbose]",
-    add: "    manager add <item> | remove <item> | list",
-    version: "            [--version]",
-    help: "            [--help]",
+    clean: "                      clean   [--update] [--verbose]",
+    add: "                      manager add <item> | remove <item> | list",
+    stats: "                      stats   [--full]",
+    version: "                              [--version]",
+    help: "                              [--help]",
 };
 const USAGE = _USAGE.clean +
     "\n" +
     _USAGE.add +
+    "\n" +
+    _USAGE.stats +
     "\n" +
     _USAGE.version +
     "\n" +
@@ -34,9 +37,9 @@ const CLEAN_OPTIONS = _CLEAN_OPTIONS.update +
     _CLEAN_OPTIONS.maxim;
 export const HELP = "Usage: fuckingnode\n" +
     USAGE +
-    "\n\nClean options:\n" +
+    "\n\n'clean' will clean your added projects. Flags:\n" +
     CLEAN_OPTIONS +
-    "\n\nOptions:\n" +
+    "\n\nAdditional flags:\n" +
     OPTIONS;
 
 interface heLikesJs {
@@ -92,4 +95,4 @@ export const iLikeJs: heLikesJs = {
  *
  * @type {"fuckingnode"}
  */
-export const CliName: "fuckingnode" = "fuckingnode" as const
+export const CliName: "fuckingnode" = "fuckingnode" as const;

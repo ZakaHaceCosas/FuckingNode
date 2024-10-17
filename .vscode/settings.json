@@ -15,7 +15,7 @@
         "motherf",
         "MOTHERFKRS",
         "msvc",
-        "therf",
+        "therf"
     ],
     "deno.enable": true,
     "editor.formatOnSave": false,
