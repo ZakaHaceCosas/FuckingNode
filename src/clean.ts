@@ -63,12 +63,14 @@ async function CleanMotherfucker(
             const pruneOutput = await pruneCmd.output();
             if (!pruneOutput.success) {
                 throw new Error(
-                    `pruning ${motherfuckerInQuestion} gave an unknown error`,
+                    `Pruning ${motherfuckerInQuestion} gave an unknown error: ${
+                        pruneOutput.stderr ? new TextDecoder().decode(pruneOutput.stderr) : ""
+                    }`,
                 );
             }
             const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
             await LogStuff(
-                `${baseCommand + " " + pruneArg}: ${pruneStdout}`,
+                `${baseCommand} ${pruneArg.join(" ")}: ${pruneStdout}`,
                 "package",
             );
         }
