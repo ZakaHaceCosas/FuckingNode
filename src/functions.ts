@@ -333,15 +333,13 @@ export async function GetMotherfuckers(): Promise<string[]> {
 export async function GetDirSize(path: string): Promise<number> {
     let totalSize: number = 0;
 
+    if (!(await Deno.stat(path)).isDirectory) throw new Error("Provided path doesn't point to a directory.");
+
     for await (const entry of Deno.readDir(path)) {
         const fullPath = `${path}/${entry.name}`;
-        if (entry.isDirectory) {
-            totalSize += await GetDirSize(fullPath); // recursively calls itself
-        } else {
-            const fileInfo = await Deno.stat(fullPath);
-            totalSize += fileInfo.size; // increases the size
-        }
+        const fileInfo = await Deno.stat(fullPath);
+        totalSize += fileInfo.size; // increases the size
     }
 
-    return parseFloat((totalSize / (1024 * 1024)).toFixed(3));
+    return parseFloat((totalSize / (1024 * 1024)).toFixed(3)); // (returns in MB)
 }

@@ -26,9 +26,6 @@ switch (command ? command.toLowerCase() : "") {
         await FuckingNodeManager(Deno.args);
         break;
     case "stats":
-        console.log(
-            "(note this can take a while to load, as it has to recursively measure the size of each project every time",
-        );
         await GetFuckingStats(statsModular);
         break;
     case "--version":
