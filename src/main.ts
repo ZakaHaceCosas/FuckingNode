@@ -14,26 +14,30 @@ const wantsMaxim = flags.includes("--maxim");
 
 const statsModular = flags.includes("--full");
 
+async function init() {
+    await CheckForUpdates();
+    await FreshSetup();
+}
+
 switch (command ? command.toLowerCase() : "") {
     case "clean":
-        await CheckForUpdates();
-        await FreshSetup();
+        await init();
         await FuckingNodeCleaner(isVerbose, wantsToUpdate, wantsMaxim);
         break;
     case "manager":
-        await CheckForUpdates();
-        await FreshSetup();
+        await init();
         await FuckingNodeManager(Deno.args);
         break;
     case "stats":
+        await init();
         await GetFuckingStats(statsModular);
         break;
     case "--version":
-        await CheckForUpdates();
+        await init();
         console.log(VERSION);
         break;
     case "--help":
-        await CheckForUpdates();
+        await init();
         await LogStuff(HELP, "bulb", true);
         break;
     default:
