@@ -86,3 +86,10 @@ export const iLikeJs: heLikesJs = {
     mfn: "m*therf*cking",
     mfly: "m*therf*ckingly",
 };
+
+/**
+ * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
+ *
+ * @type {"fuckingnode"}
+ */
+export const CliName: "fuckingnode" = "fuckingnode" as const

@@ -1,7 +1,7 @@
 // VOCAB CLEANUP STATUS
 // TEXT - CLEAN / VARS - NOT CLEAN
 
-import { iLikeJs, VERSION } from "./constants.ts";
+import { CliName, iLikeJs, VERSION } from "./constants.ts";
 import {
     type GITHUB_RELEASE,
     type RIGHT_NOW_DATE,
@@ -46,10 +46,10 @@ export function GetPath(
     }
 
     // i don't know how to remove the f-word from here, i can't just put an asterisk in a file path
-    const BASE_DIR = `${appDataPath}/FuckingNode/`;
-    const MOTHERFKRS_DIR = `${BASE_DIR}/fuckingNode-motherfuckers.txt`;
-    const LOGS_DIR = `${BASE_DIR}/fuckingNode-Logs.log`;
-    const UPDATES_DIR = `${BASE_DIR}/fuckingNode-updates.txt`;
+    const BASE_DIR = `${appDataPath}/${CliName}/`;
+    const MOTHERFKRS_DIR = `${BASE_DIR}/${CliName}-motherfuckers.txt`;
+    const LOGS_DIR = `${BASE_DIR}/${CliName}-Logs.log`;
+    const UPDATES_DIR = `${BASE_DIR}/${CliName}-updates.txt`;
 
     switch (path) {
         case "BASE":

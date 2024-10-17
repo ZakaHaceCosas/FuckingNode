@@ -1,12 +1,12 @@
 // VOCAB CLEANUP STATUS
 // TEXT - CLEAN / VARS - NOT CLEAN
 
-import { iLikeJs } from "./constants.ts";
+import { CliName, iLikeJs } from "./constants.ts";
 import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {
-    const usage = "Usage: fuckingNode manager add `projectPathHere` / remove `projectPathHere` / list";
+    const usage = `Usage: ${CliName} manager add <projectPathHere> / remove <projectPathHere> / list`;
 
     switch (errorCode) {
         case "noArgument":
