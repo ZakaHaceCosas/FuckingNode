@@ -2,6 +2,7 @@ import FuckingNodeCleaner from "./clean.ts";
 import FuckingNodeManager from "./manage.ts";
 import { HELP, VERSION } from "./constants.ts";
 import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
+import GetFuckingStats from "./stats.ts";
 
 const [command] = Deno.args;
 const flags = Deno.args.map((arg) => {
@@ -10,6 +11,8 @@ const flags = Deno.args.map((arg) => {
 const isVerbose = flags.includes("--verbose");
 const wantsToUpdate = flags.includes("--update");
 const wantsMaxim = flags.includes("--maxim");
+
+const statsModular = flags.includes("--full");
 
 switch (command ? command.toLowerCase() : "") {
     case "clean":
@@ -21,6 +24,12 @@ switch (command ? command.toLowerCase() : "") {
         await CheckForUpdates();
         await FreshSetup();
         await FuckingNodeManager(Deno.args);
+        break;
+    case "stats":
+        console.log(
+            "(note this can take a while to load, as it has to recursively measure the size of each project every time",
+        );
+        await GetFuckingStats(statsModular);
         break;
     case "--version":
         await CheckForUpdates();

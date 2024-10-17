@@ -7,6 +7,13 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+
+- Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size
+  of `node_modules/`, but you can pass the `--full` flag to it so it also includes your code.
+
 ## [1.0.2] 15-10-2024
 
 ### Added
