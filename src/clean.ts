@@ -150,8 +150,10 @@ export default async function FuckingNodeCleaner(
         const results: { path: string; status: string }[] = [];
 
         for (const motherfucker of motherFuckers) {
-            if (!(await Deno.stat(motherfucker))) {
-                await LogStuff(`Path not found: ${motherfucker}`, "error");
+            try {
+                await Deno.stat(motherfucker);
+            } catch {
+                await LogStuff(`Path not found: ${motherfucker}. You might want to update your list of ${I_LIKE_JS.MFS}.`, "error");
                 results.push({ path: motherfucker, status: "Not found" });
                 continue;
             }
