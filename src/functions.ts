@@ -267,13 +267,13 @@ export async function CheckForUpdates(): Promise<void> {
 
         if (!(currentCompatibleDate > lastCompatibleDate)) return; // no need to update
 
-        // 7 days
+        // 5 days
         const differenceInMilliseconds = currentCompatibleDate.getTime() - lastCompatibleDate.getTime();
 
-        // actually 7 days and not 7 days in milliseconds
+        // actually 5 days and not 5 days in milliseconds
         const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
 
-        needsToCheck = differenceInDays >= 7;
+        needsToCheck = differenceInDays >= 5;
     }
 
     if (!needsToCheck) return; // no need to update
