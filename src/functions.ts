@@ -217,14 +217,12 @@ function CompareSemver(versionA: string, versionB: string): number {
 }
 
 /**
- * Checks for updates (in case it needs to do so).
+ * Checks for updates (in case it needs to do so). If you want to force it to check for updates, pass `true` as the 1st argument. Otherwise, pass false or no argument at all.
  *
  * @export
- * @async
- * @returns {Promise<void>}
+ * @returns {void}
  */
-export async function CheckForUpdates(): Promise<void> {
-    let needsToWait: boolean = true;
+export function CheckForUpdates(force?: boolean): void {
     const tellAboutUpdate = async (newVer: SemVer) => {
         await LogStuff(
             `There's a new version! ${newVer}. Consider downloading it from GitHub. You're on ${VERSION}, btw.`,
@@ -232,82 +230,97 @@ export async function CheckForUpdates(): Promise<void> {
         );
     };
 
-    try {
-        await Deno.stat(GetPath("UPDATES"));
-    } catch {
-        const dataToWrite: UPDATE_FILE = {
-            isUpToDate: true,
-            lastVer: VERSION,
-            lastCheck: GetDateNow(),
-        };
-
-        await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite));
-        needsToWait = false;
-    }
-
-    const updateFileContent = await Deno.readTextFile(GetPath("UPDATES"));
-    const updateFile: UPDATE_FILE = JSON.parse(updateFileContent);
-    if (!RIGHT_NOW_DATE_REGEX.test(updateFile.lastCheck)) {
-        throw new Error(
-            "Unable to parse date of last update. Got " + updateFile.lastCheck + ".",
-        );
-    }
-
-    if (!updateFile.isUpToDate) {
-        await tellAboutUpdate(updateFile.lastVer);
-    }
-
-    let needsToCheck = true;
-
-    if (needsToWait) {
-        const currentCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(
-            GetDateNow(),
-        );
-        const lastCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(updateFile.lastCheck);
-
-        if (!(currentCompatibleDate > lastCompatibleDate)) return; // no need to update
-
-        // 5 days
-        const differenceInMilliseconds = currentCompatibleDate.getTime() - lastCompatibleDate.getTime();
-
-        // actually 5 days and not 5 days in milliseconds
-        const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
-
-        needsToCheck = differenceInDays >= 5;
-    }
-
-    if (!needsToCheck) return; // no need to update
-
-    try {
-        const response = await fetch(
-            "https://api.github.com/repos/ZakaHaceCosas/FuckingNode/releases/latest",
-            {
-                headers: {
-                    Accept: "application/vnd.github.v3+json",
+    async function Update() {
+        try {
+            const response = await fetch(
+                "https://api.github.com/repos/ZakaHaceCosas/FuckingNode/releases/latest",
+                {
+                    headers: {
+                        Accept: "application/vnd.github.v3+json",
+                    },
                 },
-            },
-        );
+            );
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const content: GITHUB_RELEASE = await response.json();
+
+            const isUpToDate = CompareSemver(content.tag_name, VERSION) === 0;
+
+            const dataToWrite: UPDATE_FILE = {
+                isUpToDate: isUpToDate,
+                lastVer: content.tag_name,
+                lastCheck: GetDateNow(),
+            };
+            await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
+
+            if (!isUpToDate) {
+                await tellAboutUpdate(content.tag_name);
+            } // we're up to date
+        } catch (e) {
+            throw new Error("Error checking for updates: " + e);
+        }
+    }
+
+    async function VerifyItNeedsToUpdate(): Promise<boolean> {
+        let needsToWait: boolean = true;
+
+        try {
+            await Deno.stat(GetPath("UPDATES"));
+        } catch {
+            const dataToWrite: UPDATE_FILE = {
+                isUpToDate: true,
+                lastVer: VERSION,
+                lastCheck: GetDateNow(),
+            };
+
+            await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite));
+            needsToWait = false;
         }
 
-        const content: GITHUB_RELEASE = await response.json();
+        const updateFileContent = await Deno.readTextFile(GetPath("UPDATES"));
+        const updateFile: UPDATE_FILE = JSON.parse(updateFileContent);
+        if (!RIGHT_NOW_DATE_REGEX.test(updateFile.lastCheck)) {
+            throw new Error(
+                "Unable to parse date of last update. Got " + updateFile.lastCheck + ".",
+            );
+        }
 
-        const isUpToDate = CompareSemver(content.tag_name, VERSION) === 0;
+        if (!updateFile.isUpToDate) {
+            await tellAboutUpdate(updateFile.lastVer);
+        }
 
-        const dataToWrite: UPDATE_FILE = {
-            isUpToDate: isUpToDate,
-            lastVer: content.tag_name,
-            lastCheck: GetDateNow(),
-        };
-        await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
+        let needsToCheck = true;
 
-        if (!isUpToDate) {
-            await tellAboutUpdate(content.tag_name);
-        } // we're up to date
-    } catch (e) {
-        throw new Error("Error checking for updates: " + e);
+        if (needsToWait) {
+            const currentCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(
+                GetDateNow(),
+            );
+            const lastCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(updateFile.lastCheck);
+
+            if (!(currentCompatibleDate > lastCompatibleDate)) return false; // no need to update
+
+            // 5 days
+            const differenceInMilliseconds = currentCompatibleDate.getTime() - lastCompatibleDate.getTime();
+
+            // actually 5 days and not 5 days in milliseconds
+            const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+            needsToCheck = differenceInDays >= 5;
+        }
+
+        return needsToCheck;
+    }
+
+    if (force) {
+        Update();
+        return;
+    } else {
+        if (!VerifyItNeedsToUpdate()) return;
+        Update();
+        return;
     }
 }
 

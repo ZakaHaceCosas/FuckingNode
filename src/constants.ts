@@ -12,6 +12,7 @@ const _USAGE = {
     clean: "                      clean   [--update] [--verbose]",
     add: "                      manager add <item> | remove <item> | ignore <item> | list",
     stats: "                      stats   [--full]",
+    self_update: "                              self-update",
     version: "                              [--version]",
     help: "                              [--help]",
 };
@@ -20,6 +21,8 @@ const USAGE = _USAGE.clean +
     _USAGE.add +
     "\n" +
     _USAGE.stats +
+    "\n" +
+    _USAGE.self_update +
     "\n" +
     _USAGE.version +
     "\n" +

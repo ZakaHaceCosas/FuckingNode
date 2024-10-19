@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Added
+
+- `self-update` so the user can manually check for updates every time he wants to.
+
 ### Changed
 
 - `manager add` now checks if the path exists before adding it.
