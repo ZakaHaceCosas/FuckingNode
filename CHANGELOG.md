@@ -7,6 +7,18 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Changed
+
+- `manager add` now checks if the path exists before adding it.
+
+### Fixed
+
+- `manager` was broken by a human mistake on previous updates (sorry, mb) and it didn't recognize one word commands like `list`. It has been
+  fixed.
+- `clean` would crash if one of your project's path didn't exist. Now it will log an error and skip it without interrupting the cleanup.
+
 ## [1.1.0] 19-10-2024
 
 ### Added
