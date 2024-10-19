@@ -92,16 +92,15 @@ async function listEntries() {
 
 // run functions based on args
 export default async function FuckingNodeManager(args: string[]) {
-    if (args.length === 0 || args.length === 1) {
+    if (!args || (args.length === 0 || args.length === 1) || args[2] === undefined) {
         // 1 argument equals "manager" with no arg, so it also flags the noArgument error
         Error("noArgument");
         Deno.exit(1);
     }
 
-    const command = args[1];
-    const entry = args[2]?.trim();
+    const entry = args[2].trim();
 
-    switch (command.toLowerCase()) {
+    switch (entry.toLowerCase()) {
         case "add":
             if (entry) {
                 await addEntry(entry);

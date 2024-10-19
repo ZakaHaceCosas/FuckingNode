@@ -180,9 +180,18 @@ export function GetDateNow(): RIGHT_NOW_DATE {
 function MakeDateNowCompatibleWithJavaScriptsDate(
     dateString: RIGHT_NOW_DATE,
 ): Date {
+    if (!RIGHT_NOW_DATE_REGEX.test(dateString)) throw new TypeError("Provided dateString doesn't match RIGHT_NOW_DATE Regular Expression.");
+
     const [datePart, timePart] = dateString.split(" ");
+
+    if (!datePart) throw new Error("undefined datePart");
+    if (!timePart) throw new Error("undefined timePart");
+
     const [year, month, day] = datePart.split("-").map(Number);
     const [hours, minutes] = timePart.split(":").map(Number);
+
+    if (!year) throw new Error("undefined year");
+    if (!month) throw new Error("undefined month");
 
     return new Date(year, month - 1, day, hours, minutes);
 }
