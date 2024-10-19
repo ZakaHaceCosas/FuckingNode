@@ -42,13 +42,18 @@ async function addEntry(entry: string) {
     if (list.includes(workingEntry)) {
         await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
     } else {
-        await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
-            append: true,
-        });
-        await LogStuff(
-            `Congrats! ${parseEntry(workingEntry)} was added to your list. One mf less to care about!`,
-            "tick-clear",
-        );
+        try {
+            await Deno.stat(workingEntry);
+            await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
+                append: true,
+            });
+            await LogStuff(
+                `Congrats! ${parseEntry(workingEntry)} was added to your list. One mf less to care about!`,
+                "tick-clear",
+            );
+        } catch {
+            await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
+        }
     }
 }
 
