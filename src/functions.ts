@@ -9,6 +9,23 @@ import {
 } from "./types.ts";
 
 /**
+ * Returns `true` if a given path exists, `false` if otherwise.
+ *
+ * @export
+ * @async
+ * @param {string} path Path to check for
+ * @returns {Promise<boolean>}
+ */
+export async function CheckForPath(path: string): Promise<boolean> {
+    try {
+        await Deno.stat(path);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+/**
  * Logs a message to the standard output and saves it to a `.log` file.
  *
  * @export
@@ -88,15 +105,11 @@ export async function FreshSetup(): Promise<void> {
     try {
         await Deno.mkdir(GetPath("BASE"), { recursive: true });
 
-        try {
-            await Deno.stat(GetPath("MOTHERFKRS"));
-        } catch {
+        if (!(await CheckForPath(GetPath("MOTHERFKRS")))) {
             await Deno.writeTextFile(GetPath("MOTHERFKRS"), "");
         }
 
-        try {
-            await Deno.stat(GetPath("LOGS"));
-        } catch {
+        if (!(await CheckForPath(GetPath("LOGS")))) {
             await Deno.writeTextFile(GetPath("LOGS"), "");
         }
     } catch (error) {
@@ -242,6 +255,7 @@ export function CheckForUpdates(force?: boolean): void {
             );
 
             if (!response.ok) {
+                if (response.status === 403) return; // (github as a rate limit, so this is not an error we should be really aware of)
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
@@ -262,16 +276,16 @@ export function CheckForUpdates(force?: boolean): void {
             };
             await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
         } catch (e) {
-            throw new Error("Error checking for updates: " + e);
+            if (e) {
+                throw new Error("Error checking for updates: " + e);
+            }
         }
     }
 
     async function VerifyItNeedsToUpdate(): Promise<boolean> {
         let needsToWait: boolean = true;
 
-        try {
-            await Deno.stat(GetPath("UPDATES"));
-        } catch {
+        if (!(await CheckForPath(GetPath("UPDATES")))) {
             const dataToWrite: UPDATE_FILE = {
                 isUpToDate: true,
                 lastVer: VERSION,
@@ -361,8 +375,8 @@ export async function GetDirSize(path: string): Promise<number> {
 
     for await (const entry of Deno.readDir(path)) {
         const fullPath = `${path}/${entry.name}`;
-        const fileInfo = await Deno.stat(fullPath);
-        totalSize += fileInfo.size; // increases the size
+        const fileSize = (await Deno.stat(fullPath)).size;
+        totalSize += fileSize; // increases the size
     }
 
     return parseFloat((totalSize / (1024 * 1024)).toFixed(3)); // (returns in MB)

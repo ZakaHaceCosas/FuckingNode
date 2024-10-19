@@ -1,6 +1,7 @@
 import { I_LIKE_JS } from "./constants.ts";
-import { GetPath, LogStuff } from "./functions.ts";
+import { CheckForPath, GetPath, LogStuff } from "./functions.ts";
 import { type SUPPORTED_LOCKFILE } from "./types.ts";
+import { IGNORE_FILE } from "./constants.ts";
 
 async function CleanMotherfucker(
     lockfile: SUPPORTED_LOCKFILE,
@@ -81,21 +82,19 @@ async function CleanMotherfucker(
             `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
             "trash",
         );
-        try {
-            await Deno.stat(maximPath);
-            await Deno.remove(maximPath, {
-                recursive: true,
-            });
-            await LogStuff(
-                `Maxim pruned ${motherfuckerInQuestion}.`,
-                "tick-clear",
-            );
-        } catch {
+        if (!(await CheckForPath(maximPath))) {
             await LogStuff(
                 `An unknown error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${I_LIKE_JS.MF}...`,
                 "bruh",
             );
         }
+        await Deno.remove(maximPath, {
+            recursive: true,
+        });
+        await LogStuff(
+            `Maxim pruned ${motherfuckerInQuestion}.`,
+            "tick-clear",
+        );
     }
 }
 
@@ -150,9 +149,7 @@ export default async function FuckingNodeCleaner(
         const results: { path: string; status: string }[] = [];
 
         for (const motherfucker of motherFuckers) {
-            try {
-                await Deno.stat(motherfucker);
-            } catch {
+            if (!(await CheckForPath(motherfucker))) {
                 await LogStuff(`Path not found: ${motherfucker}. You might want to update your list of ${I_LIKE_JS.MFS}.`, "error");
                 results.push({ path: motherfucker, status: "Not found" });
                 continue;
@@ -165,46 +162,42 @@ export default async function FuckingNodeCleaner(
                     "working",
                 );
 
-                try {
-                    if (await Deno.stat(".fknodeignore")) {
-                        if (verbose) {
-                            await LogStuff(
-                                `This ${I_LIKE_JS.MF} (${motherfucker}) is protected by ${I_LIKE_JS.FKN} divine protection (.fknodeignore file). Cannot clean or update it.`,
-                                "heads-up",
-                            );
-                        }
-                        results.push({
-                            path: motherfucker,
-                            status: "Protected",
-                        });
-                        continue;
+                if (await CheckForPath(IGNORE_FILE)) {
+                    if (verbose) {
+                        await LogStuff(
+                            `This ${I_LIKE_JS.MF} (${motherfucker}) is protected by ${I_LIKE_JS.FKN} divine protection (.fknodeignore file). Cannot clean or update it.`,
+                            "heads-up",
+                        );
                     }
-                } catch {
-                    // nothing :D
+                    results.push({
+                        path: motherfucker,
+                        status: "Protected",
+                    });
+                    continue;
                 }
 
-                if (await Deno.stat("pnpm-lock.yaml")) {
+                if (await CheckForPath("pnpm-lock.yaml")) {
                     await CleanMotherfucker(
                         "pnpm-lock.yaml",
                         motherfucker,
                         update,
                         maximForReal,
                     );
-                } else if (await Deno.stat("package-lock.json")) {
+                } else if (await CheckForPath("package-lock.json")) {
                     await CleanMotherfucker(
                         "package-lock.json",
                         motherfucker,
                         update,
                         maximForReal,
                     );
-                } else if (await Deno.stat("yarn.lock")) {
+                } else if (await CheckForPath("yarn.lock")) {
                     await CleanMotherfucker(
                         "yarn.lock",
                         motherfucker,
                         update,
                         maximForReal,
                     );
-                } else if (await Deno.stat("package.json")) {
+                } else if (await CheckForPath("package.json")) {
                     await LogStuff(
                         `${motherfucker} has a package.json but not a lockfile. Can't ${I_LIKE_JS.FKN} clean.`,
                         "warn",

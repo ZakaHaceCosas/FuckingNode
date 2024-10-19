@@ -1,5 +1,5 @@
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "./constants.ts";
-import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
+import { CheckForPath, GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {
@@ -42,18 +42,16 @@ async function addEntry(entry: string) {
     if (list.includes(workingEntry)) {
         await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
     } else {
-        try {
-            await Deno.stat(workingEntry);
-            await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
-                append: true,
-            });
-            await LogStuff(
-                `Congrats! ${parseEntry(workingEntry)} was added to your list. One mf less to care about!`,
-                "tick-clear",
-            );
-        } catch {
+        if (!(await CheckForPath(workingEntry))) {
             await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
         }
+        await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
+            append: true,
+        });
+        await LogStuff(
+            `Congrats! ${parseEntry(workingEntry)} was added to your list. One mf less to care about!`,
+            "tick-clear",
+        );
     }
 }
 
@@ -95,16 +93,21 @@ async function listEntries() {
     }
 }
 
-// ignore a project
+/**
+ * Description placeholder
+ *
+ * @async
+ * @param {string} entry
+ * @returns {Promise<0 | 1 | 2>}
+ */
 async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
     const workingEntry = parseEntry(entry);
     const pathToIgnoreFile = `${workingEntry}/${IGNORE_FILE}`;
 
-    try {
-        await Deno.stat(pathToIgnoreFile);
+    if (await CheckForPath(pathToIgnoreFile)) {
         LogStuff(`${I_LIKE_JS.MF} is already ignored!`, "error");
         return 2;
-    } catch {
+    } else {
         try {
             await Deno.create(pathToIgnoreFile);
             LogStuff(`Divine powers have successfully ignored this ${I_LIKE_JS.MF}`, "tick");
