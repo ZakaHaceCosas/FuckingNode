@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
-### Added
+### [1.1.0] 19-10-2024
 
 - Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size of `node_modules/`,
   but you can pass the `--full` flag to it so it also includes your code.
@@ -20,6 +20,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename variables and all that kind
   of stuff. ~~I don't want to get banned~~.
+- Now "unknown errors" when pruning a project actually show the command's `stderr`.
+
+### Fixed
+
+- Sometimes `manager` didn't properly handle wrong arguments. Now it should do.
+- 
 
 ## [1.0.2] 15-10-2024
 
