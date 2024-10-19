@@ -11,20 +11,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size
-  of `node_modules/`, but you can pass the `--full` flag to it so it also includes your code.
+- Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size of `node_modules/`,
+  but you can pass the `--full` flag to it so it also includes your code.
 
 ### Changed
 
-- Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename
-  variables and all that kind of stuff. ~~I don't want to get banned~~.
+- Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename variables and all that kind
+  of stuff. ~~I don't want to get banned~~.
 
 ## [1.0.2] 15-10-2024
 
 ### Added
 
-- Added `--maxim` flag to the `clean` command. It will _take cleaning to the max_ (AKA removing `node_modules/`
-  entirely).
+- Added `--maxim` flag to the `clean` command. It will _take cleaning to the max_ (AKA removing `node_modules/` entirely).
 - Now the cleaner uses additional commands, like `dedupe`, for more in-depth cleaning.
 - Now it's capable of checking for updates by itself. Does it only once every 7 days to save up on the user's resources.
 
@@ -35,8 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - If you just run `fuckingnode` with no args, you got a TypeError instead of "Unknown command...". This was fixed.
-- Now the path you provide for add / remove gets a bit of purification (removing trailing spaces & trailing `/`) to
-  avoid issues.
+- Now the path you provide for add / remove gets a bit of purification (removing trailing spaces & trailing `/`) to avoid issues.
 
 ## [1.0.1] 14-10-2024 <!-- two releases in a day, lol -->
 
@@ -48,8 +46,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Fixed the app losing data from one version to another (now it uses `APPDATA/FuckingNode/*` instead of
-  `APPDATA/FuckingNode-VERSION/*` to store data).
+- Fixed the app losing data from one version to another (now it uses `APPDATA/FuckingNode/*` instead of `APPDATA/FuckingNode-VERSION/*` to
+  store data).
 - Remove case sensitivity from some arguments.
 
 ## [1.0.0] - 14-10-2024
