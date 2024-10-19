@@ -247,7 +247,13 @@ export function CheckForUpdates(force?: boolean): void {
 
             const content: GITHUB_RELEASE = await response.json();
 
-            const isUpToDate = CompareSemver(content.tag_name, VERSION) === 0;
+            const isUpToDate = CompareSemver(content.tag_name, VERSION) <= 0;
+
+            if (!isUpToDate) {
+                await tellAboutUpdate(content.tag_name);
+            } else {
+                if (force) await LogStuff(`You're up to date! (v${VERSION})`, "tick-clear");
+            }
 
             const dataToWrite: UPDATE_FILE = {
                 isUpToDate: isUpToDate,
@@ -255,10 +261,6 @@ export function CheckForUpdates(force?: boolean): void {
                 lastCheck: GetDateNow(),
             };
             await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
-
-            if (!isUpToDate) {
-                await tellAboutUpdate(content.tag_name);
-            } // we're up to date
         } catch (e) {
             throw new Error("Error checking for updates: " + e);
         }
