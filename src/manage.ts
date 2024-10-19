@@ -1,9 +1,9 @@
-import { CliName, IgnoreFile, iLikeJs } from "./constants.ts";
+import { APP_NAME, IGNORE_FILE, I_LIKE_JS } from "./constants.ts";
 import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {
-    const usage = `Usage:\n${CliName} manager add <path> / remove <path> / ignore <path> / list`;
+    const usage = `Usage:\n${APP_NAME} manager add <path> / remove <path> / ignore <path> / list`;
 
     switch (errorCode) {
         case "noArgument":
@@ -14,7 +14,7 @@ async function Error(errorCode: "noArgument" | "invalidArgument") {
             break;
         case "invalidArgument":
             await LogStuff(
-                `BRO IT'S SO ${iLikeJs.mfn} EASY!!1!1` + usage +
+                `BRO IT'S SO ${I_LIKE_JS.MFN} EASY!!1!1` + usage +
                     "\n\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where package-lock.json / pnpm-lock.yaml lives.",
                 "warn",
             );
@@ -40,7 +40,7 @@ async function addEntry(entry: string) {
     const workingEntry = parseEntry(entry);
     const list = await GetMotherfuckers();
     if (list.includes(workingEntry)) {
-        await LogStuff(`Bruh, you already added this ${iLikeJs.mf}! ${workingEntry}`, "error");
+        await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
     } else {
         await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${parseEntry(workingEntry)}\n`, {
             append: true,
@@ -83,7 +83,7 @@ async function removeEntry(entry: string) {
 async function listEntries() {
     const list = await GetMotherfuckers();
     if (list.length > 0) {
-        await LogStuff(`Here are the ${iLikeJs.mfs} you added so far:\n`, "bulb");
+        await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
         list.forEach(async (entry) => await LogStuff(entry));
     } else {
         await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");
@@ -93,19 +93,19 @@ async function listEntries() {
 // ignore a project
 async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
     const workingEntry = parseEntry(entry);
-    const pathToIgnoreFile = `${workingEntry}/${IgnoreFile}`;
+    const pathToIgnoreFile = `${workingEntry}/${IGNORE_FILE}`;
 
     try {
         await Deno.stat(pathToIgnoreFile);
-        LogStuff(`${iLikeJs.mf} is already ignored!`, "error");
+        LogStuff(`${I_LIKE_JS.MF} is already ignored!`, "error");
         return 2;
     } catch {
         try {
             await Deno.create(pathToIgnoreFile);
-            LogStuff(`Divine powers have successfully ignored this ${iLikeJs.mf}`, "tick");
+            LogStuff(`Divine powers have successfully ignored this ${I_LIKE_JS.MF}`, "tick");
             return 0;
         } catch (e) {
-            LogStuff(`Something went ${iLikeJs.fkn} wrong: ${e}`, "error");
+            LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
             return 1;
         }
     }

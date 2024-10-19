@@ -50,67 +50,72 @@ export const HELP = "Usage: fuckingnode\n" +
 /**
  * Different variants of the f-word for in-app usage. Not fully "explicit" as an asterisk is used, like in f*ck.
  *
- * @interface heLikesJs
- * @typedef {heLikesJs}
+ * @interface HE_LIKES_JS
+ * @typedef {HE_LIKES_JS}
  */
-interface heLikesJs {
+interface HE_LIKES_JS {
     /**
      * Base word. 4 letters.
      *
      * @type {string}
      */
-    f: string;
+    FK: string;
     /**
      * Base word but with -ing.
      *
      * @type {string}
      */
-    fkn: string;
+    FKN: string;
     /**
      * Noun. What we call a project that's made with NodeJS. Base word but mentioning his mother (-er).
      *
      * @type {string}
      */
-    mf: string;
+    MF: string;
     /**
      * Plural for `mf`.
      *
      * @type {string}
      */
-    mfs: string;
+    MFS: string;
     /**
      * Adjective. What we describe a project that's made with NodeJS as.
      *
      * @type {string}
      */
-    mfn: string;
+    MFN: string;
     /**
      * _"Something went **mother** + `fkn` + **ly**"_
      *
      * @type {string}
      */
-    mfly: string;
+    MFLY: string;
 }
 
 /**
  * Different variants of the f-word for in-app usage. Not fully "explicit" as an asterisk is used, like in f*ck.
  *
- * @type {heLikesJs}
+ * @type {HE_LIKES_JS}
  */
-export const iLikeJs: heLikesJs = {
-    f: "f*ck",
-    fkn: "f*cking",
-    mf: "m*therf*cker",
-    mfs: "m*therf*ckers",
-    mfn: "m*therf*cking",
-    mfly: "m*therf*ckingly",
+export const I_LIKE_JS: HE_LIKES_JS = {
+    FK: "f*ck",
+    FKN: "f*cking",
+    MF: "m*therf*cker",
+    MFS: "m*therf*ckers",
+    MFN: "m*therf*cking",
+    MFLY: "m*therf*ckingly",
 };
 
 /**
  * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
  *
- * @type {"fuckingnode"}
+ * @type {string}
  */
-export const CliName: "fuckingnode" = "fuckingnode" as const;
+export const APP_NAME: string = "fuckingnode";
 
-export const IgnoreFile: string = ".fknodeignore";
+/**
+ * Name of the ignore file.
+ *
+ * @type {string}
+ */
+export const IGNORE_FILE: string = ".fknodeignore";

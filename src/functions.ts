@@ -1,4 +1,4 @@
-import { CliName, iLikeJs, VERSION } from "./constants.ts";
+import { APP_NAME, I_LIKE_JS, VERSION } from "./constants.ts";
 import {
     type GITHUB_RELEASE,
     type RIGHT_NOW_DATE,
@@ -52,16 +52,16 @@ export function GetPath(
     const appDataPath = Deno.env.get("APPDATA");
     if (!appDataPath) {
         console.error(
-            `${iLikeJs.mfn} APPDATA variable not found. Something seriously went ${iLikeJs.mfly} wrong.`,
+            `${I_LIKE_JS.MFN} APPDATA variable not found. Something seriously went ${I_LIKE_JS.MFLY} wrong.`,
         );
         Deno.exit(1);
     }
 
     // i don't know how to remove the f-word from here, i can't just put an asterisk in a file path
-    const BASE_DIR = `${appDataPath}/${CliName}/`;
-    const MOTHERFKRS_DIR = `${BASE_DIR}/${CliName}-motherfuckers.txt`;
-    const LOGS_DIR = `${BASE_DIR}/${CliName}-Logs.log`;
-    const UPDATES_DIR = `${BASE_DIR}/${CliName}-updates.txt`;
+    const BASE_DIR = `${appDataPath}/${APP_NAME}/`;
+    const MOTHERFKRS_DIR = `${BASE_DIR}/${APP_NAME}-motherfuckers.txt`;
+    const LOGS_DIR = `${BASE_DIR}/${APP_NAME}-Logs.log`;
+    const UPDATES_DIR = `${BASE_DIR}/${APP_NAME}-updates.txt`;
 
     switch (path) {
         case "BASE":
@@ -100,7 +100,7 @@ export async function FreshSetup(): Promise<void> {
             await Deno.writeTextFile(GetPath("LOGS"), "");
         }
     } catch (error) {
-        await LogStuff(`Some ${iLikeJs.mfn} error happened trying to setup config files: ${error}`, "error");
+        await LogStuff(`Some ${I_LIKE_JS.MFN} error happened trying to setup config files: ${error}`, "error");
         Deno.exit(1);
     }
 }

@@ -1,4 +1,4 @@
-import { iLikeJs } from "./constants.ts";
+import { I_LIKE_JS } from "./constants.ts";
 import { GetDirSize, GetMotherfuckers, LogStuff } from "./functions.ts";
 
 export default async function GetFuckingStats(includeSelf: boolean) {
@@ -12,19 +12,19 @@ export default async function GetFuckingStats(includeSelf: boolean) {
             size += await GetDirSize(mf);
         }
 
-        let message: string = iLikeJs.mf;
+        let message: string = I_LIKE_JS.MF;
 
         if (size < 100) {
             message = "That's actually okay ngl.";
         } else if (size > 1000) {
-            message = `Big ${iLikeJs.mf}.`;
+            message = `Big ${I_LIKE_JS.MF}.`;
         } else if (size > 3000) {
-            message = `Giant ${iLikeJs.mf} (we're over a GB!)`;
+            message = `Giant ${I_LIKE_JS.MF} (we're over a GB!)`;
         } else if (size > 9000) {
-            message = `Insanely ${iLikeJs.mfn} insane.`;
+            message = `Insanely ${I_LIKE_JS.MFN} insane.`;
         } else if (size > 9999) {
             message =
-                `WHAT THE ${iLikeJs.fkn.toUpperCase} ${iLikeJs.f.toUpperCase} ARE YOU ${iLikeJs.fkn.toUpperCase} CODING IN ${iLikeJs.fkn.toUpperCase} THERE??`;
+                `WHAT THE ${I_LIKE_JS.FKN.toUpperCase} ${I_LIKE_JS.FK.toUpperCase} ARE YOU ${I_LIKE_JS.FKN.toUpperCase} CODING IN ${I_LIKE_JS.FKN.toUpperCase} THERE??`;
         }
 
         await LogStuff(
@@ -36,7 +36,7 @@ export default async function GetFuckingStats(includeSelf: boolean) {
 
     console.log("\n"); // glue stick fix
     await LogStuff(
-        `In total, your ${iLikeJs.mfs} are taking up to ${totalSpace} MB.`,
+        `In total, your ${I_LIKE_JS.MFS} are taking up to ${totalSpace} MB.`,
         "bruh",
     );
 }
