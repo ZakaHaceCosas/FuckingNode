@@ -3,6 +3,9 @@
         "indentWidth": 4,
         "lineWidth": 140
     },
+    "tasks": {
+        "compile": "deno compile --allow-read --allow-write --allow-net --allow-env --allow-run --target x86_64-pc-windows-msvc --output FuckingNode.exe src/main.ts"
+    },
     "compilerOptions": {
         "strict": true,
         "strictBindCallApply": true,
