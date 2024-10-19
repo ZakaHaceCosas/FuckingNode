@@ -25,7 +25,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Sometimes `manager` didn't properly handle wrong arguments. Now it should do.
-- 
 
 ## [1.0.2] 15-10-2024
 

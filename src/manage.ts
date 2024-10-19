@@ -1,4 +1,4 @@
-import { APP_NAME, IGNORE_FILE, I_LIKE_JS } from "./constants.ts";
+import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "./constants.ts";
 import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 
 // function to show messages
