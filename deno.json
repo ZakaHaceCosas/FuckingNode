@@ -1,4 +1,8 @@
 {
+    "fmt": {
+        "indentWidth": 4,
+        "lineWidth": 140
+    },
     "compilerOptions": {
         "strict": true,
         "strictBindCallApply": true,
@@ -13,11 +17,9 @@
         "noImplicitThis": true,
         "useUnknownInCatchVariables": true,
         "exactOptionalPropertyTypes": true,
-        "noStrictGenericChecks": false,
         "noUnusedLocals": true,
         "noUncheckedIndexedAccess": true,
         "noUnusedParameters": true,
-        "noUncheckedSideEffectImports": true,
         "noPropertyAccessFromIndexSignature": true
     }
 }
