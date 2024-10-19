@@ -12,7 +12,7 @@ export const VERSION: SemVer = "1.0.2";
 // help
 const _USAGE = {
     clean: "                      clean   [--update] [--verbose]",
-    add: "                      manager add <item> | remove <item> | list",
+    add: "                      manager add <item> | remove <item> | ignore <item> | list",
     stats: "                      stats   [--full]",
     version: "                              [--version]",
     help: "                              [--help]",
@@ -112,3 +112,5 @@ export const iLikeJs: heLikesJs = {
  * @type {"fuckingnode"}
  */
 export const CliName: "fuckingnode" = "fuckingnode" as const;
+
+export const IgnoreFile: string = ".fknodeignore";

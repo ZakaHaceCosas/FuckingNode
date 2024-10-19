@@ -1,9 +1,9 @@
-import { CliName, iLikeJs } from "./constants.ts";
+import { CliName, IgnoreFile, iLikeJs } from "./constants.ts";
 import { GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {
-    const usage = `Usage: ${CliName} manager add <projectPathHere> / remove <projectPathHere> / list`;
+    const usage = `Usage:\n${CliName} manager add <path> / remove <path> / ignore <path> / list`;
 
     switch (errorCode) {
         case "noArgument":
@@ -90,30 +90,61 @@ async function listEntries() {
     }
 }
 
+// ignore a project
+async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
+    const workingEntry = parseEntry(entry);
+    const pathToIgnoreFile = `${workingEntry}/${IgnoreFile}`;
+
+    try {
+        await Deno.stat(pathToIgnoreFile);
+        LogStuff(`${iLikeJs.mf} is already ignored!`, "error");
+        return 2;
+    } catch {
+        try {
+            await Deno.create(pathToIgnoreFile);
+            LogStuff(`Divine powers have successfully ignored this ${iLikeJs.mf}`, "tick");
+            return 0;
+        } catch (e) {
+            LogStuff(`Something went ${iLikeJs.fkn} wrong: ${e}`, "error");
+            return 1;
+        }
+    }
+}
+
 // run functions based on args
 export default async function FuckingNodeManager(args: string[]) {
-    if (!args || (args.length === 0 || args.length === 1) || args[2] === undefined) {
+    if (!args || args.length === 0 || args.length === 1 || args[2] === undefined) {
         // 1 argument equals "manager" with no arg, so it also flags the noArgument error
         Error("noArgument");
         Deno.exit(1);
     }
 
+    const command = args[1];
     const entry = args[2].trim();
 
-    switch (entry.toLowerCase()) {
+    if (!command) {
+        Error("noArgument");
+        return;
+    }
+
+    switch (command.toLowerCase()) {
         case "add":
-            if (entry) {
-                await addEntry(entry);
-            } else {
+            if (!entry) {
                 Error("invalidArgument");
             }
+            await addEntry(entry);
             break;
         case "remove":
-            if (entry) {
-                await removeEntry(entry);
-            } else {
+            if (!entry) {
                 Error("invalidArgument");
             }
+            await removeEntry(entry);
+            break;
+        case "ignore":
+            if (!entry) {
+                Error("invalidArgument");
+            }
+            await ignoreEntry(entry);
             break;
         case "list":
             await listEntries();
