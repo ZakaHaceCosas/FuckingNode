@@ -42,7 +42,7 @@ async function addEntry(entry: string) {
     if (list.includes(workingEntry)) {
         await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
     } else {
-        await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${parseEntry(workingEntry)}\n`, {
+        await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
         });
         await LogStuff(
@@ -113,14 +113,13 @@ async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
 
 // run functions based on args
 export default async function FuckingNodeManager(args: string[]) {
-    if (!args || args.length === 0 || args.length === 1 || args[2] === undefined) {
-        // 1 argument equals "manager" with no arg, so it also flags the noArgument error
+    if (!args || args.length === 0) {
         Error("noArgument");
         Deno.exit(1);
     }
 
     const command = args[1];
-    const entry = args[2].trim();
+    const entry = args[2] ? args[2].trim() : null;
 
     if (!command) {
         Error("noArgument");
@@ -129,20 +128,23 @@ export default async function FuckingNodeManager(args: string[]) {
 
     switch (command.toLowerCase()) {
         case "add":
-            if (!entry) {
+            if (!entry || entry === null) {
                 Error("invalidArgument");
+                return;
             }
             await addEntry(entry);
             break;
         case "remove":
-            if (!entry) {
+            if (!entry || entry === null) {
                 Error("invalidArgument");
+                return;
             }
             await removeEntry(entry);
             break;
         case "ignore":
-            if (!entry) {
+            if (!entry || entry === null) {
                 Error("invalidArgument");
+                return;
             }
             await ignoreEntry(entry);
             break;
