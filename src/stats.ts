@@ -8,8 +8,14 @@ export default async function GetFuckingStats(includeSelf: boolean) {
 
     for (const mf of mfs) {
         let size = await GetDirSize(`${mf}/node_modules`);
+        const selfSize = await GetDirSize(mf);
+        if (!size || !selfSize) {
+            await LogStuff(`Feels like ${mf} doesn't exist?`);
+            return;
+        }
+
         if (includeSelf) {
-            size += await GetDirSize(mf);
+            size += selfSize;
         }
 
         let message: string = I_LIKE_JS.MF;

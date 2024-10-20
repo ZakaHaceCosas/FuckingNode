@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fixed an error where the app would throw an error when the user checked for updates too much (AKA reached GitHub's API rate limit).
+- Fixed an error where non-existent paths would break `stats`.
 
 ## [1.1.1] - 19-10-2024
 

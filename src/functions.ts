@@ -361,17 +361,17 @@ export async function GetMotherfuckers(): Promise<string[]> {
 }
 
 /**
- * Gets the size in MBs of a DIR.
+ * Gets the size in MBs of a DIR. Will return null if an error happens.
  *
  * @export
  * @async
  * @param {string} path Path to the directory.
- * @returns {Promise<number>}
+ * @returns {Promise<number | null>}
  */
-export async function GetDirSize(path: string): Promise<number> {
+export async function GetDirSize(path: string): Promise<number | null> {
     let totalSize: number = 0;
 
-    if (!(await Deno.stat(path)).isDirectory) throw new Error("Provided path doesn't point to a directory.");
+    if (!(await Deno.stat(path)).isDirectory) return null;
 
     for await (const entry of Deno.readDir(path)) {
         const fullPath = `${path}/${entry.name}`;
