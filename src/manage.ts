@@ -29,15 +29,41 @@ async function Error(errorCode: "noArgument" | "invalidArgument"): Promise<void>
 }
 
 /**
+ * Given a path, returns a number based on if it's a valid Node project or not. It can also return `false` if the DIR does not exist at all.
+ *
+ * `0` = valid. `1` = not valid, no package.json. `2` = not fully valid, not node_modules. `3` = not fully valid, duplicate.
+ *
+ * @async
+ * @param {string} entry The path.
+ * @returns {Promise<0 | 1 | 2 | 3 | false>}
+ */
+async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | false> {
+    const workingEntry = ParsePath("list", entry) as string;
+    const list = await GetMotherfuckers();
+    if (list.includes(workingEntry)) {
+        return 3;
+    }
+    if (!(await CheckForPath(`${workingEntry}/node_modules`))) {
+        return 2;
+    }
+    if (!(await CheckForPath(`${workingEntry}/package.json`))) {
+        return 1;
+    }
+    if (!(await CheckForPath(workingEntry))) {
+        return false;
+    }
+    return 0;
+}
+
+/**
  * Adds a new project.
  *
  * @async
- * @param {string} entry
+ * @param {string} entry Path to the project.
  * @returns {Promise<void>}
  */
 async function addEntry(entry: string): Promise<void> {
     const workingEntry = ParsePath("list", entry) as string;
-    const list = await GetMotherfuckers();
     async function addTheEntry() {
         await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
@@ -47,11 +73,12 @@ async function addEntry(entry: string): Promise<void> {
             "tick-clear",
         );
     }
-    if (list.includes(workingEntry)) {
+    const validation = await validateEntryAsNodeProject(workingEntry);
+    if (validation === 3) {
         await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
         return;
     }
-    if (!(await CheckForPath(`${workingEntry}/node_modules`))) {
+    if (validation === 2) {
         await LogStuff(
             `This path doesn't have a node_modules DIR, so adding it would be useless.`,
             "what",
@@ -60,14 +87,14 @@ async function addEntry(entry: string): Promise<void> {
         if (!addAnyway) return;
         addTheEntry();
     }
-    if (!(await CheckForPath(`${workingEntry}/package.json`))) {
+    if (validation === 1) {
         await LogStuff(`This path doesn't have a package.json. Are you sure it's a node project?`, "what");
         const addAnyway = confirm(`Confirm you want to add it\nPS. You typed: ${workingEntry}`);
         if (!addAnyway) return;
         addTheEntry();
         return;
     }
-    if (!(await CheckForPath(workingEntry))) {
+    if (validation === 0) {
         await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
         return;
     }
