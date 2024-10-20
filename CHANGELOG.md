@@ -24,6 +24,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed an error where the app would throw an error when the user checked for updates too much (AKA reached GitHub's API rate limit).
 - Fixed an error where non-existent paths would break `stats`.
 - Fixed `manager add` adding a path even if it doesn't exist.
+- Fixed an issue where if the `node_modules` DIR wasn't present but the user chose to add the project anyway, it got added twice.
+- Fixed an issue where removing a duplicate project would remove it entirely, instead of keeping one entry.
+  - Note: it was fixed by making it remove only _once_, so if you have the same entry four times and remove it, you will still have 3
+    duplicates.
 
 ## [1.1.1] - 19-10-2024
 
