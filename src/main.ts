@@ -46,7 +46,7 @@ switch (command ? command.toLowerCase() : "") {
         break;
     default:
         await LogStuff(
-            "Unknown command. Use 'clean' or 'manager'. Use 'fuckingnode --help' to see the list of commands.",
+            "Unknown command. Use 'clean' or 'manager'. Use 'fuckingnode --help' to see the full list of commands.",
             "what",
             true,
         );

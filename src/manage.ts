@@ -39,7 +39,12 @@ async function Error(errorCode: "noArgument" | "invalidArgument"): Promise<void>
 async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | false> {
     const workingEntry = ParsePath("list", entry) as string;
     const list = await GetMotherfuckers();
-    if (list.includes(workingEntry)) {
+    const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
+
+    if (!(await CheckForPath(workingEntry))) {
+        return false;
+    }
+    if (isDuplicate) {
         return 3;
     }
     if (!(await CheckForPath(`${workingEntry}/node_modules`))) {
@@ -47,9 +52,6 @@ async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 
     }
     if (!(await CheckForPath(`${workingEntry}/package.json`))) {
         return 1;
-    }
-    if (!(await CheckForPath(workingEntry))) {
-        return false;
     }
     return 0;
 }
@@ -134,6 +136,51 @@ async function removeEntry(entry: string): Promise<void> {
 }
 
 /**
+ * Cleans up projects that are invalid and probably we won't be able to clean.
+ *
+ * @async
+ * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, 2 if the user doesn't remove them.
+ */
+async function CleanProjects(): Promise<0 | 1 | 2> {
+    async function GetProjectsToRemove() {
+        const list = await GetMotherfuckers();
+        const listOfRemovals: string[] = [];
+
+        for (const project of list) {
+            const validation = await validateEntryAsNodeProject(project);
+            if (validation === 0) continue;
+            listOfRemovals.push(project);
+        }
+
+        return listOfRemovals;
+    }
+    const list = await GetProjectsToRemove();
+    if (list.length === 0) {
+        await LogStuff(`You're on the clear! Your list doesn't have any wrong ${I_LIKE_JS.MF}`, "tick");
+        return 1;
+    }
+    await LogStuff(
+        `We've found issues! We're talking about getting rid of:`,
+        "bulb",
+    );
+    console.log(`\n${list.toString().replaceAll(",", ",\n")}\n`);
+    await LogStuff(
+        `Will you remove all of these ${I_LIKE_JS.MFS}?`,
+        "what",
+    );
+    const del = confirm("(Please confirm)");
+    if (!del) {
+        await LogStuff(`I don't know why you'd keep those wrong projects, but okay...`, "bruh");
+        return 2;
+    }
+    for (const target of list) {
+        await removeEntry(target);
+    }
+    await LogStuff(`That worked out!`, "tick");
+    return 0;
+}
+
+/**
  * Lists all projects.
  *
  * @async
@@ -214,6 +261,9 @@ export default async function FuckingNodeManager(args: string[]) {
             break;
         case "list":
             await listEntries();
+            break;
+        case "cleanup":
+            await CleanProjects();
             break;
         default:
             Error("invalidArgument");

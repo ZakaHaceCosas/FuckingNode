@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Added
+
+- `manager cleanup` checks the list of projects and validates them. If some project cannot be cleaned, it will prompt you to remove it.
+
 ### Changed
 
 - Now `manager add` validates if you want to add paths that are valid but don't make sense (they don't have `package.json` or
