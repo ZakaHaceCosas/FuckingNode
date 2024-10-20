@@ -9,10 +9,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Changed
+
+- Now `manager add` validates if you want to add paths that are valid but don't make sense (they don't have `package.json` or
+  `node_modules`).
+
 ### Fixed
 
 - Fixed an error where the app would throw an error when the user checked for updates too much (AKA reached GitHub's API rate limit).
 - Fixed an error where non-existent paths would break `stats`.
+- Fixed `manager add` adding a path even if it doesn't exist.
 
 ## [1.1.1] - 19-10-2024
 

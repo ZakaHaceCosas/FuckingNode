@@ -38,12 +38,7 @@ async function Error(errorCode: "noArgument" | "invalidArgument"): Promise<void>
 async function addEntry(entry: string): Promise<void> {
     const workingEntry = ParsePath("list", entry) as string;
     const list = await GetMotherfuckers();
-    if (list.includes(workingEntry)) {
-        await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
-    } else {
-        if (!(await CheckForPath(workingEntry))) {
-            await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
-        }
+    async function addTheEntry() {
         await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
         });
@@ -52,6 +47,31 @@ async function addEntry(entry: string): Promise<void> {
             "tick-clear",
         );
     }
+    if (list.includes(workingEntry)) {
+        await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
+        return;
+    }
+    if (!(await CheckForPath(`${workingEntry}/node_modules`))) {
+        await LogStuff(
+            `This path doesn't have a node_modules DIR, so adding it would be useless.`,
+            "what",
+        );
+        const addAnyway = confirm(`Confirm you want to add it\nPS. You typed: ${workingEntry}`);
+        if (!addAnyway) return;
+        addTheEntry();
+    }
+    if (!(await CheckForPath(`${workingEntry}/package.json`))) {
+        await LogStuff(`This path doesn't have a package.json. Are you sure it's a node project?`, "what");
+        const addAnyway = confirm(`Confirm you want to add it\nPS. You typed: ${workingEntry}`);
+        if (!addAnyway) return;
+        addTheEntry();
+        return;
+    }
+    if (!(await CheckForPath(workingEntry))) {
+        await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
+        return;
+    }
+    addTheEntry();
 }
 
 /**
