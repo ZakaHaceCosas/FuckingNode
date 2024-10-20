@@ -9,8 +9,12 @@ export default async function GetFuckingStats(includeSelf: boolean) {
     for (const mf of mfs) {
         let size = await GetDirSize(`${mf}/node_modules`);
         const selfSize = await GetDirSize(mf);
-        if (!size || !selfSize) {
-            await LogStuff(`Feels like ${mf} doesn't exist?`);
+        if (!selfSize) {
+            await LogStuff(`Feels like ${mf} doesn't exist?`, "error");
+            continue;
+        }
+        if (!size) {
+            await LogStuff(`${mf} doesn't have a node_modules DIR? What's up?`, "warn");
             continue;
         }
 
@@ -35,6 +39,7 @@ export default async function GetFuckingStats(includeSelf: boolean) {
 
         await LogStuff(
             `${mf} is taking ${size} MB in your drive. ${message}`,
+            "trash",
         );
 
         totalSpace += size;
