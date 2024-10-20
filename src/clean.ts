@@ -161,12 +161,10 @@ export default async function FuckingNodeCleaner(
                 );
 
                 if (await CheckForPath(IGNORE_FILE)) {
-                    if (verbose) {
-                        await LogStuff(
-                            `This ${I_LIKE_JS.MF} (${motherfucker}) is protected by ${I_LIKE_JS.FKN} divine protection (.fknodeignore file). Cannot clean or update it.`,
-                            "heads-up",
-                        );
-                    }
+                    await LogStuff(
+                        `This ${I_LIKE_JS.MF} (${motherfucker}) is protected by ${I_LIKE_JS.FKN} divine protection (.fknodeignore file). Cannot clean or update it.`,
+                        "heads-up",
+                    );
                     results.push({
                         path: motherfucker,
                         status: "Protected",
