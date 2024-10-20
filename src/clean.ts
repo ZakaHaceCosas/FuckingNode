@@ -202,7 +202,7 @@ export default async function FuckingNodeCleaner(
                     );
                 } else {
                     await LogStuff(
-                        `Neither pnpm-lock.yaml nor package-lock.json nor yarn.lock were found at the ${I_LIKE_JS.MFN} ${motherfucker}. Skipping this ${I_LIKE_JS.MF}...`,
+                        `No supported lockfile was found at ${motherfucker}. Skipping this ${I_LIKE_JS.MF}...`,
                         "warn",
                     );
                 }
@@ -210,7 +210,7 @@ export default async function FuckingNodeCleaner(
                 results.push({ path: motherfucker, status: "Success" });
             } catch (err) {
                 await LogStuff(
-                    `Error while processing ${motherfucker} -> ${err}`,
+                    `Error while working around with ${motherfucker} -> ${err}`,
                     "error",
                 );
                 results.push({ path: motherfucker, status: "Failed" });
