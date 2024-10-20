@@ -14,14 +14,13 @@ async function Error(errorCode: "noArgument" | "invalidArgument"): Promise<void>
     switch (errorCode) {
         case "noArgument":
             await LogStuff(
-                "Why didn't ya provide an argument? " + usage,
+                `Why didn't you provide a valid argument? Remember: ${usage}`,
                 "what",
             );
             break;
         case "invalidArgument":
             await LogStuff(
-                `BRO IT'S SO ${I_LIKE_JS.MFN} EASY!!1!1` + usage +
-                    "\n\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where package-lock.json / pnpm-lock.yaml lives.",
+                `BRO IT'S SO ${I_LIKE_JS.MFN} EASY!!\n${usage}\n\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where your lockfile and node_module DIR live.`,
                 "warn",
             );
             break;
