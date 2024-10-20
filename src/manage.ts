@@ -158,19 +158,21 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
 
         // this should handle duplicates, so all duplicates EXCEPT ONE are removed
         // otherwise, if you have a project duplicate, all entries get removed and you loose it
-        // BEGIN IDK WHATS GOING ON
-        const countMap = {};
+
+        // it creates an object where key is the project and the value is (i think) the number of times the project has been found
+        const countMap: { [key: string]: number } = {};
+        // iterates over the full list of to-be-removed projects to add them with the count of times they've been found
         listOfRemovals.forEach((project: string) => {
             countMap[project] = (countMap[project] || 0) + 1;
         });
 
-        const result = [];
+        // the array we will return to the user
+        const result: string[] = [];
+        // for each project of the object, if it exists, we push it, and this somehow returns only one entry per project
         for (const project of Object.keys(countMap)) {
-            if (countMap[project] > 1) {
-                result.push(project);
-            }
+            if (countMap[project] && countMap[project] > 1) result.push(project);
         }
-        // END IDK WHATS GOING ON
+        // (no i didn't write that)
 
         return result;
     }
