@@ -88,6 +88,7 @@ async function addEntry(entry: string): Promise<void> {
         const addAnyway = confirm(`Confirm you want to add it\nPS. You typed: ${workingEntry}`);
         if (!addAnyway) return;
         addTheEntry();
+        return;
     }
     if (validation === 1) {
         await LogStuff(`This path doesn't have a package.json. Are you sure it's a node project?`, "what");
