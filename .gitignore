@@ -2,4 +2,4 @@
 .command
 **.xp.ts
 # compiled executable
-**.exe
+dist/**

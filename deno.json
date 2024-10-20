@@ -4,7 +4,12 @@
         "lineWidth": 140
     },
     "tasks": {
-        "compile": "deno compile --allow-read --allow-write --allow-net --allow-env --allow-run --target x86_64-pc-windows-msvc --output FuckingNode.exe src/main.ts"
+        "compile-microsoft-mf": "deno compile --allow-read --allow-write --allow-net --allow-env --allow-run --target x86_64-pc-windows-msvc --output FuckingNode-Windows64.exe src/main.ts",
+        "compile-arm-mac": "deno compile --allow-read --allow-write --allow-net --allow-env --allow-run --target aarch64-apple-darwin --output FuckingNode-macOS-Arm src/main.ts",
+        "compile-arm-chad": "deno compile --allow-read --allow-write --allow-net --allow-env --allow-run --target x86_64-unknown-linux-gnu --output FuckingNode-Linux-Arm src/main.ts",
+        "compile-64-mac": "deno compile --allow-read --allow-write --allow-net --allow-env --allow-run --target x86_64-apple-darwin --output FuckingNode-macOS-86_64 src/main.ts",
+        "compile-64-chad": "deno compile --allow-read --allow-write --allow-net --allow-env --allow-run --target aarch64-unknown-linux-gnu --output FuckingNode-Linux-86_64 src/main.ts",
+        "compile": "deno task compile-microsoft-mf && deno task compile-arm-mac && deno task compile-arm-chad && deno task compile-64-mac && deno task compile-64-chad"
     },
     "compilerOptions": {
         "strict": true,
