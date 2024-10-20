@@ -1,8 +1,14 @@
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "./constants.ts";
 import { CheckForPath, GetMotherfuckers, GetPath, LogStuff, ParsePath } from "./functions.ts";
 
-// function to show messages
-async function Error(errorCode: "noArgument" | "invalidArgument") {
+/**
+ * Shorthand function to show errors in here.
+ *
+ * @async
+ * @param {("noArgument" | "invalidArgument")} errorCode
+ * @returns {Promise<void>}
+ */
+async function Error(errorCode: "noArgument" | "invalidArgument"): Promise<void> {
     const usage = `Usage:\n${APP_NAME} manager add <path> / remove <path> / ignore <path> / list`;
 
     switch (errorCode) {
@@ -22,8 +28,14 @@ async function Error(errorCode: "noArgument" | "invalidArgument") {
     }
 }
 
-// write new entry to file
-async function addEntry(entry: string) {
+/**
+ * Adds a new project.
+ *
+ * @async
+ * @param {string} entry
+ * @returns {Promise<void>}
+ */
+async function addEntry(entry: string): Promise<void> {
     const workingEntry = ParsePath("list", entry) as string;
     const list = await GetMotherfuckers();
     if (list.includes(workingEntry)) {
@@ -42,8 +54,14 @@ async function addEntry(entry: string) {
     }
 }
 
-// remove entry from file
-async function removeEntry(entry: string) {
+/**
+ * Removes a project.
+ *
+ * @async
+ * @param {string} entry
+ * @returns {Promise<void>}
+ */
+async function removeEntry(entry: string): Promise<void> {
     const workingEntry = ParsePath("list", entry) as string;
     let list = await GetMotherfuckers();
     if (list.includes(workingEntry)) {
@@ -69,8 +87,13 @@ async function removeEntry(entry: string) {
     }
 }
 
-// list entries
-async function listEntries() {
+/**
+ * Lists all projects.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
+async function listEntries(): Promise<void> {
     const list = await GetMotherfuckers();
     if (list.length > 0) {
         await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
@@ -81,11 +104,11 @@ async function listEntries() {
 }
 
 /**
- * Description placeholder
+ * Ignores a project by adding a `.fknodeignore` file to it's root.
  *
  * @async
- * @param {string} entry
- * @returns {Promise<0 | 1 | 2>}
+ * @param {string} entry The path to the project's root.
+ * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if failure (will log the error), 2 if the project's already ignored.
  */
 async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
     const workingEntry = ParsePath("list", entry) as string;
