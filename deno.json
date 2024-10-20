@@ -1,7 +1,7 @@
 {
     "fmt": {
         "indentWidth": 4,
-        "lineWidth": 140
+        "lineWidth": 144
     },
     "tasks": {
         "compile-microsoft-mf": "deno compile --allow-read --allow-write --allow-net --allow-env --allow-run --target x86_64-pc-windows-msvc --output dist/fuckingnode.exe src/main.ts",

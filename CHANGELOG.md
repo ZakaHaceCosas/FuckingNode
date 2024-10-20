@@ -16,8 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
-- Now `manager add` validates if you want to add paths that are valid but don't make sense (they don't have `package.json` or
-  `node_modules`).
+- Now `manager add` validates if you want to add paths that are valid but don't make sense (they don't have `package.json` or `node_modules`).
 
 ### Fixed
 
@@ -44,22 +43,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `manager` was broken by a human mistake on previous updates (sorry, mb) and it didn't recognize one word commands like `list`. It has been
   fixed.
 - `clean` would crash if one of your project's path didn't exist. Now it will log an error and skip it without interrupting the cleanup.
-- When auto-checking for updates, the program would consider there are updates if your version number is greater than the one from GitHub -
-  it's unlikely that the end user ever saw this, but it's now fixed.
+- When auto-checking for updates, the program would consider there are updates if your version number is greater than the one from GitHub - it's
+  unlikely that the end user ever saw this, but it's now fixed.
 
 ## [1.1.0] 19-10-2024
 
 ### Added
 
-- Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size of `node_modules/`,
-  but you can pass the `--full` flag to it so it also includes your code.
-- Added `manager ignore` command. Creates a `.fknodeignore` file at the root of the project, so F*ckingNode simply ignores it whenever a
-  cleanup is made.
+- Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size of `node_modules/`, but
+  you can pass the `--full` flag to it so it also includes your code.
+- Added `manager ignore` command. Creates a `.fknodeignore` file at the root of the project, so F*ckingNode simply ignores it whenever a cleanup
+  is made.
 
 ### Changed
 
-- Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename variables and all that kind
-  of stuff. ~~I don't want to get banned~~.
+- Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename variables and all that kind of
+  stuff. ~~I don't want to get banned~~.
 - Now "unknown errors" when pruning a project actually show the command's `stderr`.
 
 ### Fixed
@@ -93,8 +92,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Fixed the app losing data from one version to another (now it uses `APPDATA/FuckingNode/*` instead of `APPDATA/FuckingNode-VERSION/*` to
-  store data).
+- Fixed the app losing data from one version to another (now it uses `APPDATA/FuckingNode/*` instead of `APPDATA/FuckingNode-VERSION/*` to store
+  data).
 - Remove case sensitivity from some arguments.
 
 ## [1.0.0] - 14-10-2024

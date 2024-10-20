@@ -8,12 +8,12 @@
 
 ## Abstract
 
-Tired of Node projects' ~~motherf*cking~~ `node_modules` directory and their space consumption, I once switched to `pnpm` (my greatest
-decision in years) and started manually removing all `node_modules` folders and `pnpm` pruning all of my projects.
+Tired of Node projects' ~~motherf*cking~~ `node_modules` directory and their space consumption, I once switched to `pnpm` (my greatest decision
+in years) and started manually removing all `node_modules` folders and `pnpm` pruning all of my projects.
 
-This was time consuming, but it felt worth it - just the day I got pnpm and did a `node_modules` cleanup I recovered ~11 GB of space.
-Anyway, one day I had the idea of automating the process with a PowerShell script, and it felt good - so good that I turned that `ps1` code
-into a CLI app with TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
+This was time consuming, but it felt worth it - just the day I got pnpm and did a `node_modules` cleanup I recovered ~11 GB of space. Anyway,
+one day I had the idea of automating the process with a PowerShell script, and it felt good - so good that I turned that `ps1` code into a CLI
+app with TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
 
 > ### (yes i'm calling it like that and i'm shipping that to production, don't question me)
 
@@ -22,8 +22,8 @@ into a CLI app with TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
 Currently only Windows is supported.
 
 > [!WARNING]
-> Since Deno allows to compile to macOS and Linux from my PC, next release will include macOS and Linux versions. I don't have devices with
-> any of those OSs so someone will have to test them.
+> Since Deno allows to compile to macOS and Linux from my PC, next release will include macOS and Linux versions. I don't have devices with any
+> of those OSs so someone will have to test them.
 
 1. Download the `.exe` from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest).
 2. Place that somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
@@ -61,13 +61,13 @@ Currently only Windows is supported.
 And that's it for now.
 
 > [!TIP]
-> If for any reason you want to skip a project without removing it from your list (idk, maybe you _temporarily_ don't want anyone to update
-> deps for that specific project), create an empty `.fknodeignore` file in the root of the project and F*ckingNode will ignore it.
+> If for any reason you want to skip a project without removing it from your list (idk, maybe you _temporarily_ don't want anyone to update deps
+> for that specific project), create an empty `.fknodeignore` file in the root of the project and F*ckingNode will ignore it.
 
 ---
 
-Hope those motherf*ckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue (or make a PR which
-would be awesome :smile:).
+Hope those motherf*ckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue (or make a PR which would
+be awesome :smile:).
 
 Cya!
 
