@@ -5,7 +5,7 @@ import type { SemVer } from "./types.ts";
  *
  * @type {SemVer}
  */
-export const VERSION: SemVer = "1.1.1";
+export const VERSION: SemVer = "1.2.0";
 
 // help
 const _USAGE = {
