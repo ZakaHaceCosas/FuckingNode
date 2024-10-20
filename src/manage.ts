@@ -39,7 +39,7 @@ async function Error(errorCode: "noArgument" | "invalidArgument"): Promise<void>
 async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | false> {
     const workingEntry = ParsePath("list", entry) as string;
     const list = await GetMotherfuckers();
-    const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
+    const isDuplicate = (list.filter((item) => item === workingEntry).length) >= 1;
 
     if (!(await CheckForPath(workingEntry))) {
         return false;
@@ -97,7 +97,7 @@ async function addEntry(entry: string): Promise<void> {
         addTheEntry();
         return;
     }
-    if (validation === 0) {
+    if (validation === false) {
         await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
         return;
     }
@@ -154,7 +154,23 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
             listOfRemovals.push(project);
         }
 
-        return listOfRemovals;
+        // this should handle duplicates, so all duplicates EXCEPT ONE are removed
+        // otherwise, if you have a project duplicate, all entries get removed and you loose it
+        // BEGIN IDK WHATS GOING ON
+        const countMap = {};
+        listOfRemovals.forEach((project: string) => {
+            countMap[project] = (countMap[project] || 0) + 1;
+        });
+
+        const result = [];
+        for (const project of Object.keys(countMap)) {
+            if (countMap[project] > 1) {
+                result.push(project);
+            }
+        }
+        // END IDK WHATS GOING ON
+
+        return result;
     }
     const list = await GetProjectsToRemove();
     if (list.length === 0) {
