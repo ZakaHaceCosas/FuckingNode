@@ -10,7 +10,7 @@ export const VERSION: SemVer = "1.1.1";
 // help
 const _USAGE = {
     clean: "                      clean   [--update] [--verbose]",
-    manager: "                      manager add <item> | remove <item> | ignore <item> | list | cleanup",
+    manager: "                      manager add <item> / [--self] | remove <item> | ignore <item> | list | cleanup",
     stats: "                      stats   [--full]",
     self_update: "                              self-update",
     version: "                              [--version]",

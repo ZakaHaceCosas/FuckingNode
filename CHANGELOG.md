@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - `manager cleanup` checks the list of projects and validates them. If some project cannot be cleaned, it will prompt you to remove it.
+- `--self` flag to `manager add`, so you can add the CWD to the list quickly.
 
 ### Changed
 

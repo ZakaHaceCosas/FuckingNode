@@ -64,7 +64,8 @@ async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 
  * @returns {Promise<void>}
  */
 async function addEntry(entry: string): Promise<void> {
-    const workingEntry = ParsePath("list", entry) as string;
+    const realPath: string = (entry === "--self") ? Deno.cwd() : entry;
+    const workingEntry = ParsePath("list", realPath) as string;
     async function addTheEntry() {
         await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
