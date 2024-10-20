@@ -371,7 +371,9 @@ export async function GetMotherfuckers(): Promise<string[]> {
 export async function GetDirSize(path: string): Promise<number | null> {
     let totalSize: number = 0;
 
-    if (!(await Deno.stat(path)).isDirectory) return null;
+    if (!(await CheckForPath(path))) {
+        return null;
+    }
 
     for await (const entry of Deno.readDir(path)) {
         const fullPath = `${path}/${entry.name}`;

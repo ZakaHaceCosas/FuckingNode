@@ -11,7 +11,7 @@ export default async function GetFuckingStats(includeSelf: boolean) {
         const selfSize = await GetDirSize(mf);
         if (!size || !selfSize) {
             await LogStuff(`Feels like ${mf} doesn't exist?`);
-            return;
+            continue;
         }
 
         if (includeSelf) {
@@ -40,7 +40,7 @@ export default async function GetFuckingStats(includeSelf: boolean) {
         totalSpace += size;
     }
 
-    console.log("\n"); // glue stick fix
+    console.log(""); // glue stick fix
     await LogStuff(
         `In total, your ${I_LIKE_JS.MFS} are taking up to ${totalSpace} MB.`,
         "bruh",
