@@ -19,7 +19,11 @@ into a CLI app with TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
 
 ## Installation
 
-Currently only Windows is supported. I'll look onto Linux, which I'd love to support.
+Currently only Windows is supported.
+
+> [!WARNING]
+> Since Deno allows to compile to macOS and Linux from my PC, next release will include macOS and Linux versions. I don't have devices with
+> any of those OSs so someone will have to test them.
 
 1. Download the `.exe` from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest).
 2. Place that somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
@@ -48,10 +52,11 @@ Currently only Windows is supported. I'll look onto Linux, which I'd love to sup
 - `fuckingnode manager list` - lists all projects.
 - `fuckingnode manager add <path>` - adds a project.
 - `fuckingnode manager remove <path>` - removes a project.
+- `fuckingnode manager stats` - tells you how much space all your added `node_modules` are taking up.
 
 ### Others
 
-- `fuckingnode --help` and `fuckingnode --version` - both do the obvious.
+- `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode self-update` - all do the obvious.
 
 And that's it for now.
 
