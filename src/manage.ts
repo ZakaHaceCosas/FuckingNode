@@ -113,9 +113,11 @@ async function addEntry(entry: string): Promise<void> {
  */
 async function removeEntry(entry: string): Promise<void> {
     const workingEntry = ParsePath("list", entry) as string;
-    let list = await GetMotherfuckers();
+    const list = await GetMotherfuckers();
+    const index = list.indexOf(workingEntry);
+
     if (list.includes(workingEntry)) {
-        list = list.filter((item) => item !== workingEntry);
+        if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         if (list.length > 0) {
             await Deno.writeTextFile(
                 GetPath("MOTHERFKRS"),
