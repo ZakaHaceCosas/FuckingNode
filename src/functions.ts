@@ -383,3 +383,28 @@ export async function GetDirSize(path: string): Promise<number | null> {
 
     return parseFloat((totalSize / (1024 * 1024)).toFixed(3)); // (returns in MB)
 }
+
+/**
+ * Parses a string with either a single path (list) or a lot of paths (cleaner), to ensure string cleanness.
+ *
+ * @export
+ * @param {("list" | "cleaner")} idea What kind of parsing you'd like
+ * @param {string} target The string to parse.
+ * @returns {(string | string[])} Either a string or a string[].
+ */
+export function ParsePath(idea: "list" | "cleaner", target: string): string | string[] {
+    if (idea === "cleaner") {
+        return target.split("\n")
+            .map((line) => line.trim().replace(/,$/, ""))
+            .filter((line) => line.length > 0);
+    } else if (idea === "list") {
+        const cleanEntry = target.trimEnd().trimStart();
+        if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
+            return cleanEntry.trimEnd().trimStart().slice(0, -1);
+        }
+
+        return cleanEntry;
+    } else {
+        throw new Error("Invalid idea.");
+    }
+}

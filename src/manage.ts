@@ -1,5 +1,5 @@
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "./constants.ts";
-import { CheckForPath, GetMotherfuckers, GetPath, LogStuff } from "./functions.ts";
+import { CheckForPath, GetMotherfuckers, GetPath, LogStuff, ParsePath } from "./functions.ts";
 
 // function to show messages
 async function Error(errorCode: "noArgument" | "invalidArgument") {
@@ -22,22 +22,9 @@ async function Error(errorCode: "noArgument" | "invalidArgument") {
     }
 }
 
-// parse entry
-function parseEntry(entry: string): string {
-    const cleanEntry = entry.trimEnd().trimStart();
-    let cleanerEntry: string;
-    if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
-        cleanerEntry = entry.trimEnd().trimStart().slice(0, -1);
-    } else {
-        cleanerEntry = entry.trimEnd().trimStart();
-    }
-
-    return cleanerEntry;
-}
-
 // write new entry to file
 async function addEntry(entry: string) {
-    const workingEntry = parseEntry(entry);
+    const workingEntry = ParsePath("list", entry) as string;
     const list = await GetMotherfuckers();
     if (list.includes(workingEntry)) {
         await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
@@ -49,7 +36,7 @@ async function addEntry(entry: string) {
             append: true,
         });
         await LogStuff(
-            `Congrats! ${parseEntry(workingEntry)} was added to your list. One mf less to care about!`,
+            `Congrats! ${workingEntry} was added to your list. One mf less to care about!`,
             "tick-clear",
         );
     }
@@ -57,7 +44,7 @@ async function addEntry(entry: string) {
 
 // remove entry from file
 async function removeEntry(entry: string) {
-    const workingEntry = parseEntry(entry);
+    const workingEntry = ParsePath("list", entry) as string;
     let list = await GetMotherfuckers();
     if (list.includes(workingEntry)) {
         list = list.filter((item) => item !== workingEntry);
@@ -101,7 +88,7 @@ async function listEntries() {
  * @returns {Promise<0 | 1 | 2>}
  */
 async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
-    const workingEntry = parseEntry(entry);
+    const workingEntry = ParsePath("list", entry) as string;
     const pathToIgnoreFile = `${workingEntry}/${IGNORE_FILE}`;
 
     if (await CheckForPath(pathToIgnoreFile)) {

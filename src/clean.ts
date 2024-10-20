@@ -2,6 +2,7 @@ import { I_LIKE_JS } from "./constants.ts";
 import { CheckForPath, GetPath, LogStuff } from "./functions.ts";
 import { type SUPPORTED_LOCKFILE } from "./types.ts";
 import { IGNORE_FILE } from "./constants.ts";
+import { ParsePath } from "./functions.ts";
 
 async function CleanMotherfucker(
     lockfile: SUPPORTED_LOCKFILE,
@@ -111,10 +112,7 @@ export default async function FuckingNodeCleaner(
         let motherFuckers: string[] = [];
         try {
             const data = await Deno.readTextFile(GetPath("MOTHERFKRS"));
-            motherFuckers = data
-                .split("\n")
-                .map((line) => line.trim().replace(/,$/, ""))
-                .filter((line) => line.length > 0);
+            motherFuckers = ParsePath("cleaner", data) as string[];
         } catch (e) {
             await LogStuff(
                 `${I_LIKE_JS.MFN} error reading your ${I_LIKE_JS.MFN} list of ${I_LIKE_JS.MFS}: ${e}`,
