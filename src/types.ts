@@ -97,4 +97,10 @@ export interface UPDATE_FILE {
     lastVer: SemVer;
 }
 
+/**
+ * A string preceded with "https://"
+ *
+ * @export
+ * @typedef {tURL}
+ */
 export type tURL = `https://${string}`;

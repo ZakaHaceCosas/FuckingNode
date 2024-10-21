@@ -1,6 +1,6 @@
 import FuckingNodeCleaner from "./clean.ts";
 import FuckingNodeManager from "./manage.ts";
-import { HELP, VERSION } from "./constants.ts";
+import { APP_NAME, HELP, VERSION } from "./constants.ts";
 import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
 import GetFuckingStats from "./stats.ts";
 
@@ -45,7 +45,7 @@ switch (command ? command.toLowerCase() : "") {
         break;
     default:
         await LogStuff(
-            "Unknown command. Use 'clean' or 'manager'. Use 'fuckingnode --help' to see the full list of commands.",
+            `Unknown command. Use 'clean' or 'manager'. Use '${APP_NAME.CLI} --help' to see the full list of commands.`,
             "what",
             true,
         );

@@ -7,6 +7,17 @@ import type { SemVer, tURL } from "./types.ts";
  */
 export const VERSION: SemVer = "1.2.0";
 
+/**
+ * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
+ *
+ * @type {{CASED: string, CLI: string, STYLED: string}}
+ */
+export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
+    CASED: "FuckingNode",
+    CLI: "fuckingnode",
+    STYLED: "F*ckingNode",
+};
+
 // help
 const _USAGE = {
     clean: "                      clean   [--update] [--verbose]",
@@ -41,7 +52,7 @@ const CLEAN_OPTIONS = _CLEAN_OPTIONS.update +
     _CLEAN_OPTIONS.verbose +
     "\n" +
     _CLEAN_OPTIONS.maxim;
-export const HELP = "Usage: fuckingnode\n" +
+export const HELP = `Usage: ${APP_NAME.CLI}\n` +
     USAGE +
     "\n\n'clean' will clean your added projects. Flags:\n" +
     CLEAN_OPTIONS +
@@ -108,17 +119,15 @@ export const I_LIKE_JS: HE_LIKES_JS = {
 };
 
 /**
- * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
- *
- * @type {string}
- */
-export const APP_NAME: string = "fuckingnode";
-
-/**
  * Name of the ignore file.
  *
  * @type {string}
  */
 export const IGNORE_FILE: string = ".fknodeignore";
 
-export const RELEASE_URL: tURL = "https://api.github.com/repos/ZakaHaceCosas/FuckingNode/releases/latest";
+/**
+ * GitHub REST API URL from where releases are obtained.
+ *
+ * @type {tURL}
+ */
+export const RELEASE_URL: tURL = `https://api.github.com/repos/ZakaHaceCosas/${APP_NAME.CASED}/releases/latest`;

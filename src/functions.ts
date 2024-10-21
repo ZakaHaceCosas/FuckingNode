@@ -75,10 +75,10 @@ export function GetPath(
     }
 
     // i don't know how to remove the f-word from here, i can't just put an asterisk in a file path
-    const BASE_DIR = `${appDataPath}/${APP_NAME}/`;
-    const MOTHERFKRS_DIR = `${BASE_DIR}/${APP_NAME}-motherfuckers.txt`;
-    const LOGS_DIR = `${BASE_DIR}/${APP_NAME}-Logs.log`;
-    const UPDATES_DIR = `${BASE_DIR}/${APP_NAME}-updates.txt`;
+    const BASE_DIR = `${appDataPath}/${APP_NAME.CASED}/`;
+    const MOTHERFKRS_DIR = `${BASE_DIR}/${APP_NAME.CASED}-motherfuckers.txt`;
+    const LOGS_DIR = `${BASE_DIR}/${APP_NAME.CASED}-Logs.log`;
+    const UPDATES_DIR = `${BASE_DIR}/${APP_NAME.CASED}-updates.txt`;
 
     switch (path) {
         case "BASE":

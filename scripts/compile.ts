@@ -11,7 +11,7 @@ const TARGETS = {
 };
 
 const ALL_COMMANDS = Object.entries(TARGETS).map(([_key, [target, output]]) => {
-    const compiledName = target![1] === "win64" ? `${APP_NAME}-${output}.exe` : `${APP_NAME}-${output}`;
+    const compiledName = target![1] === "win64" ? `${APP_NAME.CASED}-${output}.exe` : `${APP_NAME.CASED}-${output}`;
 
     const args = [
         "compile",
