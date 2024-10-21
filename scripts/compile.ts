@@ -11,10 +11,7 @@ const TARGETS = {
 };
 
 const ALL_COMMANDS = Object.entries(TARGETS).map(([_key, [target, output]]) => {
-    if (!target) throw new Error("something went wrong (!target)");
-    if (!output) throw new Error("something went wrong (!output)");
-
-    const compiledName = target[1] === "win64" ? `${APP_NAME}-${output}.exe` : `${APP_NAME}-${output}`;
+    const compiledName = target![1] === "win64" ? `${APP_NAME}-${output}.exe` : `${APP_NAME}-${output}`;
 
     const args = [
         "compile",
@@ -24,14 +21,12 @@ const ALL_COMMANDS = Object.entries(TARGETS).map(([_key, [target, output]]) => {
         PERMISSIONS_NEEDED[3]!,
         PERMISSIONS_NEEDED[4]!,
         "--target",
-        target,
+        target!,
         "--output",
         `dist/${compiledName}`,
         "src/main.ts",
     ];
     console.log(args);
-
-    if (!args) throw new Error("something went wrong (!args)");
 
     return new Deno.Command("deno", { args });
 });
