@@ -1,4 +1,4 @@
-import { APP_NAME, I_LIKE_JS, VERSION } from "./constants.ts";
+import { APP_NAME, I_LIKE_JS, RELEASE_URL, VERSION } from "./constants.ts";
 import {
     type GITHUB_RELEASE,
     type RIGHT_NOW_DATE,
@@ -187,15 +187,15 @@ export function GetDateNow(): RIGHT_NOW_DATE {
 /**
  * Takes a `RIGHT_NOW_DATE` and turns it into a JS `Date()` so code can interact with it.
  *
- * @param {RIGHT_NOW_DATE} dateString
+ * @param {RIGHT_NOW_DATE} date The date string you want to make standard.
  * @returns {Date}
  */
-function MakeDateNowCompatibleWithJavaScriptsDate(
-    dateString: RIGHT_NOW_DATE,
+function MakeRightNowDateStandard(
+    date: RIGHT_NOW_DATE,
 ): Date {
-    if (!RIGHT_NOW_DATE_REGEX.test(dateString)) throw new TypeError("Provided dateString doesn't match RIGHT_NOW_DATE Regular Expression.");
+    if (!RIGHT_NOW_DATE_REGEX.test(date)) throw new TypeError("Provided dateString doesn't match RIGHT_NOW_DATE Regular Expression.");
 
-    const [datePart, timePart] = dateString.split(" ");
+    const [datePart, timePart] = date.split(" ");
 
     if (!datePart) throw new Error("undefined datePart");
     if (!timePart) throw new Error("undefined timePart");
@@ -233,9 +233,9 @@ function CompareSemver(versionA: string, versionB: string): number {
  * Checks for updates (in case it needs to do so). If you want to force it to check for updates, pass `true` as the 1st argument. Otherwise, pass false or no argument at all.
  *
  * @export
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export function CheckForUpdates(force?: boolean): void {
+export async function CheckForUpdates(force?: boolean): Promise<void> {
     const tellAboutUpdate = async (newVer: SemVer) => {
         await LogStuff(
             `There's a new version! ${newVer}. Consider downloading it from GitHub. You're on ${VERSION}, btw.`,
@@ -246,7 +246,7 @@ export function CheckForUpdates(force?: boolean): void {
     async function Update() {
         try {
             const response = await fetch(
-                "https://api.github.com/repos/ZakaHaceCosas/FuckingNode/releases/latest",
+                RELEASE_URL,
                 {
                     headers: {
                         Accept: "application/vnd.github.v3+json",
@@ -255,30 +255,25 @@ export function CheckForUpdates(force?: boolean): void {
             );
 
             if (!response.ok) {
-                if (response.status === 403) return; // (github as a rate limit, so this is not an error we should be really aware of)
+                if (response.status === 403) return; // (github has a rate limit, so this is not an error we should be really aware of)
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const content: GITHUB_RELEASE = await response.json();
 
             const isUpToDate = CompareSemver(content.tag_name, VERSION) <= 0;
+            if (!isUpToDate) await tellAboutUpdate(content.tag_name);
 
-            if (!isUpToDate) {
-                await tellAboutUpdate(content.tag_name);
-            } else {
-                if (force) await LogStuff(`You're up to date! (v${VERSION})`, "tick-clear");
-            }
+            if (force) await LogStuff(`You're up to date! (v${VERSION})`, "tick-clear");
 
             const dataToWrite: UPDATE_FILE = {
                 isUpToDate: isUpToDate,
                 lastVer: content.tag_name,
                 lastCheck: GetDateNow(),
             };
-            await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 7 days later, so no waste of net resources.
+            await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 5 days later, so no waste of net resources.
         } catch (e) {
-            if (e) {
-                throw new Error("Error checking for updates: " + e);
-            }
+            throw new Error("Error checking for updates: " + e);
         }
     }
 
@@ -296,8 +291,7 @@ export function CheckForUpdates(force?: boolean): void {
             needsToWait = false;
         }
 
-        const updateFileContent = await Deno.readTextFile(GetPath("UPDATES"));
-        const updateFile: UPDATE_FILE = JSON.parse(updateFileContent);
+        const updateFile: UPDATE_FILE = JSON.parse(await Deno.readTextFile(GetPath("UPDATES")));
         if (!RIGHT_NOW_DATE_REGEX.test(updateFile.lastCheck)) {
             throw new Error(
                 "Unable to parse date of last update. Got " + updateFile.lastCheck + ".",
@@ -306,15 +300,16 @@ export function CheckForUpdates(force?: boolean): void {
 
         if (!updateFile.isUpToDate) {
             await tellAboutUpdate(updateFile.lastVer);
+            return true;
         }
 
         let needsToCheck = true;
 
         if (needsToWait) {
-            const currentCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(
+            const currentCompatibleDate = MakeRightNowDateStandard(
                 GetDateNow(),
             );
-            const lastCompatibleDate = MakeDateNowCompatibleWithJavaScriptsDate(updateFile.lastCheck);
+            const lastCompatibleDate = MakeRightNowDateStandard(updateFile.lastCheck);
 
             if (!(currentCompatibleDate > lastCompatibleDate)) return false; // no need to update
 
@@ -334,7 +329,7 @@ export function CheckForUpdates(force?: boolean): void {
         Update();
         return;
     } else {
-        if (!VerifyItNeedsToUpdate()) return;
+        if (!(await VerifyItNeedsToUpdate())) return;
         Update();
         return;
     }

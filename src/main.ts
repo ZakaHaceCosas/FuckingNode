@@ -14,8 +14,8 @@ const wantsMaxim = flags.includes("--maxim");
 
 const statsModular = flags.includes("--full");
 
-async function init() {
-    CheckForUpdates(false);
+async function init(update?: boolean) {
+    await CheckForUpdates(update);
     await FreshSetup();
 }
 
@@ -41,8 +41,7 @@ switch (command ? command.toLowerCase() : "") {
         await LogStuff(HELP, "bulb", true);
         break;
     case "self-update":
-        await FreshSetup();
-        CheckForUpdates(true);
+        await init(true);
         break;
     default:
         await LogStuff(

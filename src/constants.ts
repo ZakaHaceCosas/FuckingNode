@@ -1,4 +1,4 @@
-import type { SemVer } from "./types.ts";
+import type { SemVer, tURL } from "./types.ts";
 
 /**
  * Current version of the app
@@ -120,3 +120,5 @@ export const APP_NAME: string = "fuckingnode";
  * @type {string}
  */
 export const IGNORE_FILE: string = ".fknodeignore";
+
+export const RELEASE_URL: tURL = "https://api.github.com/repos/ZakaHaceCosas/FuckingNode/releases/latest";

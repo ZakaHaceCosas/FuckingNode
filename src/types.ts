@@ -96,3 +96,5 @@ export interface UPDATE_FILE {
      */
     lastVer: SemVer;
 }
+
+export type tURL = `https://${string}`;
