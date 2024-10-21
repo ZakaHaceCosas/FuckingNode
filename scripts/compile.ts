@@ -1,4 +1,4 @@
-// TODO: refactor this piece of garbage so this code isn't trash
+// i should think of a better way than PERMISSION[1], PERMISSION[2] to pass args
 import { APP_NAME, VERSION } from "../src/constants.ts";
 
 const PERMISSIONS_NEEDED = ["--allow-read", "--allow-write", "--allow-net", "--allow-env", "--allow-run"];
