@@ -26,12 +26,11 @@ const ALL_COMMANDS = Object.entries(TARGETS).map(([_key, [target, output]]) => {
         `dist/${compiledName}`,
         "src/main.ts",
     ];
-    console.log(args);
 
     return new Deno.Command("deno", { args });
 });
 
 for (const CMD of ALL_COMMANDS) {
     const p = CMD.spawn();
-    p.status.then((status) => console.log(`Exit status: ${status.code}`));
+    p.status.then((_status) => {});
 }
