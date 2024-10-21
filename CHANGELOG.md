@@ -1,4 +1,4 @@
-<!-- markdownlint-disable -->
+<!-- markdownlint-disable MD024 -->
 
 # F*ckingNode Changelog
 

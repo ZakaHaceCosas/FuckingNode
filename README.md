@@ -1,5 +1,3 @@
-<!-- markdownlint-disable -->
-
 # F*ckingNode
 
 > [!WARNING]
@@ -19,10 +17,12 @@ app with TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
 
 ## Installation
 
+### Release
+
 Currently only Windows is supported.
 
 > [!WARNING]
-> Deno allows to compile to macOS and Linux from my PC, but I don't have devices with any of those OSs so someone will have to test them.
+> Next release will include macOS and Linux binaries. _I cannot test them as I don't have any device_.
 
 1. Download the `.exe` from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest).
 2. Place that somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
@@ -30,6 +30,15 @@ Currently only Windows is supported.
 4. You'll see a modal with two lists, both having a "Path" entry. On each one, click edit, then New, and then type the path you saved
    F*ckingNode to (e.g. `C:\Scripts\FuckingNode.exe`).
 5. Save both lists and you're done! The `fuckingnode` command will now work from your terminal.
+
+### Compiling from source
+
+It should work on macOS and Linux as well.
+
+1. Install [Deno 2](https://docs.deno.com/runtime/).
+2. Open this project from the root.
+3. Run `deno task compile`.
+4. An executable for each platform will be created at `dist/`. Run the executable for your platform (file names are specific to each platform).
 
 ## Usage
 
