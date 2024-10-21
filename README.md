@@ -22,8 +22,7 @@ app with TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
 Currently only Windows is supported.
 
 > [!WARNING]
-> Since Deno allows to compile to macOS and Linux from my PC, next release will include macOS and Linux versions. I don't have devices with any
-> of those OSs so someone will have to test them.
+> Deno allows to compile to macOS and Linux from my PC, but I don't have devices with any of those OSs so someone will have to test them.
 
 1. Download the `.exe` from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest).
 2. Place that somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
