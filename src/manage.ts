@@ -256,7 +256,7 @@ async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
 }
 
 // run functions based on args
-export default async function FuckingNodeManager(args: string[]) {
+export default async function TheManager(args: string[]) {
     if (!args || args.length === 0) {
         Error("noArgument");
         Deno.exit(1);

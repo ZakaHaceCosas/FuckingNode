@@ -4,7 +4,7 @@ import { type SUPPORTED_LOCKFILE } from "./types.ts";
 import { IGNORE_FILE } from "./constants.ts";
 import { ParsePath } from "./functions.ts";
 
-async function CleanMotherfucker(
+async function PerformCleaning(
     lockfile: SUPPORTED_LOCKFILE,
     motherfuckerInQuestion: string,
     shouldUpdate: boolean,
@@ -99,7 +99,7 @@ async function CleanMotherfucker(
     }
 }
 
-export default async function FuckingNodeCleaner(
+export default async function TheCleaner(
     verbose: boolean,
     update: boolean,
     maxim: boolean,
@@ -173,21 +173,21 @@ export default async function FuckingNodeCleaner(
                 }
 
                 if (await CheckForPath("pnpm-lock.yaml")) {
-                    await CleanMotherfucker(
+                    await PerformCleaning(
                         "pnpm-lock.yaml",
                         motherfucker,
                         update,
                         maximForReal,
                     );
                 } else if (await CheckForPath("package-lock.json")) {
-                    await CleanMotherfucker(
+                    await PerformCleaning(
                         "package-lock.json",
                         motherfucker,
                         update,
                         maximForReal,
                     );
                 } else if (await CheckForPath("yarn.lock")) {
-                    await CleanMotherfucker(
+                    await PerformCleaning(
                         "yarn.lock",
                         motherfucker,
                         update,
@@ -206,9 +206,9 @@ export default async function FuckingNodeCleaner(
                 }
 
                 results.push({ path: motherfucker, status: "Success" });
-            } catch (err) {
+            } catch (e) {
                 await LogStuff(
-                    `Error while working around with ${motherfucker} -> ${err}`,
+                    `Error while working around with ${motherfucker}: ${e}`,
                     "error",
                 );
                 results.push({ path: motherfucker, status: "Failed" });

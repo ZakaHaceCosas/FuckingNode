@@ -1,5 +1,5 @@
-import FuckingNodeCleaner from "./clean.ts";
-import FuckingNodeManager from "./manage.ts";
+import TheCleaner from "./clean.ts";
+import TheManager from "./manage.ts";
 import { APP_NAME, HELP, VERSION } from "./constants.ts";
 import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
 import GetFuckingStats from "./stats.ts";
@@ -22,11 +22,11 @@ async function init(update?: boolean) {
 switch (command ? command.toLowerCase() : "") {
     case "clean":
         await init();
-        await FuckingNodeCleaner(isVerbose, wantsToUpdate, wantsMaxim);
+        await TheCleaner(isVerbose, wantsToUpdate, wantsMaxim);
         break;
     case "manager":
         await init();
-        await FuckingNodeManager(Deno.args);
+        await TheManager(Deno.args);
         break;
     case "stats":
         await init();

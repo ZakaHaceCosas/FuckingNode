@@ -76,7 +76,7 @@ export function GetPath(
 
     // i don't know how to remove the f-word from here, i can't just put an asterisk in a file path
     const BASE_DIR = `${appDataPath}/${APP_NAME.CASED}/`;
-    const MOTHERFKRS_DIR = `${BASE_DIR}/${APP_NAME.CASED}-motherfuckers.txt`;
+    const MOTHERFKRS_DIR = `${BASE_DIR}/${APP_NAME.CASED}-${I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")}.txt`;
     const LOGS_DIR = `${BASE_DIR}/${APP_NAME.CASED}-Logs.log`;
     const UPDATES_DIR = `${BASE_DIR}/${APP_NAME.CASED}-updates.txt`;
 
