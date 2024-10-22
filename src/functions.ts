@@ -388,12 +388,15 @@ export async function GetDirSize(path: string): Promise<number | null> {
  * @returns {(string | string[])} Either a string or a string[].
  */
 export function ParsePath(idea: "list" | "cleaner", target: string): string | string[] {
+    let workingTarget = target;
+    if (target === "--self") workingTarget = Deno.cwd();
+
     if (idea === "cleaner") {
-        return target.split("\n")
+        return workingTarget.split("\n")
             .map((line) => line.trim().replace(/,$/, ""))
             .filter((line) => line.length > 0);
     } else if (idea === "list") {
-        const cleanEntry = target.trimEnd().trimStart();
+        const cleanEntry = workingTarget.trimEnd().trimStart();
         if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
             return cleanEntry.trimEnd().trimStart().slice(0, -1);
         }
