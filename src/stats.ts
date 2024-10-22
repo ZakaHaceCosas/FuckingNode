@@ -24,13 +24,13 @@ export default async function GetFuckingStats(includeSelf: boolean) {
 
         let message: string = I_LIKE_JS.MF;
 
-        if (size < 100) {
+        if (size < 50) {
             message = "That's actually okay ngl.";
-        } else if (size > 1000) {
+        } else if (size > 500) {
             message = `Big ${I_LIKE_JS.MF}.`;
-        } else if (size > 3000) {
+        } else if (size > 1000) {
             message = `Giant ${I_LIKE_JS.MF} (we're over a GB!)`;
-        } else if (size > 9000) {
+        } else if (size > 5000) {
             message = `Insanely ${I_LIKE_JS.MFN} insane.`;
         } else if (size > 9999) {
             message =
@@ -38,7 +38,7 @@ export default async function GetFuckingStats(includeSelf: boolean) {
         }
 
         await LogStuff(
-            `${mf} is taking ${size} MB in your drive. ${message}`,
+            `${mf} is taking ${size.toFixed(3)} MB in your drive. ${message}`,
             "trash",
         );
 
@@ -47,7 +47,7 @@ export default async function GetFuckingStats(includeSelf: boolean) {
 
     console.log(""); // glue stick fix
     await LogStuff(
-        `In total, your ${I_LIKE_JS.MFS} are taking up to ${totalSpace} MB.`,
+        `In total, your ${I_LIKE_JS.MFS} are taking up to ${totalSpace.toFixed(3)} MB.`,
         "bruh",
     );
 }
