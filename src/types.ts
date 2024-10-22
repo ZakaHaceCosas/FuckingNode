@@ -22,6 +22,14 @@ export type SUPPORTED_LOCKFILE =
     | "yarn.lock";
 
 /**
+ * Package manager commands for supported managers.
+ *
+ * @export
+ * @typedef {MANAGERS}
+ */
+export type MANAGERS = "pnpm" | "npm" | "yarn";
+
+/**
  * Valid emojis
  *
  * @export
