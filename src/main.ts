@@ -10,6 +10,7 @@ const [command] = Deno.args;
 const flags = Deno.args.map((arg) => {
     return arg.toLowerCase();
 });
+
 const isVerbose = flags.includes("--verbose");
 const wantsToUpdate = flags.includes("--update");
 const wantsMaxim = flags.includes("--maxim");

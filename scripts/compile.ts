@@ -31,6 +31,12 @@ const ALL_COMMANDS = Object.entries(TARGETS).map(([_key, [target, output]]) => {
     return new Deno.Command("deno", { args });
 });
 
+await Deno.remove("./dist/", {
+    recursive: true,
+});
+
+Deno.mkdir("dist/");
+
 for (const CMD of ALL_COMMANDS) {
     const p = CMD.spawn();
     p.status.then((_status) => {});
