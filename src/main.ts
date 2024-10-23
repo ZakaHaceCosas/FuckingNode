@@ -1,9 +1,9 @@
 import TheCleaner from "./clean.ts";
 import TheManager from "./manage.ts";
+import TheStatistics from "./stats.ts";
+import TheMigrator from "./migrate.ts";
 import { APP_NAME, HELP, VERSION } from "./constants.ts";
 import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
-import GetFuckingStats from "./stats.ts";
-import TheMigrator from "./migrate.ts";
 import type { MANAGERS } from "./types.ts";
 
 const [command] = Deno.args;
@@ -33,7 +33,7 @@ switch (command ? command.toLowerCase() : "") {
         break;
     case "stats":
         await init();
-        await GetFuckingStats(statsModular);
+        await TheStatistics(statsModular);
         break;
     case "migrate":
         await init();
