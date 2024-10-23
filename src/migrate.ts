@@ -34,12 +34,7 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
     }
 
     try {
-        if (!project) throw new Error(`No project specified!`);
-
         const workingProject = ParsePath("path", project) as string;
-
-        if (!target) throw new Error(`No target specified!`);
-
         const workingTarget = target.toLowerCase().trimEnd().trimStart();
 
         if (!(["pnpm", "npm", "yarn"].includes(workingTarget))) {

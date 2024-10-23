@@ -37,7 +37,9 @@ switch (command ? command.toLowerCase() : "") {
         break;
     case "migrate":
         await init();
-        await TheMigrator(Deno.args[1]!, Deno.args[2]! as MANAGERS);
+        if (!Deno.args[1]) throw new Error(`No project specified!`);
+        if (!Deno.args[2]) throw new Error(`No target specified!`);
+        await TheMigrator(Deno.args[1], Deno.args[2] as MANAGERS);
         break;
     case "--version":
         await init();
