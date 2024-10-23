@@ -6,6 +6,8 @@ export default async function GetFuckingStats(includeSelf: boolean) {
 
     let totalSpace: number = 0;
 
+    await LogStuff(`This is ${I_LIKE_JS.MFLY} going to take a while. Have a coffee meanwhile!`, "bruh");
+
     for (const mf of mfs) {
         let size = await GetDirSize(`${mf}/node_modules`);
         const selfSize = await GetDirSize(mf);

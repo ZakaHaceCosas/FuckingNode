@@ -374,19 +374,31 @@ export async function GetMotherfuckers(): Promise<string[]> {
  * @returns {Promise<number>}
  */
 export async function GetDirSize(path: string): Promise<number> {
-    let totalSize: number = 0;
+    try {
+        let totalSize: number = 0;
 
-    const workingPath = ParsePath("path", path) as string;
+        const workingPath = ParsePath("path", path) as string;
 
-    if (!(await CheckForPath(workingPath))) throw new Error(`Provided path ${path} doesn't exist.`);
+        if (!(await CheckForPath(workingPath))) throw new Error(`Provided path ${path} doesn't exist.`);
 
-    for await (const entry of Deno.readDir(workingPath)) {
-        const fullPath = `${workingPath}/${entry.name}`;
-        const fileSize = (await Deno.stat(fullPath)).size;
-        totalSize += fileSize; // increases the size
+        for await (const entry of Deno.readDir(workingPath)) {
+            const fullPath = `${workingPath}/${entry.name}`;
+            try {
+                const pathInfo = await Deno.stat(fullPath);
+                if (pathInfo.isFile) {
+                    totalSize += pathInfo.size; // increases the size
+                } else if (pathInfo.isDirectory) {
+                    totalSize += await GetDirSize(fullPath); // if the entry happens to be another DIR, recursively analyze it
+                }
+            } catch {
+                continue;
+            }
+        }
+
+        return parseFloat((totalSize / (1024 * 1024)).toFixed(3)); // (returns in MB)
+    } catch (e) {
+        throw e;
     }
-
-    return parseFloat((totalSize / (1024 * 1024)).toFixed(3)); // (returns in MB)
 }
 
 /**
