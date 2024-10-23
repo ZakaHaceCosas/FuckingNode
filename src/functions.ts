@@ -366,22 +366,22 @@ export async function GetMotherfuckers(): Promise<string[]> {
 }
 
 /**
- * Gets the size in MBs of a DIR. Will return null if an error happens.
+ * Gets the size in MBs of a DIR.
  *
  * @export
  * @async
  * @param {string} path Path to the directory.
- * @returns {Promise<number | null>}
+ * @returns {Promise<number>}
  */
-export async function GetDirSize(path: string): Promise<number | null> {
+export async function GetDirSize(path: string): Promise<number> {
     let totalSize: number = 0;
 
-    if (!(await CheckForPath(path))) {
-        return null;
-    }
+    const workingPath = ParsePath("path", path) as string;
 
-    for await (const entry of Deno.readDir(path)) {
-        const fullPath = `${path}/${entry.name}`;
+    if (!(await CheckForPath(workingPath))) throw new Error(`Provided path ${path} doesn't exist.`);
+
+    for await (const entry of Deno.readDir(workingPath)) {
+        const fullPath = `${workingPath}/${entry.name}`;
         const fileSize = (await Deno.stat(fullPath)).size;
         totalSize += fileSize; // increases the size
     }
