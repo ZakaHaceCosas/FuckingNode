@@ -10,7 +10,9 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
         try {
             await LogStuff("Please wait (this will take a while)...", "working");
             try {
+                await LogStuff("Removing node_modules and previous lockfile (1/3)...", "working");
                 await Deno.remove(`${target}/${remove}`);
+                await LogStuff("Removing node_modules and previous lockfile (2/3)...", "working");
                 await Deno.remove(`${target}/node_modules`, {
                     recursive: true,
                 });
@@ -18,9 +20,8 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
                 throw e;
             }
 
-            if (!(await CheckForPath(`${target}/package.json`))) throw new Error("No package.json found, cannot migrate.");
-
             Deno.chdir(target);
+            await LogStuff("Installing modules with the desired manager (3/3)...", "working");
             const command = new Deno.Command(cmd, { args: ["install"] });
             const output = await command.output();
 
@@ -33,15 +34,17 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
     }
 
     try {
+        if (!project) throw new Error(`No project specified!`);
+
         const workingProject = ParsePath("list", project) as string;
 
-        const c = await LogStuff(
-            `Are you sure you want to migrate ${workingProject} to ${target}? Your current lockfile will be removed, so versions could be potentially messed up.`,
-            "what",
-            undefined,
-            true,
-        );
-        if (!c) return;
+        if (!target) throw new Error(`No target specified!`);
+
+        const workingTarget = target.toLowerCase().trimEnd().trimStart();
+
+        if (!(["pnpm", "npm", "yarn"].includes(workingTarget))) {
+            throw new Error(`${workingTarget} is not a valid target. Use either "pnpm", "npm", or "yarn".`);
+        }
 
         const isNpm = await CheckForPath(`${workingProject}/package-lock.json`);
         const isPnpm = await CheckForPath(`${workingProject}/pnpm-lock.yaml`);
@@ -49,11 +52,23 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
 
         if (!isNpm && !isPnpm && !isYarn) throw new Error("We weren't able to find a valid lockfile over here.");
 
+        if (!(await CheckForPath(`${target}/package.json`))) {
+            throw new Error("No package.json found, cannot migrate. How will we install your modules without it?");
+        }
+
+        const c = await LogStuff(
+            `Are you sure?\nMigrating ${workingProject} to ${target} will remove your current lockfile, so versions could be potentially messed up.`,
+            "what",
+            undefined,
+            true,
+        );
+        if (!c) return;
+
         if (isNpm) await handler("package-lock.json", target, workingProject);
         else if (isPnpm) await handler("pnpm-lock.yaml", target, workingProject);
         else if (isYarn) await handler("yarn.lock", target, workingProject);
     } catch (e) {
-        await LogStuff(`Some error happened: ${e}`, "error");
+        await LogStuff(`${e}`, "error");
         code = 1;
     } finally {
         Deno.chdir(cwd);
