@@ -16,6 +16,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Updated help menu.
+- Now `--self` can be used anywhere you need you pass a path.
+
+### Fixed
+
+- Now `stats` will recursively get the size of DIRs within `node_modules/` for more accuracy. **Still WIP.**
+- Now `stats` rounds numbers correctly.
 
 ## [1.2.0] 21-10-2024
 
