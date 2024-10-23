@@ -390,14 +390,14 @@ export async function GetDirSize(path: string): Promise<number | null> {
 }
 
 /**
- * Parses a string with either a single path (list) or a lot of paths (cleaner), to ensure string cleanness.
+ * Parses a string with either a single path (path) or a lot of paths (cleaner), to ensure string cleanness.
  *
  * @export
- * @param {("list" | "cleaner")} idea What kind of parsing you'd like
+ * @param {("path" | "cleaner")} idea What kind of parsing you'd like
  * @param {string} target The string to parse.
  * @returns {(string | string[])} Either a string or a string[].
  */
-export function ParsePath(idea: "list" | "cleaner", target: string): string | string[] {
+export function ParsePath(idea: "path" | "cleaner", target: string): string | string[] {
     let workingTarget = target;
     if (target === "--self") workingTarget = Deno.cwd();
 
@@ -405,7 +405,7 @@ export function ParsePath(idea: "list" | "cleaner", target: string): string | st
         return workingTarget.split("\n")
             .map((line) => line.trim().replace(/,$/, ""))
             .filter((line) => line.length > 0);
-    } else if (idea === "list") {
+    } else if (idea === "path") {
         const cleanEntry = workingTarget.trimEnd().trimStart();
         if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
             return cleanEntry.trimEnd().trimStart().slice(0, -1);
@@ -415,4 +415,16 @@ export function ParsePath(idea: "list" | "cleaner", target: string): string | st
     } else {
         throw new Error("Invalid idea.");
     }
+}
+
+/**
+ * Adds whitespace before a string.
+ *
+ * @export
+ * @param {string} prev String itself.
+ * @param {number} n Amount of whitespace to add before.
+ * @returns {string} The spaced string.
+ */
+export function SpaceString(prev: string, n: number): string {
+    return `${" ".repeat(n)}${prev}`;
 }

@@ -37,7 +37,7 @@ async function Error(errorCode: "noArgument" | "invalidArgument"): Promise<void>
  * @returns {Promise<0 | 1 | 2 | 3 | false>}
  */
 async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | false> {
-    const workingEntry = ParsePath("list", entry) as string;
+    const workingEntry = ParsePath("path", entry) as string;
     const list = await GetMotherfuckers();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) >= 1;
 
@@ -64,7 +64,7 @@ async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 
  * @returns {Promise<void>}
  */
 async function addEntry(entry: string): Promise<void> {
-    const workingEntry = ParsePath("list", entry) as string;
+    const workingEntry = ParsePath("path", entry) as string;
     async function addTheEntry() {
         await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
@@ -116,7 +116,7 @@ async function addEntry(entry: string): Promise<void> {
  * @returns {Promise<void>}
  */
 async function removeEntry(entry: string): Promise<void> {
-    const workingEntry = ParsePath("list", entry) as string;
+    const workingEntry = ParsePath("path", entry) as string;
     const list = await GetMotherfuckers();
     const index = list.indexOf(workingEntry);
 
@@ -231,7 +231,7 @@ async function listEntries(): Promise<void> {
  * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if failure (will log the error), 2 if the project's already ignored.
  */
 async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
-    const workingEntry = ParsePath("list", entry) as string;
+    const workingEntry = ParsePath("path", entry) as string;
     const pathToIgnoreFile = `${workingEntry}/${IGNORE_FILE}`;
 
     if (await CheckForPath(pathToIgnoreFile)) {
