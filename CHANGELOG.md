@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Added `migrate` command to move a project from one package to another.
 
+### Changed
+
+- Updated help menu.
+
 ## [1.2.0] 21-10-2024
 
 ### Added
