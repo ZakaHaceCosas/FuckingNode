@@ -393,15 +393,16 @@ export async function GetDirSize(path: string): Promise<number> {
         const sizePromises = entries.map(async (entry) => {
             const fullPath = `${workingPath}/${entry.name}`;
             try {
-                const pathInfo = await Deno.stat(fullPath);
+                const pathInfo = await Deno.lstat(fullPath);
                 if (pathInfo.isFile) {
                     return pathInfo.size; // increases the size
                 } else if (pathInfo.isDirectory) {
                     return await GetDirSize(fullPath); // if the entry happens to be another DIR, recursively analyze it
                 } else {
-                    return 0; // if it's neither a file nor a DIR, there's 0 things left to try
+                    return pathInfo.size; // just try anyway
                 }
-            } catch {
+            } catch (e) {
+                console.error("Error: " + e)
                 return 0; // ignore errors an continue
             }
         });
