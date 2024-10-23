@@ -44,8 +44,11 @@ switch (command ? command.toLowerCase() : "") {
         console.log(VERSION);
         break;
     case "--help":
+    case "-h":
+    case "help":
+    case "-help":
         await init();
-        await LogStuff(HELP, "bulb", true);
+        await LogStuff(HELP, undefined, true);
         break;
     case "self-update":
         await init(true);
