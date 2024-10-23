@@ -22,7 +22,7 @@ export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
 // help
 const _USAGE = {
     clean: SpaceString("clean   [--update] [--verbose]", 8),
-    manager: SpaceString("manager add <item> / [--self] | remove <item> | ignore <item> | list | cleanup", 8),
+    manager: SpaceString("manager add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup", 8),
     stats: SpaceString("stats   [--full]", 8),
     migrate: SpaceString("migrate", 8),
     self_update: SpaceString("self-update", 8),
@@ -43,6 +43,7 @@ const _MANAGER_OPTIONS = {
     add: SpaceString("add <path>      Adds a project to your list.", 4),
     remove: SpaceString("remove <path>   Removes a project from your list.", 4),
     ignore: SpaceString("ignore <path>   Ignores a project so it's not cleaned or updated but still on your list.", 4),
+    revive: SpaceString("revive <path>   Stops ignoring an ignored project.", 4),
     list: SpaceString("list            Lists all of your added projects.", 4),
     cleanup: SpaceString(
         "cleanup         Shows projects that aren't valid (invalid path, no package.json, duplicates...) and lets you remove them.",

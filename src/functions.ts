@@ -402,7 +402,7 @@ export async function GetDirSize(path: string): Promise<number> {
                     return pathInfo.size; // just try anyway
                 }
             } catch (e) {
-                console.error("Error: " + e)
+                console.error("Error: " + e);
                 return 0; // ignore errors an continue
             }
         });

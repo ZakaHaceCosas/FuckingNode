@@ -8,7 +8,7 @@ import { CheckForPath, GetMotherfuckers, GetPath, LogStuff, ParsePath } from "./
  * @param {("noArgument" | "invalidArgument")} errorCode
  * @returns {Promise<void>}
  */
-async function Error(errorCode: "noArgument" | "invalidArgument"): Promise<void> {
+async function ErrorMessage(errorCode: "noArgument" | "invalidArgument"): Promise<void> {
     const usage = `Usage:\n${APP_NAME} manager add <path> / remove <path> / ignore <path> / list`;
 
     switch (errorCode) {
@@ -224,35 +224,59 @@ async function listEntries(): Promise<void> {
 }
 
 /**
- * Ignores a project by adding a `.fknodeignore` file to it's root.
+ * Ignores (or stops ignoring) a project by adding (or removing) a `.fknodeignore` file to it's root.
  *
  * @async
+ * @param {boolean} ignore True if you want to ignore, false if you want to stop ignoring.
  * @param {string} entry The path to the project's root.
- * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if failure (will log the error), 2 if the project's already ignored.
+ * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if failure (will log the error), 2 if the project's status is not valid (e.g. ignoring an already ignored project or stop ignoring a project that was not ignored).
  */
-async function ignoreEntry(entry: string): Promise<0 | 1 | 2> {
-    const workingEntry = ParsePath("path", entry) as string;
-    const pathToIgnoreFile = `${workingEntry}/${IGNORE_FILE}`;
+async function handleIgnoreEntry(ignore: boolean, entry: string): Promise<0 | 1 | 2> {
+    try {
+        const workingEntry = ParsePath("path", entry) as string;
+        const pathToIgnoreFile = `${workingEntry}/${IGNORE_FILE}`;
 
-    if (await CheckForPath(pathToIgnoreFile)) {
-        LogStuff(`${I_LIKE_JS.MF} is already ignored!`, "error");
-        return 2;
-    } else {
-        try {
-            await Deno.create(pathToIgnoreFile);
-            LogStuff(`Divine powers have successfully ignored this ${I_LIKE_JS.MF}`, "tick");
-            return 0;
-        } catch (e) {
-            LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
-            return 1;
+        if (ignore) {
+            if (await CheckForPath(pathToIgnoreFile)) {
+                LogStuff(`${I_LIKE_JS.MF} is already ignored!`, "error");
+                return 2;
+            } else {
+                try {
+                    await Deno.create(pathToIgnoreFile);
+                    LogStuff(`Divine powers have successfully ignored this ${I_LIKE_JS.MF}`, "tick");
+                    return 0;
+                } catch (e) {
+                    LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
+                    return 1;
+                }
+            }
+        } else if (!ignore) {
+            if (!(await CheckForPath(pathToIgnoreFile))) {
+                LogStuff(`${I_LIKE_JS.MF} isn't ignored yet!`, "error");
+                return 2;
+            } else {
+                try {
+                    await Deno.remove(pathToIgnoreFile);
+                    LogStuff(`Divine powers have abandoned this ${I_LIKE_JS.MF}`, "tick");
+                    return 0;
+                } catch (e) {
+                    LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
+                    return 1;
+                }
+            }
+        } else {
+            throw new Error("Whether to ignore or stop ignoring wasn't correctly specified.");
         }
+    } catch (e) {
+        await LogStuff(`Error: ${e}`, "error");
+        throw e;
     }
 }
 
 // run functions based on args
 export default async function TheManager(args: string[]) {
     if (!args || args.length === 0) {
-        Error("noArgument");
+        ErrorMessage("noArgument");
         Deno.exit(1);
     }
 
@@ -260,31 +284,38 @@ export default async function TheManager(args: string[]) {
     const entry = args[2] ? args[2].trim() : null;
 
     if (!command) {
-        Error("noArgument");
+        ErrorMessage("noArgument");
         return;
     }
 
     switch (command.toLowerCase()) {
         case "add":
             if (!entry || entry === null) {
-                Error("invalidArgument");
+                ErrorMessage("invalidArgument");
                 return;
             }
             await addEntry(entry);
             break;
         case "remove":
             if (!entry || entry === null) {
-                Error("invalidArgument");
+                ErrorMessage("invalidArgument");
                 return;
             }
             await removeEntry(entry);
             break;
         case "ignore":
             if (!entry || entry === null) {
-                Error("invalidArgument");
+                ErrorMessage("invalidArgument");
                 return;
             }
-            await ignoreEntry(entry);
+            await handleIgnoreEntry(true, entry);
+            break;
+        case "revive":
+            if (!entry || entry === null) {
+                ErrorMessage("invalidArgument");
+                return;
+            }
+            await handleIgnoreEntry(false, entry);
             break;
         case "list":
             await listEntries();
@@ -293,7 +324,7 @@ export default async function TheManager(args: string[]) {
             await CleanProjects();
             break;
         default:
-            Error("invalidArgument");
+            ErrorMessage("invalidArgument");
             Deno.exit(1);
     }
 }
