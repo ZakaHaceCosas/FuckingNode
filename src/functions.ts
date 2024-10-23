@@ -32,14 +32,16 @@ export async function CheckForPath(path: string): Promise<boolean> {
  * @async
  * @param {string} message The message to be logged.
  * @param {?SUPPORTED_EMOJIS} [emoji] Additionally, add an emoji before the log.
- * @param {?boolean} [silent] Optional. If true, log will be made without saving to the `.log` file.
- * @returns {Promise<void>}
+ * @param {?boolean} silent Optional. If true, log will be made without saving to the `.log` file.
+ * @param {?boolean} question If true, the log will act as a y/N confirm. Will return true if the user confirms, false otherwise.
+ * @returns {Promise<boolean>} Boolean value if it's a question depending on user input. If it's not a question, to avoid a type error for being `void`, it always returns false.
  */
 export async function LogStuff(
     message: string,
     emoji?: SUPPORTED_EMOJIS,
     silent?: boolean,
-): Promise<void> {
+    question?: boolean,
+): Promise<boolean> {
     const finalMessage = emoji ? Emojify(message, emoji) : message;
     console.log(finalMessage);
 
@@ -51,8 +53,16 @@ export async function LogStuff(
                 append: true,
             });
         }
+
+        if (question) {
+            const c = confirm("Confirm?");
+            return c;
+        } else {
+            return false;
+        }
     } catch (e) {
         console.error(`Error logging stuff: ${e}`);
+        throw e;
     }
 }
 

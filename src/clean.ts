@@ -130,8 +130,11 @@ export default async function TheCleaner(
 
         let maximForReal: boolean;
         if (maxim) {
-            maximForReal = confirm(
-                "⚠ Are you sure you want to use maxim cleaning? It will recursively remove the contents of node_modules for ALL projects from your list.",
+            maximForReal = await LogStuff(
+                "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
+                "warn",
+                undefined,
+                true,
             );
         } else {
             maximForReal = false;

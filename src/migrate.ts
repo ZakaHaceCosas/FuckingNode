@@ -35,8 +35,11 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
     try {
         const workingProject = ParsePath("list", project) as string;
 
-        const c = confirm(
+        const c = await LogStuff(
             `Are you sure you want to migrate ${workingProject} to ${target}? Your current lockfile will be removed, so versions could be potentially messed up.`,
+            "what",
+            undefined,
+            true,
         );
         if (!c) return;
 

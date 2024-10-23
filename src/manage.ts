@@ -80,18 +80,23 @@ async function addEntry(entry: string): Promise<void> {
         return;
     }
     if (validation === 2) {
-        await LogStuff(
-            `This path doesn't have a node_modules DIR, so adding it would be useless.`,
+        const addAnyway = await LogStuff(
+            `This path doesn't have a node_modules DIR, so adding it would be useless. Confirm you want to add it.\nPS. You typed: ${workingEntry}`,
             "what",
+            undefined,
+            true,
         );
-        const addAnyway = confirm(`Confirm you want to add it\nPS. You typed: ${workingEntry}`);
         if (!addAnyway) return;
         addTheEntry();
         return;
     }
     if (validation === 1) {
-        await LogStuff(`This path doesn't have a package.json. Are you sure it's a node project?`, "what");
-        const addAnyway = confirm(`Confirm you want to add it\nPS. You typed: ${workingEntry}`);
+        const addAnyway = await LogStuff(
+            `This path doesn't have a package.json. Are you sure it's a node project?\nConfirm you want to add it\nPS. You typed: ${workingEntry}`,
+            "what",
+            undefined,
+            true,
+        );
         if (!addAnyway) return;
         addTheEntry();
         return;
@@ -185,11 +190,12 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         "bulb",
     );
     console.log(`\n${list.toString().replaceAll(",", ",\n")}\n`);
-    await LogStuff(
+    const del = await LogStuff(
         `Will you remove all of these ${I_LIKE_JS.MFS}?`,
         "what",
+        undefined,
+        true,
     );
-    const del = confirm("(Please confirm)");
     if (!del) {
         await LogStuff(`I don't know why you'd keep those wrong projects, but okay...`, "bruh");
         return 2;
