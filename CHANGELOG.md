@@ -12,16 +12,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added `migrate` command to move a project from one package to another.
+- Decided to hide `stats` behind `--experimental-stats` due to instability.
 
 ### Changed
 
 - Updated help menu.
-- Now `--self` can be used anywhere you need you pass a path.
+- Now `--self` can be used anywhere you need to pass a path.
+  - Also, now `normalize` from `node:path`
 
 ### Fixed
 
-- Now `stats` will recursively get the size of DIRs within `node_modules/` for more accuracy. **Still WIP.**
+- Now `stats` will recursively get the size of DIRs within `node_modules/` for more accuracy.
 - Now `stats` rounds numbers correctly.
+
+### Known issues
+
+- `stats`:
+  - While recursive fetching improved accuracy, it still provides sizes lower than the real one (like hundreds of MBs lower).
+  - It takes a _lot_ of CPU.
+  - It does throw an error for many files stating that they "cannot be accessed".
 
 ## [1.2.0] 21-10-2024
 

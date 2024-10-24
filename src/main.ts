@@ -2,7 +2,7 @@ import TheCleaner from "./clean.ts";
 import TheManager from "./manage.ts";
 import TheStatistics from "./stats.ts";
 import TheMigrator from "./migrate.ts";
-import { APP_NAME, HELP, VERSION } from "./constants.ts";
+import { APP_NAME, HELP, I_LIKE_JS, VERSION } from "./constants.ts";
 import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
 import type { MANAGERS } from "./types.ts";
 
@@ -31,9 +31,12 @@ switch (command ? command.toLowerCase() : "") {
         await init();
         await TheManager(Deno.args);
         break;
-    case "stats":
+    case "--experimental-stats":
         await init();
-        await TheStatistics(statsModular);
+        if (confirm("Experimental features are hidden behind a flag for a reason. Are you sure?")) {
+            await LogStuff(`Okay, there we go. Report any ${I_LIKE_JS.FKN} error you find in GitHub.`);
+            await TheStatistics(statsModular);
+        }
         break;
     case "migrate":
         await init();
