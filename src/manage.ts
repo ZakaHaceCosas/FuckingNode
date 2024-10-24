@@ -189,7 +189,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         `We've found issues! We're talking about getting rid of:`,
         "bulb",
     );
-    console.log(`\n${list.toString().replaceAll(",", ",\n")}\n`);
+    await LogStuff(`\n${list.toString().replaceAll(",", ",\n")}\n`, undefined, true);
     const del = await LogStuff(
         `Will you remove all of these ${I_LIKE_JS.MFS}?`,
         "what",

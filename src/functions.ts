@@ -402,7 +402,7 @@ export async function GetDirSize(path: string): Promise<number> {
                     return pathInfo.size; // just try anyway
                 }
             } catch (e) {
-                console.error("Error: " + e);
+                await LogStuff("Error: " + e, "error");
                 return 0; // ignore errors an continue
             }
         });
@@ -411,7 +411,7 @@ export async function GetDirSize(path: string): Promise<number> {
 
         totalSize = sizes.reduce((acc, size) => acc + size, 0);
 
-        return parseFloat((totalSize / (1024 * 1024)).toFixed(3)); // (returns in MB)
+        return parseFloat((totalSize / 1048576).toFixed(3)); // (returns in MB)
     } catch (e) {
         throw e;
     }
