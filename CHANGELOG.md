@@ -4,8 +4,7 @@
 
 All notable changes will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
-[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## 1.3.0
 
@@ -51,8 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `manager add` adding a path even if it doesn't exist.
 - Fixed an issue where if the `node_modules` DIR wasn't present but the user chose to add the project anyway, it got added twice.
 - Fixed an issue where removing a duplicate project would remove it entirely, instead of keeping one entry.
-  - Note: it was fixed by making it remove only _once_, so if you have the same entry four times and remove it, you will still have 3
-    duplicates.
+  - Note: it was fixed by making it remove only _once_, so if you have the same entry four times and remove it, you will still have 3 duplicates.
 
 ## [1.1.1] - 19-10-2024
 
@@ -66,25 +64,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- `manager` was broken by a human mistake on previous updates (sorry, mb) and it didn't recognize one word commands like `list`. It has been
-  fixed.
+- `manager` was broken by a human mistake on previous updates (sorry, mb) and it didn't recognize one word commands like `list`. It has been fixed.
 - `clean` would crash if one of your project's path didn't exist. Now it will log an error and skip it without interrupting the cleanup.
-- When auto-checking for updates, the program would consider there are updates if your version number is greater than the one from GitHub - it's
-  unlikely that the end user ever saw this, but it's now fixed.
+- When auto-checking for updates, the program would consider there are updates if your version number is greater than the one from GitHub - it's unlikely that the end user ever saw this, but it's now fixed.
 
 ## [1.1.0] 19-10-2024
 
 ### Added
 
-- Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size of `node_modules/`, but
-  you can pass the `--full` flag to it so it also includes your code.
-- Added `manager ignore` command. Creates a `.fknodeignore` file at the root of the project, so F*ckingNode simply ignores it whenever a cleanup
-  is made.
+- Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size of `node_modules/`, but you can pass the `--full` flag to it so it also includes your code.
+- Added `manager ignore` command. Creates a `.fknodeignore` file at the root of the project, so F*ckingNode simply ignores it whenever a cleanup is made.
 
 ### Changed
 
-- Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename variables and all that kind of
-  stuff. ~~I don't want to get banned~~.
+- Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename variables and all that kind of stuff. ~~I don't want to get banned~~.
 - Now "unknown errors" when pruning a project actually show the command's `stderr`.
 
 ### Fixed
@@ -118,8 +111,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Fixed the app losing data from one version to another (now it uses `APPDATA/FuckingNode/*` instead of `APPDATA/FuckingNode-VERSION/*` to store
-  data).
+- Fixed the app losing data from one version to another (now it uses `APPDATA/FuckingNode/*` instead of `APPDATA/FuckingNode-VERSION/*` to store data).
 - Remove case sensitivity from some arguments.
 
 ## [1.0.0] - 14-10-2024

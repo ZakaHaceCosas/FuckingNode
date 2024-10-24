@@ -1,7 +1,11 @@
 {
     "fmt": {
         "indentWidth": 4,
-        "lineWidth": 144
+        "lineWidth": 144,
+        "proseWrap": "never",
+        "singleQuote": false,
+        "semiColons": true,
+        "useTabs": false
     },
     "tasks": {
         "compile": "deno -A scripts/compile.ts"

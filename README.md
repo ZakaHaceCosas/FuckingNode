@@ -4,9 +4,7 @@
 
 We as humans have dedicated years of hard work to a goal: fixing Node.
 
-We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with `--experimental-strip-types`, we changed the order and made
-Deno, then we got hungry and made Bun, then we made Deno 2... Everything has been getting us closer to a better Node, and now we're one step
-closer to fixing NodeJS.
+We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with `--experimental-strip-types`, we changed the order and made Deno, then we got hungry and made Bun, then we made Deno 2... Everything has been getting us closer to a better Node, and now we're one step closer to fixing NodeJS.
 
 **F\*ckingNode**, a CLI utility to automate cleanup of a Node user's worst nightmare: `node_modules/`.
 
@@ -36,27 +34,23 @@ closer to fixing NodeJS.
 - `fuckingnode manager ignore <path>` - ignores a project (won't be cleaned or updated).
 - `fuckingnode manager revive <path>` - stops ignoring a project.
 
-`<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the
-Current Working Directory.
+`<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the Current Working Directory.
 
 ### Others
 
-- `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile,
-  `node_modules`, and reinstalls with the selected package manager).
+- `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile, `node_modules`, and reinstalls with the selected package manager).
 - `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode self-update` - all do the obvious.
 
 And that's it for now.
 
 > [!TIP]
-> If for any reason you want to skip a project without removing it from your list (idk, maybe you _temporarily_ don't want anyone to update deps
-> for that specific project), create an empty `.fknodeignore` file in the root of the project and F*ckingNode will ignore it.
+> If for any reason you want to skip a project without removing it from your list (idk, maybe you _temporarily_ don't want anyone to update deps for that specific project), create an empty `.fknodeignore` file in the root of the project and F*ckingNode will ignore it.
 
 ---
 
 ## Installation
 
-1. Download the program from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). Windows (64), macOS and
-   Linux (64 & ARM) are supported.
+1. Download the program from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). Windows (64), macOS and Linux (64 & ARM) are supported.
 2. Place your downloaded file somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
 3. Add the path to the binary to your system's path environment variable.
 4. You're done! The `fuckingnode` command will now work from your terminal.
@@ -70,8 +64,7 @@ And that's it for now.
 
 ---
 
-Hope those motherf*ckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue (or make a PR which would
-be awesome :smile:).
+Hope those motherf*ckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue (or make a PR which would be awesome :smile:).
 
 Cya!
 
