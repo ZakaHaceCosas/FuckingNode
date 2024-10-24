@@ -10,17 +10,18 @@ export default async function TheStatistics(includeSelf: boolean) {
 
     for (const mf of mfs) {
         let size = await GetDirSize(`${mf}/node_modules`);
-        const selfSize = await GetDirSize(mf);
-        if (!selfSize) {
-            await LogStuff(`Feels like ${mf} doesn't exist?`, "error");
-            continue;
-        }
         if (!size) {
             await LogStuff(`${mf} doesn't have a node_modules DIR? What's up?`, "warn");
             continue;
         }
 
         if (includeSelf) {
+            size += await GetDirSize(mf);
+            const selfSize = await GetDirSize(mf);
+            if (!selfSize) {
+                await LogStuff(`Feels like ${mf} doesn't exist?`, "error");
+                continue;
+            }
             size += selfSize;
         }
 
