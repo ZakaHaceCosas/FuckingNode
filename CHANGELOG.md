@@ -19,16 +19,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - **Decided to hide `stats` behind `--experimental-stats` due to instability.**
 - Updated help menu.
 - Now `--self` can be used anywhere you need to pass a path.
-  - Also, now `normalize` from `node:path`
+  - Also, now `normalize` from `node:path` is used to avoid issues.
 
 ### Fixed
 
-- Now `stats` will recursively get the size of DIRs within `node_modules/` for more accuracy.
-- Now `stats` rounds numbers correctly.
+- Now `stats` (`--experimental-stats`) will recursively get the size of DIRs within `node_modules/` for more accuracy.
+- Now `stats` (`--experimental-stats`) rounds numbers correctly.
 
 ### Known issues
 
-- `stats`:
+- `stats` (`--experimental-stats`):
   - While recursive fetching improved accuracy, it still provides sizes lower than the real one (like hundreds of MBs lower).
   - It takes a _lot_ of CPU.
   - It does throw an error for many files stating that they "cannot be accessed".
