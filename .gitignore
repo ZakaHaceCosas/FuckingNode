@@ -1,5 +1,5 @@
 # stuff i dont want to commit
 .command
-**.xp.ts
+**.ignore.*
 # compiled executable
 dist/**
