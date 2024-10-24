@@ -19,10 +19,9 @@ closer to fixing NodeJS.
 - `fuckingnode clean` - does the obvious.
 - `fuckingnode clean --update` - does the obvious + updates your deps.
 - `fuckingnode clean --verbose` - does the obvious with some extra logs.
-- `fuckingnode clean --maxim` - does a "maxim" cleanup (AKA instead of using npm / pnpm / yarn cleanup commands, directly removes the
-  `node_modules` directory).
+- `fuckingnode clean --maxim` - does a "maxim" cleanup (forcedly removes the `node_modules` directory).
 
-  `--`flags can be mixed to use more features at once.
+`--flags` can be mixed to use more features at once.
 
 ### Manager
 
