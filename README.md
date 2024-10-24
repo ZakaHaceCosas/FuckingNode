@@ -1,46 +1,18 @@
 # F*ckingNode
 
-> [!WARNING]
-> [The app is actually secure](https://www.virustotal.com/gui/file/182bf44c5ced202408a770e193f8f9bc2f9e6e49a867650d15ff6034aba37b0e?nocache=1).
-> I don't know why Windows Security flags it as if it was a trojan or something.
-
 ## Abstract
 
-Tired of Node projects' ~~motherf*cking~~ `node_modules` directory and their space consumption, I once switched to `pnpm` (my greatest decision
-in years) and started manually removing all `node_modules` folders and `pnpm` pruning all of my projects.
+We as humans have dedicated years of hard work to a goal: fixing Node.
 
-This was time consuming, but it felt worth it - just the day I got pnpm and did a `node_modules` cleanup I recovered ~11 GB of space. Anyway,
-one day I had the idea of automating the process with a PowerShell script, and it felt good - so good that I turned that `ps1` code into a CLI
-app with TypeScript and ~~Node backwards~~ Deno: **F*ckingNode**.
+We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with `--experimental-strip-types`, we changed the order and made
+Deno, then we got hungry and made Bun, then we made Deno 2... Everything has been getting us closer to a better Node, and now we're one step
+closer to fixing NodeJS.
+
+**F\*ckingNode**, a CLI utility to automate cleanup of a Node user's worst nightmare: `node_modules/`.
 
 > ### (yes i'm calling it like that and i'm shipping that to production, don't question me)
 
-## Installation
-
-### Release
-
-Currently only Windows is supported.
-
-> [!WARNING]
-> Next release will include macOS and Linux binaries. _I cannot test them as I don't have any device_.
-
-1. Download the `.exe` from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest).
-2. Place that somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
-3. Enter Windows Search and type "Edit environment variables for your account". Open that.
-4. You'll see a modal with two lists, both having a "Path" entry. On each one, click edit, then New, and then type the path you saved
-   F*ckingNode to (e.g. `C:\Scripts\FuckingNode.exe`).
-5. Save both lists and you're done! The `fuckingnode` command will now work from your terminal.
-
-### Compiling from source
-
-It should work on macOS and Linux as well.
-
-1. Install [Deno 2](https://docs.deno.com/runtime/).
-2. Open this project from the root.
-3. Run `deno task compile`.
-4. An executable for each platform will be created at `dist/`. Run the executable for your platform (file names are specific to each platform).
-
-## Usage
+## Features
 
 ### Cleaner
 
@@ -50,20 +22,28 @@ It should work on macOS and Linux as well.
 - `fuckingnode clean --maxim` - does a "maxim" cleanup (AKA instead of using npm / pnpm / yarn cleanup commands, directly removes the
   `node_modules` directory).
 
+  `--`flags can be mixed to use more features at once.
+
 ### Manager
 
 > [!NOTE]
-> FuckingNode has a list of all paths to projects it should clean - it's you who has to maintain it:
+> F\*ckingNode has a list of all paths to projects it should clean - it's you who has to maintain it:
 >
 > Keep in mind paths should point to the root, where you have `/package.json`, `/lockfile`[^1], and `/node_modules`.
 
 - `fuckingnode manager list` - lists all projects.
 - `fuckingnode manager add <path>` - adds a project.
 - `fuckingnode manager remove <path>` - removes a project.
-- `fuckingnode manager stats` - tells you how much space all your added `node_modules` are taking up.
+- `fuckingnode manager ignore <path>` - ignores a project (won't be cleaned or updated).
+- `fuckingnode manager revive <path>` - stops ignoring a project.
+
+`<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the
+Current Working Directory.
 
 ### Others
 
+- `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile,
+  `node_modules`, and reinstalls with the selected package manager).
 - `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode self-update` - all do the obvious.
 
 And that's it for now.
@@ -71,6 +51,23 @@ And that's it for now.
 > [!TIP]
 > If for any reason you want to skip a project without removing it from your list (idk, maybe you _temporarily_ don't want anyone to update deps
 > for that specific project), create an empty `.fknodeignore` file in the root of the project and F*ckingNode will ignore it.
+
+---
+
+## Installation
+
+1. Download the program from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). Windows (64), macOS and
+   Linux (64 & ARM) are supported.
+2. Place your downloaded file somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
+3. Add the path to the binary to your system's path environment variable.
+4. You're done! The `fuckingnode` command will now work from your terminal.
+
+### Compiling from source
+
+1. Install [Deno 2](https://docs.deno.com/runtime/).
+2. Open this project from the root.
+3. Run `deno task compile`.
+4. An executable for each platform will be created at `dist/`. Run the executable for your platform (file names are specific to each platform).
 
 ---
 
