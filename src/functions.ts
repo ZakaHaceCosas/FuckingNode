@@ -1,3 +1,4 @@
+import { normalize } from "node:path";
 import { APP_NAME, I_LIKE_JS, RELEASE_URL, VERSION } from "./constants.ts";
 import {
     type GITHUB_RELEASE,
@@ -393,7 +394,7 @@ export async function GetDirSize(path: string): Promise<number> {
         const sizePromises = entries.map(async (entry) => {
             const fullPath = `${workingPath}/${entry.name}`;
             try {
-                const pathInfo = await Deno.lstat(fullPath);
+                const pathInfo = await Deno.stat(fullPath);
                 if (pathInfo.isFile) {
                     return pathInfo.size; // increases the size
                 } else if (pathInfo.isDirectory) {
@@ -426,15 +427,23 @@ export async function GetDirSize(path: string): Promise<number> {
  * @returns {(string | string[])} Either a string or a string[].
  */
 export function ParsePath(idea: "path" | "cleaner", target: string): string | string[] {
-    let workingTarget = target;
-    if (target === "--self") workingTarget = Deno.cwd();
+    if (typeof target !== "string") {
+        throw new Error("Target must be (obviously) a string.");
+    }
+
+    let workingTarget = target.trim();
+    if (workingTarget.toLowerCase() === "--self") workingTarget = Deno.cwd();
 
     if (idea === "cleaner") {
-        return workingTarget.split("\n")
+        const allTargets = workingTarget
+            .split("\n")
             .map((line) => line.trim().replace(/,$/, ""))
             .filter((line) => line.length > 0);
+
+        return allTargets.map(normalize);
     } else if (idea === "path") {
-        const cleanEntry = workingTarget.trimEnd().trimStart();
+        const cleanEntry = normalize(workingTarget);
+
         if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
             return cleanEntry.trimEnd().trimStart().slice(0, -1);
         }
