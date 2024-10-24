@@ -366,6 +366,39 @@ export async function GetMotherfuckers(): Promise<string[]> {
     }
 }
 
+interface FileEntry {
+    entry: Deno.DirEntry;
+    info: Deno.FileInfo;
+}
+
+/**
+ * Recursively reads a DIR, returning it's data. This SHOULD fix accuracy loss with `stats`.
+ *
+ * @async
+ * @param {string} path
+ * @returns {Promise<FileEntry[]>}
+ */
+async function RecursivelyGetDir(path: string): Promise<FileEntry[]> {
+    const workingPath = ParsePath("path", path) as string;
+
+    if (!(await CheckForPath(workingPath))) throw new Error("Path doesn't exist");
+
+    const entries: FileEntry[] = [];
+
+    for await (const entry of Deno.readDir(workingPath)) {
+        if (entry.isFile) {
+            const fileInfo = await Deno.stat(`${workingPath}/${entry.name}`);
+            entries.push({ entry, info: fileInfo });
+        } else if (entry.isDirectory) {
+            // Recursively read the directory
+            const subEntries = await RecursivelyGetDir(`${workingPath}/${entry.name}`);
+            entries.push(...subEntries);
+        }
+    }
+
+    return entries;
+}
+
 /**
  * Gets the size in MBs of a DIR.
  *
@@ -384,14 +417,10 @@ export async function GetDirSize(path: string): Promise<number> {
             throw new Error(`Provided path ${path} doesn't exist.`);
         }
 
-        const entries = [];
-
-        for await (const entry of Deno.readDir(workingPath)) {
-            entries.push(entry);
-        }
+        const entries = await RecursivelyGetDir(workingPath);
 
         // process all entries in parallel
-        const sizePromises = entries.map(async (entry) => {
+        const sizePromises = entries.map(async ({ entry }) => {
             const fullPath = `${workingPath}/${entry.name}`;
             try {
                 const pathInfo = await Deno.stat(fullPath);
@@ -402,8 +431,10 @@ export async function GetDirSize(path: string): Promise<number> {
                 } else {
                     return pathInfo.size; // just try anyway
                 }
-            } catch (e) {
-                await LogStuff("Error: " + e, "error");
+            } catch (_e) {
+                // we should ignore this as logging ALL of these filesystem errors
+                // will cause the user a storage issue
+                // await LogStuff("Error: " + e, "error");
                 return 0; // ignore errors an continue
             }
         });
@@ -412,7 +443,7 @@ export async function GetDirSize(path: string): Promise<number> {
 
         totalSize = sizes.reduce((acc, size) => acc + size, 0);
 
-        return parseFloat((totalSize / 1048576).toFixed(3)); // (returns in MB)
+        return parseFloat((totalSize / 1048576).toFixed(2)); // (returns in MB)
     } catch (e) {
         throw e;
     }
