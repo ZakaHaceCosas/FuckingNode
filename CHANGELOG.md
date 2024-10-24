@@ -11,11 +11,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Added `migrate` command to move a project from one package to another.
-- Decided to hide `stats` behind `--experimental-stats` due to instability.
+- `migrate` moves a project from one package to another.
+- `manager revive` allows to stop ignoring a project (opposite of `manager ignore`)
 
 ### Changed
 
+- **Decided to hide `stats` behind `--experimental-stats` due to instability.**
 - Updated help menu.
 - Now `--self` can be used anywhere you need to pass a path.
   - Also, now `normalize` from `node:path`
