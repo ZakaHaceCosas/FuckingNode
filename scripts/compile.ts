@@ -1,7 +1,5 @@
-// i should think of a better way than PERMISSION[1], PERMISSION[2] to pass args
-import { APP_NAME, VERSION } from "../src/constants.ts";
+import { APP_NAME } from "../src/constants.ts";
 
-const PERMISSIONS_NEEDED = ["--allow-read", "--allow-write", "--allow-net", "--allow-env", "--allow-run"];
 const TARGETS = {
     win64: ["x86_64-pc-windows-msvc", "win64"],
     darwinArm: ["aarch64-apple-darwin", "macOs_arm"],
@@ -11,16 +9,15 @@ const TARGETS = {
 };
 
 const ALL_COMMANDS = Object.entries(TARGETS).map(([_key, [target, output]]) => {
-    const v = VERSION.replaceAll(".", "_");
-    const compiledName = target![1] === "win64" ? `${APP_NAME.CASED}-${v}-${output}.exe` : `${APP_NAME.CASED}-${v}-${output}`;
+    const compiledName = `${APP_NAME.CASED}-${output}${target === "win64" ? ".exe" : ""}`;
 
     const args = [
         "compile",
-        PERMISSIONS_NEEDED[0]!,
-        PERMISSIONS_NEEDED[1]!,
-        PERMISSIONS_NEEDED[2]!,
-        PERMISSIONS_NEEDED[3]!,
-        PERMISSIONS_NEEDED[4]!,
+        "--allow-read",
+        "--allow-write",
+        "--allow-net",
+        "--allow-env",
+        "--allow-run",
         "--target",
         target!,
         "--output",
