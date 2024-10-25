@@ -1,6 +1,5 @@
 import { I_LIKE_JS } from "./constants.ts";
-import { GetDirSize, GetAllProjects, LogStuff, CheckForPath } from "./functions.ts";
-import { JoinPaths } from './functions.ts';
+import { CheckForPath, GetAllProjects, GetDirSize, JoinPaths, LogStuff } from "./functions.ts";
 
 export default async function TheStatistics(includeSelf: boolean) {
     const mfs = await GetAllProjects();
@@ -15,7 +14,7 @@ export default async function TheStatistics(includeSelf: boolean) {
             continue;
         }
 
-        let size = await GetDirSize(`${mf}/node_modules`);
+        let size = await GetDirSize(JoinPaths(mf, "node_modules"));
 
         if (includeSelf) size += await GetDirSize(mf);
 

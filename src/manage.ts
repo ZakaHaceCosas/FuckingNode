@@ -1,6 +1,6 @@
 import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "./constants.ts";
-import { CheckForPath, GetAllProjects, GetPath, LogStuff, ParsePath } from "./functions.ts";
+import { CheckForPath, GetAllProjects, GetPath, JoinPaths, LogStuff, ParsePath } from "./functions.ts";
 
 /**
  * Shorthand function to show errors in here.
@@ -48,10 +48,10 @@ async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 
     if (isDuplicate) {
         return 3;
     }
-    if (!(await CheckForPath(`${workingEntry}/node_modules`))) {
+    if (!(await CheckForPath(JoinPaths(workingEntry, "node_modules")))) {
         return 2;
     }
-    if (!(await CheckForPath(`${workingEntry}/package.json`))) {
+    if (!(await CheckForPath(JoinPaths(workingEntry, "package.json")))) {
         return 1;
     }
     return 0;
@@ -144,7 +144,7 @@ async function addEntry(entry: string): Promise<void> {
         return;
     }
 
-    const workspaces = await getWorkspaces(`${workingEntry}/package.json`);
+    const workspaces = await getWorkspaces(JoinPaths(workingEntry, "package.json"));
 
     if (!workspaces) {
         addTheEntry();
@@ -302,7 +302,7 @@ async function listEntries(): Promise<void> {
 async function handleIgnoreEntry(ignore: boolean, entry: string): Promise<0 | 1 | 2> {
     try {
         const workingEntry = ParsePath("path", entry) as string;
-        const pathToIgnoreFile = `${workingEntry}/${IGNORE_FILE}`;
+        const pathToIgnoreFile = JoinPaths(workingEntry, IGNORE_FILE);
 
         if (ignore) {
             if (await CheckForPath(pathToIgnoreFile)) {

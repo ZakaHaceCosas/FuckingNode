@@ -87,10 +87,10 @@ export function GetPath(
     }
 
     // i don't know how to remove the f-word from here, i can't just put an asterisk in a file path
-    const BASE_DIR = `${appDataPath}/${APP_NAME.CASED}/`;
-    const MOTHERFKRS_DIR = `${BASE_DIR}/${APP_NAME.CASED}-${I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")}.txt`;
-    const LOGS_DIR = `${BASE_DIR}/${APP_NAME.CASED}-Logs.log`;
-    const UPDATES_DIR = `${BASE_DIR}/${APP_NAME.CASED}-updates.txt`;
+    const BASE_DIR = JoinPaths(appDataPath, APP_NAME.CASED);
+    const MOTHERFKRS_DIR = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-${I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")}.txt`);
+    const LOGS_DIR = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-Logs.log`);
+    const UPDATES_DIR = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-updates.txt`);
 
     switch (path) {
         case "BASE":
@@ -388,11 +388,11 @@ async function RecursivelyGetDir(path: string): Promise<FileEntry[]> {
 
     for await (const entry of Deno.readDir(workingPath)) {
         if (entry.isFile) {
-            const fileInfo = await Deno.stat(`${workingPath}/${entry.name}`);
+            const fileInfo = await Deno.stat(JoinPaths(workingPath, entry.name));
             entries.push({ entry, info: fileInfo });
         } else if (entry.isDirectory) {
             // Recursively read the directory
-            const subEntries = await RecursivelyGetDir(`${workingPath}/${entry.name}`);
+            const subEntries = await RecursivelyGetDir(JoinPaths(workingPath, entry.name));
             entries.push(...subEntries);
         }
     }

@@ -1,4 +1,4 @@
-import { LogStuff, ParsePath } from "./functions.ts";
+import { JoinPaths, LogStuff, ParsePath } from "./functions.ts";
 import { CheckForPath } from "./functions.ts";
 import type { MANAGERS, SUPPORTED_LOCKFILE } from "./types.ts";
 
@@ -11,9 +11,9 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
             await LogStuff("Please wait (this will take a while)...", "working");
             try {
                 await LogStuff("Removing node_modules and previous lockfile (1/3)...", "working");
-                await Deno.remove(`${target}/${remove}`);
+                await Deno.remove(JoinPaths(target, remove));
                 await LogStuff("Removing node_modules and previous lockfile (2/3)...", "working");
-                await Deno.remove(`${target}/node_modules`, {
+                await Deno.remove(JoinPaths(target, "node_modules"), {
                     recursive: true,
                 });
             } catch (e) {
@@ -41,13 +41,13 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
             throw new Error(`${workingTarget} is not a valid target. Use either "pnpm", "npm", or "yarn".`);
         }
 
-        const isNpm = await CheckForPath(`${workingProject}/package-lock.json`);
-        const isPnpm = await CheckForPath(`${workingProject}/pnpm-lock.yaml`);
-        const isYarn = await CheckForPath(`${workingProject}/yarn.lock`);
+        const isNpm = await CheckForPath(JoinPaths(workingProject, "package-lock.json"));
+        const isPnpm = await CheckForPath(JoinPaths(workingProject, "pnpm-lock.yaml"));
+        const isYarn = await CheckForPath(JoinPaths(workingProject, "yarn.lock"));
 
         if (!isNpm && !isPnpm && !isYarn) throw new Error("We weren't able to find a valid lockfile over here.");
 
-        if (!(await CheckForPath(`${target}/package.json`))) {
+        if (!(await CheckForPath(JoinPaths(target, "package.json")))) {
             throw new Error("No package.json found, cannot migrate. How will we install your modules without it?");
         }
 

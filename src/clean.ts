@@ -2,7 +2,7 @@ import { I_LIKE_JS } from "./constants.ts";
 import { CheckForPath, GetPath, LogStuff } from "./functions.ts";
 import { type SUPPORTED_LOCKFILE } from "./types.ts";
 import { IGNORE_FILE } from "./constants.ts";
-import { ParsePath } from "./functions.ts";
+import { JoinPaths, ParsePath } from "./functions.ts";
 
 async function PerformCleaning(
     lockfile: SUPPORTED_LOCKFILE,
@@ -77,7 +77,7 @@ async function PerformCleaning(
             );
         }
     } else if (shouldMaxim) {
-        const maximPath = `${motherfuckerInQuestion}/node_modules`;
+        const maximPath = JoinPaths(motherfuckerInQuestion, "node_modules");
 
         await LogStuff(
             `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
