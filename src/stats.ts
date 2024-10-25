@@ -1,22 +1,29 @@
 import { I_LIKE_JS } from "./constants.ts";
-import { CheckForPath, GetAllProjects, GetDirSize, JoinPaths, LogStuff } from "./functions.ts";
+import { CheckForPath, GetAllProjects, GetDirSize, JoinPaths, LogStuff, ParsePath } from "./functions.ts";
 
-export default async function TheStatistics(includeSelf: boolean) {
-    const mfs = await GetAllProjects();
+export default async function TheStatistics() {
+    const projects = await GetAllProjects();
 
     let totalSpace: number = 0;
 
     await LogStuff(`This is ${I_LIKE_JS.MFLY} going to take a while. Have a coffee meanwhile!`, "bruh");
 
-    for (const mf of mfs) {
-        if (!(await CheckForPath(JoinPaths(mf, "node_modules")))) {
-            await LogStuff(`${mf} doesn't have a node_modules DIR? What's up?`, "warn");
+    for (const project of projects) {
+        const workingPath = ParsePath("path", project) as string;
+
+        const nodeGarbagePath = JoinPaths(workingPath, "node_modules");
+
+        if (!(await CheckForPath(workingPath))) {
+            await LogStuff(`${workingPath} doesn't exist?`, "warn");
+            continue;
+        }
+        if (!(await CheckForPath(nodeGarbagePath))) {
+            await LogStuff(`${workingPath} doesn't have a node_modules DIR. What's up?`, "warn");
             continue;
         }
 
-        let size = await GetDirSize(JoinPaths(mf, "node_modules"));
-
-        if (includeSelf) size += await GetDirSize(mf);
+        let size = await GetDirSize(nodeGarbagePath);
+        size += await GetDirSize(workingPath);
 
         let message: string = I_LIKE_JS.MF;
 
@@ -34,7 +41,7 @@ export default async function TheStatistics(includeSelf: boolean) {
         }
 
         await LogStuff(
-            `${mf} is taking ${size.toFixed(3)} MB in your drive. ${message}`,
+            `${workingPath} is taking ${size.toFixed(2)}MB. ${message}`,
             "trash",
         );
 
@@ -43,7 +50,7 @@ export default async function TheStatistics(includeSelf: boolean) {
 
     console.log(""); // glue stick fix
     await LogStuff(
-        `In total, your ${I_LIKE_JS.MFS} are taking up to ${totalSpace.toFixed(3)} MB.`,
+        `In total, your ${I_LIKE_JS.MFS} are taking up to ${totalSpace.toFixed(2)}MB.`,
         "bruh",
     );
 }

@@ -444,7 +444,7 @@ export async function GetDirSize(path: string): Promise<number> {
 
         totalSize = sizes.reduce((acc, size) => acc + size, 0);
 
-        return parseFloat((totalSize / 1048576).toFixed(2)); // (returns in MB)
+        return parseFloat((totalSize / (1024 * 1024)).toFixed(2)); // (returns in MB)
     } catch (e) {
         await LogStuff(`Error: ${e}`, "error");
         return 0;

@@ -23,7 +23,7 @@ export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
 const _USAGE = {
     clean: SpaceString("clean   [--update] [--verbose]", 8),
     manager: SpaceString("manager add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup", 8),
-    stats: SpaceString("stats   [--full]", 8),
+    stats: SpaceString("stats", 8),
     migrate: SpaceString("migrate", 8),
     self_update: SpaceString("self-update", 8),
     version: SpaceString("[--version]", 8),
