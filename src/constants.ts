@@ -6,7 +6,7 @@ import { SpaceString } from "./functions.ts";
  *
  * @type {SemVer}
  */
-export const VERSION: SemVer = "1.3.0";
+export const VERSION: SemVer = "1.4.0";
 
 /**
  * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).

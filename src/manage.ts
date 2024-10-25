@@ -1,3 +1,4 @@
+import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "./constants.ts";
 import { CheckForPath, GetMotherfuckers, GetPath, LogStuff, ParsePath } from "./functions.ts";
 
@@ -57,6 +58,40 @@ async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 
 }
 
 /**
+ * Checks for workspaces within a Node project.
+ *
+ * @async
+ * @param {string} pkgJsonPath Path to the package.json file.
+ * @returns {Promise<string[] | null>}
+ */
+async function getWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
+    try {
+        if (!(await CheckForPath(ParsePath("path", pkgJsonPath) as string))) throw new Error("Requested path doesn't exist.");
+
+        const pkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
+
+        if (!Array.isArray(pkgJson.workspaces)) {
+            return null;
+        }
+
+        const absoluteWorkspaces: string[] = [];
+
+        for (const path of pkgJson.workspaces) {
+            for await (const dir of expandGlob(path)) {
+                if (dir.isDirectory) {
+                    absoluteWorkspaces.push(dir.path);
+                }
+            }
+        }
+
+        return absoluteWorkspaces;
+    } catch (e) {
+        await LogStuff(`Error looking for workspaces: ${e}`, "error");
+        return null;
+    }
+}
+
+/**
  * Adds a new project.
  *
  * @async
@@ -65,6 +100,7 @@ async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 
  */
 async function addEntry(entry: string): Promise<void> {
     const workingEntry = ParsePath("path", entry) as string;
+
     async function addTheEntry() {
         await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
@@ -74,7 +110,9 @@ async function addEntry(entry: string): Promise<void> {
             "tick-clear",
         );
     }
+
     const validation = await validateEntryAsNodeProject(workingEntry);
+
     if (validation === 3) {
         await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
         return;
@@ -105,7 +143,37 @@ async function addEntry(entry: string): Promise<void> {
         await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
         return;
     }
-    addTheEntry();
+
+    const workspaces = await getWorkspaces(`${workingEntry}/package.json`);
+
+    if (!workspaces) {
+        addTheEntry();
+        return;
+    }
+
+    const addWorkspaces = await LogStuff(
+        `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these Node workspaces:\n\n${workspaces.toString()}.\n\nShould we add them to your list as well, so they're all cleaned?`,
+        "bulb",
+        undefined,
+        true,
+    );
+
+    if (!addWorkspaces) {
+        addTheEntry();
+        return;
+    }
+
+    await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
+        append: true,
+    });
+    for (const workspace of workspaces) {
+        await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workspace}\n`, {
+            append: true,
+        });
+    }
+
+    await LogStuff(`Added all of your projects. Many mfs less to care about!`, "tick-clear");
+    return;
 }
 
 /**
@@ -137,7 +205,7 @@ async function removeEntry(entry: string): Promise<void> {
         }
     } else {
         await LogStuff(
-            `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry}\n(PS. You wrote: ${entry} - input sometimes gets cleaned up)`,
+            `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry}`,
             "error",
         );
     }
