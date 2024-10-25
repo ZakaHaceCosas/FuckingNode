@@ -86,21 +86,20 @@ export function GetPath(
         Deno.exit(1);
     }
 
-    // i don't know how to remove the f-word from here, i can't just put an asterisk in a file path
     const BASE_DIR = JoinPaths(appDataPath, APP_NAME.CASED);
-    const MOTHERFKRS_DIR = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-${I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")}.txt`);
-    const LOGS_DIR = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-Logs.log`);
-    const UPDATES_DIR = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-updates.txt`);
+    const PROJECTS = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-${I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")}.txt`);
+    const LOGS = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-logs.log`);
+    const UPDATES = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-updates.json`);
 
     switch (path) {
         case "BASE":
             return BASE_DIR;
         case "MOTHERFKRS":
-            return MOTHERFKRS_DIR;
+            return PROJECTS;
         case "LOGS":
-            return LOGS_DIR;
+            return LOGS;
         case "UPDATES":
-            return UPDATES_DIR;
+            return UPDATES;
         default:
             throw new Error("Invalid path requested");
     }
