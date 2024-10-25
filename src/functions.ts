@@ -529,3 +529,28 @@ export function ParseFlag(flag: string, min: boolean): string[] {
 
     return response;
 }
+
+/**
+ * Executes commands and automatically handles errors.
+ *
+ * @export
+ * @async
+ * @param {string} main Main command.
+ * @param {string[]} stuff Additional args for the command.
+ * @returns {unknown} Whatever the commands returns via either the `stdout` or the `stderr` (if an `stderr` is thrown, the app will exit).
+ */
+export async function Commander(main: string, stuff: string[]) {
+    const decoder = new TextDecoder();
+    const command = new Deno.Command(main, {
+        args: stuff,
+    });
+    const output = await command.output();
+    if (!output.success) {
+        await LogStuff(
+            `An error happened with ${main} ${stuff.toString()}: ` + output.stderr ? decoder.decode(output.stderr) : "(Error is unknown)",
+        );
+        Deno.exit(1);
+    }
+    const result = decoder.decode(output.stdout);
+    return result;
+}

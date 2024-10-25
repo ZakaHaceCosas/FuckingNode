@@ -1,15 +1,17 @@
 import { I_LIKE_JS } from "./constants.ts";
-import { CheckForPath, GetPath, LogStuff } from "./functions.ts";
+import { CheckForPath, Commander, GetPath, LogStuff } from "./functions.ts";
 import { type SUPPORTED_LOCKFILE } from "./types.ts";
 import { IGNORE_FILE } from "./constants.ts";
 import { JoinPaths, ParsePath } from "./functions.ts";
 
 async function PerformCleaning(
     lockfile: SUPPORTED_LOCKFILE,
-    motherfuckerInQuestion: string,
+    projectInQuestion: string,
     shouldUpdate: boolean,
     shouldMaxim: boolean,
 ) {
+    const motherfuckerInQuestion = ParsePath("path", projectInQuestion) as string;
+
     let baseCommand: string;
     let pruneArgs: string[][];
     let updateArg: string[];
@@ -35,21 +37,12 @@ async function PerformCleaning(
 
     if (shouldUpdate) {
         await LogStuff(
-            `Updating and using ${baseCommand} for ${motherfuckerInQuestion}.`,
+            `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
             "package",
         );
-        const updateCmd = new Deno.Command(baseCommand, {
-            args: updateArg,
-        });
-        const updateOutput = await updateCmd.output();
-        if (!updateOutput.success) {
-            throw new Error(
-                `updating ${motherfuckerInQuestion} gave an unknown error`,
-            );
-        }
-        const updateStdout = new TextDecoder().decode(updateOutput.stdout);
+        const updateOutput = await Commander(baseCommand, updateArg);
         await LogStuff(
-            `${baseCommand + " " + updateArg}: ${updateStdout}`,
+            `${baseCommand} ${updateArg}: ${updateOutput}`,
             "package",
         );
     }
@@ -59,20 +52,9 @@ async function PerformCleaning(
             "package",
         );
         for (const pruneArg of pruneArgs) {
-            const pruneCmd = new Deno.Command(baseCommand, {
-                args: pruneArg,
-            });
-            const pruneOutput = await pruneCmd.output();
-            if (!pruneOutput.success) {
-                throw new Error(
-                    `Pruning ${motherfuckerInQuestion} gave an unknown error: ${
-                        pruneOutput.stderr ? new TextDecoder().decode(pruneOutput.stderr) : ""
-                    }`,
-                );
-            }
-            const pruneStdout = new TextDecoder().decode(pruneOutput.stdout);
+            const pruneOutput = await Commander(baseCommand, pruneArg);
             await LogStuff(
-                `${baseCommand} ${pruneArg.join(" ")}: ${pruneStdout}`,
+                `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput}`,
                 "package",
             );
         }
@@ -109,10 +91,10 @@ export default async function TheCleaner(
         const originalLocation = Deno.cwd();
 
         // read all mfs
-        let motherFuckers: string[] = [];
+        let projects: string[] = [];
         try {
             const data = await Deno.readTextFile(GetPath("MOTHERFKRS"));
-            motherFuckers = ParsePath("cleaner", data) as string[];
+            projects = ParsePath("cleaner", data) as string[];
         } catch (e) {
             await LogStuff(
                 `${I_LIKE_JS.MFN} error reading your ${I_LIKE_JS.MFN} list of ${I_LIKE_JS.MFS}: ${e}`,
@@ -120,7 +102,7 @@ export default async function TheCleaner(
             Deno.exit(1);
         }
 
-        if (motherFuckers.length === 0) {
+        if (projects.length === 0) {
             await LogStuff(
                 `There isn't any ${I_LIKE_JS.MF} over here... yet...`,
                 "moon-face",
@@ -149,27 +131,27 @@ export default async function TheCleaner(
 
         const results: { path: string; status: string }[] = [];
 
-        for (const motherfucker of motherFuckers) {
-            if (!(await CheckForPath(motherfucker))) {
-                await LogStuff(`Path not found: ${motherfucker}. You might want to update your list of ${I_LIKE_JS.MFS}.`, "error");
-                results.push({ path: motherfucker, status: "Not found" });
+        for (const project of projects) {
+            if (!(await CheckForPath(project))) {
+                await LogStuff(`Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`, "error");
+                results.push({ path: project, status: "Not found" });
                 continue;
             }
 
             try {
-                Deno.chdir(motherfucker);
+                Deno.chdir(project);
                 await LogStuff(
-                    `Cleaning the ${motherfucker} ${I_LIKE_JS.MF}...`,
+                    `Cleaning the ${project} ${I_LIKE_JS.MF}...`,
                     "working",
                 );
 
                 if (await CheckForPath(IGNORE_FILE)) {
                     await LogStuff(
-                        `This ${I_LIKE_JS.MF} (${motherfucker}) is protected by ${I_LIKE_JS.FKN} divine protection (.fknodeignore file). Cannot clean or update it.`,
+                        `This ${I_LIKE_JS.MF} (${project}) is protected by ${I_LIKE_JS.FKN} divine protection (.fknodeignore file). Cannot clean or update it.`,
                         "heads-up",
                     );
                     results.push({
-                        path: motherfucker,
+                        path: project,
                         status: "Protected",
                     });
                     continue;
@@ -178,43 +160,43 @@ export default async function TheCleaner(
                 if (await CheckForPath("pnpm-lock.yaml")) {
                     await PerformCleaning(
                         "pnpm-lock.yaml",
-                        motherfucker,
+                        project,
                         update,
                         maximForReal,
                     );
                 } else if (await CheckForPath("package-lock.json")) {
                     await PerformCleaning(
                         "package-lock.json",
-                        motherfucker,
+                        project,
                         update,
                         maximForReal,
                     );
                 } else if (await CheckForPath("yarn.lock")) {
                     await PerformCleaning(
                         "yarn.lock",
-                        motherfucker,
+                        project,
                         update,
                         maximForReal,
                     );
                 } else if (await CheckForPath("package.json")) {
                     await LogStuff(
-                        `${motherfucker} has a package.json but not a lockfile. Can't ${I_LIKE_JS.FKN} clean.`,
+                        `${project} has a package.json but not a lockfile. Can't ${I_LIKE_JS.FKN} clean.`,
                         "warn",
                     );
                 } else {
                     await LogStuff(
-                        `No supported lockfile was found at ${motherfucker}. Skipping this ${I_LIKE_JS.MF}...`,
+                        `No supported lockfile was found at ${project}. Skipping this ${I_LIKE_JS.MF}...`,
                         "warn",
                     );
                 }
 
-                results.push({ path: motherfucker, status: "Success" });
+                results.push({ path: project, status: "Success" });
             } catch (e) {
                 await LogStuff(
-                    `Error while working around with ${motherfucker}: ${e}`,
+                    `Error while working around with ${project}: ${e}`,
                     "error",
                 );
-                results.push({ path: motherfucker, status: "Failed" });
+                results.push({ path: project, status: "Failed" });
             }
         }
 
