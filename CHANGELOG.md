@@ -16,6 +16,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Now flag commands like --help or --version are now case unsensitive and all support single dash calls (-help) and 1st letter calls (-h, -v).
 
+### Fixed
+
+- Fix `stats` adding it's self size twice, incorrectly increasing the MB size.
+
 ## [1.3.0] 24-10-2024
 
 ### Added

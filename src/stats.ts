@@ -1,5 +1,6 @@
 import { I_LIKE_JS } from "./constants.ts";
-import { GetDirSize, GetAllProjects, LogStuff } from "./functions.ts";
+import { GetDirSize, GetAllProjects, LogStuff, CheckForPath } from "./functions.ts";
+import { JoinPaths } from './functions.ts';
 
 export default async function TheStatistics(includeSelf: boolean) {
     const mfs = await GetAllProjects();
@@ -9,21 +10,14 @@ export default async function TheStatistics(includeSelf: boolean) {
     await LogStuff(`This is ${I_LIKE_JS.MFLY} going to take a while. Have a coffee meanwhile!`, "bruh");
 
     for (const mf of mfs) {
-        let size = await GetDirSize(`${mf}/node_modules`);
-        if (!size) {
+        if (!(await CheckForPath(JoinPaths(mf, "node_modules")))) {
             await LogStuff(`${mf} doesn't have a node_modules DIR? What's up?`, "warn");
             continue;
         }
 
-        if (includeSelf) {
-            size += await GetDirSize(mf);
-            const selfSize = await GetDirSize(mf);
-            if (!selfSize) {
-                await LogStuff(`Feels like ${mf} doesn't exist?`, "error");
-                continue;
-            }
-            size += selfSize;
-        }
+        let size = await GetDirSize(`${mf}/node_modules`);
+
+        if (includeSelf) size += await GetDirSize(mf);
 
         let message: string = I_LIKE_JS.MF;
 

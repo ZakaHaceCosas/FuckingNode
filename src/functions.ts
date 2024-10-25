@@ -1,3 +1,4 @@
+import { join } from "https://deno.land/std@0.224.0/path/mod.ts";
 import { normalize } from "node:path";
 import { APP_NAME, I_LIKE_JS, RELEASE_URL, VERSION } from "./constants.ts";
 import {
@@ -421,7 +422,7 @@ export async function GetDirSize(path: string): Promise<number> {
 
         // process all entries in parallel
         const sizePromises = entries.map(async ({ entry }) => {
-            const fullPath = `${workingPath}/${entry.name}`;
+            const fullPath = JoinPaths(workingPath, entry.name);
             try {
                 const pathInfo = await Deno.stat(fullPath);
                 if (pathInfo.isFile) {
@@ -484,6 +485,19 @@ export function ParsePath(idea: "path" | "cleaner", target: string): string | st
     } else {
         throw new Error("Invalid idea.");
     }
+}
+
+/**
+ * Joins two parts of a file path.
+ *
+ * @export
+ * @param {string} pathA First part, e.g. "my/beginning/"
+ * @param {string} pathB Second part, e.g. "my/end.txt"
+ * @returns {string} Result, e.g. "my/beginning/my/end.txt"
+ */
+export function JoinPaths(pathA: string, pathB: string): string {
+    const workingPath = join(pathA, pathB);
+    return ParsePath("path", workingPath) as string;
 }
 
 /**
