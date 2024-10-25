@@ -3,3 +3,5 @@
 **.ignore.*
 # compiled executable
 dist/**
+# fake NodeJS projects so i can test the CLI
+tests/**
