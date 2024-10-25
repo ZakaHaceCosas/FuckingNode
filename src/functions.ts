@@ -353,13 +353,13 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
  * @async
  * @returns {Promise<string[]>}
  */
-export async function GetMotherfuckers(): Promise<string[]> {
+export async function GetAllProjects(): Promise<string[]> {
     try {
         const content = await Deno.readTextFile(GetPath("MOTHERFKRS"));
         return content.split("\n").filter(Boolean);
-    } catch (error) {
+    } catch (e) {
         await LogStuff(
-            `Failed to read the file: ${GetPath("MOTHERFKRS")} - ${error}`,
+            `Failed to read ${GetPath("MOTHERFKRS")} - ${e}`,
             "error",
         );
         Deno.exit(1);
@@ -445,7 +445,8 @@ export async function GetDirSize(path: string): Promise<number> {
 
         return parseFloat((totalSize / 1048576).toFixed(2)); // (returns in MB)
     } catch (e) {
-        throw e;
+        await LogStuff(`Error: ${e}`, "error");
+        return 0;
     }
 }
 

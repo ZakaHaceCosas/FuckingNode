@@ -1,6 +1,6 @@
 import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "./constants.ts";
-import { CheckForPath, GetMotherfuckers, GetPath, LogStuff, ParsePath } from "./functions.ts";
+import { CheckForPath, GetAllProjects, GetPath, LogStuff, ParsePath } from "./functions.ts";
 
 /**
  * Shorthand function to show errors in here.
@@ -39,7 +39,7 @@ async function ErrorMessage(errorCode: "noArgument" | "invalidArgument"): Promis
  */
 async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | false> {
     const workingEntry = ParsePath("path", entry) as string;
-    const list = await GetMotherfuckers();
+    const list = await GetAllProjects();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) >= 1;
 
     if (!(await CheckForPath(workingEntry))) {
@@ -185,7 +185,7 @@ async function addEntry(entry: string): Promise<void> {
  */
 async function removeEntry(entry: string): Promise<void> {
     const workingEntry = ParsePath("path", entry) as string;
-    const list = await GetMotherfuckers();
+    const list = await GetAllProjects();
     const index = list.indexOf(workingEntry);
 
     if (list.includes(workingEntry)) {
@@ -219,7 +219,7 @@ async function removeEntry(entry: string): Promise<void> {
  */
 async function CleanProjects(): Promise<0 | 1 | 2> {
     async function GetProjectsToRemove() {
-        const list = await GetMotherfuckers();
+        const list = await GetAllProjects();
         const listOfRemovals: string[] = [];
 
         for (const project of list) {
@@ -282,7 +282,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
  * @returns {Promise<void>}
  */
 async function listEntries(): Promise<void> {
-    const list = await GetMotherfuckers();
+    const list = await GetAllProjects();
     if (list.length > 0) {
         await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
         list.forEach(async (entry) => await LogStuff(entry));

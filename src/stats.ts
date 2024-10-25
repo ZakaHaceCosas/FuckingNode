@@ -1,8 +1,8 @@
 import { I_LIKE_JS } from "./constants.ts";
-import { GetDirSize, GetMotherfuckers, LogStuff } from "./functions.ts";
+import { GetDirSize, GetAllProjects, LogStuff } from "./functions.ts";
 
 export default async function TheStatistics(includeSelf: boolean) {
-    const mfs = await GetMotherfuckers();
+    const mfs = await GetAllProjects();
 
     let totalSpace: number = 0;
 
