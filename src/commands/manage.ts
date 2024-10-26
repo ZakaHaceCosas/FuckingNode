@@ -1,8 +1,10 @@
 import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import { CheckForPath, GetAllProjects, GetPath, JoinPaths, LogStuff, NameProject, ParsePath } from "../functions.ts";
-import { ParseFlag } from "../functions.ts";
 import type { PkgJson } from "../types.ts";
+import { LogStuff, ParseFlag } from "../functions/io.ts";
+import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
+import { GetAllProjects, NameProject } from "../functions/projects.ts";
+import { GetAppPath } from "../functions/config.ts";
 
 /**
  * Shorthand function to show errors in here.
@@ -105,7 +107,7 @@ async function AddProject(entry: string): Promise<void> {
     const projectName = await NameProject(workingEntry);
 
     async function addTheEntry() {
-        await Deno.writeTextFile(await GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
+        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
         });
         await LogStuff(
@@ -170,11 +172,11 @@ async function AddProject(entry: string): Promise<void> {
         return;
     }
 
-    await Deno.writeTextFile(await GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
+    await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
         append: true,
     });
     for (const workspace of workspaces) {
-        await Deno.writeTextFile(await GetPath("MOTHERFKRS"), `${workspace}\n`, {
+        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workspace}\n`, {
             append: true,
         });
     }
@@ -199,7 +201,7 @@ async function RemoveProject(entry: string): Promise<void> {
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         if (list.length > 0) {
             await Deno.writeTextFile(
-                await GetPath("MOTHERFKRS"),
+                await GetAppPath("MOTHERFKRS"),
                 list.join("\n") + "\n",
             );
             await LogStuff(
@@ -209,7 +211,7 @@ async function RemoveProject(entry: string): Promise<void> {
                 "tick-clear",
             );
         } else {
-            await Deno.remove(await GetPath("MOTHERFKRS"));
+            await Deno.remove(await GetAppPath("MOTHERFKRS"));
             await LogStuff("Removed the last entry. The list is now empty.", "moon-face");
         }
     } else {

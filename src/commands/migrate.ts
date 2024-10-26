@@ -1,5 +1,6 @@
-import { Commander, JoinPaths, LogStuff, ParsePath } from "../functions.ts";
-import { CheckForPath } from "../functions.ts";
+import { Commander } from "../functions/cli.ts";
+import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
+import { LogStuff } from "../functions/io.ts";
 import type { MANAGERS, SUPPORTED_LOCKFILE } from "../types.ts";
 
 export default async function TheMigrator(project: string, target: MANAGERS) {

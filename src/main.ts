@@ -4,9 +4,10 @@ import TheStatistics from "./commands/stats.ts";
 import TheMigrator from "./commands/migrate.ts";
 import TheHelper from "./commands/help.ts";
 import { APP_NAME, I_LIKE_JS, VERSION } from "./constants.ts";
-import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
 import type { MANAGERS } from "./types.ts";
-import { ParseFlag } from "./functions.ts";
+import { LogStuff, ParseFlag } from "./functions/io.ts";
+import { CheckForUpdates } from "./functions/updater.ts";
+import { FreshSetup } from "./functions/config.ts";
 
 const [command] = Deno.args;
 

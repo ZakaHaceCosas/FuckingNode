@@ -1,8 +1,10 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { CheckForPath, Commander, GetPath, LogStuff } from "../functions.ts";
 import { type SUPPORTED_LOCKFILE } from "../types.ts";
 import { IGNORE_FILE } from "../constants.ts";
-import { JoinPaths, ParsePath } from "../functions.ts";
+import { Commander } from "../functions/cli.ts";
+import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
+import { LogStuff } from "../functions/io.ts";
+import { GetAppPath } from "../functions/config.ts";
 
 async function PerformCleaning(
     lockfile: SUPPORTED_LOCKFILE,
@@ -118,7 +120,7 @@ export default async function TheCleaner(
         // read all mfs
         let projects: string[] = [];
         try {
-            const data = await Deno.readTextFile(await GetPath("MOTHERFKRS"));
+            const data = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
             projects = await ParsePath("cleaner", data) as string[];
         } catch (e) {
             await LogStuff(
