@@ -1,5 +1,5 @@
-import { APP_NAME } from "./constants.ts";
-import { LogStuff, SpaceString } from "./functions.ts";
+import { APP_NAME } from "../constants.ts";
+import { LogStuff, SpaceString } from "../functions.ts";
 
 function joinObjectValues(obj: Record<string, string>): string {
     return Object.values(obj).join("\n");

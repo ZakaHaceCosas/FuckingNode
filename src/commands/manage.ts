@@ -1,6 +1,6 @@
 import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
-import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "./constants.ts";
-import { CheckForPath, GetAllProjects, GetPath, JoinPaths, LogStuff, ParsePath } from "./functions.ts";
+import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
+import { CheckForPath, GetAllProjects, GetPath, JoinPaths, LogStuff, ParsePath } from "../functions.ts";
 
 /**
  * Shorthand function to show errors in here.

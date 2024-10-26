@@ -1,8 +1,8 @@
-import { I_LIKE_JS } from "./constants.ts";
-import { CheckForPath, Commander, GetPath, LogStuff } from "./functions.ts";
-import { type SUPPORTED_LOCKFILE } from "./types.ts";
-import { IGNORE_FILE } from "./constants.ts";
-import { JoinPaths, ParsePath } from "./functions.ts";
+import { I_LIKE_JS } from "../constants.ts";
+import { CheckForPath, Commander, GetPath, LogStuff } from "../functions.ts";
+import { type SUPPORTED_LOCKFILE } from "../types.ts";
+import { IGNORE_FILE } from "../constants.ts";
+import { JoinPaths, ParsePath } from "../functions.ts";
 
 async function PerformCleaning(
     lockfile: SUPPORTED_LOCKFILE,

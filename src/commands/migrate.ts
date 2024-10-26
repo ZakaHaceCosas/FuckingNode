@@ -1,6 +1,6 @@
-import { Commander, JoinPaths, LogStuff, ParsePath } from "./functions.ts";
-import { CheckForPath } from "./functions.ts";
-import type { MANAGERS, SUPPORTED_LOCKFILE } from "./types.ts";
+import { Commander, JoinPaths, LogStuff, ParsePath } from "../functions.ts";
+import { CheckForPath } from "../functions.ts";
+import type { MANAGERS, SUPPORTED_LOCKFILE } from "../types.ts";
 
 export default async function TheMigrator(project: string, target: MANAGERS) {
     const cwd = Deno.cwd();
