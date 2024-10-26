@@ -28,7 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fix `stats` adding it's self size twice, incorrectly increasing the MB size.
-- Fixed paths being always joined as `some/location`, now Deno's `join` function is used to avoid issues.
+- Fix paths being always joined as `some/location`, now Deno's `join` function is used to avoid issues.
+- Fix `manager cleanup` not detecting some projects (an error with duplicate handling).
 
 ## [1.3.0] 24-10-2024
 

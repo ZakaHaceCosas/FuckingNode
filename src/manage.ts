@@ -31,19 +31,19 @@ async function ErrorMessage(errorCode: "noArgument" | "invalidArgument"): Promis
 /**
  * Given a path, returns a number based on if it's a valid Node project or not. It can also return `false` if the DIR does not exist at all.
  *
- * `0` = valid. `1` = not valid, no package.json. `2` = not fully valid, not node_modules. `3` = not fully valid, duplicate.
+ * `0` = valid. `1` = not valid, no package.json. `2` = not fully valid, not node_modules. `3` = not fully valid, duplicate. `4` = path doesn't exist.
  *
  * @async
  * @param {string} entry The path.
- * @returns {Promise<0 | 1 | 2 | 3 | false>}
+ * @returns {Promise<0 | 1 | 2 | 3 | 4>}
  */
-async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | false> {
+async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
     const workingEntry = ParsePath("path", entry) as string;
     const list = await GetAllProjects();
-    const isDuplicate = (list.filter((item) => item === workingEntry).length) >= 1;
+    const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 
     if (!(await CheckForPath(workingEntry))) {
-        return false;
+        return 4;
     }
     if (isDuplicate) {
         return 3;
@@ -139,7 +139,7 @@ async function addEntry(entry: string): Promise<void> {
         addTheEntry();
         return;
     }
-    if (validation === false) {
+    if (validation === 4) {
         await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
         return;
     }
@@ -224,8 +224,8 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
 
         for (const project of list) {
             const validation = await validateEntryAsNodeProject(project);
-            if (validation === 0) continue;
-            listOfRemovals.push(project);
+            console.log(project, validation);
+            if (validation !== 0) listOfRemovals.push(project);
         }
 
         // this should handle duplicates, so all duplicates EXCEPT ONE are removed
@@ -242,7 +242,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         const result: string[] = [];
         // for each project of the object, if it exists, we push it, and this somehow returns only one entry per project
         for (const project of Object.keys(countMap)) {
-            if (countMap[project] && countMap[project] > 1) result.push(project);
+            if (countMap[project] && countMap[project] >= 1) result.push(project);
         }
         // (no i didn't write that)
 
