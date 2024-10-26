@@ -173,7 +173,7 @@ export default async function TheCleaner(
 
                 if (await CheckForPath(IGNORE_FILE)) {
                     await LogStuff(
-                        `This ${I_LIKE_JS.MF} (${project}) is protected by ${I_LIKE_JS.FKN} divine protection (.fknodeignore file). Cannot clean or update it.`,
+                        `${project} is protected by ${I_LIKE_JS.FKN} divine protection. Cannot touch it.`,
                         "heads-up",
                     );
                     results.push({
@@ -196,8 +196,17 @@ export default async function TheCleaner(
                 }
 
                 if (lockfiles.length > 0) {
-                    for (const lockfile of lockfiles) {
-                        await PerformCleaning(lockfile, project, update, realIntensity);
+                    if (lockfiles.length === 1) {
+                        for (const lockfile of lockfiles) {
+                            await PerformCleaning(lockfile, project, update, realIntensity);
+                        }
+                    } else {
+                        await LogStuff(
+                            `More than one lockfile is a ${I_LIKE_JS.MFLY} bad practice. Future versions might add a handler for this cases, but for now we'll skip this.`,
+                            "error",
+                        );
+                        results.push({ path: project, status: "Too many lockfiles." });
+                        continue;
                     }
                 } else if (await CheckForPath("package.json")) {
                     await LogStuff(
