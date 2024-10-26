@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - `normal` will do the easy: recursively run cleaning commands.
   - `hard` will do what default used to do (clean + dedupe) + it will also clean cache.
   - `maxim` will do what maxim does: forcedly remove `node_modules/` for everyone.
+- Added `list --ignored` flag to only list ignored projects.
 
 ### Changed
 

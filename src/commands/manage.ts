@@ -1,6 +1,7 @@
 import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import { CheckForPath, GetAllProjects, GetPath, JoinPaths, LogStuff, ParsePath } from "../functions.ts";
+import { ParseFlag } from "../functions.ts";
 
 /**
  * Shorthand function to show errors in here.
@@ -278,16 +279,26 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
  * Lists all projects.
  *
  * @async
+ * @param {boolean} ignoredOnly If true, only ignored projects will be shown.
  * @returns {Promise<void>}
  */
-async function ListProjects(): Promise<void> {
+async function ListProjects(ignoredOnly: boolean): Promise<void> {
     const list = await GetAllProjects();
-    if (list.length > 0) {
+    if (list.length === 0) {
+        await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");
+        return;
+    }
+    if (!ignoredOnly) {
         await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
         list.forEach(async (entry) => await LogStuff(entry));
-    } else {
-        await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");
+        return;
     }
+    await LogStuff(`Here are the ${I_LIKE_JS.MFS} you ignored so far:\n`, "bulb");
+    list.forEach(async (entry) => {
+        if (!(await CheckForPath(JoinPaths(entry, IGNORE_FILE)))) return;
+        await LogStuff(entry);
+    });
+    return;
 }
 
 /**
@@ -348,7 +359,7 @@ export default async function TheManager(args: string[]) {
     }
 
     const command = args[1];
-    const entry = args[2] ? args[2].trim() : null;
+    const secondArg = args[2] ? args[2].trim() : null;
 
     if (!command) {
         ErrorMessage("noArgument");
@@ -357,35 +368,35 @@ export default async function TheManager(args: string[]) {
 
     switch (command.toLowerCase()) {
         case "add":
-            if (!entry || entry === null) {
+            if (!secondArg || secondArg === null) {
                 ErrorMessage("invalidArgument");
                 return;
             }
-            await addEntry(entry);
+            await addEntry(secondArg);
             break;
         case "remove":
-            if (!entry || entry === null) {
+            if (!secondArg || secondArg === null) {
                 ErrorMessage("invalidArgument");
                 return;
             }
-            await RemoveProject(entry);
+            await RemoveProject(secondArg);
             break;
         case "ignore":
-            if (!entry || entry === null) {
+            if (!secondArg || secondArg === null) {
                 ErrorMessage("invalidArgument");
                 return;
             }
-            await HandleIgnoreProject(true, entry);
+            await HandleIgnoreProject(true, secondArg);
             break;
         case "revive":
-            if (!entry || entry === null) {
+            if (!secondArg || secondArg === null) {
                 ErrorMessage("invalidArgument");
                 return;
             }
-            await HandleIgnoreProject(false, entry);
+            await HandleIgnoreProject(false, secondArg);
             break;
         case "list":
-            await ListProjects();
+            await ListProjects(ParseFlag("ignored", false).includes(secondArg ?? ""));
             break;
         case "cleanup":
             await CleanProjects();
