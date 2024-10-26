@@ -45,9 +45,9 @@ async function PerformCleaning(
             `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
             "package",
         );
-        const updateOutput = await Commander(baseCommand, updateArg);
+        const updateOutput = await Commander(baseCommand, updateArg, false);
         await LogStuff(
-            `${baseCommand} ${updateArg}: ${updateOutput}`,
+            `${baseCommand} ${updateArg}: ${updateOutput.stdout}`,
             "package",
         );
     }
@@ -58,9 +58,9 @@ async function PerformCleaning(
             "package",
         );
         for (const pruneArg of pruneArgs) {
-            const pruneOutput = await Commander(baseCommand, pruneArg);
+            const pruneOutput = await Commander(baseCommand, pruneArg, false);
             await LogStuff(
-                `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput}`,
+                `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput.stdout}`,
                 "package",
             );
         }
@@ -71,16 +71,16 @@ async function PerformCleaning(
             "package",
         );
         for (const pruneArg of pruneArgs) {
-            const pruneOutput = await Commander(baseCommand, pruneArg);
+            const pruneOutput = await Commander(baseCommand, pruneArg, false);
             await LogStuff(
-                `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput}`,
+                `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput.stdout}`,
                 "package",
             );
         }
         for (const hardPruneArg of hardPruneArgs) {
-            const pruneOutput = await Commander(baseCommand, hardPruneArg);
+            const pruneOutput = await Commander(baseCommand, hardPruneArg, false);
             await LogStuff(
-                `${baseCommand} ${hardPruneArg.join(" ")}: ${pruneOutput}`,
+                `${baseCommand} ${hardPruneArg.join(" ")}: ${pruneOutput.stdout}`,
                 "package",
             );
         }

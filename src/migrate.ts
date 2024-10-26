@@ -1,4 +1,4 @@
-import { JoinPaths, LogStuff, ParsePath } from "./functions.ts";
+import { Commander, JoinPaths, LogStuff, ParsePath } from "./functions.ts";
 import { CheckForPath } from "./functions.ts";
 import type { MANAGERS, SUPPORTED_LOCKFILE } from "./types.ts";
 
@@ -20,11 +20,10 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
 
             Deno.chdir(target);
             await LogStuff("Installing modules with the desired manager (2/3)...", "working");
-            const command = new Deno.Command(cmd, { args: ["install"] });
-            const output = await command.output();
+            const command = await Commander(cmd, ["install"], false);
 
-            if (!output.success) {
-                await LogStuff(`New installation threw an error: ${new TextDecoder().decode(output.stderr)}`, "error");
+            if (!command.success) {
+                await LogStuff(`New installation threw an error: ${command.stdout}`, "error");
             }
 
             try {
