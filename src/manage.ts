@@ -224,7 +224,6 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
 
         for (const project of list) {
             const validation = await ValidateNodeProject(project);
-            console.log(project, validation);
             if (validation !== 0) listOfRemovals.push(project);
         }
 
