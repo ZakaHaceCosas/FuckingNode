@@ -29,8 +29,9 @@ We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with 
 > Keep in mind paths should point to the root, where you have `/package.json`, `/lockfile`[^1], and `/node_modules`.
 
 - `fuckingnode manager list` - lists all projects.
-- `fuckingnode manager add <path>` - adds a project.
-- `fuckingnode manager remove <path>` - removes a project.
+- `fuckingnode manager list --ignored` - lists all ignored projects.
+- `fuckingnode manager add <path>` - adds a project to list.
+- `fuckingnode manager remove <path>` - removes a project from list.
 - `fuckingnode manager ignore <path>` - ignores a project (won't be cleaned or updated).
 - `fuckingnode manager revive <path>` - stops ignoring a project.
 
