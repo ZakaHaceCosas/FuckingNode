@@ -3,6 +3,7 @@ import { normalize } from "node:path";
 import { APP_NAME, I_LIKE_JS, RELEASE_URL, VERSION } from "./constants.ts";
 import {
     type GITHUB_RELEASE,
+    type PkgJson,
     type RIGHT_NOW_DATE,
     RIGHT_NOW_DATE_REGEX,
     type SemVer,
@@ -495,7 +496,7 @@ export function ParsePath(idea: "path" | "cleaner", target: string): string | st
  * @returns {string} Result, e.g. "my/beginning/my/end.txt"
  */
 export function JoinPaths(pathA: string, pathB: string): string {
-    const workingPath = join(pathA, pathB);
+    const workingPath = join(ParsePath("path", pathA) as string, ParsePath("path", pathB) as string);
     return ParsePath("path", workingPath) as string;
 }
 
@@ -581,4 +582,21 @@ export async function Commander(main: string, stuff: string[], log: boolean): Pr
     };
 
     return result;
+}
+
+/**
+ * Given a path to a project, returns it's name.
+ *
+ * @export
+ * @param {string} path Path to the **root**.
+ * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
+ */
+export async function NameProject(path: string): Promise<string> {
+    const pkgJsonPath = JoinPaths(path, "package.json");
+
+    if (!(await CheckForPath(pkgJsonPath))) return ParsePath("path", path) as string;
+
+    const packageJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
+
+    return packageJson.name ?? ParsePath("path", path) as string;
 }

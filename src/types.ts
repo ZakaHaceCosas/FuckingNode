@@ -113,6 +113,13 @@ export interface UPDATE_FILE {
  */
 export type tURL = `https://${string}`;
 
+/**
+ * `package.json` props we need.
+ *
+ * @export
+ * @interface PkgJson
+ * @typedef {PkgJson}
+ */
 export interface PkgJson {
     name?: string;
     workspaces?: string[] | {
