@@ -2,7 +2,8 @@ import TheCleaner from "./clean.ts";
 import TheManager from "./manage.ts";
 import TheStatistics from "./stats.ts";
 import TheMigrator from "./migrate.ts";
-import { APP_NAME, HELP, I_LIKE_JS, VERSION } from "./constants.ts";
+import TheHelper from "./help.ts";
+import { APP_NAME, I_LIKE_JS, VERSION } from "./constants.ts";
 import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
 import type { MANAGERS } from "./types.ts";
 import { ParseFlag } from "./functions.ts";
@@ -32,7 +33,7 @@ async function init(update?: boolean) {
 
 if (ParseFlag("help", true).some((flag) => flags.includes(flag))) {
     await init();
-    await LogStuff(HELP, undefined, true);
+    await TheHelper(Deno.args[1]);
     Deno.exit(0);
 }
 
