@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added support for monorepos / Node workspaces. When adding a project, now F\*ckingNode will look through the `package.json`. If `workspaces` are found, it will prompt to add them as separate projects so they get their own cleanup as well.
+- Added clean levels, adding a new `hard` level and replacing the `--maxim` flag. Now `clean` takes a level, either `clean normal`, `clean hard`, or `clean maxim` (if no level, "normal" will be used as default).
+  - `normal` will do the easy: recursively run cleaning commands.
+  - `hard` will do what default used to do (clean + dedupe) + it will also clean cache.
+  - `maxim` will do what maxim does: forcedly remove `node_modules/` for everyone.
 
 ### Changed
 

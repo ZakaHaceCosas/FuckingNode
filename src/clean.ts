@@ -8,27 +8,32 @@ async function PerformCleaning(
     lockfile: SUPPORTED_LOCKFILE,
     projectInQuestion: string,
     shouldUpdate: boolean,
-    shouldMaxim: boolean,
+    intensity: "normal" | "hard" | "maxim",
 ) {
     const motherfuckerInQuestion = ParsePath("path", projectInQuestion) as string;
+    const maximPath = JoinPaths(motherfuckerInQuestion, "node_modules");
 
     let baseCommand: string;
     let pruneArgs: string[][];
+    let hardPruneArgs: string[][];
     let updateArg: string[];
     switch (lockfile) {
         case "package-lock.json":
             baseCommand = "npm";
             pruneArgs = [["dedupe"], ["prune"]];
+            hardPruneArgs = [["cache", "clean"]];
             updateArg = ["update"];
             break;
         case "pnpm-lock.yaml":
             baseCommand = "pnpm";
-            pruneArgs = [["dedupe"], ["prune"], ["store", "prune"]];
+            pruneArgs = [["dedupe"], ["prune"]];
+            hardPruneArgs = [["store", "prune"]];
             updateArg = ["update"];
             break;
         case "yarn.lock":
             baseCommand = "yarn";
             pruneArgs = [["autoclean", "--force"]];
+            hardPruneArgs = [["cache", "clean"]];
             updateArg = ["upgrade"];
             break;
         default:
@@ -46,7 +51,8 @@ async function PerformCleaning(
             "package",
         );
     }
-    if (!shouldMaxim) {
+
+    if (intensity === "normal") {
         await LogStuff(
             `Pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
             "package",
@@ -58,9 +64,28 @@ async function PerformCleaning(
                 "package",
             );
         }
-    } else if (shouldMaxim) {
-        const maximPath = JoinPaths(motherfuckerInQuestion, "node_modules");
-
+    }
+    if (intensity === "hard") {
+        await LogStuff(
+            `Hard-pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
+            "package",
+        );
+        for (const pruneArg of pruneArgs) {
+            const pruneOutput = await Commander(baseCommand, pruneArg);
+            await LogStuff(
+                `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput}`,
+                "package",
+            );
+        }
+        for (const hardPruneArg of hardPruneArgs) {
+            const pruneOutput = await Commander(baseCommand, hardPruneArg);
+            await LogStuff(
+                `${baseCommand} ${hardPruneArg.join(" ")}: ${pruneOutput}`,
+                "package",
+            );
+        }
+    }
+    if (intensity === "maxim") {
         await LogStuff(
             `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
             "trash",
@@ -84,7 +109,7 @@ async function PerformCleaning(
 export default async function TheCleaner(
     verbose: boolean,
     update: boolean,
-    maxim: boolean,
+    intensity: "normal" | "hard" | "maxim",
 ) {
     try {
         // original path
@@ -110,16 +135,17 @@ export default async function TheCleaner(
             return;
         }
 
-        let maximForReal: boolean;
-        if (maxim) {
-            maximForReal = await LogStuff(
+        let realIntensity: "normal" | "hard" | "maxim";
+        if (intensity === "maxim") {
+            const confirmMaxim = await LogStuff(
                 "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
                 "warn",
                 undefined,
                 true,
             );
+            realIntensity = confirmMaxim ? intensity : "hard";
         } else {
-            maximForReal = false;
+            realIntensity = intensity;
         }
 
         if (verbose) {
@@ -162,21 +188,21 @@ export default async function TheCleaner(
                         "pnpm-lock.yaml",
                         project,
                         update,
-                        maximForReal,
+                        realIntensity,
                     );
                 } else if (await CheckForPath("package-lock.json")) {
                     await PerformCleaning(
                         "package-lock.json",
                         project,
                         update,
-                        maximForReal,
+                        realIntensity,
                     );
                 } else if (await CheckForPath("yarn.lock")) {
                     await PerformCleaning(
                         "yarn.lock",
                         project,
                         update,
-                        maximForReal,
+                        realIntensity,
                     );
                 } else if (await CheckForPath("package.json")) {
                     await LogStuff(

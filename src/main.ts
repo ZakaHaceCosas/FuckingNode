@@ -24,7 +24,6 @@ const flags = Deno.args.map((arg) => {
 
 const isVerbose = flags.includes("--verbose");
 const wantsToUpdate = flags.includes("--update");
-const wantsMaxim = flags.includes("--maxim");
 
 async function init(update?: boolean) {
     await CheckForUpdates(update);
@@ -54,13 +53,16 @@ if (ParseFlag("experimental-stats", false).some((flag) => flags.includes(flag)))
 switch (command.toLowerCase()) {
     case "clean":
         await init();
-        await TheCleaner(isVerbose, wantsToUpdate, wantsMaxim);
+        if (Deno.args[1] && !["normal", "hard", "maxim"].includes(Deno.args[1])) {
+            await LogStuff("Invalid intensity provided.", "error");
+            Deno.exit(1);
+        }
+        await TheCleaner(isVerbose, wantsToUpdate, Deno.args[1] as "normal" | "hard" | "maxim" ?? "normal");
         break;
     case "manager":
         await init();
         await TheManager(Deno.args);
         break;
-
     case "migrate":
         await init();
         if (!Deno.args[1]) throw new Error(`No project specified!`);
