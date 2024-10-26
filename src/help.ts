@@ -21,7 +21,10 @@ export default async function TheHelper(query?: string) {
     };
     const OPTIONS = joinObjectValues(_OPTIONS);
     const _CLEAN_OPTIONS = {
-        intensity: SpaceString("<intensity>     Can be 'normal' (default), 'hard', or 'maxim'. The higher, the deeper (but more time-consuming) the cleaning will be.", 4),
+        intensity: SpaceString(
+            "<intensity>     Can be 'normal' (default), 'hard', or 'maxim'. The higher, the deeper (but more time-consuming) the cleaning will be.",
+            4,
+        ),
         update: SpaceString("--update        Update all your projects before cleaning them.", 4),
         verbose: SpaceString("--verbose       Show more detailed ('verbose') logs.", 4),
     };

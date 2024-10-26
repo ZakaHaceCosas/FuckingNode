@@ -183,37 +183,36 @@ export default async function TheCleaner(
                     continue;
                 }
 
+                const lockfiles: SUPPORTED_LOCKFILE[] = [];
+
                 if (await CheckForPath("pnpm-lock.yaml")) {
-                    await PerformCleaning(
-                        "pnpm-lock.yaml",
-                        project,
-                        update,
-                        realIntensity,
-                    );
-                } else if (await CheckForPath("package-lock.json")) {
-                    await PerformCleaning(
-                        "package-lock.json",
-                        project,
-                        update,
-                        realIntensity,
-                    );
-                } else if (await CheckForPath("yarn.lock")) {
-                    await PerformCleaning(
-                        "yarn.lock",
-                        project,
-                        update,
-                        realIntensity,
-                    );
+                    lockfiles.push("pnpm-lock.yaml");
+                }
+                if (await CheckForPath("package-lock.json")) {
+                    lockfiles.push("package-lock.json");
+                }
+                if (await CheckForPath("yarn.lock")) {
+                    lockfiles.push("yarn.lock");
+                }
+
+                if (lockfiles.length > 0) {
+                    for (const lockfile of lockfiles) {
+                        await PerformCleaning(lockfile, project, update, realIntensity);
+                    }
                 } else if (await CheckForPath("package.json")) {
                     await LogStuff(
                         `${project} has a package.json but not a lockfile. Can't ${I_LIKE_JS.FKN} clean.`,
                         "warn",
                     );
+                    results.push({ path: project, status: "No lockfile." });
+                    continue;
                 } else {
                     await LogStuff(
                         `No supported lockfile was found at ${project}. Skipping this ${I_LIKE_JS.MF}...`,
                         "warn",
                     );
+                    results.push({ path: project, status: "No package.json." });
+                    continue;
                 }
 
                 results.push({ path: project, status: "Success" });
