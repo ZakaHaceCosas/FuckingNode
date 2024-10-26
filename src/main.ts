@@ -73,6 +73,10 @@ switch (command.toLowerCase()) {
     case "self-update":
         await init(true);
         break;
+    case "stats":
+        await init();
+        await LogStuff("stats has been proven to be an unstable and not-working command. Use --experimental-stats if you want to try it.", "warn");
+        break;
     default:
         await LogStuff(
             `Unknown command. Use 'clean' or 'manager'. Use '${APP_NAME.CLI} --help' to see the full list of commands.`,
