@@ -75,7 +75,10 @@ switch (command.toLowerCase()) {
         break;
     case "stats":
         await init();
-        await LogStuff("stats has been proven to be an unstable and not-working command. Use --experimental-stats if you want to try it.", "warn");
+        await LogStuff(
+            "stats has been proven to be an unstable and not-working command. Use --experimental-stats if you want to try it.",
+            "warn",
+        );
         break;
     default:
         await LogStuff(

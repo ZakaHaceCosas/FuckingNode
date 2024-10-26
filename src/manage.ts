@@ -29,15 +29,15 @@ async function ErrorMessage(errorCode: "noArgument" | "invalidArgument"): Promis
 }
 
 /**
- * Given a path, returns a number based on if it's a valid Node project or not. It can also return `false` if the DIR does not exist at all.
+ * Given a path, returns a number based on if it's a valid Node project or not.
  *
  * `0` = valid. `1` = not valid, no package.json. `2` = not fully valid, not node_modules. `3` = not fully valid, duplicate. `4` = path doesn't exist.
  *
  * @async
- * @param {string} entry The path.
+ * @param {string} entry Path to the project.
  * @returns {Promise<0 | 1 | 2 | 3 | 4>}
  */
-async function validateEntryAsNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
+async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
     const workingEntry = ParsePath("path", entry) as string;
     const list = await GetAllProjects();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
@@ -111,7 +111,7 @@ async function addEntry(entry: string): Promise<void> {
         );
     }
 
-    const validation = await validateEntryAsNodeProject(workingEntry);
+    const validation = await ValidateNodeProject(workingEntry);
 
     if (validation === 3) {
         await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
@@ -183,7 +183,7 @@ async function addEntry(entry: string): Promise<void> {
  * @param {string} entry
  * @returns {Promise<void>}
  */
-async function removeEntry(entry: string): Promise<void> {
+async function RemoveProject(entry: string): Promise<void> {
     const workingEntry = ParsePath("path", entry) as string;
     const list = await GetAllProjects();
     const index = list.indexOf(workingEntry);
@@ -223,7 +223,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         const listOfRemovals: string[] = [];
 
         for (const project of list) {
-            const validation = await validateEntryAsNodeProject(project);
+            const validation = await ValidateNodeProject(project);
             console.log(project, validation);
             if (validation !== 0) listOfRemovals.push(project);
         }
@@ -269,7 +269,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         return 2;
     }
     for (const target of list) {
-        await removeEntry(target);
+        await RemoveProject(target);
     }
     await LogStuff(`That worked out!`, "tick");
     return 0;
@@ -281,7 +281,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
  * @async
  * @returns {Promise<void>}
  */
-async function listEntries(): Promise<void> {
+async function ListProjects(): Promise<void> {
     const list = await GetAllProjects();
     if (list.length > 0) {
         await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
@@ -299,7 +299,7 @@ async function listEntries(): Promise<void> {
  * @param {string} entry The path to the project's root.
  * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if failure (will log the error), 2 if the project's status is not valid (e.g. ignoring an already ignored project or stop ignoring a project that was not ignored).
  */
-async function handleIgnoreEntry(ignore: boolean, entry: string): Promise<0 | 1 | 2> {
+async function HandleIgnoreProject(ignore: boolean, entry: string): Promise<0 | 1 | 2> {
     try {
         const workingEntry = ParsePath("path", entry) as string;
         const pathToIgnoreFile = JoinPaths(workingEntry, IGNORE_FILE);
@@ -369,24 +369,24 @@ export default async function TheManager(args: string[]) {
                 ErrorMessage("invalidArgument");
                 return;
             }
-            await removeEntry(entry);
+            await RemoveProject(entry);
             break;
         case "ignore":
             if (!entry || entry === null) {
                 ErrorMessage("invalidArgument");
                 return;
             }
-            await handleIgnoreEntry(true, entry);
+            await HandleIgnoreProject(true, entry);
             break;
         case "revive":
             if (!entry || entry === null) {
                 ErrorMessage("invalidArgument");
                 return;
             }
-            await handleIgnoreEntry(false, entry);
+            await HandleIgnoreProject(false, entry);
             break;
         case "list":
-            await listEntries();
+            await ListProjects();
             break;
         case "cleanup":
             await CleanProjects();
