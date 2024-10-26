@@ -112,3 +112,11 @@ export interface UPDATE_FILE {
  * @typedef {tURL}
  */
 export type tURL = `https://${string}`;
+
+export interface PkgJson {
+    name?: string;
+    workspaces?: string[] | {
+        packages: string[];
+        nohoist?: string[];
+    };
+}

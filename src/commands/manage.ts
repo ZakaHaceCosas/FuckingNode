@@ -2,6 +2,7 @@ import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import { CheckForPath, GetAllProjects, GetPath, JoinPaths, LogStuff, ParsePath } from "../functions.ts";
 import { ParseFlag } from "../functions.ts";
+import type { PkgJson } from "../types.ts";
 
 /**
  * Shorthand function to show errors in here.
@@ -69,15 +70,15 @@ async function getWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
     try {
         if (!(await CheckForPath(ParsePath("path", pkgJsonPath) as string))) throw new Error("Requested path doesn't exist.");
 
-        const pkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
-
-        if (!Array.isArray(pkgJson.workspaces)) {
-            return null;
-        }
+        const pkgJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
 
         const absoluteWorkspaces: string[] = [];
 
-        for (const path of pkgJson.workspaces) {
+        const workspacePaths = Array.isArray(pkgJson.workspaces) ? pkgJson.workspaces : pkgJson.workspaces?.packages;
+
+        if (!workspacePaths) return null;
+
+        for (const path of workspacePaths) {
             for await (const dir of expandGlob(path)) {
                 if (dir.isDirectory) {
                     absoluteWorkspaces.push(dir.path);
