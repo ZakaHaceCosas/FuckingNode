@@ -1,8 +1,8 @@
-import TheCleaner from "./clean.ts";
-import TheManager from "./manage.ts";
-import TheStatistics from "./stats.ts";
-import TheMigrator from "./migrate.ts";
-import TheHelper from "./help.ts";
+import TheCleaner from "./commands/clean.ts";
+import TheManager from "./commands/manage.ts";
+import TheStatistics from "./commands/stats.ts";
+import TheMigrator from "./commands/migrate.ts";
+import TheHelper from "./commands/help.ts";
 import { APP_NAME, I_LIKE_JS, VERSION } from "./constants.ts";
 import { CheckForUpdates, FreshSetup, LogStuff } from "./functions.ts";
 import type { MANAGERS } from "./types.ts";
