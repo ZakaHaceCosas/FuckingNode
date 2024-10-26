@@ -10,9 +10,7 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
         try {
             await LogStuff("Please wait (this will take a while)...", "working");
             try {
-                await LogStuff("Removing node_modules and previous lockfile (1/3)...", "working");
-                await Deno.remove(JoinPaths(target, remove));
-                await LogStuff("Removing node_modules and previous lockfile (2/3)...", "working");
+                await LogStuff("Removing node_modules (1/3)...", "working");
                 await Deno.remove(JoinPaths(target, "node_modules"), {
                     recursive: true,
                 });
@@ -21,12 +19,19 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
             }
 
             Deno.chdir(target);
-            await LogStuff("Installing modules with the desired manager (3/3)...", "working");
+            await LogStuff("Installing modules with the desired manager (2/3)...", "working");
             const command = new Deno.Command(cmd, { args: ["install"] });
             const output = await command.output();
 
             if (!output.success) {
                 await LogStuff(`New installation threw an error: ${new TextDecoder().decode(output.stderr)}`, "error");
+            }
+
+            try {
+                await LogStuff("Removing previous lockfile (3/3)...", "working");
+                await Deno.remove(JoinPaths(target, remove));
+            } catch (e) {
+                throw e;
             }
         } catch (e) {
             await LogStuff(`Migration threw an: ${e}`, "error");
