@@ -52,7 +52,7 @@ export async function LogStuff(
         const logged = `${finalMessage} ... @ ${new Date().toLocaleString()}` + "\n";
 
         if (!silent) {
-            await Deno.writeTextFile(GetPath("LOGS"), logged, {
+            await Deno.writeTextFile(await GetPath("LOGS"), logged, {
                 append: true,
             });
         }
@@ -76,9 +76,9 @@ export async function LogStuff(
  * @param {("BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES")} path What path you want.
  * @returns {string} The path as a string.
  */
-export function GetPath(
+export async function GetPath(
     path: "BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES",
-): string {
+): Promise<string> {
     const appDataPath = Deno.env.get("APPDATA");
     if (!appDataPath) {
         console.error(
@@ -87,10 +87,10 @@ export function GetPath(
         Deno.exit(1);
     }
 
-    const BASE_DIR = JoinPaths(appDataPath, APP_NAME.CASED);
-    const PROJECTS = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-${I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")}.txt`);
-    const LOGS = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-logs.log`);
-    const UPDATES = JoinPaths(BASE_DIR, `${APP_NAME.CASED}-updates.json`);
+    const BASE_DIR = await JoinPaths(appDataPath, APP_NAME.CASED);
+    const PROJECTS = await JoinPaths(BASE_DIR, `${APP_NAME.CASED}-${I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")}.txt`);
+    const LOGS = await JoinPaths(BASE_DIR, `${APP_NAME.CASED}-logs.log`);
+    const UPDATES = await JoinPaths(BASE_DIR, `${APP_NAME.CASED}-updates.json`);
 
     switch (path) {
         case "BASE":
@@ -115,14 +115,14 @@ export function GetPath(
  */
 export async function FreshSetup(): Promise<void> {
     try {
-        await Deno.mkdir(GetPath("BASE"), { recursive: true });
+        await Deno.mkdir(await GetPath("BASE"), { recursive: true });
 
-        if (!(await CheckForPath(GetPath("MOTHERFKRS")))) {
-            await Deno.writeTextFile(GetPath("MOTHERFKRS"), "");
+        if (!(await CheckForPath(await GetPath("MOTHERFKRS")))) {
+            await Deno.writeTextFile(await GetPath("MOTHERFKRS"), "");
         }
 
-        if (!(await CheckForPath(GetPath("LOGS")))) {
-            await Deno.writeTextFile(GetPath("LOGS"), "");
+        if (!(await CheckForPath(await GetPath("LOGS")))) {
+            await Deno.writeTextFile(await GetPath("LOGS"), "");
         }
     } catch (error) {
         await LogStuff(`Some ${I_LIKE_JS.MFN} error happened trying to setup config files: ${error}`, "error");
@@ -283,7 +283,7 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
                 lastVer: content.tag_name,
                 lastCheck: GetDateNow(),
             };
-            await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 5 days later, so no waste of net resources.
+            await Deno.writeTextFile(await GetPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 5 days later, so no waste of net resources.
         } catch (e) {
             throw new Error("Error checking for updates: " + e);
         }
@@ -292,18 +292,18 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
     async function VerifyItNeedsToUpdate(): Promise<boolean> {
         let needsToWait: boolean = true;
 
-        if (!(await CheckForPath(GetPath("UPDATES")))) {
+        if (!(await CheckForPath(await GetPath("UPDATES")))) {
             const dataToWrite: UPDATE_FILE = {
                 isUpToDate: true,
                 lastVer: VERSION,
                 lastCheck: GetDateNow(),
             };
 
-            await Deno.writeTextFile(GetPath("UPDATES"), JSON.stringify(dataToWrite));
+            await Deno.writeTextFile(await GetPath("UPDATES"), JSON.stringify(dataToWrite));
             needsToWait = false;
         }
 
-        const updateFile: UPDATE_FILE = JSON.parse(await Deno.readTextFile(GetPath("UPDATES")));
+        const updateFile: UPDATE_FILE = JSON.parse(await Deno.readTextFile(await GetPath("UPDATES")));
         if (!RIGHT_NOW_DATE_REGEX.test(updateFile.lastCheck)) {
             throw new Error(
                 "Unable to parse date of last update. Got " + updateFile.lastCheck + ".",
@@ -356,7 +356,7 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
  */
 export async function GetAllProjects(): Promise<string[]> {
     try {
-        const content = await Deno.readTextFile(GetPath("MOTHERFKRS"));
+        const content = await Deno.readTextFile(await GetPath("MOTHERFKRS"));
         return content.split("\n").filter(Boolean);
     } catch (e) {
         await LogStuff(
@@ -380,7 +380,7 @@ interface FileEntry {
  * @returns {Promise<FileEntry[]>}
  */
 async function RecursivelyGetDir(path: string): Promise<FileEntry[]> {
-    const workingPath = ParsePath("path", path) as string;
+    const workingPath = await ParsePath("path", path) as string;
 
     if (!(await CheckForPath(workingPath))) throw new Error("Path doesn't exist");
 
@@ -388,11 +388,11 @@ async function RecursivelyGetDir(path: string): Promise<FileEntry[]> {
 
     for await (const entry of Deno.readDir(workingPath)) {
         if (entry.isFile) {
-            const fileInfo = await Deno.stat(JoinPaths(workingPath, entry.name));
+            const fileInfo = await Deno.stat(await JoinPaths(workingPath, entry.name));
             entries.push({ entry, info: fileInfo });
         } else if (entry.isDirectory) {
             // Recursively read the directory
-            const subEntries = await RecursivelyGetDir(JoinPaths(workingPath, entry.name));
+            const subEntries = await RecursivelyGetDir(await JoinPaths(workingPath, entry.name));
             entries.push(...subEntries);
         }
     }
@@ -412,7 +412,7 @@ export async function GetDirSize(path: string): Promise<number> {
     try {
         let totalSize: number = 0;
 
-        const workingPath = ParsePath("path", path) as string;
+        const workingPath = await ParsePath("path", path) as string;
 
         if (!(await CheckForPath(workingPath))) {
             throw new Error(`Provided path ${path} doesn't exist.`);
@@ -422,7 +422,7 @@ export async function GetDirSize(path: string): Promise<number> {
 
         // process all entries in parallel
         const sizePromises = entries.map(async ({ entry }) => {
-            const fullPath = JoinPaths(workingPath, entry.name);
+            const fullPath = await JoinPaths(workingPath, entry.name);
             try {
                 const pathInfo = await Deno.stat(fullPath);
                 if (pathInfo.isFile) {
@@ -459,13 +459,16 @@ export async function GetDirSize(path: string): Promise<number> {
  * @param {string} target The string to parse.
  * @returns {(string | string[])} Either a string or a string[].
  */
-export function ParsePath(idea: "path" | "cleaner", target: string): string | string[] {
+export async function ParsePath(idea: "path" | "cleaner", target: string): Promise<string | string[]> {
     if (typeof target !== "string") {
         throw new Error("Target must be (obviously) a string.");
     }
 
     let workingTarget = target.trim();
     if (workingTarget.toLowerCase() === "--self") workingTarget = Deno.cwd();
+    else {
+        workingTarget = await Deno.realPath(workingTarget);
+    }
 
     if (idea === "cleaner") {
         const allTargets = workingTarget
@@ -495,9 +498,9 @@ export function ParsePath(idea: "path" | "cleaner", target: string): string | st
  * @param {string} pathB Second part, e.g. "my/end.txt"
  * @returns {string} Result, e.g. "my/beginning/my/end.txt"
  */
-export function JoinPaths(pathA: string, pathB: string): string {
-    const workingPath = join(ParsePath("path", pathA) as string, ParsePath("path", pathB) as string);
-    return ParsePath("path", workingPath) as string;
+export async function JoinPaths(pathA: string, pathB: string): Promise<string> {
+    const workingPath = join(await ParsePath("path", pathA) as string, await ParsePath("path", pathB) as string);
+    return await ParsePath("path", workingPath) as string;
 }
 
 /**
@@ -592,11 +595,11 @@ export async function Commander(main: string, stuff: string[], log: boolean): Pr
  * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
  */
 export async function NameProject(path: string): Promise<string> {
-    const pkgJsonPath = JoinPaths(path, "package.json");
+    const pkgJsonPath = await JoinPaths(path, "package.json");
 
-    if (!(await CheckForPath(pkgJsonPath))) return ParsePath("path", path) as string;
+    if (!(await CheckForPath(pkgJsonPath))) return await ParsePath("path", path) as string;
 
     const packageJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
 
-    return packageJson.name ?? ParsePath("path", path) as string;
+    return packageJson.name ?? await ParsePath("path", path) as string;
 }

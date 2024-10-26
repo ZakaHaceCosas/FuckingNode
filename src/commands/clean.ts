@@ -10,8 +10,8 @@ async function PerformCleaning(
     shouldUpdate: boolean,
     intensity: "normal" | "hard" | "maxim",
 ) {
-    const motherfuckerInQuestion = ParsePath("path", projectInQuestion) as string;
-    const maximPath = JoinPaths(motherfuckerInQuestion, "node_modules");
+    const motherfuckerInQuestion = await ParsePath("path", projectInQuestion) as string;
+    const maximPath = await JoinPaths(motherfuckerInQuestion, "node_modules");
 
     let baseCommand: string;
     let pruneArgs: string[][];
@@ -118,8 +118,8 @@ export default async function TheCleaner(
         // read all mfs
         let projects: string[] = [];
         try {
-            const data = await Deno.readTextFile(GetPath("MOTHERFKRS"));
-            projects = ParsePath("cleaner", data) as string[];
+            const data = await Deno.readTextFile(await GetPath("MOTHERFKRS"));
+            projects = await ParsePath("cleaner", data) as string[];
         } catch (e) {
             await LogStuff(
                 `${I_LIKE_JS.MFN} error reading your ${I_LIKE_JS.MFN} list of ${I_LIKE_JS.MFS}: ${e}`,

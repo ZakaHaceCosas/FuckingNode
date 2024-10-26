@@ -1,6 +1,6 @@
 import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
 import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import { CheckForPath, GetAllProjects, GetPath, JoinPaths, LogStuff, ParsePath } from "../functions.ts";
+import { CheckForPath, GetAllProjects, GetPath, JoinPaths, LogStuff, NameProject, ParsePath } from "../functions.ts";
 import { ParseFlag } from "../functions.ts";
 import type { PkgJson } from "../types.ts";
 
@@ -12,7 +12,7 @@ import type { PkgJson } from "../types.ts";
  * @returns {Promise<void>}
  */
 async function ErrorMessage(errorCode: "noArgument" | "invalidArgument"): Promise<void> {
-    const usage = `Usage:\n${APP_NAME} manager add <path> / remove <path> / ignore <path> / list`;
+    const usage = `Usage: ${APP_NAME.CLI} manager add <path> / remove <path> / ignore <path> / list`;
 
     switch (errorCode) {
         case "noArgument":
@@ -40,7 +40,7 @@ async function ErrorMessage(errorCode: "noArgument" | "invalidArgument"): Promis
  * @returns {Promise<0 | 1 | 2 | 3 | 4>}
  */
 async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
-    const workingEntry = ParsePath("path", entry) as string;
+    const workingEntry = await ParsePath("path", entry) as string;
     const list = await GetAllProjects();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 
@@ -50,10 +50,10 @@ async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
     if (isDuplicate) {
         return 3;
     }
-    if (!(await CheckForPath(JoinPaths(workingEntry, "node_modules")))) {
+    if (!(await CheckForPath(await JoinPaths(workingEntry, "node_modules")))) {
         return 2;
     }
-    if (!(await CheckForPath(JoinPaths(workingEntry, "package.json")))) {
+    if (!(await CheckForPath(await JoinPaths(workingEntry, "package.json")))) {
         return 1;
     }
     return 0;
@@ -68,7 +68,7 @@ async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
  */
 async function getWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
     try {
-        if (!(await CheckForPath(ParsePath("path", pkgJsonPath) as string))) throw new Error("Requested path doesn't exist.");
+        if (!(await CheckForPath(await ParsePath("path", pkgJsonPath) as string))) throw new Error("Requested path doesn't exist.");
 
         const pkgJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
 
@@ -100,15 +100,16 @@ async function getWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
  * @param {string} entry Path to the project.
  * @returns {Promise<void>}
  */
-async function addEntry(entry: string): Promise<void> {
-    const workingEntry = ParsePath("path", entry) as string;
+async function AddProject(entry: string): Promise<void> {
+    const workingEntry = await ParsePath("path", entry) as string;
+    const projectName = await NameProject(workingEntry);
 
     async function addTheEntry() {
-        await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
+        await Deno.writeTextFile(await GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
         });
         await LogStuff(
-            `Congrats! ${workingEntry} was added to your list. One mf less to care about!`,
+            `Congrats! ${projectName} was added to your list. One mf less to care about!`,
             "tick-clear",
         );
     }
@@ -116,12 +117,12 @@ async function addEntry(entry: string): Promise<void> {
     const validation = await ValidateNodeProject(workingEntry);
 
     if (validation === 3) {
-        await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! ${workingEntry}`, "error");
+        await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! (${projectName})`, "error");
         return;
     }
     if (validation === 2) {
         const addAnyway = await LogStuff(
-            `This path doesn't have a node_modules DIR, so adding it would be useless. Confirm you want to add it.\nPS. You typed: ${workingEntry}`,
+            `${projectName} doesn't have a node_modules DIR, so adding it would be kinda useless. Confirm you want to add it.\nPS. You typed: ${workingEntry}`,
             "what",
             undefined,
             true,
@@ -132,7 +133,7 @@ async function addEntry(entry: string): Promise<void> {
     }
     if (validation === 1) {
         const addAnyway = await LogStuff(
-            `This path doesn't have a package.json. Are you sure it's a node project?\nConfirm you want to add it\nPS. You typed: ${workingEntry}`,
+            `This path doesn't have a package.json. Are you sure it's a Node project?\nConfirm you want to add it\nPS. You typed: ${workingEntry}`,
             "what",
             undefined,
             true,
@@ -146,7 +147,7 @@ async function addEntry(entry: string): Promise<void> {
         return;
     }
 
-    const workspaces = await getWorkspaces(JoinPaths(workingEntry, "package.json"));
+    const workspaces = await getWorkspaces(await JoinPaths(workingEntry, "package.json"));
 
     if (!workspaces) {
         addTheEntry();
@@ -154,7 +155,11 @@ async function addEntry(entry: string): Promise<void> {
     }
 
     const addWorkspaces = await LogStuff(
-        `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these Node workspaces:\n\n${workspaces.toString()}.\n\nShould we add them to your list as well, so they're all cleaned?`,
+        `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these Node workspaces:\n\n${
+            workspaces.map(async (thingy) => {
+                return await NameProject(thingy);
+            })
+        }.\n\nShould we add them to your list as well, so they're all cleaned?`,
         "bulb",
         undefined,
         true,
@@ -165,11 +170,11 @@ async function addEntry(entry: string): Promise<void> {
         return;
     }
 
-    await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
+    await Deno.writeTextFile(await GetPath("MOTHERFKRS"), `${workingEntry}\n`, {
         append: true,
     });
     for (const workspace of workspaces) {
-        await Deno.writeTextFile(GetPath("MOTHERFKRS"), `${workspace}\n`, {
+        await Deno.writeTextFile(await GetPath("MOTHERFKRS"), `${workspace}\n`, {
             append: true,
         });
     }
@@ -186,7 +191,7 @@ async function addEntry(entry: string): Promise<void> {
  * @returns {Promise<void>}
  */
 async function RemoveProject(entry: string): Promise<void> {
-    const workingEntry = ParsePath("path", entry) as string;
+    const workingEntry = await ParsePath("path", entry) as string;
     const list = await GetAllProjects();
     const index = list.indexOf(workingEntry);
 
@@ -194,15 +199,17 @@ async function RemoveProject(entry: string): Promise<void> {
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         if (list.length > 0) {
             await Deno.writeTextFile(
-                GetPath("MOTHERFKRS"),
+                await GetPath("MOTHERFKRS"),
                 list.join("\n") + "\n",
             );
             await LogStuff(
-                `Let me guess: ${workingEntry} was another "revolutionary cutting edge project" that you're now removing, right?`,
+                `Let me guess: ${await NameProject(
+                    workingEntry,
+                )} was another "revolutionary cutting edge project" that you're now removing, right?`,
                 "tick-clear",
             );
         } else {
-            await Deno.remove(GetPath("MOTHERFKRS"));
+            await Deno.remove(await GetPath("MOTHERFKRS"));
             await LogStuff("Removed the last entry. The list is now empty.", "moon-face");
         }
     } else {
@@ -258,6 +265,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         `We've found issues! We're talking about getting rid of:`,
         "bulb",
     );
+    // doesn't use NameProject as it's likely to point to an invalid path
     await LogStuff(`\n${list.toString().replaceAll(",", ",\n")}\n`, undefined, true);
     const del = await LogStuff(
         `Will you remove all of these ${I_LIKE_JS.MFS}?`,
@@ -291,13 +299,13 @@ async function ListProjects(ignoredOnly: boolean): Promise<void> {
     }
     if (!ignoredOnly) {
         await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
-        list.forEach(async (entry) => await LogStuff(entry));
+        list.forEach(async (entry) => await LogStuff(await NameProject(entry)));
         return;
     }
     await LogStuff(`Here are the ${I_LIKE_JS.MFS} you ignored so far:\n`, "bulb");
     list.forEach(async (entry) => {
-        if (!(await CheckForPath(JoinPaths(entry, IGNORE_FILE)))) return;
-        await LogStuff(entry);
+        if (!(await CheckForPath(await JoinPaths(entry, IGNORE_FILE)))) return;
+        await LogStuff(await NameProject(entry));
     });
     return;
 }
@@ -312,16 +320,16 @@ async function ListProjects(ignoredOnly: boolean): Promise<void> {
  */
 async function HandleIgnoreProject(ignore: boolean, entry: string): Promise<0 | 1 | 2> {
     try {
-        const workingEntry = ParsePath("path", entry) as string;
+        const workingEntry = await ParsePath("path", entry) as string;
         const pathToIgnoreFile = JoinPaths(workingEntry, IGNORE_FILE);
 
         if (ignore) {
-            if (await CheckForPath(pathToIgnoreFile)) {
+            if (await CheckForPath(await pathToIgnoreFile)) {
                 LogStuff(`${I_LIKE_JS.MF} is already ignored!`, "error");
                 return 2;
             } else {
                 try {
-                    await Deno.create(pathToIgnoreFile);
+                    await Deno.create(await pathToIgnoreFile);
                     LogStuff(`Divine powers have successfully ignored this ${I_LIKE_JS.MF}`, "tick");
                     return 0;
                 } catch (e) {
@@ -330,12 +338,12 @@ async function HandleIgnoreProject(ignore: boolean, entry: string): Promise<0 | 
                 }
             }
         } else if (!ignore) {
-            if (!(await CheckForPath(pathToIgnoreFile))) {
+            if (!(await CheckForPath(await pathToIgnoreFile))) {
                 LogStuff(`${I_LIKE_JS.MF} isn't ignored yet!`, "error");
                 return 2;
             } else {
                 try {
-                    await Deno.remove(pathToIgnoreFile);
+                    await Deno.remove(await pathToIgnoreFile);
                     LogStuff(`Divine powers have abandoned this ${I_LIKE_JS.MF}`, "tick");
                     return 0;
                 } catch (e) {
@@ -373,7 +381,7 @@ export default async function TheManager(args: string[]) {
                 ErrorMessage("invalidArgument");
                 return;
             }
-            await addEntry(secondArg);
+            await AddProject(secondArg);
             break;
         case "remove":
             if (!secondArg || secondArg === null) {

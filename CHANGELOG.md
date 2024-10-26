@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fix `manager add` not detecting workspaces when an object instead of an array is used.
+- Fix `manager add` not correctly resolving relative paths, such as `../../my-project`.
 
 ## [1.4.0] 26-10-2024
 
