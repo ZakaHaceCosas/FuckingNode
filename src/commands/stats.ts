@@ -11,7 +11,7 @@ export default async function TheStatistics() {
     await LogStuff(`This is ${I_LIKE_JS.MFLY} going to take a while. Have a coffee meanwhile!`, "bruh");
 
     for (const project of projects) {
-        const workingPath = await ParsePath("path", project) as string;
+        const workingPath = await ParsePath(project);
 
         const nodeGarbagePath = await JoinPaths(workingPath, "node_modules");
 

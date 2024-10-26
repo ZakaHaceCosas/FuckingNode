@@ -33,9 +33,9 @@ export async function GetAllProjects(): Promise<string[]> {
 export async function NameProject(path: string): Promise<string> {
     const pkgJsonPath = await JoinPaths(path, "package.json");
 
-    if (!(await CheckForPath(pkgJsonPath))) return await ParsePath("path", path) as string;
+    if (!(await CheckForPath(pkgJsonPath))) return await ParsePath(path);
 
     const packageJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
 
-    return packageJson.name ?? await ParsePath("path", path) as string;
+    return packageJson.name ?? await ParsePath(path);
 }

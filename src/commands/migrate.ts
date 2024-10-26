@@ -39,7 +39,7 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
     }
 
     try {
-        const workingProject = await ParsePath("path", project) as string;
+        const workingProject = await ParsePath(project);
         const workingTarget = target.toLowerCase().trimEnd().trimStart();
 
         if (!(["pnpm", "npm", "yarn"].includes(workingTarget))) {

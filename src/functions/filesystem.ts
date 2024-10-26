@@ -32,7 +32,7 @@ interface FileEntry {
  * @returns {Promise<FileEntry[]>}
  */
 async function RecursivelyGetDir(path: string): Promise<FileEntry[]> {
-    const workingPath = await ParsePath("path", path) as string;
+    const workingPath = await ParsePath(path);
 
     if (!(await CheckForPath(workingPath))) throw new Error("Path doesn't exist");
 
@@ -64,7 +64,7 @@ export async function GetDirSize(path: string): Promise<number> {
     try {
         let totalSize: number = 0;
 
-        const workingPath = await ParsePath("path", path) as string;
+        const workingPath = await ParsePath(path);
 
         if (!(await CheckForPath(workingPath))) {
             throw new Error(`Provided path ${path} doesn't exist.`);
@@ -104,14 +104,13 @@ export async function GetDirSize(path: string): Promise<number> {
 }
 
 /**
- * Parses a string with either a single path (path) or a lot of paths (cleaner), to ensure string cleanness.
+ * Parses a string path, to ensure string cleanness and handle things like relative paths or `--self`.
  *
  * @export
- * @param {("path" | "cleaner")} idea What kind of parsing you'd like
  * @param {string} target The string to parse.
- * @returns {(string | string[])} Either a string or a string[].
+ * @returns {(string)} A string with the parsed path.
  */
-export async function ParsePath(idea: "path" | "cleaner", target: string): Promise<string | string[]> {
+export async function ParsePath(target: string): Promise<string> {
     if (typeof target !== "string") {
         throw new Error("Target must be (obviously) a string.");
     }
@@ -123,24 +122,34 @@ export async function ParsePath(idea: "path" | "cleaner", target: string): Promi
         workingTarget = await Deno.realPath(workingTarget);
     }
 
-    if (idea === "cleaner") {
-        const allTargets = workingTarget
-            .split("\n")
-            .map((line) => line.trim().replace(/,$/, ""))
-            .filter((line) => line.length > 0);
+    const cleanEntry = normalize(workingTarget);
 
-        return allTargets.map(normalize);
-    } else if (idea === "path") {
-        const cleanEntry = normalize(workingTarget);
-
-        if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
-            return cleanEntry.trimEnd().trimStart().slice(0, -1);
-        }
-
-        return cleanEntry;
-    } else {
-        throw new Error("Invalid idea.");
+    if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
+        return cleanEntry.slice(0, -1);
     }
+
+    return cleanEntry;
+}
+
+/**
+ * Parses a string of a lot of file paths separated by commands, and returns them as an array of individual paths.
+ *
+ * @export
+ * @param {string} target The string to parse.
+ * @returns {string[]} Your `string[]`.
+ */
+export function ParsePathList(target: string): string[] {
+    if (typeof target !== "string") {
+        throw new Error("Target must be (obviously) a string.");
+    }
+
+    const workingTarget = target.trim();
+    const allTargets = workingTarget
+        .split("\n")
+        .map((line) => line.trim().replace(/,$/, ""))
+        .filter((line) => line.length > 0);
+
+    return allTargets.map(normalize);
 }
 
 /**
@@ -152,6 +161,6 @@ export async function ParsePath(idea: "path" | "cleaner", target: string): Promi
  * @returns {string} Result, e.g. "my/beginning/my/end.txt"
  */
 export async function JoinPaths(pathA: string, pathB: string): Promise<string> {
-    const workingPath = join(await ParsePath("path", pathA) as string, await ParsePath("path", pathB) as string);
-    return await ParsePath("path", workingPath) as string;
+    const workingPath = join(await ParsePath(pathA), await ParsePath(pathB));
+    return await ParsePath(workingPath);
 }

@@ -42,7 +42,7 @@ async function ErrorMessage(errorCode: "noArgument" | "invalidArgument"): Promis
  * @returns {Promise<0 | 1 | 2 | 3 | 4>}
  */
 async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
-    const workingEntry = await ParsePath("path", entry) as string;
+    const workingEntry = await ParsePath(entry);
     const list = await GetAllProjects();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 
@@ -70,7 +70,7 @@ async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
  */
 async function getWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
     try {
-        if (!(await CheckForPath(await ParsePath("path", pkgJsonPath) as string))) throw new Error("Requested path doesn't exist.");
+        if (!(await CheckForPath(await ParsePath(pkgJsonPath)))) throw new Error("Requested path doesn't exist.");
 
         const pkgJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
 
@@ -103,7 +103,7 @@ async function getWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
  * @returns {Promise<void>}
  */
 async function AddProject(entry: string): Promise<void> {
-    const workingEntry = await ParsePath("path", entry) as string;
+    const workingEntry = await ParsePath(entry);
     const projectName = await NameProject(workingEntry);
 
     async function addTheEntry() {
@@ -193,7 +193,7 @@ async function AddProject(entry: string): Promise<void> {
  * @returns {Promise<void>}
  */
 async function RemoveProject(entry: string): Promise<void> {
-    const workingEntry = await ParsePath("path", entry) as string;
+    const workingEntry = await ParsePath(entry);
     const list = await GetAllProjects();
     const index = list.indexOf(workingEntry);
 
@@ -322,7 +322,7 @@ async function ListProjects(ignoredOnly: boolean): Promise<void> {
  */
 async function HandleIgnoreProject(ignore: boolean, entry: string): Promise<0 | 1 | 2> {
     try {
-        const workingEntry = await ParsePath("path", entry) as string;
+        const workingEntry = await ParsePath(entry);
         const pathToIgnoreFile = JoinPaths(workingEntry, IGNORE_FILE);
 
         if (ignore) {

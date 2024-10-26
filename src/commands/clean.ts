@@ -2,7 +2,7 @@ import { I_LIKE_JS } from "../constants.ts";
 import { type SUPPORTED_LOCKFILE } from "../types.ts";
 import { IGNORE_FILE } from "../constants.ts";
 import { Commander } from "../functions/cli.ts";
-import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
+import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAppPath } from "../functions/config.ts";
 
@@ -12,7 +12,7 @@ async function PerformCleaning(
     shouldUpdate: boolean,
     intensity: "normal" | "hard" | "maxim",
 ) {
-    const motherfuckerInQuestion = await ParsePath("path", projectInQuestion) as string;
+    const motherfuckerInQuestion = await ParsePath(projectInQuestion);
     const maximPath = await JoinPaths(motherfuckerInQuestion, "node_modules");
 
     let baseCommand: string;
@@ -42,6 +42,8 @@ async function PerformCleaning(
             throw new Error("Invalid lockfile provided");
     }
 
+    const whatIsBeingDone: string = intensity === "normal" ? "Pruning" : "Hard-pruning";
+
     if (shouldUpdate) {
         await LogStuff(
             `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
@@ -53,32 +55,18 @@ async function PerformCleaning(
             "package",
         );
     }
-
-    if (intensity === "normal") {
+    await LogStuff(
+        `${whatIsBeingDone} using ${baseCommand} for ${motherfuckerInQuestion}.`,
+        "package",
+    );
+    for (const pruneArg of pruneArgs) {
+        const pruneOutput = await Commander(baseCommand, pruneArg, false);
         await LogStuff(
-            `Pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
+            `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput.stdout}`,
             "package",
         );
-        for (const pruneArg of pruneArgs) {
-            const pruneOutput = await Commander(baseCommand, pruneArg, false);
-            await LogStuff(
-                `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput.stdout}`,
-                "package",
-            );
-        }
     }
     if (intensity === "hard") {
-        await LogStuff(
-            `Hard-pruning using ${baseCommand} for ${motherfuckerInQuestion}.`,
-            "package",
-        );
-        for (const pruneArg of pruneArgs) {
-            const pruneOutput = await Commander(baseCommand, pruneArg, false);
-            await LogStuff(
-                `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput.stdout}`,
-                "package",
-            );
-        }
         for (const hardPruneArg of hardPruneArgs) {
             const pruneOutput = await Commander(baseCommand, hardPruneArg, false);
             await LogStuff(
@@ -121,7 +109,7 @@ export default async function TheCleaner(
         let projects: string[] = [];
         try {
             const data = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
-            projects = await ParsePath("cleaner", data) as string[];
+            projects = ParsePathList(data);
         } catch (e) {
             await LogStuff(
                 `${I_LIKE_JS.MFN} error reading your ${I_LIKE_JS.MFN} list of ${I_LIKE_JS.MFS}: ${e}`,
