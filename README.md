@@ -14,19 +14,29 @@ We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with 
 
 ### Cleaner
 
+Automates cleaning of each NodeJS project you add by using your manager's built in features, so a single command makes everything cleaner. It will detect your lockfile (e.g. "pnpm-lock.yaml", "package-lock.json") to know whether to use **npm**, **pnpm**, or **yarn** (currently supported managers).
+
 - `fuckingnode clean` - does the obvious.
 - `fuckingnode clean --update` - does the obvious + updates your deps.
 - `fuckingnode clean --verbose` - does the obvious with some extra logs.
-- `fuckingnode clean --maxim` - does a "maxim" cleanup (forcedly removes the `node_modules` directory).
 
 `--flags` can be mixed to use more features at once.
 
+`clean` can take an intensity level, either "normal", "hard", or "maxim"
+
+> `clean normal`, `clean hard`, `clean maxim`, or just `clean` (defaults to normal).
+
+The higher the level, the more space you'll recover, but the slower the process will be.
+
+This is what each level does:
+
+- **Normal**: Runs default prune / autoclean and dedupe commands.
+- **Hard**: Does the previous + cleans the entire cache (`pnpm store prune` / `yarn cache clean` / `npm cache clean --force`). _Note: While pnpm will only purge unused packages, npm will clear the entire cache, making it go slower._
+- **Maxim**: This does not run any cleanup command. It will simply remove the `node_modules/` folder of each project. Slowest (plus you'll need to reinstall deps), hence it will ask for confirmation before starting. The good thing is that you'll probably get many GB of storage back, so this is actually useful if your drive is almost full.
+
 ### Manager
 
-> [!NOTE]
-> F\*ckingNode has a list of all paths to projects it should clean - it's you who has to maintain it:
->
-> Keep in mind paths should point to the root, where you have `/package.json`, `/lockfile`[^1], and `/node_modules`.
+F\*ckingNode keeps a list of all paths to the projects it should clean - it's you who has to maintain it. Keep in mind paths should point to the root, where you have `/package.json`, `/lockfile`[^1], and `/node_modules`.
 
 - `fuckingnode manager list` - lists all projects.
 - `fuckingnode manager list --ignored` - lists all ignored projects.
@@ -37,9 +47,11 @@ We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with 
 
 `<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the Current Working Directory.
 
+Best practice is to run `fuckingnode manager add --self` after creating a Node project from your CLI.
+
 ### Others
 
-- `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile, `node_modules`, and reinstalls with the selected package manager).
+- `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile, `node_modules`, and reinstalls with the selected package manager). For now it relies on the specified package manager's ability to understand other lockfiles to ensure version compatibility. No issues _should_ occur.
 - `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode self-update` - all do the obvious.
 
 And that's it for now.
