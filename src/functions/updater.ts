@@ -39,6 +39,8 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
         );
     };
 
+    const UpdaterFilePath = await GetAppPath("UPDATES");
+
     async function Update() {
         try {
             const response = await fetch(
@@ -67,7 +69,7 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
                 lastVer: content.tag_name,
                 lastCheck: GetDateNow(),
             };
-            await Deno.writeTextFile(await GetAppPath("UPDATES"), JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 5 days later, so no waste of net resources.
+            await Deno.writeTextFile(UpdaterFilePath, JSON.stringify(dataToWrite)); // if it checks successfully, it doesn't check again until 5 days later, so no waste of net resources.
         } catch (e) {
             throw new Error("Error checking for updates: " + e);
         }
@@ -76,18 +78,19 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
     async function VerifyItNeedsToUpdate(): Promise<boolean> {
         let needsToWait: boolean = true;
 
-        if (!(await CheckForPath(await GetAppPath("UPDATES")))) {
+        if (!(await CheckForPath(UpdaterFilePath))) {
             const dataToWrite: UPDATE_FILE = {
                 isUpToDate: true,
                 lastVer: VERSION,
                 lastCheck: GetDateNow(),
             };
 
-            await Deno.writeTextFile(await GetAppPath("UPDATES"), JSON.stringify(dataToWrite));
+            await Deno.writeTextFile(UpdaterFilePath, JSON.stringify(dataToWrite));
             needsToWait = false;
         }
 
-        const updateFile: UPDATE_FILE = JSON.parse(await Deno.readTextFile(await GetAppPath("UPDATES")));
+        const unparsedUpdateFile = await Deno.readTextFile(UpdaterFilePath);
+        const updateFile: UPDATE_FILE = JSON.parse(unparsedUpdateFile);
         if (!RIGHT_NOW_DATE_REGEX.test(updateFile.lastCheck)) {
             throw new Error(
                 "Unable to parse date of last update. Got " + updateFile.lastCheck + ".",
