@@ -30,10 +30,9 @@ export interface CommanderOutput {
  * @async
  * @param {string} main Main command.
  * @param {string[]} stuff Additional args for the command.
- * @param {boolean} log Whether to `LogStuff` the `stdout` or the `stderr`.
  * @returns {Promise<CommanderOutput>} An object with a boolean telling if it was successful and its output.
  */
-export async function Commander(main: string, stuff: string[], log: boolean): Promise<CommanderOutput> {
+export async function Commander(main: string, stuff: string[]): Promise<CommanderOutput> {
     const decoder = new TextDecoder();
     const encoder = new TextEncoder();
     const command = new Deno.Command(main, {
@@ -59,8 +58,6 @@ export async function Commander(main: string, stuff: string[], log: boolean): Pr
     const output = await process.output();
 
     if (!output.success) {
-        if (!log) Deno.exit(1);
-
         const errorMessage = output.stderr ? decoder.decode(output.stderr) : "(Error is unknown)";
 
         await LogStuff(`An error happened with ${main} ${stuff.join(" ")}: ${errorMessage}`);

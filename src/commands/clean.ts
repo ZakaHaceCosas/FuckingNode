@@ -43,7 +43,7 @@ async function PerformCleaning(
             `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
             "package",
         );
-        const updateOutput = await Commander(baseCommand, updateArg, false);
+        const updateOutput = await Commander(baseCommand, updateArg);
         await LogStuff(
             `${baseCommand} ${updateArg}\n`,
             "package",
@@ -55,7 +55,7 @@ async function PerformCleaning(
         "package",
     );
     for (const pruneArg of pruneArgs) {
-        const pruneOutput = await Commander(baseCommand, pruneArg, false);
+        const pruneOutput = await Commander(baseCommand, pruneArg);
         await LogStuff(
             `${baseCommand} ${pruneArg.join(" ")}\n`,
             "package",
@@ -222,27 +222,9 @@ export default async function TheCleaner(
             const pnpmHardPruneArgs: string[] = ["store", "prune"];
             const yarnHardPruneArgs: string[] = ["cache", "clean"];
 
-            const npmHardPruneOutput = await Commander("npm", npmHardPruneArgs, false);
-            const pnpmHardPruneOutput = await Commander("pnpm", pnpmHardPruneArgs, false);
-            const yarnHardPruneOutput = await Commander("yarn", yarnHardPruneArgs, false);
-
-            if (verbose) {
-                await LogStuff(
-                    `npm ${npmHardPruneArgs.join(" ")}\n`,
-                    "package",
-                );
-                console.log(npmHardPruneOutput.stdout);
-                await LogStuff(
-                    `pnpm ${pnpmHardPruneArgs.join(" ")}\n`,
-                    "package",
-                );
-                console.log(pnpmHardPruneOutput.stdout);
-                await LogStuff(
-                    `yarn ${yarnHardPruneArgs.join(" ")}\n`,
-                    "package",
-                );
-                console.log(yarnHardPruneOutput.stdout);
-            }
+            await Commander("npm", npmHardPruneArgs);
+            await Commander("pnpm", pnpmHardPruneArgs);
+            await Commander("yarn", yarnHardPruneArgs);
         }
 
         // go back home
