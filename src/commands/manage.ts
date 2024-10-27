@@ -1,36 +1,10 @@
 import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
-import { APP_NAME, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
+import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { PkgJson } from "../types.ts";
-import { LogStuff, ParseFlag } from "../functions/io.ts";
+import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
-
-/**
- * Shorthand function to show errors in here.
- *
- * @async
- * @param {("noArgument" | "invalidArgument")} errorCode
- * @returns {Promise<void>}
- */
-async function ErrorMessage(errorCode: "noArgument" | "invalidArgument"): Promise<void> {
-    const usage = `Usage: ${APP_NAME.CLI} manager add <path> / remove <path> / ignore <path> / list`;
-
-    switch (errorCode) {
-        case "noArgument":
-            await LogStuff(
-                `Why didn't you provide a valid argument? Remember: ${usage}`,
-                "what",
-            );
-            break;
-        case "invalidArgument":
-            await LogStuff(
-                `BRO IT'S SO ${I_LIKE_JS.MFN} EASY!!\n${usage}\n\nRemember to provide exact path, AKA C:\\Users\\coolDude\\notCoolNodeProject. Must be the root, AKA where your lockfile and node_module DIR live.`,
-                "warn",
-            );
-            break;
-    }
-}
 
 /**
  * Given a path, returns a number based on if it's a valid Node project or not.
@@ -365,7 +339,7 @@ async function HandleIgnoreProject(ignore: boolean, entry: string): Promise<0 | 
 // run functions based on args
 export default async function TheManager(args: string[]) {
     if (!args || args.length === 0) {
-        ErrorMessage("noArgument");
+        ErrorMessage("NoArgumentPassed");
         Deno.exit(1);
     }
 
@@ -373,35 +347,35 @@ export default async function TheManager(args: string[]) {
     const secondArg = args[2] ? args[2].trim() : null;
 
     if (!command) {
-        ErrorMessage("noArgument");
+        ErrorMessage("NoArgumentPassed");
         return;
     }
 
     switch (command.toLowerCase()) {
         case "add":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("invalidArgument");
+                ErrorMessage("InvalidArgumentPassed");
                 return;
             }
             await AddProject(secondArg);
             break;
         case "remove":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("invalidArgument");
+                ErrorMessage("InvalidArgumentPassed");
                 return;
             }
             await RemoveProject(secondArg);
             break;
         case "ignore":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("invalidArgument");
+                ErrorMessage("InvalidArgumentPassed");
                 return;
             }
             await HandleIgnoreProject(true, secondArg);
             break;
         case "revive":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("invalidArgument");
+                ErrorMessage("InvalidArgumentPassed");
                 return;
             }
             await HandleIgnoreProject(false, secondArg);
@@ -413,7 +387,7 @@ export default async function TheManager(args: string[]) {
             await CleanProjects();
             break;
         default:
-            ErrorMessage("invalidArgument");
+            ErrorMessage("InvalidArgumentPassed");
             Deno.exit(1);
     }
 }

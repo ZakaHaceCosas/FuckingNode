@@ -1,4 +1,5 @@
-import { type SUPPORTED_EMOJIS } from "../types.ts";
+import { APP_NAME, I_LIKE_JS } from "../constants.ts";
+import { type ERROR_CODES, type SUPPORTED_EMOJIS } from "../types.ts";
 import { GetAppPath } from "./config.ts";
 
 /**
@@ -87,6 +88,37 @@ export async function LogStuff(
         console.error(`Error logging stuff: ${e}`);
         throw e;
     }
+}
+
+/**
+ * Shorthand function to show errors in here.
+ *
+ * @async
+ * @param {ERROR_CODES} errorCode
+ * @returns {Promise<void>}
+ */
+export async function ErrorMessage(
+    errorCode: ERROR_CODES,
+): Promise<void> {
+    let message: string;
+    switch (errorCode) {
+        case "InvalidArgumentPassed":
+            message = `BRO IT'S SO ${I_LIKE_JS.MFLY} EASY!!\n\nYou've passed an invalid argument.`;
+            break;
+        case "NoArgumentPassed":
+            message = `Why didn't you provide an argument? Remember to check ${APP_NAME.CLI} --help if you don't know what to do.`;
+            break;
+        default:
+            message = "Unknown error";
+            break;
+    }
+
+    await LogStuff(
+        message,
+        "warn",
+        undefined,
+        false,
+    );
 }
 
 /**

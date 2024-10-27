@@ -127,3 +127,11 @@ export interface PkgJson {
         nohoist?: string[];
     };
 }
+
+/**
+ * All possible error codes.
+ *
+ * @export
+ * @typedef {ERROR_CODES}
+ */
+export type ERROR_CODES = "InvalidArgumentPassed" | "NoArgumentPassed";
