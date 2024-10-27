@@ -23,7 +23,7 @@ async function PerformCleaning(
         case "package-lock.json":
             baseCommand = "npm";
             pruneArgs = [["dedupe"], ["prune"]];
-            hardPruneArgs = [["cache", "clean"]];
+            hardPruneArgs = [["cache", "clean", "--force"]];
             updateArg = ["update"];
             break;
         case "pnpm-lock.yaml":
