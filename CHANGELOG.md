@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Fixed `clean hard` not working with `npm`, as cache required a `--force` arg.
 - Fixed `clean hard` wasting resources by recursively running global commands (like cache cleaning).
+- Fixed the CLI writing unneeded logs from `npm` / `pnpm` / `yarn` to the `.log` file.
 
 ## [1.4.2] 27-10-2024
 

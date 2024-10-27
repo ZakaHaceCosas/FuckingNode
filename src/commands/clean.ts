@@ -45,9 +45,10 @@ async function PerformCleaning(
         );
         const updateOutput = await Commander(baseCommand, updateArg, false);
         await LogStuff(
-            `${baseCommand} ${updateArg}: ${updateOutput.stdout}`,
+            `${baseCommand} ${updateArg}\n`,
             "package",
         );
+        console.log(updateOutput.stdout);
     }
     await LogStuff(
         `Cleaning using ${baseCommand} for ${motherfuckerInQuestion}.`,
@@ -56,9 +57,10 @@ async function PerformCleaning(
     for (const pruneArg of pruneArgs) {
         const pruneOutput = await Commander(baseCommand, pruneArg, false);
         await LogStuff(
-            `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput.stdout}`,
+            `${baseCommand} ${pruneArg.join(" ")}\n`,
             "package",
         );
+        console.log(pruneOutput.stdout);
     }
     if (intensity === "maxim") {
         await LogStuff(
@@ -226,17 +228,20 @@ export default async function TheCleaner(
 
             if (verbose) {
                 await LogStuff(
-                    `npm ${npmHardPruneArgs.join(" ")}: ${npmHardPruneOutput.stdout}`,
+                    `npm ${npmHardPruneArgs.join(" ")}\n`,
                     "package",
                 );
+                console.log(npmHardPruneOutput.stdout);
                 await LogStuff(
-                    `pnpm ${pnpmHardPruneArgs.join(" ")}: ${pnpmHardPruneOutput.stdout}`,
+                    `pnpm ${pnpmHardPruneArgs.join(" ")}\n`,
                     "package",
                 );
+                console.log(pnpmHardPruneOutput.stdout);
                 await LogStuff(
-                    `yarn ${yarnHardPruneArgs.join(" ")}: ${yarnHardPruneOutput.stdout}`,
+                    `yarn ${yarnHardPruneArgs.join(" ")}\n`,
                     "package",
                 );
+                console.log(yarnHardPruneOutput.stdout);
             }
         }
 
