@@ -17,32 +17,26 @@ async function PerformCleaning(
 
     let baseCommand: string;
     let pruneArgs: string[][];
-    let hardPruneArgs: string[][];
     let updateArg: string[];
     switch (lockfile) {
         case "package-lock.json":
             baseCommand = "npm";
             pruneArgs = [["dedupe"], ["prune"]];
-            hardPruneArgs = [["cache", "clean", "--force"]];
             updateArg = ["update"];
             break;
         case "pnpm-lock.yaml":
             baseCommand = "pnpm";
             pruneArgs = [["dedupe"], ["prune"]];
-            hardPruneArgs = [["store", "prune"]];
             updateArg = ["update"];
             break;
         case "yarn.lock":
             baseCommand = "yarn";
             pruneArgs = [["autoclean", "--force"]];
-            hardPruneArgs = [["cache", "clean"]];
             updateArg = ["upgrade"];
             break;
         default:
             throw new Error("Invalid lockfile provided");
     }
-
-    const whatIsBeingDone: string = intensity === "normal" ? "Pruning" : "Hard-pruning";
 
     if (shouldUpdate) {
         await LogStuff(
@@ -56,7 +50,7 @@ async function PerformCleaning(
         );
     }
     await LogStuff(
-        `${whatIsBeingDone} using ${baseCommand} for ${motherfuckerInQuestion}.`,
+        `Cleaning using ${baseCommand} for ${motherfuckerInQuestion}.`,
         "package",
     );
     for (const pruneArg of pruneArgs) {
@@ -65,15 +59,6 @@ async function PerformCleaning(
             `${baseCommand} ${pruneArg.join(" ")}: ${pruneOutput.stdout}`,
             "package",
         );
-    }
-    if (intensity === "hard") {
-        for (const hardPruneArg of hardPruneArgs) {
-            const pruneOutput = await Commander(baseCommand, hardPruneArg, false);
-            await LogStuff(
-                `${baseCommand} ${hardPruneArg.join(" ")}: ${pruneOutput.stdout}`,
-                "package",
-            );
-        }
     }
     if (intensity === "maxim") {
         await LogStuff(
@@ -221,6 +206,37 @@ export default async function TheCleaner(
                     "error",
                 );
                 results.push({ path: project, status: "Failed" });
+            }
+        }
+
+        // cache cleaning is global, so doing these for every project like we used to do
+        // is a waste of resources
+
+        // TODO - validation to avoid calling, e.g., "yarn cache clean" when the user doesn't have yarn
+        if (intensity === "hard") {
+            await LogStuff("Time for hard-pruning! Wait patiently, please (caches take a while to clean)", "package");
+
+            const npmHardPruneArgs: string[] = ["cache", "clean", "--force"];
+            const pnpmHardPruneArgs: string[] = ["store", "prune"];
+            const yarnHardPruneArgs: string[] = ["cache", "clean"];
+
+            const npmHardPruneOutput = await Commander("npm", npmHardPruneArgs, false);
+            const pnpmHardPruneOutput = await Commander("pnpm", pnpmHardPruneArgs, false);
+            const yarnHardPruneOutput = await Commander("yarn", yarnHardPruneArgs, false);
+
+            if (verbose) {
+                await LogStuff(
+                    `npm ${npmHardPruneArgs.join(" ")}: ${npmHardPruneOutput.stdout}`,
+                    "package",
+                );
+                await LogStuff(
+                    `pnpm ${pnpmHardPruneArgs.join(" ")}: ${pnpmHardPruneOutput.stdout}`,
+                    "package",
+                );
+                await LogStuff(
+                    `yarn ${yarnHardPruneArgs.join(" ")}: ${yarnHardPruneOutput.stdout}`,
+                    "package",
+                );
             }
         }
 

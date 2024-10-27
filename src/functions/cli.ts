@@ -23,7 +23,7 @@ export interface CommanderOutput {
 
 /**
  * Executes commands and automatically handles errors.
- * 
+ *
  * Also, it _tries_ to log their content so they look "real" - that still has some known issues. But it works for now, so there's no reason to touch it.
  *
  * @export
@@ -35,7 +35,7 @@ export interface CommanderOutput {
  */
 export async function Commander(main: string, stuff: string[], log: boolean): Promise<CommanderOutput> {
     const decoder = new TextDecoder();
-    const encoder = new TextEncoder()
+    const encoder = new TextEncoder();
     const command = new Deno.Command(main, {
         args: stuff,
         stdout: "piped",

@@ -6,6 +6,17 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Changed
+
+- Now commands show their output synchronously, giving the feel of a faster CLI.
+
+### Fixed
+
+- Fixed `clean hard` not working with `npm`, as cache required a `--force` arg.
+- Fixed `clean hard` wasting resources by recursively running global commands (like cache cleaning).
+
 ## [1.4.2] 27-10-2024
 
 ### Added
