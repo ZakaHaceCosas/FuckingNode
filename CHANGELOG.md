@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Added
+
+- Added `settings schedule <hour> <day>` to schedule F\*ckingNode, so your projects are automatically cleaned.
+
 ### Fixed
 
 - Fixed an issue with path joining that made the app unusable (as it couldn't access config files).
@@ -16,15 +20,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Fix `manager add` not detecting workspaces when an object instead of an array is used.
-- Fix `manager add` not correctly resolving relative paths, such as `../../my-project`.
+- Fixed `manager add` not detecting workspaces when an object instead of an array is used.
+- Fixed `manager add` not correctly resolving relative paths, such as `../../my-project`.
 
 ## [1.4.0] 26-10-2024
 
 ### Added
 
 - Added support for monorepos / Node workspaces. When adding a project, now F\*ckingNode will look through the `package.json`. If `workspaces` are found, it will prompt to add them as separate projects so they get their own cleanup as well.
-- Added clean levels, adding a new `hard` level and replacing the `--maxim` flag. Now `clean` takes a level, either `clean normal`, `clean hard`, or `clean maxim` (if no level, "normal" will be used as default).
+- Added cleaning levels, adding a new `hard` level and replacing the `--maxim` flag. Now `clean` takes a level, either `clean normal`, `clean hard`, or `clean maxim` (if no level, "normal" will be used as default).
   - `normal` will do the easy: recursively run cleaning commands.
   - `hard` will do what default used to do (clean + dedupe) + it will also clean cache.
   - `maxim` will do what maxim does: forcedly remove `node_modules/` for everyone.
@@ -32,27 +36,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
-- **⚠ Renamed some paths used to store program info.**
+- **Rename some paths used to store program info.**
 - Now flag commands like --help or --version are now case unsensitive and all support single dash calls (-help) and 1st letter calls (-h, -v).
 - Now `migrate` will install with the new manager before removing the old lockfile. As far as I know some managers can understand other managers' lockfile format, so this will make stuff less likely to fail.
 
 ### Removed
 
-- Removed the `--full` arg from `stats`. Now the project itself is always counted.
+- Remove the `--full` arg from `stats`. Now the project itself is always counted.
 
 ### Fixed
 
-- Fix `stats` adding it's self size twice, incorrectly increasing the MB size.
-- Fix paths being always joined as `some/location`, now Deno's `join` function is used to avoid issues.
-- Fix `manager cleanup` not detecting some projects (an error with duplicate handling).
-- "Fix" handling projects with more than one lockfile. For now it'll just skip them to avoid messing up versions. Future versions might add a better handler.
+- Fixed `stats` adding it's self size twice, incorrectly increasing the MB size.
+- Fixed paths being always joined as `some/location`, now Deno's `join` function is used to avoid issues.
+- Fixed `manager cleanup` not detecting some projects (an error with duplicate handling).
+- "Fixed" handling projects with more than one lockfile. For now it'll just skip them to avoid messing up versions. Future versions might add a better handler.
 
 ## [1.3.0] 24-10-2024
 
 ### Added
 
-- `migrate` moves a project from one package to another.
-- `manager revive` allows to stop ignoring a project (opposite of `manager ignore`)
+- Added `migrate` moves a project from one package to another.
+- Added `manager revive` allows to stop ignoring a project (opposite of `manager ignore`)
 
 ### Changed
 
@@ -77,8 +81,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- `manager cleanup` checks the list of projects and validates them. If some project cannot be cleaned, it will prompt you to remove it.
-- `--self` flag to `manager` commands, so you can use the CWD instead of manually typing a path.
+- Added `manager cleanup` checks the list of projects and validates them. If some project cannot be cleaned, it will prompt you to remove it.
+- Added `--self` flag to `manager` commands, so you can use the CWD instead of manually typing a path.
 
 ### Changed
 
@@ -97,16 +101,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- `self-update` so the user can manually check for updates every time he wants to.
+- Added `self-update` so the user can manually check for updates every time he wants to.
 
 ### Changed
 
-- `manager add` now checks if the path exists before adding it.
+- Now `manager add` checks if the path exists before adding it.
 
 ### Fixed
 
-- `manager` was broken by a human mistake on previous updates (sorry, mb) and it didn't recognize one word commands like `list`. It has been fixed.
-- `clean` would crash if one of your project's path didn't exist. Now it will log an error and skip it without interrupting the cleanup.
+- Fixed `manager` being broken by a human mistake on previous updates (sorry, mb) and it didn't recognize one word commands like `list`. It has been fixed.
+- Fixed `clean` crashing if one of your project's path didn't exist. Now it will log an error and skip it without interrupting the cleanup.
 - When auto-checking for updates, the program would consider there are updates if your version number is greater than the one from GitHub - it's unlikely that the end user ever saw this, but it's now fixed.
 
 ## [1.1.0] 19-10-2024
@@ -123,15 +127,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Sometimes `manager` didn't properly handle wrong arguments. Now it should do.
+- Fixed `manager` sometimes not properly handle wrong arguments. Now it should do.
 
 ## [1.0.2] 15-10-2024
 
 ### Added
 
 - Added `--maxim` flag to the `clean` command. It will _take cleaning to the max_ (AKA removing `node_modules/` entirely).
-- Now the cleaner uses additional commands, like `dedupe`, for more in-depth cleaning.
-- Now it's capable of checking for updates by itself. Does it only once every 7 days to save up on the user's resources.
+- Added additional commands to the cleaner, like `dedupe`, for more in-depth cleaning.
+- Added the capability to the CLI of checking for updates by itself. Does it only once every 7 days to save up on the user's resources.
 
 ### Changed
 
@@ -139,7 +143,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- If you just run `fuckingnode` with no args, you got a TypeError instead of "Unknown command...". This was fixed.
+- Fixed an unhandled error where if you just run `fuckingnode` with no args, you got a TypeError instead of "Unknown command...".
 - Now the path you provide for add / remove gets a bit of purification (removing trailing spaces & trailing `/`) to avoid issues.
 
 ## [1.0.1] 14-10-2024 <!-- two releases in a day, lol -->
@@ -153,7 +157,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fixed the app losing data from one version to another (now it uses `APPDATA/FuckingNode/*` instead of `APPDATA/FuckingNode-VERSION/*` to store data).
-- Remove case sensitivity from some arguments.
+- Fixed some arguments being case-sensitive.
 
 ## [1.0.0] - 14-10-2024
 

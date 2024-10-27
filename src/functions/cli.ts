@@ -6,7 +6,7 @@ import { LogStuff } from "./io.ts";
  * @interface CommanderOutput
  * @typedef {CommanderOutput}
  */
-interface CommanderOutput {
+export interface CommanderOutput {
     /**
      * True if success, false if failure.
      *

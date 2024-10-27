@@ -8,6 +8,7 @@ import type { MANAGERS } from "./types.ts";
 import { LogStuff, ParseFlag } from "./functions/io.ts";
 import { CheckForUpdates } from "./functions/updater.ts";
 import { FreshSetup } from "./functions/config.ts";
+import TheSettings from "./commands/settings.ts";
 
 const [command] = Deno.args;
 
@@ -64,6 +65,10 @@ switch (command.toLowerCase()) {
     case "manager":
         await init();
         await TheManager(Deno.args);
+        break;
+    case "settings":
+        await init();
+        await TheSettings(Deno.args);
         break;
     case "migrate":
         await init();
