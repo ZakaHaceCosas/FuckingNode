@@ -52,6 +52,7 @@ Best practice is to run `fuckingnode manager add --self` after creating a Node p
 ### Others
 
 - `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile, `node_modules`, and reinstalls with the selected package manager). For now it relies on the specified package manager's ability to understand other lockfiles to ensure version compatibility. No issues _should_ occur.
+- `fuckingnode settings schedule <h> <d>` - schedules automated cleaning. `h` indicates what hour of the day should the cleaning be done (number from 0 to 23). `d` indicates the day interval, e.g. 3 = every 3 days (number, or an **\*** for daily cleaning).
 - `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode self-update` - all do the obvious.
 
 And that's it for now.
