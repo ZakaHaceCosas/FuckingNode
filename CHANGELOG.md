@@ -1,12 +1,12 @@
 <!-- markdownlint-disable MD024 -->
 
-# F*ckingNode Changelog
+# F\*ckingNode Changelog
 
 All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## Unreleased <!-- 1.4.3 -->
 
 ### Changed
 
@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `clean hard` not working with `npm`, as cache required a `--force` arg.
 - Fixed `clean hard` wasting resources by recursively running global commands (like cache cleaning).
 - Fixed the CLI writing unneeded logs from `npm` / `pnpm` / `yarn` to the `.log` file.
+- Fixed the app crashing (unhandled error) upon joining two untraceable paths.
+- Fixed the app crashing (unhandled error) upon calling `manager list` and having untraceable paths saved.
 
 ## [1.4.2] 27-10-2024
 

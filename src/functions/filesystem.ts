@@ -120,7 +120,11 @@ export async function ParsePath(target: string): Promise<string> {
         if (workingTarget.toLowerCase() === "--self") {
             workingTarget = Deno.cwd();
         } else {
-            workingTarget = await Deno.realPath(workingTarget);
+            try {
+                workingTarget = await Deno.realPath(workingTarget);
+            } catch {
+                workingTarget;
+            }
         }
 
         const cleanEntry = normalize(workingTarget);
@@ -157,19 +161,19 @@ export function ParsePathList(target: string): string[] {
 }
 
 /**
- * Joins two parts of a file path. **Note: 1st arg (`pathA`) will be checked to ensure it exists!**
+ * Joins two parts of a file path. If they cannot be found, you'll be given back an unparsed join.
  *
  * @export
- * @param {string} pathA First part, e.g. "./my/beginning". Must be findable.
+ * @param {string} pathA First part, e.g. "./my/beginning".
  * @param {string} pathB Second part, e.g. "my/end.txt".
  * @returns {string} Result, e.g. "my/beginning/my/end.txt".
  */
 export async function JoinPaths(pathA: string, pathB: string): Promise<string> {
     try {
         const firstPart = await ParsePath(pathA);
-        return join(firstPart, pathB.trim());
-    } catch (e) {
-        await LogStuff(`Error joining ${pathA} & ${pathB}: ${e}`);
-        throw new Error(`Error joining ${pathA} & ${pathB}: ${e}`);
+        const secondPath = pathB.trim();
+        return join(firstPart, secondPath);
+    } catch {
+        return join(pathA, pathB);
     }
 }
