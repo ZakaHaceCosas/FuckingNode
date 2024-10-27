@@ -18,6 +18,7 @@ const ALL_COMMANDS = Object.entries(TARGETS).map(([_key, [target, output]]) => {
         "--allow-net",
         "--allow-env",
         "--allow-run",
+        "--unstable-cron",
         "--target",
         target!,
         "--output",
