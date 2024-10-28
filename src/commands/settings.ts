@@ -34,8 +34,11 @@ async function CreateSchedule(hour: string, day: string | "*") {
                 hour: workingHour,
                 dayOfWeek: workingDay,
             },
-            async () => {
-                await TheCleaner(false, false, "normal");
+            {
+                backoffSchedule: [1500, 3000, 5000, 15000],
+            },
+            () => {
+                TheCleaner(false, false, "normal");
             },
         );
         await LogStuff("That worked out! Schedule created.", "tick");
