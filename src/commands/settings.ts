@@ -1,6 +1,6 @@
-import { Commander } from "../functions/cli.ts";
 import { ErrorMessage, LogStuff } from "../functions/io.ts";
 import { APP_NAME } from "../constants.ts";
+import TheCleaner from "./clean.ts";
 
 async function CreateSchedule(hour: string, day: string | "*") {
     const workingHour = Number(hour);
@@ -10,17 +10,32 @@ async function CreateSchedule(hour: string, day: string | "*") {
         Deno.exit(1);
     }
 
-    if (day !== "*" && (Number(day) < 0 || Number(day) > 6)) {
-        await LogStuff("Day must be a valid number between 0 and 6, or an asterisk.", "error");
-        Deno.exit(1);
+    let workingDay: Deno.CronScheduleExpression;
+
+    if (day === "*") {
+        workingDay = 1;
+    } else {
+        const daysBetween = Number(day);
+        if (daysBetween < 0 || daysBetween > 6) {
+            await LogStuff("Day must be a valid number between 0 and 6, or an asterisk.", "error");
+            Deno.exit(1);
+        }
+
+        workingDay = {
+            every: daysBetween,
+        };
     }
 
     try {
-        Deno.cron(
-            `${APP_NAME.CLI}-cleaner`,
-            `0 ${workingHour} ${day === "*" ? "*" : `*/${day}`} * *`,
+        await Deno.cron(
+            "fkn-cleaner",
+            {
+                minute: 0,
+                hour: workingHour,
+                dayOfWeek: workingDay,
+            },
             async () => {
-                await Commander(APP_NAME.CLI, ["clean", "normal"], true);
+                await TheCleaner(false, false, "normal");
             },
         );
         await LogStuff("That worked out! Schedule created.", "tick");

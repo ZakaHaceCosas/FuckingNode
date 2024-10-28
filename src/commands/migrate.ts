@@ -21,7 +21,7 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
 
             Deno.chdir(target);
             await LogStuff("Installing modules with the desired manager (2/3)...", "working");
-            const command = await Commander(cmd, ["install"], false);
+            const command = await Commander(cmd, ["install"]);
 
             if (!command.success) {
                 await LogStuff(`New installation threw an error: ${command.stdout}`, "error");
