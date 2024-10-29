@@ -62,6 +62,25 @@ export type SUPPORTED_EMOJIS =
 export type SemVer = `${number}.${number}.${number}`;
 
 /**
+ * A GitHub release asset.
+ *
+ * @typedef {GitHubReleaseAsset}
+ */
+type GitHubReleaseAsset = {
+    url: string;
+    name: string;
+    label: string | null;
+    size: number;
+    download_count: number;
+    /**
+     * URL to download the asset. This is what we mostly care about.
+     *
+     * @type {string}
+     */
+    browser_download_url: string;
+};
+
+/**
  * An interface so we can type responses from GitHub's REST API.
  *
  * @export
@@ -75,6 +94,12 @@ export interface GITHUB_RELEASE {
      * @type {SemVer}
      */
     tag_name: SemVer;
+    /**
+     * Assets of a release.
+     *
+     * @type {GitHubReleaseAsset[]}
+     */
+    assets: GitHubReleaseAsset[];
 }
 
 /**
