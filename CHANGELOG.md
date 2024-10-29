@@ -8,9 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased <!-- 1.4.3 -->
 
+### Added
+
+- Added an install script for Microsoft Windows.
+
 ### Changed
 
 - Now all commands show their output synchronously, giving the feel of a faster CLI.
+- Decided to hide `settings schedule` behind an experimental flag, as it doesn't work properly. `Deno.cron` (method used to schedule tasks) itself is currently considered unstable, FYI.
 
 ### Fixed
 

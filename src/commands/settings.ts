@@ -1,4 +1,4 @@
-import { ErrorMessage, LogStuff } from "../functions/io.ts";
+import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { APP_NAME } from "../constants.ts";
 import TheCleaner from "./clean.ts";
 
@@ -63,13 +63,20 @@ export default async function TheSettings(args: string[]) {
         return;
     }
 
+    if (ParseFlag("experimental-schedule", false).includes(command)) {
+        if (!secondArg || !thirdArg) {
+            await LogStuff("No time schedule was provided, or it's incomplete.", "warn");
+            return;
+        }
+        await CreateSchedule(secondArg, thirdArg);
+    }
+
     switch (command) {
         case "schedule":
-            if (!secondArg || !thirdArg) {
-                await LogStuff("No time schedule was provided, or it's incomplete.", "warn");
-                return;
-            }
-            await CreateSchedule(secondArg, thirdArg);
+            await LogStuff(
+                `${APP_NAME.STYLED} runtime's (Deno) support for scheduled tasks is still unstable and this feature doesn't work properly. Use --experimental-schedule to try it.`,
+                "bruh",
+            );
             break;
         default:
             await LogStuff(`Currently supported settings:\nschedule <hour> <day>    schedule ${APP_NAME.STYLED} to run periodically.`);
