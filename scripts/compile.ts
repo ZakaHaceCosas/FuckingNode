@@ -47,9 +47,9 @@ function CompileWindowsInstaller(): void {
         "--allow-env",
         "--allow-run",
         "--target",
-        `INSTALLER-${compiledName}`,
+        "x86_64-pc-windows-msvc",
         "--output",
-        `dist/${compiledName}`,
+        `dist/INSTALLER-${compiledName}`,
         "src/main.ts",
     ];
 
