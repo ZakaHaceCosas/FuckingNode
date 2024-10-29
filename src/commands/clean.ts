@@ -1,7 +1,7 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { type SUPPORTED_LOCKFILE } from "../types.ts";
 import { IGNORE_FILE } from "../constants.ts";
-import { Commander } from "../functions/cli.ts";
+import { Commander, CommandExists } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAppPath } from "../functions/config.ts";
@@ -213,8 +213,6 @@ export default async function TheCleaner(
 
         // cache cleaning is global, so doing these for every project like we used to do
         // is a waste of resources
-
-        // TODO - validation to avoid calling, e.g., "yarn cache clean" when the user doesn't have yarn
         if (intensity === "hard") {
             await LogStuff("Time for hard-pruning! Wait patiently, please (caches take a while to clean)", "package");
 
@@ -222,9 +220,9 @@ export default async function TheCleaner(
             const pnpmHardPruneArgs: string[] = ["store", "prune"];
             const yarnHardPruneArgs: string[] = ["cache", "clean"];
 
-            await Commander("npm", npmHardPruneArgs);
-            await Commander("pnpm", pnpmHardPruneArgs);
-            await Commander("yarn", yarnHardPruneArgs);
+            if (await CommandExists("npm")) await Commander("npm", npmHardPruneArgs);
+            if (await CommandExists("pnpm")) await Commander("pnpm", pnpmHardPruneArgs);
+            if (await CommandExists("yarn")) await Commander("yarn", yarnHardPruneArgs);
         }
 
         // go back home

@@ -15,12 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Now all commands show their output synchronously, giving the feel of a faster CLI.
-- Decided to hide `settings schedule` behind an experimental flag, as it doesn't work properly. `Deno.cron` (method used to schedule tasks) itself is currently considered unstable, FYI.
+- Now `settings schedule` is hidden behind the `--experimental-schedule` flag, as it doesn't work properly. `Deno.cron` (method used to schedule tasks) itself is currently considered unstable, FYI.
 
 ### Fixed
 
 - Fixed `clean hard` not working with `npm`, as cache required a `--force` arg.
 - Fixed `clean hard` wasting resources by recursively running global commands (like cache cleaning).
+- Fixed `clean hard` trying to use, for example, `yarn clean` with users that don't have `yarn` installed.
 - Fixed the CLI writing unneeded logs from `npm` / `pnpm` / `yarn` to the `.log` file.
 - Fixed the app crashing (unhandled error) upon joining two untraceable paths.
 - Fixed the app crashing (unhandled error) upon calling `manager list` and having untraceable paths saved.

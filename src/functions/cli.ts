@@ -71,3 +71,24 @@ export async function Commander(main: string, stuff: string[]): Promise<Commande
 
     return result;
 }
+
+/**
+ * Validates if a command exists. Useful to check if the user has some tool installed before running anything.
+ *
+ * @export
+ * @async
+ * @param {string} cmd
+ * @returns {Promise<boolean>}
+ */
+export async function CommandExists(cmd: string): Promise<boolean> {
+    try {
+        const process = new Deno.Command(cmd);
+
+        const status = await process.spawn().status;
+
+        return status.success;
+    } catch {
+        // error = false
+        return false;
+    }
+}
