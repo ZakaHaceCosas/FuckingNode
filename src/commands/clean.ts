@@ -43,24 +43,22 @@ async function PerformCleaning(
             `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
             "package",
         );
-        const updateOutput = await Commander(baseCommand, updateArg);
         await LogStuff(
             `${baseCommand} ${updateArg}\n`,
             "package",
         );
-        console.log(updateOutput.stdout);
+        await Commander(baseCommand, updateArg);
     }
     await LogStuff(
         `Cleaning using ${baseCommand} for ${motherfuckerInQuestion}.`,
         "package",
     );
     for (const pruneArg of pruneArgs) {
-        const pruneOutput = await Commander(baseCommand, pruneArg);
         await LogStuff(
             `${baseCommand} ${pruneArg.join(" ")}\n`,
             "package",
         );
-        console.log(pruneOutput.stdout);
+        await Commander(baseCommand, pruneArg);
     }
     if (intensity === "maxim") {
         await LogStuff(
@@ -69,7 +67,7 @@ async function PerformCleaning(
         );
         if (!(await CheckForPath(maximPath))) {
             await LogStuff(
-                `An unknown error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${I_LIKE_JS.MF}...`,
+                `An error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${I_LIKE_JS.MF}...`,
                 "bruh",
             );
         }
