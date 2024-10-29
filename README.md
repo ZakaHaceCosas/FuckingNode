@@ -64,10 +64,32 @@ And that's it for now.
 
 ## Installation
 
-1. Download the program from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). Windows (64), macOS and Linux (64 & ARM) are supported.
-2. Place your downloaded file somewhere (e.g. a `C:\Scripts` folder, which is what I recommend).
+<!-- ### Microsoft Windows
+
+1. Download the installer from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). You'll see "INSTALLER" on the filename, there's just one.
+2. Run it.
+3. You're done! It should have automatically installed. The `fuckingnode` CLI command should now work out of the box.
+
+### Other systems (mac & Linux) -->
+
+1. Download the program from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). macOS and Linux have support for both x84_64 and ARM.
+2. Place your downloaded file anywhere, like `/scripts` or `/home/USER/my-scripts`.
 3. Add the path to the binary to your system's path environment variable.
 4. You're done! The `fuckingnode` command will now work from your terminal.
+
+<!-- ```bash
+# open your Bash config file with nano (or your preferred editor)
+nano ~/.bashrc         # Linux
+nano ~/.bash_profile   # macOS
+
+# paste this
+export PATH="$PATH:/home/USER/my-scripts/fuckingnode" # keep '$PATH' and replace the rest (/home...) with the actual path to wherever you saved fuckingnode. It's recommended that you keep the name like that, "fuckingnode" with lowercase.
+
+# save with CTRL + O, ENTER, and CTRL + X
+# then, reload your config
+source ~/.bashrc          # Linux
+source ~/.bash_profile    # macOS
+``` -->
 
 ### Compiling from source
 
