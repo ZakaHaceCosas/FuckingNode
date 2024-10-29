@@ -18,7 +18,9 @@
         "motherfkr",
         "MOTHERFKRS",
         "msvc",
-        "therf"
+        "setx",
+        "therf",
+        "zakahacecosas"
     ],
     "deno.enable": true,
     "editor.formatOnSave": false,

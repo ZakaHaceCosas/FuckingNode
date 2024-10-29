@@ -1,3 +1,4 @@
+import { FetchGitHub } from "../../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
 import { type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type SemVer, type UPDATE_FILE } from "../types.ts";
 import { GetAppPath } from "./config.ts";
@@ -43,13 +44,8 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
 
     async function Update() {
         try {
-            const response = await fetch(
+            const response = await FetchGitHub(
                 RELEASE_URL,
-                {
-                    headers: {
-                        Accept: "application/vnd.github.v3+json",
-                    },
-                },
             );
 
             if (!response.ok) {
