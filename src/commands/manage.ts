@@ -1,4 +1,4 @@
-import { expandGlob } from "https://deno.land/std@0.224.0/fs/mod.ts";
+import { expandGlob } from "@std/fs";
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { PkgJson } from "../types.ts";
 import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";

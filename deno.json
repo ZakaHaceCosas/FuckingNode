@@ -28,5 +28,10 @@
         "noUncheckedIndexedAccess": true,
         "noUnusedParameters": true,
         "noPropertyAccessFromIndexSignature": true
-    }
+    },
+    "imports": {
+        "@std/fs": "jsr:@std/fs",
+        "@std/path": "jsr:@std/path"
+    },
+    "lock": true
 }
