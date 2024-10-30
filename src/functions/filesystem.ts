@@ -96,7 +96,7 @@ export async function GetDirSize(path: string): Promise<number> {
 
         totalSize = sizes.reduce((acc, size) => acc + size, 0);
 
-        return parseFloat((totalSize / (1024 * 1024)).toFixed(2)); // (returns in MB)
+        return ConvertBytesToMegaBytes(totalSize, false); // (returns in MB)
     } catch (e) {
         await LogStuff(`Error: ${e}`, "error");
         return 0;
@@ -176,4 +176,34 @@ export async function JoinPaths(pathA: string, pathB: string): Promise<string> {
     } catch {
         return join(pathA, pathB);
     }
+}
+
+/**
+ * Converts bytes to MB (or KB).
+ *
+ * @export
+ * @param {(number | number[])} size Either one or many byte values.
+ * @param {(boolean | "force")} useKbIfLow If false, MB are used, if "force" KB is used. If true, MB are used unless MB value is lower than 0.5, using KB instead.
+ * @param {?number} [precision] Optional, what the `parseFloat(N)` _N_ should be. Defaults to two.
+ * @returns {number}
+ */
+export function ConvertBytesToMegaBytes(size: number | number[], useKbIfLow: boolean | "force", precision?: number): number {
+    const realPrecision = precision || 2;
+    let totalVal: number = 0;
+
+    if (typeof size === "number") {
+        totalVal = size;
+    } else {
+        size.forEach((val) => {
+            totalVal += val;
+        });
+    }
+
+    const sizeInMB = totalVal / (1024 * 1024); // Convert to MB
+
+    if (((useKbIfLow === true) && sizeInMB < 0.5) || useKbIfLow === "force") {
+        return parseFloat((sizeInMB * 1024).toFixed(realPrecision)); // Convert to KB
+    }
+
+    return parseFloat(sizeInMB.toFixed(realPrecision)); // Return in MB
 }
