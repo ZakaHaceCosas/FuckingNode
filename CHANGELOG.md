@@ -6,11 +6,12 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased <!-- 1.4.3 -->
+## Unreleased <!-- 1.5.0 -->
 
 ### Added
 
 - Added an install script for Microsoft Windows.
+- Added the option to flush config files, so the user can save up space.
 
 ### Changed
 

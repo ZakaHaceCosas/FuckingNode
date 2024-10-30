@@ -1,6 +1,7 @@
 import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { APP_NAME } from "../constants.ts";
 import TheCleaner from "./clean.ts";
+import { GetAppPath } from "../functions/config.ts";
 
 async function CreateSchedule(hour: string, day: string | "*") {
     const workingHour = Number(hour);
@@ -48,6 +49,53 @@ async function CreateSchedule(hour: string, day: string | "*") {
     }
 }
 
+async function Flush(what: string, force: boolean) {
+    const validTargets = ["logs", "projects", "updates", "all"];
+    if (!validTargets.includes(what)) {
+        await LogStuff("Specify what to flush, either 'logs', 'projects', 'updates', or 'all'.", "warn");
+        return;
+    }
+
+    let file: string | string[];
+
+    switch (what) {
+        case "logs":
+            file = await GetAppPath("LOGS");
+            break;
+        case "projects":
+            file = await GetAppPath("MOTHERFKRS");
+            break;
+        case "updates":
+            file = await GetAppPath("UPDATES");
+            break;
+        case "all":
+            file = [
+                await GetAppPath("LOGS"),
+                await GetAppPath("MOTHERFKRS"),
+                await GetAppPath("UPDATES"),
+            ];
+            break;
+        default:
+            throw new Error("No valid target provided.");
+    }
+
+    const shouldProceed = force || await LogStuff("Are you sure?", "what", undefined, true);
+
+    if (!shouldProceed) return;
+
+    try {
+        if (typeof file === "string") {
+            await Deno.remove(file);
+        } else {
+            for (const removeFile of file) {
+                await Deno.remove(removeFile);
+            }
+        }
+    } catch (e) {
+        await LogStuff(`Error removing files: ${e}`, "error");
+    }
+}
+
 export default async function TheSettings(args: string[]) {
     if (!args || args.length === 0) {
         ErrorMessage("NoArgumentPassed");
@@ -71,12 +119,24 @@ export default async function TheSettings(args: string[]) {
         await CreateSchedule(secondArg, thirdArg);
     }
 
+    let shouldForce: boolean = false;
+
     switch (command) {
         case "schedule":
             await LogStuff(
                 `${APP_NAME.STYLED} runtime's (Deno) support for scheduled tasks is still unstable and this feature doesn't work properly. Use --experimental-schedule to try it.`,
                 "bruh",
             );
+            break;
+        case "flush":
+            if (!secondArg) {
+                await LogStuff("Specify what to flush.", "warn");
+                return;
+            }
+            if (ParseFlag("force", false).includes(thirdArg ?? "")) {
+                shouldForce = true;
+            }
+            await Flush(secondArg, shouldForce);
             break;
         default:
             await LogStuff(`Currently supported settings:\nschedule <hour> <day>    schedule ${APP_NAME.STYLED} to run periodically.`);

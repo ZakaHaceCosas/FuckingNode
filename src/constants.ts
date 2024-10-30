@@ -5,7 +5,7 @@ import type { SemVer, tURL } from "./types.ts";
  *
  * @type {SemVer}
  */
-export const VERSION: SemVer = "1.4.3";
+export const VERSION: SemVer = "1.5.0";
 
 /**
  * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
