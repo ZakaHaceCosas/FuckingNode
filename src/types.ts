@@ -159,4 +159,4 @@ export interface PkgJson {
  * @export
  * @typedef {ERROR_CODES}
  */
-export type ERROR_CODES = "InvalidArgumentPassed" | "NoArgumentPassed";
+export type ERROR_CODES = "Manager__ProjectInteractionInvalidCauseNoPathProvided" | "Manager__InvalidArgumentPassed";

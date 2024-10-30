@@ -5,7 +5,7 @@ function joinObjectValues(obj: Record<string, string>): string {
     return Object.values(obj).join("\n");
 }
 
-export default async function TheHelper(query?: string) {
+export default async function TheHelper(query?: "manager" | "clean" | "settings" | string) {
     const _USAGE = {
         clean: SpaceString("clean   <intensity> [--update] [--verbose]", 8),
         manager: SpaceString("manager add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup", 8),
@@ -77,12 +77,14 @@ export default async function TheHelper(query?: string) {
                 true,
             );
             break;
-        default:
+        case "settings":
             await LogStuff(
-                `Unknown command ${query}. Showing all commands`,
-                "what",
+                `Currently supported settings:\nschedule <hour> <day>                                       Schedule ${APP_NAME.STYLED} to run periodically.\nflush <"logs" | "updates" | "projects" | "all"> [--force]   Removes log files, update cache, project list, or everything.`,
+                undefined,
                 true,
             );
+            break;
+        default:
             await LogStuff(
                 FULL_HELP,
                 undefined,

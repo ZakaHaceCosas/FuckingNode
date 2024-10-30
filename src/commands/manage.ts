@@ -5,6 +5,7 @@ import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
+import TheHelper from "./help.ts";
 
 /**
  * Given a path, returns a number based on if it's a valid Node project or not.
@@ -339,7 +340,7 @@ async function HandleIgnoreProject(ignore: boolean, entry: string): Promise<0 | 
 // run functions based on args
 export default async function TheManager(args: string[]) {
     if (!args || args.length === 0) {
-        ErrorMessage("NoArgumentPassed");
+        await TheHelper("manager");
         Deno.exit(1);
     }
 
@@ -347,35 +348,35 @@ export default async function TheManager(args: string[]) {
     const secondArg = args[2] ? args[2].trim() : null;
 
     if (!command) {
-        ErrorMessage("NoArgumentPassed");
+        await TheHelper("manager");
         return;
     }
 
     switch (command.toLowerCase()) {
         case "add":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("InvalidArgumentPassed");
+                ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
                 return;
             }
             await AddProject(secondArg);
             break;
         case "remove":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("InvalidArgumentPassed");
+                ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
                 return;
             }
             await RemoveProject(secondArg);
             break;
         case "ignore":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("InvalidArgumentPassed");
+                ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
                 return;
             }
             await HandleIgnoreProject(true, secondArg);
             break;
         case "revive":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("InvalidArgumentPassed");
+                await ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
                 return;
             }
             await HandleIgnoreProject(false, secondArg);
@@ -387,7 +388,7 @@ export default async function TheManager(args: string[]) {
             await CleanProjects();
             break;
         default:
-            ErrorMessage("InvalidArgumentPassed");
+            await ErrorMessage("Manager__InvalidArgumentPassed");
             Deno.exit(1);
     }
 }

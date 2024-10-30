@@ -3,7 +3,7 @@ import TheManager from "./commands/manage.ts";
 import TheStatistics from "./commands/stats.ts";
 import TheMigrator from "./commands/migrate.ts";
 import TheHelper from "./commands/help.ts";
-import { APP_NAME, I_LIKE_JS, VERSION } from "./constants.ts";
+import { I_LIKE_JS, VERSION } from "./constants.ts";
 import type { MANAGERS } from "./types.ts";
 import { LogStuff, ParseFlag } from "./functions/io.ts";
 import { CheckForUpdates } from "./functions/updater.ts";
@@ -13,12 +13,9 @@ import TheSettings from "./commands/settings.ts";
 const [command] = Deno.args;
 
 if (!command) {
-    await LogStuff(
-        `Unknown command. Use 'clean' or 'manager'. Use '${APP_NAME.CLI} --help' to see the full list of commands.`,
-        "what",
-        true,
-    );
-    Deno.exit(1);
+    await init();
+    await TheHelper();
+    Deno.exit(0);
 }
 
 const flags = Deno.args.map((arg) => {
@@ -87,10 +84,12 @@ switch (command.toLowerCase()) {
         );
         break;
     default:
+        await init();
         await LogStuff(
-            `Unknown command. Use 'clean' or 'manager'. Use '${APP_NAME.CLI} --help' to see the full list of commands.`,
+            `Unknown command. Showing help menu.`,
             "what",
             true,
         );
-        Deno.exit(1);
+        await TheHelper();
+        Deno.exit(0);
 }

@@ -1,8 +1,9 @@
-import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
+import { LogStuff, ParseFlag } from "../functions/io.ts";
 import { APP_NAME } from "../constants.ts";
 import TheCleaner from "./clean.ts";
 import { GetAppPath } from "../functions/config.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
+import TheHelper from "./help.ts";
 
 async function CreateSchedule(hour: string, day: string | "*") {
     const workingHour = Number(hour);
@@ -123,7 +124,7 @@ async function Flush(what: string, force: boolean) {
 
 export default async function TheSettings(args: string[]) {
     if (!args || args.length === 0) {
-        ErrorMessage("NoArgumentPassed");
+        await TheHelper("settings");
         Deno.exit(1);
     }
 
@@ -132,7 +133,7 @@ export default async function TheSettings(args: string[]) {
     const thirdArg = args[3] ? args[3].trim() : null;
 
     if (!command) {
-        ErrorMessage("NoArgumentPassed");
+        await TheHelper("settings");
         return;
     }
 
@@ -167,8 +168,8 @@ export default async function TheSettings(args: string[]) {
             await Flush(secondArg, shouldForce);
             break;
         default:
-            await LogStuff(
-                `Currently supported settings:\nschedule <hour> <day>                                       Schedule ${APP_NAME.STYLED} to run periodically.\nflush <"logs" | "updates" | "projects" | "all"> [--force]   Removes log files, update cache, project list, or everything.`,
+            await TheHelper(
+                "settings",
             );
     }
 }
