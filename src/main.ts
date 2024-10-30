@@ -10,9 +10,9 @@ import { CheckForUpdates } from "./functions/updater.ts";
 import { FreshSetup } from "./functions/config.ts";
 import TheSettings from "./commands/settings.ts";
 
-const [command] = Deno.args;
+const [inputCommand] = Deno.args;
 
-if (!command) {
+if (!inputCommand) {
     await init();
     await TheHelper();
     Deno.exit(0);
@@ -50,46 +50,54 @@ if (ParseFlag("experimental-stats", false).some((flag) => flags.includes(flag)))
     Deno.exit(0);
 }
 
-switch (command.toLowerCase()) {
-    case "clean":
-        await init();
-        if (Deno.args[1] && !["normal", "hard", "maxim"].includes(Deno.args[1])) {
-            await LogStuff("Invalid intensity provided.", "error");
-            Deno.exit(1);
+async function main(command: string) {
+    try {
+        switch (command.toLowerCase()) {
+            case "clean":
+                await init();
+                if (Deno.args[1] && !["normal", "hard", "maxim"].includes(Deno.args[1])) {
+                    throw new Error("Invalid intensity provided.");
+                }
+                await TheCleaner(isVerbose, wantsToUpdate, Deno.args[1] as "normal" | "hard" | "maxim" ?? "normal");
+                break;
+            case "manager":
+                await init();
+                await TheManager(Deno.args);
+                break;
+            case "settings":
+                await init();
+                await TheSettings(Deno.args);
+                break;
+            case "migrate":
+                await init();
+                if (!Deno.args[1]) throw new Error(`No project specified!`);
+                if (!Deno.args[2]) throw new Error(`No target specified!`);
+                await TheMigrator(Deno.args[1], Deno.args[2] as MANAGERS);
+                break;
+            case "self-update":
+                await init(true);
+                break;
+            case "stats":
+                await init();
+                await LogStuff(
+                    "stats has been proven to be an unstable and not-working command. Use --experimental-stats if you want to try it.",
+                    "warn",
+                );
+                break;
+            default:
+                await init();
+                await LogStuff(
+                    `Unknown command. Showing help menu.`,
+                    "what",
+                    true,
+                );
+                await TheHelper();
+                Deno.exit(0);
         }
-        await TheCleaner(isVerbose, wantsToUpdate, Deno.args[1] as "normal" | "hard" | "maxim" ?? "normal");
-        break;
-    case "manager":
-        await init();
-        await TheManager(Deno.args);
-        break;
-    case "settings":
-        await init();
-        await TheSettings(Deno.args);
-        break;
-    case "migrate":
-        await init();
-        if (!Deno.args[1]) throw new Error(`No project specified!`);
-        if (!Deno.args[2]) throw new Error(`No target specified!`);
-        await TheMigrator(Deno.args[1], Deno.args[2] as MANAGERS);
-        break;
-    case "self-update":
-        await init(true);
-        break;
-    case "stats":
-        await init();
-        await LogStuff(
-            "stats has been proven to be an unstable and not-working command. Use --experimental-stats if you want to try it.",
-            "warn",
-        );
-        break;
-    default:
-        await init();
-        await LogStuff(
-            `Unknown command. Showing help menu.`,
-            "what",
-            true,
-        );
-        await TheHelper();
-        Deno.exit(0);
+    } catch (e) {
+        await LogStuff(String(e), "error");
+        Deno.exit(1);
+    }
 }
+
+await main(inputCommand);
