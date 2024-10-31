@@ -13,12 +13,10 @@ const exePath = join(installDir, `${APP_NAME.CLI}.exe`);
 async function GetLatestReleaseUrl(): Promise<tURL> {
     try {
         console.log("Fetching latest release from GitHub...");
-        const data: GITHUB_RELEASE = await FetchGitHub(`https://api.github.com/repos/${repo}/releases/latest`).then((response) => {
-            return response.json();
-        });
+        const response = await FetchGitHub(`https://api.github.com/repos/${repo}/releases/latest`);
+        const data: GITHUB_RELEASE = await response.json();
 
         const asset = data.assets.find((a: { name: string }) => a.name.endsWith(".exe") && !a.name.includes("INSTALLER")); // should return the windows exe file
-
         if (!asset) throw new Error("No .exe file found in the latest release.");
 
         console.log("Fetched.");
