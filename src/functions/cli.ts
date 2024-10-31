@@ -82,7 +82,7 @@ export async function Commander(main: string, stuff: string[]): Promise<Commande
  */
 export async function CommandExists(cmd: string): Promise<boolean> {
     try {
-        const process = new Deno.Command(cmd);
+        const process = new Deno.Command(cmd, { stdout: "null", stderr: "null", stdin: "null" });
 
         const status = await process.spawn().status;
 
