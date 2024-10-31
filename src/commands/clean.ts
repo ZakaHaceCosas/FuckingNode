@@ -1,13 +1,19 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { CONFIG_FILES, type SUPPORTED_LOCKFILE } from "../types.ts";
+import {
+    CONFIG_FILES,
+    IsLockfileNodeLockfile,
+    type SUPPORTED_LOCKFILES,
+    type SUPPORTED_NODE_LOCKFILE,
+    type SUPPORTED_NOT_NODE_LOCKFILE as _NotNode,
+} from "../types.ts";
 import { IGNORE_FILE } from "../constants.ts";
 import { Commander, CommandExists } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects } from "../functions/projects.ts";
 
-async function PerformCleaning(
-    lockfile: SUPPORTED_LOCKFILE,
+async function PerformNodeCleaning(
+    lockfile: SUPPORTED_NODE_LOCKFILE,
     projectInQuestion: string,
     shouldUpdate: boolean,
     intensity: "normal" | "hard" | "maxim",
@@ -155,7 +161,7 @@ export default async function TheCleaner(
                     continue;
                 }
 
-                const lockfiles: SUPPORTED_LOCKFILE[] = [];
+                const lockfiles: SUPPORTED_LOCKFILES[] = [];
 
                 if (await CheckForPath("pnpm-lock.yaml")) {
                     lockfiles.push("pnpm-lock.yaml");
@@ -166,11 +172,17 @@ export default async function TheCleaner(
                 if (await CheckForPath("yarn.lock")) {
                     lockfiles.push("yarn.lock");
                 }
+                if (await CheckForPath("bun.lockb")) {
+                    lockfiles.push("bun.lockb");
+                }
+                if (await CheckForPath("deno.lock")) {
+                    lockfiles.push("deno.lock");
+                }
 
                 if (lockfiles.length > 0) {
                     if (lockfiles.length === 1) {
                         for (const lockfile of lockfiles) {
-                            await PerformCleaning(lockfile, project, update, realIntensity);
+                            if (IsLockfileNodeLockfile(lockfile)) await PerformNodeCleaning(lockfile, project, update, realIntensity);
                         }
                     } else {
                         await LogStuff(
@@ -215,10 +227,17 @@ export default async function TheCleaner(
             const npmHardPruneArgs: string[] = ["cache", "clean", "--force"];
             const pnpmHardPruneArgs: string[] = ["store", "prune"];
             const yarnHardPruneArgs: string[] = ["cache", "clean"];
+            // bun and deno don't support yet project-wide cleanup
+            // but they do support system-wide cleanup thanks to this
+            // now F*kingNode is F*ckingJavascriptRuntimes :]
+            const bunHardPruneArgs: string[] = ["pm", "cache", "rm"];
+            const denoHardPruneArgs: string[] = ["clean"];
 
             if (await CommandExists("npm")) await Commander("npm", npmHardPruneArgs);
             if (await CommandExists("pnpm")) await Commander("pnpm", pnpmHardPruneArgs);
             if (await CommandExists("yarn")) await Commander("yarn", yarnHardPruneArgs);
+            if (await CommandExists("bun")) await Commander("bun", bunHardPruneArgs);
+            if (await CommandExists("deno")) await Commander("deno", denoHardPruneArgs);
         }
 
         // go back home

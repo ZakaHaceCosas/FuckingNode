@@ -129,17 +129,27 @@ async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> 
         return;
     }
     if (validation === 5) {
-        await LogStuff(
-            `The Deno runtime? You got a good taste for choosing a JS runtime. Sadly we don't support Deno... yet.`,
-            "bruh",
+        const addAnyway = await LogStuff(
+            // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao
+            // idk whats better, deno or bun. i have both installed, i could try. one day, maybe.
+            `This project appears to use the Deno runtime (good choice btw). We only support system-wide (AKA "hard") cleaning for Deno, but not individual cleaning of each of your projects. Adding this project to your list would not have any effect. Add anyway?`,
+            "what",
+            undefined,
+            true,
         );
+        if (!addAnyway) return;
+        addTheEntry();
         return;
     }
     if (validation === 6) {
-        await LogStuff(
-            `The Bun runtime? We don't support that... yet.`,
-            "bruh",
+        const addAnyway = await LogStuff(
+            `This project appears to use the Bun runtime. We only support system-wide (AKA "hard") cleaning for Bun, but not individual cleaning of each of your projects. Adding this project to your list would not have any effect. Add anyway?`,
+            "what",
+            undefined,
+            true,
         );
+        if (!addAnyway) return;
+        addTheEntry();
         return;
     }
 
