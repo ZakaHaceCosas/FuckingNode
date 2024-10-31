@@ -69,7 +69,11 @@ export async function LogStuff(
     verbose?: boolean,
 ): Promise<boolean> {
     const finalMessage = emoji ? Emojify(message, emoji) : message;
-    if (verbose) console.log(finalMessage);
+    if (verbose === undefined) {
+        console.log(finalMessage);
+    } else if (verbose === true) {
+        console.log(finalMessage);
+    }
 
     try {
         const logged = `${finalMessage} ... @ ${new Date().toLocaleString()}` + "\n";
