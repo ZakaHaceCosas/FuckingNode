@@ -1,5 +1,4 @@
-import { type PkgJson } from "../types.ts";
-import { GetAppPath } from "./config.ts";
+import { CONFIG_FILES, type PkgJson } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
 
@@ -10,9 +9,9 @@ import { LogStuff } from "./io.ts";
  * @async
  * @returns {Promise<string[]>}
  */
-export async function GetAllProjects(): Promise<string[]> {
+export async function GetAllProjects(appPaths: CONFIG_FILES): Promise<string[]> {
     try {
-        const content = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
+        const content = await Deno.readTextFile(appPaths.projects);
         return ParsePathList(content);
     } catch (e) {
         await LogStuff(

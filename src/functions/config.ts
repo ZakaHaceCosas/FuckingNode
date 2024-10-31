@@ -1,4 +1,5 @@
 import { APP_NAME, I_LIKE_JS } from "../constants.ts";
+import { CONFIG_FILES } from "../types.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
 
@@ -44,9 +45,9 @@ export async function GetAppPath(
  *
  * @export
  * @async
- * @returns {Promise<void>}
+ * @returns {Promise<CONFIG_FILES>}
  */
-export async function FreshSetup(): Promise<void> {
+export async function FreshSetup(): Promise<CONFIG_FILES> {
     try {
         const basePath = await GetAppPath("BASE");
         if (!(await CheckForPath(basePath))) {
@@ -62,8 +63,14 @@ export async function FreshSetup(): Promise<void> {
         if (!(await CheckForPath(logsPath))) {
             await Deno.writeTextFile(logsPath, "");
         }
-    } catch (error) {
-        await LogStuff(`Some ${I_LIKE_JS.MFN} error happened trying to setup config files: ${error}`, "error");
+
+        return {
+            projects: projectPath,
+            logs: logsPath,
+            updates: await GetAppPath("UPDATES"),
+        };
+    } catch (e) {
+        await LogStuff(`Some ${I_LIKE_JS.MFN} error happened trying to setup config files: ${e}`, "error");
         Deno.exit(1);
     }
 }

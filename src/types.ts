@@ -172,3 +172,15 @@ export interface PkgJson {
  * @typedef {ERROR_CODES}
  */
 export type ERROR_CODES = "Manager__ProjectInteractionInvalidCauseNoPathProvided" | "Manager__InvalidArgumentPassed";
+
+/**
+ * An object with paths to all config files.
+ *
+ * @export
+ * @typedef {CONFIG_FILES}
+ */
+export interface CONFIG_FILES {
+    projects: string;
+    logs: string;
+    updates: string;
+}

@@ -3,12 +3,13 @@ import TheManager from "./commands/manage.ts";
 import TheStatistics from "./commands/stats.ts";
 import TheMigrator from "./commands/migrate.ts";
 import TheHelper from "./commands/help.ts";
-import { I_LIKE_JS, VERSION } from "./constants.ts";
-import type { MANAGERS } from "./types.ts";
-import { LogStuff, ParseFlag } from "./functions/io.ts";
-import { CheckForUpdates } from "./functions/updater.ts";
-import { FreshSetup } from "./functions/config.ts";
+import TheUpdater from "./functions/updater.ts";
 import TheSettings from "./commands/settings.ts";
+
+import { I_LIKE_JS, VERSION } from "./constants.ts";
+import type { CONFIG_FILES, MANAGERS } from "./types.ts";
+import { LogStuff, ParseFlag } from "./functions/io.ts";
+import { FreshSetup } from "./functions/config.ts";
 
 const [inputCommand] = Deno.args;
 
@@ -25,9 +26,11 @@ const flags = Deno.args.map((arg) => {
 const isVerbose = flags.includes("--verbose");
 const wantsToUpdate = flags.includes("--update");
 
+let ALL_CONFIG_FILES: CONFIG_FILES;
+
 async function init(update?: boolean) {
-    await CheckForUpdates(update);
-    await FreshSetup();
+    await TheUpdater(ALL_CONFIG_FILES, update);
+    ALL_CONFIG_FILES = await FreshSetup();
 }
 
 if (ParseFlag("help", true).some((flag) => flags.includes(flag))) {
@@ -58,15 +61,15 @@ async function main(command: string) {
                 if (Deno.args[1] && !["normal", "hard", "maxim"].includes(Deno.args[1])) {
                     throw new Error("Invalid intensity provided.");
                 }
-                await TheCleaner(isVerbose, wantsToUpdate, Deno.args[1] as "normal" | "hard" | "maxim" ?? "normal");
+                await TheCleaner(isVerbose, wantsToUpdate, Deno.args[1] as "normal" | "hard" | "maxim" ?? "normal", ALL_CONFIG_FILES);
                 break;
             case "manager":
                 await init();
-                await TheManager(Deno.args);
+                await TheManager(Deno.args, ALL_CONFIG_FILES);
                 break;
             case "settings":
                 await init();
-                await TheSettings(Deno.args);
+                await TheSettings(Deno.args, ALL_CONFIG_FILES);
                 break;
             case "migrate":
                 await init();

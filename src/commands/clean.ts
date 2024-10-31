@@ -1,5 +1,5 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { type SUPPORTED_LOCKFILE } from "../types.ts";
+import { CONFIG_FILES, type SUPPORTED_LOCKFILE } from "../types.ts";
 import { IGNORE_FILE } from "../constants.ts";
 import { Commander, CommandExists } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
@@ -89,13 +89,14 @@ export default async function TheCleaner(
     verbose: boolean,
     update: boolean,
     intensity: "normal" | "hard" | "maxim",
+    CF: CONFIG_FILES,
 ) {
     try {
         // original path
         const originalLocation = Deno.cwd();
 
         // read all projects
-        const projects: string[] = await GetAllProjects();
+        const projects: string[] = await GetAllProjects(CF);
 
         if (projects.length === 0) {
             await LogStuff(

@@ -1,7 +1,6 @@
 import { FetchGitHub } from "../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
-import { type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type SemVer, type UPDATE_FILE } from "../types.ts";
-import { GetAppPath } from "./config.ts";
+import { CONFIG_FILES, type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type SemVer, type UPDATE_FILE } from "../types.ts";
 import { GetDateNow, MakeRightNowDateStandard } from "./date.ts";
 import { CheckForPath } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
@@ -32,7 +31,7 @@ function CompareSemver(versionA: string, versionB: string): number {
  * @export
  * @returns {Promise<void>}
  */
-export async function CheckForUpdates(force?: boolean): Promise<void> {
+export default async function TheUpdater(paths: CONFIG_FILES, force?: boolean): Promise<void> {
     const tellAboutUpdate = async (newVer: SemVer) => {
         await LogStuff(
             `There's a new version! ${newVer}. Consider downloading it from GitHub. You're on ${VERSION}, btw.`,
@@ -40,7 +39,7 @@ export async function CheckForUpdates(force?: boolean): Promise<void> {
         );
     };
 
-    const UpdaterFilePath = await GetAppPath("UPDATES");
+    const UpdaterFilePath = paths.updates;
 
     async function Update() {
         try {

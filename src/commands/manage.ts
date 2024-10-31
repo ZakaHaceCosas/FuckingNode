@@ -1,10 +1,9 @@
 import { expandGlob } from "@std/fs";
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import type { PkgJson } from "../types.ts";
+import type { CONFIG_FILES, PkgJson } from "../types.ts";
 import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
-import { GetAppPath } from "../functions/config.ts";
 import TheHelper from "./help.ts";
 
 /**
@@ -16,9 +15,9 @@ import TheHelper from "./help.ts";
  * @param {string} entry Path to the project.
  * @returns {Promise<0 | 1 | 2 | 3 | 4>}
  */
-async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4 | 5 | 6> {
+async function ValidateNodeProject(entry: string, appPaths: CONFIG_FILES): Promise<0 | 1 | 2 | 3 | 4 | 5 | 6> {
     const workingEntry = await ParsePath(entry);
-    const list = await GetAllProjects();
+    const list = await GetAllProjects(appPaths);
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 
     if (!(await CheckForPath(workingEntry))) {
@@ -83,12 +82,12 @@ async function GetWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
  * @param {string} entry Path to the project.
  * @returns {Promise<void>}
  */
-async function AddProject(entry: string): Promise<void> {
+async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> {
     const workingEntry = await ParsePath(entry);
     const projectName = await NameProject(workingEntry);
 
     async function addTheEntry() {
-        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
+        await Deno.writeTextFile(appPaths.projects, `${workingEntry}\n`, {
             append: true,
         });
         await LogStuff(
@@ -97,7 +96,7 @@ async function AddProject(entry: string): Promise<void> {
         );
     }
 
-    const validation = await ValidateNodeProject(workingEntry);
+    const validation = await ValidateNodeProject(workingEntry, appPaths);
 
     if (validation === 3) {
         await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! (${projectName})`, "error");
@@ -167,11 +166,11 @@ async function AddProject(entry: string): Promise<void> {
         return;
     }
 
-    await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
+    await Deno.writeTextFile(appPaths.projects, `${workingEntry}\n`, {
         append: true,
     });
     for (const workspace of workspaces) {
-        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workspace}\n`, {
+        await Deno.writeTextFile(appPaths.projects, `${workspace}\n`, {
             append: true,
         });
     }
@@ -187,16 +186,16 @@ async function AddProject(entry: string): Promise<void> {
  * @param {string} entry
  * @returns {Promise<void>}
  */
-async function RemoveProject(entry: string): Promise<void> {
+async function RemoveProject(entry: string, appPaths: CONFIG_FILES): Promise<void> {
     const workingEntry = await ParsePath(entry);
-    const list = await GetAllProjects();
+    const list = await GetAllProjects(appPaths);
     const index = list.indexOf(workingEntry);
 
     if (list.includes(workingEntry)) {
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         if (list.length > 0) {
             await Deno.writeTextFile(
-                await GetAppPath("MOTHERFKRS"),
+                appPaths.projects,
                 list.join("\n") + "\n",
             );
             await LogStuff(
@@ -206,7 +205,7 @@ async function RemoveProject(entry: string): Promise<void> {
                 "tick-clear",
             );
         } else {
-            await Deno.remove(await GetAppPath("MOTHERFKRS"));
+            await Deno.remove(appPaths.projects);
             await LogStuff("Removed the last entry. The list is now empty.", "moon-face");
         }
     } else {
@@ -223,13 +222,13 @@ async function RemoveProject(entry: string): Promise<void> {
  * @async
  * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, 2 if the user doesn't remove them.
  */
-async function CleanProjects(): Promise<0 | 1 | 2> {
+async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
     async function GetProjectsToRemove() {
-        const list = await GetAllProjects();
+        const list = await GetAllProjects(appPaths);
         const listOfRemovals: string[] = [];
 
         for (const project of list) {
-            const validation = await ValidateNodeProject(project);
+            const validation = await ValidateNodeProject(project, appPaths);
             if (validation !== 0) listOfRemovals.push(project);
         }
 
@@ -275,7 +274,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         return 2;
     }
     for (const target of list) {
-        await RemoveProject(target);
+        await RemoveProject(target, appPaths);
     }
     await LogStuff(`That worked out!`, "tick");
     return 0;
@@ -288,8 +287,8 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
  * @param {boolean} ignoredOnly If true, only ignored projects will be shown.
  * @returns {Promise<void>}
  */
-async function ListProjects(ignoredOnly: boolean): Promise<void> {
-    const list = await GetAllProjects();
+async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promise<void> {
+    const list = await GetAllProjects(appPaths);
     if (list.length === 0) {
         await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");
         return;
@@ -358,7 +357,7 @@ async function HandleIgnoreProject(ignore: boolean, entry: string): Promise<0 | 
 }
 
 // run functions based on args
-export default async function TheManager(args: string[]) {
+export default async function TheManager(args: string[], CF: CONFIG_FILES) {
     if (!args || args.length === 0) {
         await TheHelper("manager");
         Deno.exit(1);
@@ -378,14 +377,14 @@ export default async function TheManager(args: string[]) {
                 ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
                 return;
             }
-            await AddProject(secondArg);
+            await AddProject(secondArg, CF);
             break;
         case "remove":
             if (!secondArg || secondArg === null) {
                 ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
                 return;
             }
-            await RemoveProject(secondArg);
+            await RemoveProject(secondArg, CF);
             break;
         case "ignore":
             if (!secondArg || secondArg === null) {
@@ -402,10 +401,10 @@ export default async function TheManager(args: string[]) {
             await HandleIgnoreProject(false, secondArg);
             break;
         case "list":
-            await ListProjects(ParseFlag("ignored", false).includes(secondArg ?? ""));
+            await ListProjects(ParseFlag("ignored", false).includes(secondArg ?? ""), CF);
             break;
         case "cleanup":
-            await CleanProjects();
+            await CleanProjects(CF);
             break;
         default:
             await ErrorMessage("Manager__InvalidArgumentPassed");

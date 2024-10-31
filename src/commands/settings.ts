@@ -1,11 +1,11 @@
 import { LogStuff, ParseFlag } from "../functions/io.ts";
 import { APP_NAME } from "../constants.ts";
 import TheCleaner from "./clean.ts";
-import { GetAppPath } from "../functions/config.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import TheHelper from "./help.ts";
+import { CONFIG_FILES } from "../types.ts";
 
-async function CreateSchedule(hour: string, day: string | "*") {
+async function CreateSchedule(hour: string, day: string | "*", appPaths: CONFIG_FILES) {
     const workingHour = Number(hour);
 
     if (workingHour < 0 || workingHour > 23) {
@@ -47,7 +47,7 @@ async function CreateSchedule(hour: string, day: string | "*") {
                 backoffSchedule: [1500, 3000, 5000, 15000],
             },
             () => {
-                TheCleaner(false, false, "normal");
+                TheCleaner(false, false, "normal", appPaths);
             },
         );
         await LogStuff("That worked out! Schedule created.", "tick");
@@ -57,7 +57,7 @@ async function CreateSchedule(hour: string, day: string | "*") {
     }
 }
 
-async function Flush(what: string, force: boolean) {
+async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
     const validTargets = ["logs", "projects", "updates", "all"];
     if (!validTargets.includes(what)) {
         await LogStuff(
@@ -71,19 +71,19 @@ async function Flush(what: string, force: boolean) {
 
     switch (what) {
         case "logs":
-            file = await GetAppPath("LOGS");
+            file = config.logs;
             break;
         case "projects":
-            file = await GetAppPath("MOTHERFKRS");
+            file = config.projects;
             break;
         case "updates":
-            file = await GetAppPath("UPDATES");
+            file = config.updates;
             break;
         case "all":
             file = [
-                await GetAppPath("LOGS"),
-                await GetAppPath("MOTHERFKRS"),
-                await GetAppPath("UPDATES"),
+                config.logs,
+                config.projects,
+                config.updates,
             ];
             break;
         default:
@@ -122,7 +122,7 @@ async function Flush(what: string, force: boolean) {
     }
 }
 
-export default async function TheSettings(args: string[]) {
+export default async function TheSettings(args: string[], CF: CONFIG_FILES) {
     if (!args || args.length === 0) {
         await TheHelper("settings");
         Deno.exit(1);
@@ -145,7 +145,7 @@ export default async function TheSettings(args: string[]) {
             );
             return;
         }
-        await CreateSchedule(secondArg, thirdArg);
+        await CreateSchedule(secondArg, thirdArg, CF);
     }
 
     let shouldForce: boolean = false;
@@ -165,7 +165,7 @@ export default async function TheSettings(args: string[]) {
             if (ParseFlag("force", false).includes(thirdArg ?? "")) {
                 shouldForce = true;
             }
-            await Flush(secondArg, shouldForce);
+            await Flush(secondArg, shouldForce, CF);
             break;
         default:
             await TheHelper(
