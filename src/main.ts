@@ -26,12 +26,14 @@ const flags = Deno.args.map((arg) => {
 const isVerbose = flags.includes("--verbose");
 const wantsToUpdate = flags.includes("--update");
 
-let ALL_CONFIG_FILES: CONFIG_FILES;
-
 async function init(update?: boolean) {
+    const configFiles = await FreshSetup(); // Temporarily hold the result
+    const ALL_CONFIG_FILES: CONFIG_FILES = configFiles; // Assign only after it's resolved
     await TheUpdater(ALL_CONFIG_FILES, update);
-    ALL_CONFIG_FILES = await FreshSetup();
+    return ALL_CONFIG_FILES;
 }
+
+const ALL_CONFIG_FILES = await init();
 
 if (ParseFlag("help", true).some((flag) => flags.includes(flag))) {
     await init();
