@@ -5,10 +5,20 @@
  * @typedef {RIGHT_NOW_DATE}
  */
 export type RIGHT_NOW_DATE = `${number}-${string}-${string} ${string}:${string}`;
+
 /**
  * RegEx for RIGHT_NOW_DATE
  */
 export const RIGHT_NOW_DATE_REGEX = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+
+/**
+ * Supported package files.
+ *
+ * @export
+ * @typedef {SUPPORTED_PROJECT_FILE}
+ */
+export type SUPPORTED_PROJECT_FILE = "package.json";
+// | "deno.json"
 
 /**
  * Supported lockfile type that the app recognizes as cleanable.
@@ -20,6 +30,8 @@ export type SUPPORTED_LOCKFILE =
     | "package-lock.json"
     | "pnpm-lock.yaml"
     | "yarn.lock";
+// | "deno.lock"
+// | "bun.lockb";
 
 /**
  * Package manager commands for supported managers.
@@ -27,7 +39,7 @@ export type SUPPORTED_LOCKFILE =
  * @export
  * @typedef {MANAGERS}
  */
-export type MANAGERS = "pnpm" | "npm" | "yarn";
+export type MANAGERS = "pnpm" | "npm" | "yarn" | "deno" | "bun";
 
 /**
  * Valid emojis

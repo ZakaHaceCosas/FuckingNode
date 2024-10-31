@@ -10,13 +10,13 @@ import TheHelper from "./help.ts";
 /**
  * Given a path, returns a number based on if it's a valid Node project or not.
  *
- * `0` = valid. `1` = not valid, no package.json. `2` = not fully valid, not node_modules. `3` = not fully valid, duplicate. `4` = path doesn't exist.
+ * `0` = valid. `1` = not valid, no package.json. `2` = not fully valid, not node_modules. `3` = not fully valid, duplicate. `4` = path doesn't exist. `5` | `6` = project uses an unsupported runtime (5 = Deno, 6 = Bun).
  *
  * @async
  * @param {string} entry Path to the project.
  * @returns {Promise<0 | 1 | 2 | 3 | 4>}
  */
-async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
+async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4 | 5 | 6> {
     const workingEntry = await ParsePath(entry);
     const list = await GetAllProjects();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
@@ -31,6 +31,12 @@ async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
         return 2;
     }
     if (!(await CheckForPath(await JoinPaths(workingEntry, "package.json")))) {
+        if (await CheckForPath(await JoinPaths(workingEntry, "bun.lockb"))) { // we use bun's lockfile as, AFAIK, it doesn't have its own package file
+            return 6;
+        }
+        if (await CheckForPath(await JoinPaths(workingEntry, "deno.json"))) {
+            return 5;
+        }
         return 1;
     }
     return 0;
@@ -43,7 +49,7 @@ async function ValidateNodeProject(entry: string): Promise<0 | 1 | 2 | 3 | 4> {
  * @param {string} pkgJsonPath Path to the package.json file.
  * @returns {Promise<string[] | null>}
  */
-async function getWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
+async function GetWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
     try {
         if (!(await CheckForPath(await ParsePath(pkgJsonPath)))) throw new Error("Requested path doesn't exist.");
 
@@ -123,8 +129,22 @@ async function AddProject(entry: string): Promise<void> {
         await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
         return;
     }
+    if (validation === 5) {
+        await LogStuff(
+            `The Deno runtime? You got a good taste for choosing a JS runtime. Sadly we don't support Deno... yet.`,
+            "bruh",
+        );
+        return;
+    }
+    if (validation === 6) {
+        await LogStuff(
+            `The Bun runtime? We don't support that... yet.`,
+            "bruh",
+        );
+        return;
+    }
 
-    const workspaces = await getWorkspaces(await JoinPaths(workingEntry, "package.json"));
+    const workspaces = await GetWorkspaces(await JoinPaths(workingEntry, "package.json"));
 
     if (!workspaces) {
         addTheEntry();
