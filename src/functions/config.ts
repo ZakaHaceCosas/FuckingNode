@@ -48,7 +48,10 @@ export async function GetAppPath(
  */
 export async function FreshSetup(): Promise<void> {
     try {
-        await Deno.mkdir(await GetAppPath("BASE"), { recursive: true });
+        const basePath = await GetAppPath("BASE");
+        if (!(await CheckForPath(basePath))) {
+            await Deno.mkdir(basePath, { recursive: true });
+        }
 
         const projectPath = await GetAppPath("MOTHERFKRS");
         if (!(await CheckForPath(projectPath))) {

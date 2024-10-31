@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed the app crashing (unhandled error) upon calling `manager list` and having untraceable paths saved.
 - Fixed `clean` writing twice to the `stdout` what cleanup commands would do.
 - Fixed many potential unhandled errors at many places.
+- Fixed the base directory for app config being recursively created on each run.
 
 ## [1.4.2] 27-10-2024
 
