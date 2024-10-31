@@ -1,6 +1,6 @@
 import { type PkgJson } from "../types.ts";
 import { GetAppPath } from "./config.ts";
-import { CheckForPath, JoinPaths, ParsePath } from "./filesystem.ts";
+import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
 
 /**
@@ -13,10 +13,10 @@ import { LogStuff } from "./io.ts";
 export async function GetAllProjects(): Promise<string[]> {
     try {
         const content = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
-        return content.split("\n").filter(Boolean);
+        return ParsePathList(content);
     } catch (e) {
         await LogStuff(
-            `Failed to read ${GetAppPath("MOTHERFKRS")} - ${e}`,
+            `Failed to read your projects - ${e}`,
             "error",
         );
         Deno.exit(1);

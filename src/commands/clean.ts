@@ -2,82 +2,86 @@ import { I_LIKE_JS } from "../constants.ts";
 import { type SUPPORTED_LOCKFILE } from "../types.ts";
 import { IGNORE_FILE } from "../constants.ts";
 import { Commander, CommandExists } from "../functions/cli.ts";
-import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "../functions/filesystem.ts";
+import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
-import { GetAppPath } from "../functions/config.ts";
+import { GetAllProjects } from "../functions/projects.ts";
 
 async function PerformCleaning(
     lockfile: SUPPORTED_LOCKFILE,
     projectInQuestion: string,
     shouldUpdate: boolean,
     intensity: "normal" | "hard" | "maxim",
-) {
-    const motherfuckerInQuestion = await ParsePath(projectInQuestion);
-    const maximPath = await JoinPaths(motherfuckerInQuestion, "node_modules");
+): Promise<void> {
+    try {
+        const motherfuckerInQuestion = await ParsePath(projectInQuestion);
+        const maximPath = await JoinPaths(motherfuckerInQuestion, "node_modules");
 
-    let baseCommand: string;
-    let pruneArgs: string[][];
-    let updateArg: string[];
-    switch (lockfile) {
-        case "package-lock.json":
-            baseCommand = "npm";
-            pruneArgs = [["dedupe"], ["prune"]];
-            updateArg = ["update"];
-            break;
-        case "pnpm-lock.yaml":
-            baseCommand = "pnpm";
-            pruneArgs = [["dedupe"], ["prune"]];
-            updateArg = ["update"];
-            break;
-        case "yarn.lock":
-            baseCommand = "yarn";
-            pruneArgs = [["autoclean", "--force"]];
-            updateArg = ["upgrade"];
-            break;
-        default:
-            throw new Error("Invalid lockfile provided");
-    }
+        let baseCommand: string;
+        let pruneArgs: string[][];
+        let updateArg: string[];
+        switch (lockfile) {
+            case "package-lock.json":
+                baseCommand = "npm";
+                pruneArgs = [["dedupe"], ["prune"]];
+                updateArg = ["update"];
+                break;
+            case "pnpm-lock.yaml":
+                baseCommand = "pnpm";
+                pruneArgs = [["dedupe"], ["prune"]];
+                updateArg = ["update"];
+                break;
+            case "yarn.lock":
+                baseCommand = "yarn";
+                pruneArgs = [["autoclean", "--force"]];
+                updateArg = ["upgrade"];
+                break;
+            default:
+                throw new Error("Invalid lockfile provided");
+        }
 
-    if (shouldUpdate) {
-        await LogStuff(
-            `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
-            "package",
-        );
-        await LogStuff(
-            `${baseCommand} ${updateArg}\n`,
-            "package",
-        );
-        await Commander(baseCommand, updateArg);
-    }
-    await LogStuff(
-        `Cleaning using ${baseCommand} for ${motherfuckerInQuestion}.`,
-        "package",
-    );
-    for (const pruneArg of pruneArgs) {
-        await LogStuff(
-            `${baseCommand} ${pruneArg.join(" ")}\n`,
-            "package",
-        );
-        await Commander(baseCommand, pruneArg);
-    }
-    if (intensity === "maxim") {
-        await LogStuff(
-            `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
-            "trash",
-        );
-        if (!(await CheckForPath(maximPath))) {
+        if (shouldUpdate) {
             await LogStuff(
-                `An error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${I_LIKE_JS.MF}...`,
-                "bruh",
+                `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
+                "package",
+            );
+            await LogStuff(
+                `${baseCommand} ${updateArg}\n`,
+                "package",
+            );
+            await Commander(baseCommand, updateArg);
+        }
+        await LogStuff(
+            `Cleaning using ${baseCommand} for ${motherfuckerInQuestion}.`,
+            "package",
+        );
+        for (const pruneArg of pruneArgs) {
+            await LogStuff(
+                `${baseCommand} ${pruneArg.join(" ")}\n`,
+                "package",
+            );
+            await Commander(baseCommand, pruneArg);
+        }
+        if (intensity === "maxim") {
+            await LogStuff(
+                `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
+                "trash",
+            );
+            if (!(await CheckForPath(maximPath))) {
+                await LogStuff(
+                    `An error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${I_LIKE_JS.MF}...`,
+                    "bruh",
+                );
+            }
+            await Deno.remove(maximPath, {
+                recursive: true,
+            });
+            await LogStuff(
+                `Maxim pruned ${motherfuckerInQuestion}.`,
+                "tick-clear",
             );
         }
-        await Deno.remove(maximPath, {
-            recursive: true,
-        });
-        await LogStuff(
-            `Maxim pruned ${motherfuckerInQuestion}.`,
-            "tick-clear",
-        );
+    } catch (e) {
+        throw e;
     }
 }
 
@@ -90,17 +94,8 @@ export default async function TheCleaner(
         // original path
         const originalLocation = Deno.cwd();
 
-        // read all mfs
-        let projects: string[] = [];
-        try {
-            const data = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
-            projects = ParsePathList(data);
-        } catch (e) {
-            await LogStuff(
-                `${I_LIKE_JS.MFN} error reading your ${I_LIKE_JS.MFN} list of ${I_LIKE_JS.MFS}: ${e}`,
-            );
-            Deno.exit(1);
-        }
+        // read all projects
+        const projects: string[] = await GetAllProjects();
 
         if (projects.length === 0) {
             await LogStuff(
@@ -123,12 +118,13 @@ export default async function TheCleaner(
             realIntensity = intensity;
         }
 
-        if (verbose) {
-            await LogStuff(
-                `Cleaning started at ${new Date().toLocaleString()}`,
-                "working",
-            );
-        }
+        await LogStuff(
+            `Cleaning started at ${new Date().toLocaleString()}`,
+            "working",
+            undefined,
+            undefined,
+            verbose,
+        );
 
         const results: { path: string; status: string }[] = [];
 
@@ -206,6 +202,7 @@ export default async function TheCleaner(
                     "error",
                 );
                 results.push({ path: project, status: "Failed" });
+                continue;
             }
         }
 
@@ -230,18 +227,19 @@ export default async function TheCleaner(
             "tick",
         );
 
-        if (verbose) {
-            // shows a report
-            await LogStuff("Report:", "chart");
-            for (const result of results) {
-                await LogStuff(`${result.path} -> ${result.status}`);
-            }
-
-            await LogStuff(
-                `Cleaning completed at ${new Date().toLocaleString()}`,
-                "tick",
-            );
+        // shows a report
+        await LogStuff("Report:", "chart", false, undefined, verbose);
+        for (const result of results) {
+            await LogStuff(`${result.path} -> ${result.status}`, undefined, false, undefined, verbose);
         }
+
+        await LogStuff(
+            `Cleaning completed at ${new Date().toLocaleString()}`,
+            "tick",
+            false,
+            undefined,
+            verbose,
+        );
         Deno.exit(0);
     } catch (e) {
         await LogStuff("Some error happened: " + e);
