@@ -1,4 +1,4 @@
-import type { tURL } from "../src/types.ts";
+import type { tURL } from "../types.ts";
 
 export async function FetchGitHub(url: tURL): Promise<Response> {
     return await fetch(url, {

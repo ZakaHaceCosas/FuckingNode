@@ -1,4 +1,4 @@
-import { FetchGitHub } from "../../utils/fetch.ts";
+import { FetchGitHub } from "../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
 import { type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type SemVer, type UPDATE_FILE } from "../types.ts";
 import { GetAppPath } from "./config.ts";

@@ -1,7 +1,7 @@
 import { ensureDir } from "@std/fs";
 import { join } from "@std/path";
 import { APP_NAME } from "../src/constants.ts";
-import { FetchGitHub } from "../utils/fetch.ts";
+import { FetchGitHub } from "../src/utils/fetch.ts";
 import type { GITHUB_RELEASE } from "../src/types.ts";
 
 const repo = `ZakaHaceCosas/${APP_NAME.CASED}`;
