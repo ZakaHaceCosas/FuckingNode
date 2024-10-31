@@ -1,13 +1,13 @@
 import { Commander } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
-import type { MANAGERS, SUPPORTED_LOCKFILE } from "../types.ts";
+import type { MANAGERS, SUPPORTED_NODE_LOCKFILE } from "../types.ts";
 
 export default async function TheMigrator(project: string, target: MANAGERS) {
     const cwd = Deno.cwd();
     let code: 0 | 1 = 0;
 
-    async function handler(remove: SUPPORTED_LOCKFILE, cmd: MANAGERS, target: string) {
+    async function handler(remove: SUPPORTED_NODE_LOCKFILE, cmd: MANAGERS, target: string) {
         try {
             await LogStuff("Please wait (this will take a while)...", "working");
             try {
