@@ -17,11 +17,7 @@ async function GetLatestReleaseUrl(): Promise<tURL> {
             return response.json();
         });
 
-        const asset = data.assets.find(
-            (a: { name: string }) => {
-                a.name.endsWith(".exe") && !a.name.includes("INSTALLER");
-            },
-        ); // should return the windows exe file
+        const asset = data.assets.find((a: { name: string }) => a.name.endsWith(".exe") && !a.name.includes("INSTALLER")); // should return the windows exe file
 
         if (!asset) throw new Error("No .exe file found in the latest release.");
 
@@ -41,7 +37,7 @@ async function DownloadApp(url: string): Promise<void> {
 
         await ensureDir(installDir);
         await Deno.writeFile(exePath, fileData); // saves the exe
-        console.log("Donwloaded");
+        console.log("Downloaded successfully");
         return;
     } catch (e) {
         throw e;
