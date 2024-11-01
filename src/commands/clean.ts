@@ -231,13 +231,35 @@ export default async function TheCleaner(
             // but they do support system-wide cleanup thanks to this
             // now F*kingNode is F*ckingJavascriptRuntimes :]
             const bunHardPruneArgs: string[] = ["pm", "cache", "rm"];
-            const denoHardPruneArgs: string[] = ["clean"];
+            // const denoHardPruneArgs: string[] = ["clean"];
 
             if (await CommandExists("npm")) await Commander("npm", npmHardPruneArgs);
             if (await CommandExists("pnpm")) await Commander("pnpm", pnpmHardPruneArgs);
             if (await CommandExists("yarn")) await Commander("yarn", yarnHardPruneArgs);
             if (await CommandExists("bun")) await Commander("bun", bunHardPruneArgs);
-            if (await CommandExists("deno")) await Commander("deno", denoHardPruneArgs);
+            // if (await CommandExists("deno")) await Commander("deno", denoHardPruneArgs);
+
+            // deno requires this glue fix
+            // because apparently i cannot clear the cache of deno
+            // using a program thats written in deno
+            // and it throws an error and exists the CLI
+            // epic.
+            if (await CommandExists("deno")) {
+                try {
+                    const denoDir: string | undefined = Deno.env.get("DENO_DIR");
+                    if (!denoDir) throw "lmao";
+                    await Deno.remove(denoDir);
+                    // the CLI calls this kind of behaviors "maxim" cleanup
+                    // yet we're doing from the "hard" preset and not the
+                    // "maxim" one
+                    // epic.
+                } catch {
+                    // nothing happened.
+                    // i don't know what could happen if i delete the cache *live*
+                    // shouldn't be an issue as the compiled executable brings it's own
+                    // deno, but well, lets try :]
+                }
+            }
         }
 
         // go back home
