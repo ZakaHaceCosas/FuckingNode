@@ -91,11 +91,6 @@ async function main(command: string) {
                 break;
             default:
                 await init();
-                await LogStuff(
-                    `Unknown command. Showing help menu.`,
-                    "what",
-                    true,
-                );
                 await TheHelper();
                 Deno.exit(0);
         }
