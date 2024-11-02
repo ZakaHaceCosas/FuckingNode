@@ -1,3 +1,4 @@
+import { IGNORE_FILE } from "../constants.ts";
 import { CONFIG_FILES, type PkgJson } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
@@ -37,4 +38,48 @@ export async function NameProject(path: string): Promise<string> {
     const packageJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
 
     return packageJson.name ?? await ParsePath(path);
+}
+
+/**
+ * Checks if a project is ignored ("protected by divine protection"), and if so, tells you if it's protected from whether cleanups, updates, or both.
+ *
+ * @export
+ * @async
+ * @param {string} path Path to the project
+ * @returns {Promise<null | "update" | "cleanup" | "total">} `null` means no ignore and `total` means ignore all. Rest explains itself.
+ */
+export async function CheckDivineProtection(
+    path: string,
+): Promise<null | "update" | "cleanup" | "total"> {
+    const workingPath = await ParsePath(path);
+    const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
+
+    if (!(await CheckForPath(pathToDivineFile))) return null;
+    const divineContent = new TextDecoder().decode(
+        await Deno.readFile(pathToDivineFile),
+    );
+    const cleanContent = divineContent
+        .split("\n") // split in lines
+        .filter((line) => !line.trim().startsWith("--!")) // allow comments, beginning with --!
+        .join(" ") // join into a single string
+        .trim(); // trim
+
+    const hasUpdate = /update\.?/i.test(cleanContent);
+    const hasCleanup = /cleanup\.?/i.test(cleanContent);
+
+    if (
+        (hasUpdate && hasCleanup) ||
+        cleanContent === "*" ||
+        cleanContent === ""
+    ) {
+        return "total"; // total
+        // empty files or an asterisk count as total.
+        // two asterisks will count as null.
+    } else if (hasUpdate) {
+        return "update"; // just update
+    } else if (hasCleanup) {
+        return "cleanup"; // just cleanup
+    }
+
+    return null; // nothing
 }
