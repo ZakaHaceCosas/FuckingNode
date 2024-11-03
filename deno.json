@@ -28,9 +28,7 @@
         "noUncheckedIndexedAccess": true,
         "noUnusedParameters": true,
         "noPropertyAccessFromIndexSignature": true,
-        "isolatedDeclarations": true,
         "allowUnreachableCode": false,
-        "allowJs": false,
         "allowUnusedLabels": false,
         "noErrorTruncation": true
     },
