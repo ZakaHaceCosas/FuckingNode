@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added an install script for Microsoft Windows.
 - Added the option to flush config files, so the user can save up space.
 - Added partial support for cleanup of both the Bun and Deno JavaScript runtimes.
+- Added the ability to customize whether an ignored project should ignore updates, cleanup, or everything.
+  - Now that the ignore file expects content, comments are allowed using the `--!` prefix.
 
 ### Changed
 

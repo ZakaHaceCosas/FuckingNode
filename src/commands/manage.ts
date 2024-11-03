@@ -3,7 +3,7 @@ import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CONFIG_FILES, PkgJson } from "../types.ts";
 import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import { GetAllProjects, NameProject } from "../functions/projects.ts";
+import { CheckDivineProtection as _UNUSED_FOR_NOW_LMAO, GetAllProjects, NameProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 
 /**
@@ -322,47 +322,56 @@ async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promi
  * @async
  * @param {boolean} ignore True if you want to ignore, false if you want to stop ignoring.
  * @param {string} entry The path to the project's root.
+ * @param {string} ignoranceLevel Allows to specify whether this project should ignore updates, cleanup, or both, by writing stuff to the ignore file.
  * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if failure (will log the error), 2 if the project's status is not valid (e.g. ignoring an already ignored project or stop ignoring a project that was not ignored).
  */
-async function HandleIgnoreProject(ignore: boolean, entry: string): Promise<0 | 1 | 2> {
+async function HandleIgnoreProject(
+    ignore: boolean,
+    entry: string,
+    ignoranceLevel?: "updater" | "cleanup" | "*",
+): Promise<0 | 1 | 2> {
     try {
         const workingEntry = await ParsePath(entry);
-        const pathToIgnoreFile = JoinPaths(workingEntry, IGNORE_FILE);
+        const pathToIgnoreFile = await JoinPaths(workingEntry, IGNORE_FILE);
+
+        let currentLevels = await CheckForPath(pathToIgnoreFile) ? (await Deno.readTextFile(pathToIgnoreFile)).split(".") : [];
+
+        const target = ignoranceLevel ?? "*";
 
         if (ignore) {
-            if (await CheckForPath(await pathToIgnoreFile)) {
-                LogStuff(`${I_LIKE_JS.MF} is already ignored!`, "error");
-                return 2;
-            } else {
-                try {
-                    await Deno.create(await pathToIgnoreFile);
-                    LogStuff(`Divine powers have successfully ignored this ${I_LIKE_JS.MF}`, "tick");
-                    return 0;
-                } catch (e) {
-                    LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
-                    return 1;
-                }
+            if (target === "*") {
+                currentLevels = ["*"];
+            } else if (!currentLevels.includes(target) && !currentLevels.includes("*")) {
+                currentLevels.push(target);
             }
-        } else if (!ignore) {
-            if (!(await CheckForPath(await pathToIgnoreFile))) {
-                LogStuff(`${I_LIKE_JS.MF} isn't ignored yet!`, "error");
-                return 2;
-            } else {
-                try {
-                    await Deno.remove(await pathToIgnoreFile);
-                    LogStuff(`Divine powers have abandoned this ${I_LIKE_JS.MF}`, "tick");
-                    return 0;
-                } catch (e) {
-                    LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
-                    return 1;
-                }
-            }
+
+            await Deno.writeTextFile(pathToIgnoreFile, currentLevels.join("."));
+            await LogStuff(`Divine powers have successfully ignored this ${I_LIKE_JS.MF}`, "tick");
+            return 0;
         } else {
-            throw new Error("Whether to ignore or stop ignoring wasn't correctly specified.");
+            if (!CheckForPath(pathToIgnoreFile)) {
+                await LogStuff(`${I_LIKE_JS.MF} isn't ignored yet!`, "error");
+                return 2;
+            }
+
+            if (target === "*") {
+                currentLevels = [];
+            } else {
+                currentLevels = currentLevels.filter((level) => level !== target && level !== "*");
+            }
+
+            if (currentLevels.length === 0) {
+                await Deno.remove(pathToIgnoreFile);
+            } else {
+                await Deno.writeTextFile(pathToIgnoreFile, currentLevels.join("."));
+            }
+
+            await LogStuff(`Divine powers have abandoned this ${I_LIKE_JS.MF}`, "tick");
+            return 0;
         }
     } catch (e) {
-        await LogStuff(`Error: ${e}`, "error");
-        throw e;
+        await LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
+        return 1;
     }
 }
 
@@ -375,6 +384,7 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
 
     const command = args[1];
     const secondArg = args[2] ? args[2].trim() : null;
+    const thirdArg = args[3] ? args[3].trim() : null;
 
     if (!command) {
         await TheHelper("manager");
@@ -401,14 +411,22 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
                 ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
                 return;
             }
-            await HandleIgnoreProject(true, secondArg);
+            if (thirdArg && !(["updater", "cleanup", "*"].includes(thirdArg))) {
+                // TODO - error message
+                return;
+            }
+            await HandleIgnoreProject(true, secondArg, (thirdArg as "updater" | "cleanup" | "*") ?? undefined);
             break;
         case "revive":
             if (!secondArg || secondArg === null) {
                 await ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
                 return;
             }
-            await HandleIgnoreProject(false, secondArg);
+            if (thirdArg && !(["updater", "cleanup", "*"].includes(thirdArg))) {
+                // TODO - error message
+                return;
+            }
+            await HandleIgnoreProject(false, secondArg, (thirdArg as "updater" | "cleanup" | "*") ?? undefined);
             break;
         case "list":
             await ListProjects(ParseFlag("ignored", false).includes(secondArg ?? ""), CF);

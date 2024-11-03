@@ -46,11 +46,11 @@ export async function NameProject(path: string): Promise<string> {
  * @export
  * @async
  * @param {string} path Path to the project
- * @returns {Promise<null | "update" | "cleanup" | "total">} `null` means no ignore and `total` means ignore all. Rest explains itself.
+ * @returns {Promise<null | "updater" | "cleanup" | "*">} `null` means no ignore and `total` means ignore all. Rest explains itself.
  */
 export async function CheckDivineProtection(
     path: string,
-): Promise<null | "update" | "cleanup" | "total"> {
+): Promise<null | "updater" | "cleanup" | "*"> {
     const workingPath = await ParsePath(path);
     const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
 
@@ -64,19 +64,19 @@ export async function CheckDivineProtection(
         .join(" ") // join into a single string
         .trim(); // trim
 
-    const hasUpdate = /update\.?/i.test(cleanContent);
+    const hasUpdater = /updater\.?/i.test(cleanContent);
     const hasCleanup = /cleanup\.?/i.test(cleanContent);
 
     if (
-        (hasUpdate && hasCleanup) ||
+        (hasUpdater && hasCleanup) ||
         cleanContent === "*" ||
         cleanContent === ""
     ) {
-        return "total"; // total
+        return "*"; // total
         // empty files or an asterisk count as total.
         // two asterisks will count as null.
-    } else if (hasUpdate) {
-        return "update"; // just update
+    } else if (hasUpdater) {
+        return "updater"; // just update
     } else if (hasCleanup) {
         return "cleanup"; // just cleanup
     }
