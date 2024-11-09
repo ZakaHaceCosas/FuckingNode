@@ -4,6 +4,7 @@ import { APP_NAME } from "../src/constants.ts";
 import { FetchGitHub } from "../src/utils/fetch.ts";
 import type { GITHUB_RELEASE, tURL } from "../src/types.ts";
 import { ParsePath } from "../src/functions/filesystem.ts";
+import GenericErrorHandler from "../src/utils/error.ts";
 
 const repo = `ZakaHaceCosas/${APP_NAME.CASED}`;
 const installDir = await ParsePath(`C:\\${APP_NAME.CASED}`);
@@ -73,8 +74,7 @@ async function Installer() {
         await AddAppToPath();
         console.log("Installed successfully! Restart your terminal for it to work.");
     } catch (e) {
-        console.error("Error:", e);
-        Deno.exit(1);
+        await GenericErrorHandler(e);
     }
 }
 

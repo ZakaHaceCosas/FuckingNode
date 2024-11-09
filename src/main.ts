@@ -10,6 +10,7 @@ import { I_LIKE_JS, VERSION } from "./constants.ts";
 import type { CONFIG_FILES } from "./types.ts";
 import { LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup } from "./functions/config.ts";
+import GenericErrorHandler from "./utils/error.ts";
 
 const [inputCommand] = Deno.args;
 
@@ -99,8 +100,7 @@ async function main(command: string) {
                 Deno.exit(0);
         }
     } catch (e) {
-        await LogStuff(String(e), "error");
-        Deno.exit(1);
+        await GenericErrorHandler(e);
     }
 }
 

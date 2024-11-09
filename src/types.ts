@@ -221,4 +221,15 @@ export interface CONFIG_FILES {
  *
  * @typedef {validColors}
  */
-export type validColors = "red" | "white" | "bold" | "blue" | "green" | "cyan" | "half-opaque" | "bright-green" | "italic" | "bright-blue";
+export type validColors =
+    | "red"
+    | "white"
+    | "bold"
+    | "blue"
+    | "green"
+    | "cyan"
+    | "half-opaque"
+    | "bright-green"
+    | "italic"
+    | "bright-blue"
+    | "bright-yellow";
