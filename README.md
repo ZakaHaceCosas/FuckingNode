@@ -10,6 +10,10 @@ We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with 
 
 > ### (yes i'm calling it like that and i'm shipping that to production, don't question me)
 
+By the way, _while the name implies NodeJS-only support, Deno and Bun are coming soon!_
+
+Check the v2 branch, we're working on support for non-Node projects, and also other stuff like custom settings for the CLI and more! <!-- haven't added new settings, that's still to come -->
+
 ## Features
 
 ### Cleaner
@@ -64,20 +68,22 @@ And that's it for now.
 
 ## Installation
 
-<!-- ### Microsoft Windows
+### Microsoft Windows
 
 1. Download the installer from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). You'll see "INSTALLER" on the filename, there's just one.
 2. Run it.
 3. You're done! It should have automatically installed. The `fuckingnode` CLI command should now work out of the box.
 
-### Other systems (mac & Linux) -->
+### Other systems (mac & Linux)
 
 1. Download the program from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). macOS and Linux have support for both x84_64 and ARM.
 2. Place your downloaded file anywhere, like `/scripts` or `/home/USER/my-scripts`.
 3. Add the path to the binary to your system's path environment variable.
 4. You're done! The `fuckingnode` command will now work from your terminal.
 
-<!-- ```bash
+Here's how to add the path to your path env variable, in case you didn't know:
+
+```bash
 # open your Bash config file with nano (or your preferred editor)
 nano ~/.bashrc         # Linux
 nano ~/.bash_profile   # macOS
@@ -89,7 +95,7 @@ export PATH="$PATH:/home/USER/my-scripts/fuckingnode" # keep '$PATH' and replace
 # then, reload your config
 source ~/.bashrc          # Linux
 source ~/.bash_profile    # macOS
-``` -->
+```
 
 ### Compiling from source
 
