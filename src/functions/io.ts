@@ -1,5 +1,5 @@
 import TheHelper from "../commands/help.ts";
-import { type ERROR_CODES, type SUPPORTED_EMOJIS } from "../types.ts";
+import { type ERROR_CODES, type SUPPORTED_EMOJIS, validColors } from "../types.ts";
 import { GetAppPath } from "./config.ts";
 
 /**
@@ -124,7 +124,7 @@ export async function ErrorMessage(
     }
 
     await LogStuff(
-        currentErr ? message : (message + currentErr),
+        currentErr ? message : message + currentErr,
         "warn",
         undefined,
         false,
@@ -159,4 +159,55 @@ export function ParseFlag(flag: string, min: boolean): string[] {
     if (min) response.push(`--${target.charAt(0)}`, `-${target.charAt(0)}`);
 
     return response;
+}
+
+/**
+ * Given a string, returns a colored version of it. Does take care of end-of-string resetting.
+ *
+ * @export
+ * @param {string} string The string.
+ * @param {validColors} color The color you wish to give it. Some styles that aren't "colors" are also allowed, e.g. `bold`.
+ * @returns {string}
+ */
+export function ColorString(string: string, color: validColors): string {
+    // 1) \033 2) \x1b
+    const RESET = "\x1b[0m";
+    let colorCode = RESET;
+
+    switch (color) {
+        case "red":
+            colorCode = "\x1b[31m";
+            break;
+        case "white":
+            colorCode = "\x1b[37m";
+            break;
+        case "bold":
+            colorCode = "\x1b[1m";
+            break;
+        case "blue":
+            colorCode = "\x1b[34m";
+            break;
+        case "green":
+            colorCode = "\x1b[32m";
+            break;
+        case "cyan":
+            colorCode = "\x1b[36m";
+            break;
+        case "half-opaque":
+            colorCode = "\x1b[2m";
+            break;
+        case "bright-green":
+            colorCode = "\x1b[92m";
+            break;
+        case "bright-blue":
+            colorCode = "\x1b[94m";
+            break;
+        case "italic":
+            colorCode = "\x1b[3m";
+            break;
+        default:
+            break;
+    }
+
+    return `${colorCode}${string}${RESET}`;
 }

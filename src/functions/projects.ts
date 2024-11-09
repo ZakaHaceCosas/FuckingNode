@@ -1,7 +1,7 @@
 import { IGNORE_FILE } from "../constants.ts";
 import { CONFIG_FILES, type PkgJson } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
-import { LogStuff } from "./io.ts";
+import { ColorString, LogStuff } from "./io.ts";
 
 /**
  * Gets all the users projects and returns their paths as a `string[]`.
@@ -37,7 +37,11 @@ export async function NameProject(path: string): Promise<string> {
 
     const packageJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
 
-    return packageJson.name ?? await ParsePath(path);
+    if (!packageJson.name) return await ParsePath(path);
+
+    return `${ColorString(ColorString(packageJson.name, "bold"), "bright-blue")} ${
+        ColorString(ColorString(await ParsePath(path), "italic"), "half-opaque")
+    }`;
 }
 
 /**

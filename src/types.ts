@@ -215,3 +215,10 @@ export interface CONFIG_FILES {
     logs: string;
     updates: string;
 }
+
+/**
+ * Colors that can be used to spice up the CLI's stdout.
+ *
+ * @typedef {validColors}
+ */
+export type validColors = "red" | "white" | "bold" | "blue" | "green" | "cyan" | "half-opaque" | "bright-green" | "italic" | "bright-blue";

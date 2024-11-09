@@ -313,15 +313,19 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
  */
 async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promise<void> {
     const list = await GetAllProjects(appPaths);
+    list.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+
     if (list.length === 0) {
         await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");
         return;
     }
+
     if (!ignoredOnly) {
         await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
         list.forEach(async (entry) => await LogStuff(await NameProject(entry)));
         return;
     }
+
     await LogStuff(`Here are the ${I_LIKE_JS.MFS} you ignored so far:\n`, "bulb");
     list.forEach(async (entry) => {
         if (!(await CheckForPath(await JoinPaths(entry, IGNORE_FILE)))) return;

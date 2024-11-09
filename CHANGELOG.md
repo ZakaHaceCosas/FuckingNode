@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now all commands show their output synchronously, giving the feel of a faster CLI.
 - Now `settings schedule` is hidden behind the `--experimental-schedule` flag, as it doesn't work properly. `Deno.cron` (method used to schedule tasks) itself is currently considered unstable, FYI.
 - Now in some places instead of an "Unknown command" error, the help menu is shown so you can see what commands are valid.
+- Now `manager list` shows both the name of the project (from `package.json`, if it was possible to obtain) alongside it's absolute path. Also, now projects are alphabetically sorted by name (by their path if not possible to obtain their name).
+- Now the CLI has cool looking colors 🙂.
 
 ### Fixed
 
