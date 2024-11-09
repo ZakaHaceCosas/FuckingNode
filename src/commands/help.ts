@@ -1,11 +1,14 @@
 import { APP_NAME } from "../constants.ts";
 import { LogStuff, SpaceString } from "../functions/io.ts";
+import { TheHelperConstructedParams } from "./constructors/command.ts";
 
 function joinObjectValues(obj: Record<string, string>): string {
     return Object.values(obj).join("\n");
 }
 
-export default async function TheHelper(query?: "manager" | "clean" | "settings" | string) {
+export default async function TheHelper(params: TheHelperConstructedParams) {
+    const { query } = params;
+
     const _USAGE = {
         clean: SpaceString("clean    <intensity> [--update] [--verbose]", 8),
         manager: SpaceString("manager  add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup", 8),

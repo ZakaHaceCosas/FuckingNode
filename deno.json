@@ -36,7 +36,8 @@
     },
     "imports": {
         "@std/fs": "jsr:@std/fs",
-        "@std/path": "jsr:@std/path"
+        "@std/path": "jsr:@std/path",
+        "@std/yaml": "jsr:@std/yaml"
     },
     "lock": true
 }

@@ -1,6 +1,5 @@
 import { I_LIKE_JS } from "../constants.ts";
 import {
-    CONFIG_FILES,
     IsLockfileNodeLockfile,
     type SUPPORTED_LOCKFILES,
     type SUPPORTED_NODE_LOCKFILE,
@@ -11,6 +10,7 @@ import { Commander, CommandExists } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects } from "../functions/projects.ts";
+import { TheCleanerConstructedParams } from "./constructors/command.ts";
 
 async function PerformNodeCleaning(
     lockfile: SUPPORTED_NODE_LOCKFILE,
@@ -20,7 +20,10 @@ async function PerformNodeCleaning(
 ): Promise<void> {
     try {
         const motherfuckerInQuestion = await ParsePath(projectInQuestion);
-        const maximPath = await JoinPaths(motherfuckerInQuestion, "node_modules");
+        const maximPath = await JoinPaths(
+            motherfuckerInQuestion,
+            "node_modules",
+        );
 
         let baseCommand: string;
         let pruneArgs: string[][];
@@ -50,10 +53,7 @@ async function PerformNodeCleaning(
                 `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
                 "package",
             );
-            await LogStuff(
-                `${baseCommand} ${updateArg}\n`,
-                "package",
-            );
+            await LogStuff(`${baseCommand} ${updateArg}\n`, "package");
             await Commander(baseCommand, updateArg);
         }
         await LogStuff(
@@ -61,10 +61,7 @@ async function PerformNodeCleaning(
             "package",
         );
         for (const pruneArg of pruneArgs) {
-            await LogStuff(
-                `${baseCommand} ${pruneArg.join(" ")}\n`,
-                "package",
-            );
+            await LogStuff(`${baseCommand} ${pruneArg.join(" ")}\n`, "package");
             await Commander(baseCommand, pruneArg);
         }
         if (intensity === "maxim") {
@@ -91,12 +88,9 @@ async function PerformNodeCleaning(
     }
 }
 
-export default async function TheCleaner(
-    verbose: boolean,
-    update: boolean,
-    intensity: "normal" | "hard" | "maxim",
-    CF: CONFIG_FILES,
-) {
+export default async function TheCleaner(params: TheCleanerConstructedParams) {
+    const { CF, intensity, verbose, update } = params;
+
     try {
         // original path
         const originalLocation = Deno.cwd();
@@ -113,6 +107,10 @@ export default async function TheCleaner(
         }
 
         let realIntensity: "normal" | "hard" | "maxim";
+        const possibleOptions = ["normal", "hard", "maxim"];
+        if (!(possibleOptions.includes(intensity))) {
+            realIntensity = "normal";
+        }
         if (intensity === "maxim") {
             const confirmMaxim = await LogStuff(
                 "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
@@ -122,7 +120,7 @@ export default async function TheCleaner(
             );
             realIntensity = confirmMaxim ? intensity : "hard";
         } else {
-            realIntensity = intensity;
+            realIntensity = intensity as "normal" | "hard" | "maxim";
         }
 
         await LogStuff(
@@ -137,7 +135,10 @@ export default async function TheCleaner(
 
         for (const project of projects) {
             if (!(await CheckForPath(project))) {
-                await LogStuff(`Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`, "error");
+                await LogStuff(
+                    `Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`,
+                    "error",
+                );
                 results.push({ path: project, status: "Not found" });
                 continue;
             }
@@ -189,7 +190,10 @@ export default async function TheCleaner(
                             `More than one lockfile is a ${I_LIKE_JS.MFLY} bad practice. Future versions might add a handler for this cases, but for now we'll skip this.`,
                             "error",
                         );
-                        results.push({ path: project, status: "Too many lockfiles." });
+                        results.push({
+                            path: project,
+                            status: "Too many lockfiles.",
+                        });
                         continue;
                     }
                 } else if (await CheckForPath("package.json")) {
@@ -222,7 +226,10 @@ export default async function TheCleaner(
         // cache cleaning is global, so doing these for every project like we used to do
         // is a waste of resources
         if (intensity === "hard") {
-            await LogStuff("Time for hard-pruning! Wait patiently, please (caches take a while to clean)", "package");
+            await LogStuff(
+                "Time for hard-pruning! Wait patiently, please (caches take a while to clean)",
+                "package",
+            );
 
             const npmHardPruneArgs: string[] = ["cache", "clean", "--force"];
             const pnpmHardPruneArgs: string[] = ["store", "prune"];
@@ -272,7 +279,13 @@ export default async function TheCleaner(
         // shows a report
         await LogStuff("Report:", "chart", false, undefined, verbose);
         for (const result of results) {
-            await LogStuff(`${result.path} -> ${result.status}`, undefined, false, undefined, verbose);
+            await LogStuff(
+                `${result.path} -> ${result.status}`,
+                undefined,
+                false,
+                undefined,
+                verbose,
+            );
         }
 
         await LogStuff(

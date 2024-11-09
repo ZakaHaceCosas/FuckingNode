@@ -2,8 +2,15 @@ import { Commander } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import type { MANAGERS, SUPPORTED_NODE_LOCKFILE } from "../types.ts";
+import { TheMigratorConstructedParams } from "./constructors/command.ts";
 
-export default async function TheMigrator(project: string, target: MANAGERS) {
+export default async function TheMigrator(params: TheMigratorConstructedParams) {
+    const { project, target } = params;
+    if (!project) throw new Error("No project (path) specified.");
+    if (!target) throw new Error("No target (pnpm, npm, yarn) specified.");
+    const MANAGERS = ["pnpm", "npm", "yarn"];
+    if (!MANAGERS.includes(target)) throw new Error("Target isn't a valid package manager (pnpm, npm, yarn).");
+
     const cwd = Deno.cwd();
     let code: 0 | 1 = 0;
 
@@ -64,9 +71,9 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
         );
         if (!c) return;
 
-        if (isNpm) await handler("package-lock.json", target, workingProject);
-        else if (isPnpm) await handler("pnpm-lock.yaml", target, workingProject);
-        else if (isYarn) await handler("yarn.lock", target, workingProject);
+        if (isNpm) await handler("package-lock.json", target as MANAGERS, workingProject);
+        else if (isPnpm) await handler("pnpm-lock.yaml", target as MANAGERS, workingProject);
+        else if (isYarn) await handler("yarn.lock", target as MANAGERS, workingProject);
     } catch (e) {
         await LogStuff(`${e}`, "error");
         code = 1;

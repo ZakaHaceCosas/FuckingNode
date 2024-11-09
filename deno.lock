@@ -4,6 +4,7 @@
     "jsr:@std/fs@*": "1.0.5",
     "jsr:@std/path@*": "1.0.7",
     "jsr:@std/path@^1.0.7": "1.0.7",
+    "jsr:@std/yaml@*": "1.0.5",
     "npm:@types/node@*": "22.5.4"
   },
   "jsr": {
@@ -15,6 +16,9 @@
     },
     "@std/path@1.0.7": {
       "integrity": "76a689e07f0e15dcc6002ec39d0866797e7156629212b28f27179b8a5c3b33a1"
+    },
+    "@std/yaml@1.0.5": {
+      "integrity": "71ba3d334305ee2149391931508b2c293a8490f94a337eef3a09cade1a2a2742"
     }
   },
   "npm": {
@@ -31,7 +35,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/fs@*",
-      "jsr:@std/path@*"
+      "jsr:@std/path@*",
+      "jsr:@std/yaml@*"
     ]
   }
 }

@@ -1,3 +1,4 @@
+import { parse } from "@std/yaml";
 import { expandGlob } from "@std/fs";
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CONFIG_FILES, PkgJson } from "../types.ts";
@@ -42,26 +43,39 @@ async function ValidateNodeProject(entry: string, appPaths: CONFIG_FILES): Promi
 }
 
 /**
- * Checks for workspaces within a Node project.
+ * Checks for workspaces within a Node project, supporting package.json
+ * and pnpm-workspace.yaml.
  *
  * @async
- * @param {string} pkgJsonPath Path to the package.json file.
+ * @param {string} path Path to the root of the project.
  * @returns {Promise<string[] | null>}
  */
-async function GetWorkspaces(pkgJsonPath: string): Promise<string[] | null> {
+async function GetWorkspaces(path: string): Promise<string[] | null> {
     try {
-        if (!(await CheckForPath(await ParsePath(pkgJsonPath)))) throw new Error("Requested path doesn't exist.");
+        const workingPath: string = await ParsePath(path);
 
-        const pkgJson: PkgJson = JSON.parse(await Deno.readTextFile(pkgJsonPath));
+        if (!(await CheckForPath(workingPath))) throw new Error("Requested path doesn't exist.");
+
+        const workingJsonPkgPath: string = await JoinPaths(workingPath, "package.json");
+
+        if (!(await CheckForPath(workingJsonPkgPath))) throw new Error("Requested path doesn't have a package.json file.");
+
+        const pkgJson: PkgJson = JSON.parse(await Deno.readTextFile(workingJsonPkgPath));
+
+        const workspacePaths: string[] = Array.isArray(pkgJson.workspaces) ? pkgJson.workspaces : pkgJson.workspaces?.packages || [];
+
+        const pnpmWorkspacePath: string = await JoinPaths(workingPath, "pnpm-workspace.yaml");
+        if (await CheckForPath(pnpmWorkspacePath)) {
+            const pnpmConfig = parse(await Deno.readTextFile(pnpmWorkspacePath)) as { packages: string[] };
+            if (pnpmConfig?.packages) workspacePaths.push(...pnpmConfig.packages);
+        }
+
+        if (workspacePaths.length === 0) return null;
 
         const absoluteWorkspaces: string[] = [];
-
-        const workspacePaths = Array.isArray(pkgJson.workspaces) ? pkgJson.workspaces : pkgJson.workspaces?.packages;
-
-        if (!workspacePaths) return null;
-
-        for (const path of workspacePaths) {
-            for await (const dir of expandGlob(path)) {
+        for (const workspacePath of workspacePaths) {
+            const fullPath = await JoinPaths(workingPath, workspacePath);
+            for await (const dir of expandGlob(fullPath)) {
                 if (dir.isDirectory) {
                     absoluteWorkspaces.push(dir.path);
                 }
@@ -378,7 +392,7 @@ async function HandleIgnoreProject(
 // run functions based on args
 export default async function TheManager(args: string[], CF: CONFIG_FILES) {
     if (!args || args.length === 0) {
-        await TheHelper("manager");
+        await TheHelper({ query: "manager" });
         Deno.exit(1);
     }
 
@@ -387,7 +401,7 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
     const thirdArg = args[3] ? args[3].trim() : null;
 
     if (!command) {
-        await TheHelper("manager");
+        await TheHelper({ query: "manager" });
         return;
     }
 

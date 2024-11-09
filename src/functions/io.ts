@@ -116,7 +116,7 @@ export async function ErrorMessage(
                 'Provide the path to the project.\n    It can be relative (../node-project),\n    absolute (C:\\Users\\coolDev\\node-project),\n    or you can type "--self" to use the current working DIR.';
             break;
         case "Manager__InvalidArgumentPassed":
-            await TheHelper("manager");
+            await TheHelper({ query: "manager" });
             return;
         default:
             message = "Unknown error. Exception: ";

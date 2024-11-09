@@ -4,6 +4,7 @@ import TheCleaner from "./clean.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import TheHelper from "./help.ts";
 import { CONFIG_FILES } from "../types.ts";
+import { TheSettingsConstructedParams } from "./constructors/command.ts";
 
 async function CreateSchedule(hour: string, day: string | "*", appPaths: CONFIG_FILES) {
     const workingHour = Number(hour);
@@ -47,7 +48,7 @@ async function CreateSchedule(hour: string, day: string | "*", appPaths: CONFIG_
                 backoffSchedule: [1500, 3000, 5000, 15000],
             },
             () => {
-                TheCleaner(false, false, "normal", appPaths);
+                TheCleaner({ update: false, verbose: false, intensity: "normal", CF: appPaths });
             },
         );
         await LogStuff("That worked out! Schedule created.", "tick");
@@ -122,9 +123,11 @@ async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
     }
 }
 
-export default async function TheSettings(args: string[], CF: CONFIG_FILES) {
+export default async function TheSettings(params: TheSettingsConstructedParams) {
+    const { args, CF } = params;
+
     if (!args || args.length === 0) {
-        await TheHelper("settings");
+        await TheHelper({ query: "settings" });
         Deno.exit(1);
     }
 
@@ -133,7 +136,7 @@ export default async function TheSettings(args: string[], CF: CONFIG_FILES) {
     const thirdArg = args[3] ? args[3].trim() : null;
 
     if (!command) {
-        await TheHelper("settings");
+        await TheHelper({ query: "settings" });
         return;
     }
 
@@ -169,7 +172,7 @@ export default async function TheSettings(args: string[], CF: CONFIG_FILES) {
             break;
         default:
             await TheHelper(
-                "settings",
+                { query: "settings" },
             );
     }
 }
