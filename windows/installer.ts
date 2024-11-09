@@ -47,7 +47,7 @@ async function AddAppToPath(): Promise<void> {
         console.log("Adding shorthand to PATH");
         // get current path
         const currentPath = Deno.env.get("PATH");
-        if (!currentPath || currentPath === undefined) {
+        if (!currentPath || currentPath == undefined || currentPath == "") {
             throw new Error("No path / Path is undefined."); // could you imagine accidentally deleting a user's PATH variable? idk if that's even possible but damn, that would be crazy LMAO. this Error avoids it.
         }
         const newPath = `${currentPath};${installDir}`;
@@ -74,6 +74,7 @@ async function Installer() {
         console.log("Installed successfully! Restart your terminal for it to work.");
     } catch (e) {
         console.error("Error:", e);
+        Deno.exit(1);
     }
 }
 
