@@ -5,8 +5,9 @@ import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CONFIG_FILES, PkgJson } from "../types.ts";
 import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import { CheckDivineProtection as _UNUSED_FOR_NOW_LMAO, GetAllProjects, NameProject } from "../functions/projects.ts";
+import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
+import GenericErrorHandler from "../utils/error.ts";
 
 /**
  * Given a path, returns a number indicating if it's a valid Node project or not.
@@ -347,26 +348,50 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
  * @returns {Promise<void>}
  */
 async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promise<void> {
-    const list = await GetAllProjects(appPaths);
-    list.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    try {
+        const list = await GetAllProjects(appPaths);
+        list.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
-    if (list.length === 0) {
-        await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");
-        return;
-    }
+        if (list.length === 0) {
+            await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");
+            return;
+        }
 
-    if (!ignoredOnly) {
+        if (ignoredOnly) {
+            const ignoreList: string[] = [];
+
+            for (const entry of list) {
+                const protection = await CheckDivineProtection(entry);
+                if (!protection) continue;
+                ignoreList.push(entry);
+            }
+
+            console.log(ignoreList);
+
+            if (ignoreList.length === 0) {
+                await LogStuff(
+                    "Huh, you didn't ignore anything! Good to see you care about all your projects (not for long, I can bet).",
+                    "moon-face",
+                );
+                return;
+            }
+
+            await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`, "bulb");
+            for (const entry of ignoreList) {
+                await LogStuff(await NameProject(entry));
+            }
+
+            return;
+        }
+
         await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
-        list.forEach(async (entry) => await LogStuff(await NameProject(entry)));
+        for (const entry of list) {
+            await LogStuff(await NameProject(entry));
+        }
         return;
+    } catch (e) {
+        GenericErrorHandler(e);
     }
-
-    await LogStuff(`Here are the ${I_LIKE_JS.MFS} you ignored so far:\n`, "bulb");
-    list.forEach(async (entry) => {
-        if (!(await CheckForPath(await JoinPaths(entry, IGNORE_FILE)))) return;
-        await LogStuff(await NameProject(entry));
-    });
-    return;
 }
 
 /**

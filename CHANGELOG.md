@@ -39,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed many potential unhandled errors at many places.
 - Fixed the base directory for app config being recursively created on each run.
 - Fixed the app fetching config paths many times. This _should_ slightly improve performance (as it reduces path-checking operations).
+- Fixed `manager list` not listing ignored projects (showing an empty list when there are ignored projects).
 
 ## [1.4.2] 27-10-2024
 
