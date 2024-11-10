@@ -220,6 +220,8 @@ export type validColors =
     | "blue"
     | "green"
     | "cyan"
+    | "purple"
+    | "pink"
     | "half-opaque"
     | "bright-green"
     | "italic"

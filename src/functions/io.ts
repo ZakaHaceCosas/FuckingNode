@@ -148,7 +148,7 @@ export function SpaceString(prev: string, n: number): string {
  *
  * @export
  * @param {string} flag String you want to test.
- * @param {boolean} min Optional. When true, using just the 1st letter of the provided string (e.g. "--h") is also counted as valid.
+ * @param {boolean} min When true, using just the 1st letter of the provided string (e.g. "--h") is also counted as valid.
  * @returns {string[]}
  */
 export function ParseFlag(flag: string, min: boolean): string[] {
@@ -192,6 +192,12 @@ export function ColorString(string: string, color: validColors): string {
             break;
         case "cyan":
             colorCode = "\x1b[36m";
+            break;
+        case "purple":
+            colorCode = "\x1b[35m";
+            break;
+        case "pink":
+            colorCode = "\x1b[38;5;213m"; // idk if this will work...
             break;
         case "half-opaque":
             colorCode = "\x1b[2m";
