@@ -45,11 +45,11 @@ We could avoid nesting using `if` the smart 🗿 way:
 ```ts
 async function StartUp() {
     if (!User.isAuthenticated) throw new Error("User ain't authenticated!");
-    await startup()
+    await startup();
     if (User.isAdmin) {
-        await login("admin")
+        await login("admin");
     } else {
-        await login("user")
+        await login("user");
     }
 }
 ```
