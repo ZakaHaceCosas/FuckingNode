@@ -1,7 +1,7 @@
 import { greaterThan, parse } from "@std/semver";
 import { FetchGitHub } from "../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
-import { CONFIG_FILES, type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type SemVer, type UPDATE_FILE } from "../types.ts";
+import { CONFIG_FILES, type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type UPDATE_FILE } from "../types.ts";
 import { GetDateNow, MakeRightNowDateStandard } from "./date.ts";
 import { CheckForPath } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
@@ -28,7 +28,7 @@ function IsSemverNewer(versionA: string, versionB: string): boolean {
  * @returns {Promise<void>}
  */
 export default async function TheUpdater(paths: CONFIG_FILES, force?: boolean): Promise<void> {
-    const tellAboutUpdate = async (newVer: SemVer) => {
+    const tellAboutUpdate = async (newVer: string) => {
         await LogStuff(
             `There's a new version! ${newVer}. Consider downloading it from GitHub. You're on ${VERSION}, btw.`,
             "bulb",

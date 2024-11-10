@@ -64,6 +64,7 @@
       "jsr:@std/fs@*",
       "jsr:@std/path@*",
       "jsr:@std/semver@*",
+      "jsr:@std/toml@*",
       "jsr:@std/yaml@*"
     ]
   }

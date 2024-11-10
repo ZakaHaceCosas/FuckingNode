@@ -97,14 +97,6 @@ export type SUPPORTED_EMOJIS =
     | "chart";
 
 /**
- * Always SemVer compliant (1.2.3, 1.0.34, etc...) type. Doesn't support tags like `-alpha`, for example.
- *
- * @export
- * @typedef {SemVer}
- */
-export type SemVer = `${number}.${number}.${number}`;
-
-/**
  * A GitHub release asset.
  *
  * @typedef {GitHubReleaseAsset}
@@ -132,11 +124,11 @@ type GitHubReleaseAsset = {
  */
 export interface GITHUB_RELEASE {
     /**
-     * Version of a release.
+     * Version of a release. Uses the SemVer format.
      *
-     * @type {SemVer}
+     * @type {string}
      */
-    tag_name: SemVer;
+    tag_name: string;
     /**
      * Assets of a release.
      *
@@ -166,11 +158,11 @@ export interface UPDATE_FILE {
      */
     isUpToDate: boolean;
     /**
-     * Latest version of the app.
+     * Latest version of the app. Uses the SemVer format.
      *
-     * @type {SemVer}
+     * @type {string}
      */
-    lastVer: SemVer;
+    lastVer: string;
 }
 
 /**

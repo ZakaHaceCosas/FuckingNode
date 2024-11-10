@@ -1,11 +1,20 @@
-import type { SemVer, tURL } from "./types.ts";
+import type { tURL } from "./types.ts";
+import type { SemVer } from "@std/semver/types";
+import { format } from "@std/semver";
+
+const _SV_VER: SemVer = {
+    major: 2,
+    minor: 0,
+    patch: 0,
+    prerelease: ["alpha", 1],
+};
 
 /**
- * Current version of the app
+ * Current version of the app. Uses the SemVer format.
  *
- * @type {SemVer}
+ * @type {string}
  */
-export const VERSION: SemVer = "2.0.0";
+export const VERSION: string = format(_SV_VER);
 
 /**
  * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
