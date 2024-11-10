@@ -112,7 +112,6 @@ async function main(command: string) {
         Deno.exit(0);
     } catch (e) {
         await GenericErrorHandler(e);
-        Deno.exit(1);
     }
 }
 

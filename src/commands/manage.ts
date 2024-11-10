@@ -390,7 +390,7 @@ async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promi
         }
         return;
     } catch (e) {
-        GenericErrorHandler(e);
+        await GenericErrorHandler(e);
     }
 }
 
