@@ -96,8 +96,12 @@ async function GetWorkspaces(path: string): Promise<string[] | null> {
         // Check for Deno configuration (deno.json or deno.jsonc)
         const denoJsonPath = await JoinPaths(workingPath, "deno.json");
         const denoJsoncPath = await JoinPaths(workingPath, "deno.jsonc");
-        if (await CheckForPath(denoJsonPath) || await CheckForPath(denoJsoncPath)) {
-            const denoConfig = JSON.parse(await Deno.readTextFile((await CheckForPath(denoJsonPath)) ? denoJsonPath : denoJsoncPath));
+        if ((await CheckForPath(denoJsonPath)) || (await CheckForPath(denoJsoncPath))) {
+            const denoConfig = JSON.parse(
+                await Deno.readTextFile(
+                    (await CheckForPath(denoJsonPath)) ? denoJsonPath : denoJsoncPath,
+                ),
+            );
             if (denoConfig.workspace && Array.isArray(denoConfig.workspace)) {
                 for (const member of denoConfig.workspace) {
                     const memberPath = await JoinPaths(workingPath, member);
@@ -132,7 +136,10 @@ async function GetWorkspaces(path: string): Promise<string[] | null> {
  * @param {string} entry Path to the project.
  * @returns {Promise<void>}
  */
-async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> {
+async function AddProject(
+    entry: string,
+    appPaths: CONFIG_FILES,
+): Promise<void> {
     const workingEntry = await ParsePath(entry);
     const projectName = await NameProject(workingEntry);
 
@@ -149,7 +156,10 @@ async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> 
     const validation = await ValidateNodeProject(workingEntry, appPaths);
 
     if (validation === 3) {
-        await LogStuff(`Bruh, you already added this ${I_LIKE_JS.MF}! (${projectName})`, "error");
+        await LogStuff(
+            `Bruh, you already added this ${I_LIKE_JS.MF}! (${projectName})`,
+            "error",
+        );
         return;
     }
     if (validation === 2) {
@@ -175,7 +185,10 @@ async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> 
         return;
     }
     if (validation === 4) {
-        await LogStuff(`Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`, "error");
+        await LogStuff(
+            `Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`,
+            "error",
+        );
         return;
     }
     if (validation === 5) {
@@ -203,7 +216,9 @@ async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> 
         return;
     }
 
-    const workspaces = await GetWorkspaces(await JoinPaths(workingEntry, "package.json"));
+    const workspaces = await GetWorkspaces(
+        await JoinPaths(workingEntry, "package.json"),
+    );
 
     if (!workspaces) {
         addTheEntry();
@@ -212,9 +227,11 @@ async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> 
 
     const addWorkspaces = await LogStuff(
         `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these Node workspaces:\n\n${
-            workspaces.map(async (thingy) => {
-                return await NameProject(thingy);
-            })
+            workspaces.map(
+                async (thingy) => {
+                    return await NameProject(thingy);
+                },
+            )
         }.\n\nShould we add them to your list as well, so they're all cleaned?`,
         "bulb",
         undefined,
@@ -235,7 +252,10 @@ async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> 
         });
     }
 
-    await LogStuff(`Added all of your projects. Many mfs less to care about!`, "tick-clear");
+    await LogStuff(
+        `Added all of your projects. Many mfs less to care about!`,
+        "tick-clear",
+    );
     return;
 }
 
@@ -246,7 +266,10 @@ async function AddProject(entry: string, appPaths: CONFIG_FILES): Promise<void> 
  * @param {string} entry
  * @returns {Promise<void>}
  */
-async function RemoveProject(entry: string, appPaths: CONFIG_FILES): Promise<void> {
+async function RemoveProject(
+    entry: string,
+    appPaths: CONFIG_FILES,
+): Promise<void> {
     const workingEntry = await ParsePath(entry);
     const list = await GetAllProjects(appPaths);
     const index = list.indexOf(workingEntry);
@@ -254,10 +277,7 @@ async function RemoveProject(entry: string, appPaths: CONFIG_FILES): Promise<voi
     if (list.includes(workingEntry)) {
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         if (list.length > 0) {
-            await Deno.writeTextFile(
-                appPaths.projects,
-                list.join("\n") + "\n",
-            );
+            await Deno.writeTextFile(appPaths.projects, list.join("\n") + "\n");
             await LogStuff(
                 `Let me guess: ${await NameProject(
                     workingEntry,
@@ -266,7 +286,10 @@ async function RemoveProject(entry: string, appPaths: CONFIG_FILES): Promise<voi
             );
         } else {
             await Deno.remove(appPaths.projects);
-            await LogStuff("Removed the last entry. The list is now empty.", "moon-face");
+            await LogStuff(
+                "Removed the last entry. The list is now empty.",
+                "moon-face",
+            );
         }
     } else {
         await LogStuff(
@@ -306,7 +329,9 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
         const result: string[] = [];
         // for each project of the object, if it exists, we push it, and this somehow returns only one entry per project
         for (const project of Object.keys(countMap)) {
-            if (countMap[project] && countMap[project] >= 1) result.push(project);
+            if (countMap[project] && countMap[project] >= 1) {
+                result.push(project);
+            }
         }
         // (no i didn't write that)
 
@@ -314,7 +339,10 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
     }
     const list = await GetProjectsToRemove();
     if (list.length === 0) {
-        await LogStuff(`You're on the clear! Your list doesn't have any wrong ${I_LIKE_JS.MF}`, "tick");
+        await LogStuff(
+            `You're on the clear! Your list doesn't have any wrong ${I_LIKE_JS.MF}`,
+            "tick",
+        );
         return 1;
     }
     await LogStuff(
@@ -322,7 +350,11 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
         "bulb",
     );
     // doesn't use NameProject as it's likely to point to an invalid path
-    await LogStuff(`\n${list.toString().replaceAll(",", ",\n")}\n`, undefined, true);
+    await LogStuff(
+        `\n${list.toString().replaceAll(",", ",\n")}\n`,
+        undefined,
+        true,
+    );
     const del = await LogStuff(
         `Will you remove all of these ${I_LIKE_JS.MFS}?`,
         "what",
@@ -330,7 +362,10 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
         true,
     );
     if (!del) {
-        await LogStuff(`I don't know why you'd keep those wrong projects, but okay...`, "bruh");
+        await LogStuff(
+            `I don't know why you'd keep those wrong projects, but okay...`,
+            "bruh",
+        );
         return 2;
     }
     for (const target of list) {
@@ -347,13 +382,19 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
  * @param {boolean} ignoredOnly If true, only ignored projects will be shown.
  * @returns {Promise<void>}
  */
-async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promise<void> {
+async function ListProjects(
+    ignoredOnly: boolean,
+    appPaths: CONFIG_FILES,
+): Promise<void> {
     try {
         const list = await GetAllProjects(appPaths);
         list.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
         if (list.length === 0) {
-            await LogStuff("Bruh, your mfs list is empty! Ain't nobody here!", "moon-face");
+            await LogStuff(
+                "Bruh, your mfs list is empty! Ain't nobody here!",
+                "moon-face",
+            );
             return;
         }
 
@@ -376,7 +417,10 @@ async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promi
                 return;
             }
 
-            await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`, "bulb");
+            await LogStuff(
+                `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`,
+                "bulb",
+            );
             for (const entry of ignoreList) {
                 await LogStuff(await NameProject(entry));
             }
@@ -384,7 +428,10 @@ async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promi
             return;
         }
 
-        await LogStuff(`Here are the ${I_LIKE_JS.MFS} you added so far:\n`, "bulb");
+        await LogStuff(
+            `Here are the ${I_LIKE_JS.MFS} you added so far:\n`,
+            "bulb",
+        );
         for (const entry of list) {
             await LogStuff(await NameProject(entry));
         }
@@ -406,46 +453,68 @@ async function ListProjects(ignoredOnly: boolean, appPaths: CONFIG_FILES): Promi
 async function HandleIgnoreProject(
     ignore: boolean,
     entry: string,
-    ignoranceLevel?: "updater" | "cleanup" | "*",
+    ignoranceLevel: "updater" | "cleanup" | "*",
 ): Promise<0 | 1 | 2> {
     try {
         const workingEntry = await ParsePath(entry);
         const pathToIgnoreFile = await JoinPaths(workingEntry, IGNORE_FILE);
+        const hasIgnoreFile = await CheckForPath(pathToIgnoreFile);
+        console.log("HAS IGNORE FILE", hasIgnoreFile);
 
-        let currentLevels = await CheckForPath(pathToIgnoreFile) ? (await Deno.readTextFile(pathToIgnoreFile)).split(".") : [];
+        const currentLevels = hasIgnoreFile ? (await Deno.readTextFile(pathToIgnoreFile)).split(".\n") : [];
+        console.log(currentLevels);
 
-        const target = ignoranceLevel ?? "*";
+        if (ignore === true) {
+            try {
+                let toWrite: string[];
+                if (ignoranceLevel === "*") {
+                    toWrite = ["*"];
+                } else {
+                    toWrite = [ignoranceLevel];
+                }
 
-        if (ignore) {
-            if (target === "*") {
-                currentLevels = ["*"];
-            } else if (!currentLevels.includes(target) && !currentLevels.includes("*")) {
-                currentLevels.push(target);
+                /* else if (!currentLevels.includes(ignoranceLevel) && !currentLevels.includes("*")) */
+
+                console.log("To write", toWrite);
+                console.log("Current", currentLevels);
+
+                if (toWrite.toString() === (await CheckDivineProtection(workingEntry))) throw 1;
+
+                await Deno.writeTextFile(
+                    pathToIgnoreFile,
+                    (toWrite.includes("*") && toWrite.length === 1) ? "*" : toWrite.join(".\n"),
+                );
+
+                await LogStuff(
+                    `Divine powers have successfully created ${ignoranceLevel} protection for this ${I_LIKE_JS.MF}`,
+                    "tick",
+                );
+            } catch (exception) {
+                if (exception === 1) {
+                    await LogStuff(
+                        "This project is already protected!",
+                        "error",
+                    );
+                    return 2;
+                }
+                throw exception;
             }
-
-            await Deno.writeTextFile(pathToIgnoreFile, currentLevels.join("."));
-            await LogStuff(`Divine powers have successfully ignored this ${I_LIKE_JS.MF}`, "tick");
             return 0;
-        } else {
-            if (!CheckForPath(pathToIgnoreFile)) {
+        } else if (ignore === false) {
+            if (!hasIgnoreFile) {
                 await LogStuff(`${I_LIKE_JS.MF} isn't ignored yet!`, "error");
                 return 2;
             }
 
-            if (target === "*") {
-                currentLevels = [];
-            } else {
-                currentLevels = currentLevels.filter((level) => level !== target && level !== "*");
-            }
+            await Deno.remove(pathToIgnoreFile);
 
-            if (currentLevels.length === 0) {
-                await Deno.remove(pathToIgnoreFile);
-            } else {
-                await Deno.writeTextFile(pathToIgnoreFile, currentLevels.join("."));
-            }
-
-            await LogStuff(`Divine powers have abandoned this ${I_LIKE_JS.MF}`, "tick");
+            await LogStuff(
+                `Divine powers have abandoned this ${I_LIKE_JS.MF}`,
+                "tick",
+            );
             return 0;
+        } else {
+            throw new Error("Invalid option. Ignore or stop ignore?");
         }
     } catch (e) {
         await LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
@@ -469,45 +538,72 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
         return;
     }
 
+    async function validateArgumentsForIgnoreHandler(
+        secondArg: string | null,
+        thirdArg: string | null,
+    ) {
+        if (!secondArg) {
+            await ErrorMessage(
+                "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+            );
+            return false;
+        }
+        if (thirdArg && !["updater", "cleanup", "*"].includes(thirdArg)) {
+            await LogStuff("err, provide level");
+            return false;
+        }
+        return true;
+    }
+
+    async function handleIgnoreInteraction(
+        isIgnoring: boolean,
+        secondArg: string,
+        thirdArg?: "updater" | "cleanup" | "*",
+    ) {
+        await HandleIgnoreProject(isIgnoring, secondArg, thirdArg ?? "*");
+    }
+
     switch (command.toLowerCase()) {
         case "add":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
+                ErrorMessage(
+                    "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+                );
                 return;
             }
             await AddProject(secondArg, CF);
             break;
         case "remove":
             if (!secondArg || secondArg === null) {
-                ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
+                ErrorMessage(
+                    "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+                );
                 return;
             }
             await RemoveProject(secondArg, CF);
             break;
         case "ignore":
-            if (!secondArg || secondArg === null) {
-                ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
-                return;
+            if (await validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
+                await handleIgnoreInteraction(
+                    true,
+                    secondArg!,
+                    thirdArg as "updater" | "cleanup" | "*",
+                );
             }
-            if (thirdArg && !(["updater", "cleanup", "*"].includes(thirdArg))) {
-                // TODO - error message
-                return;
-            }
-            await HandleIgnoreProject(true, secondArg, (thirdArg as "updater" | "cleanup" | "*") ?? undefined);
             break;
         case "revive":
-            if (!secondArg || secondArg === null) {
-                await ErrorMessage("Manager__ProjectInteractionInvalidCauseNoPathProvided");
-                return;
+            if (await validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
+                await handleIgnoreInteraction(
+                    false,
+                    secondArg!,
+                );
             }
-            if (thirdArg && !(["updater", "cleanup", "*"].includes(thirdArg))) {
-                // TODO - error message
-                return;
-            }
-            await HandleIgnoreProject(false, secondArg, (thirdArg as "updater" | "cleanup" | "*") ?? undefined);
             break;
         case "list":
-            await ListProjects(ParseFlag("ignored", false).includes(secondArg ?? ""), CF);
+            await ListProjects(
+                ParseFlag("ignored", false).includes(secondArg ?? ""),
+                CF,
+            );
             break;
         case "cleanup":
             await CleanProjects(CF);

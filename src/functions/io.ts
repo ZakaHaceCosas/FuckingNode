@@ -124,7 +124,7 @@ export async function ErrorMessage(
     }
 
     await LogStuff(
-        currentErr ? message : message + currentErr,
+        ColorString("Error: ", "red") + currentErr ? message : message + currentErr,
         "warn",
         undefined,
         false,

@@ -92,6 +92,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     "working",
                 );
 
+                // TODO - support new Divine protection format
                 if (await CheckForPath(IGNORE_FILE)) {
                     await LogStuff(
                         `${project} is protected by ${I_LIKE_JS.FKN} divine protection. Cannot touch it.`,
