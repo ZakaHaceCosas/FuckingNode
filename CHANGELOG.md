@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added the ability to customize whether an ignored project should ignore updates, cleanup, or everything.
   - Now that the ignore file expects content, comments are allowed using the `--!` prefix.
 - Added better support for workspaces, by recognizing `pnpm-workspace.yaml`.
+- Added the ability to only do a hard cleanup (global cache cleanup), by running either `global-clean`, `hard-clean`, or `clean hard-only`.
 
 ### Changed
 

@@ -1,6 +1,7 @@
 import { I_LIKE_JS } from "../constants.ts";
 import {
     IsLockfileNodeLockfile,
+    ProjectCleanerIntensity,
     type SUPPORTED_LOCKFILES,
     type SUPPORTED_NOT_NODE_LOCKFILE as _NotNode,
 } from "../types.ts";
@@ -11,6 +12,7 @@ import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
 import { PerformHardCleanup, PerformNodeCleaning } from "./toolkit/cleaner.ts";
+import { CleanerIntensity } from "../types.ts";
 
 export default async function TheCleaner(params: TheCleanerConstructedParams) {
     const { CF, intensity, verbose, update } = params;
@@ -30,12 +32,25 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             return;
         }
 
-        let realIntensity: "normal" | "hard" | "maxim";
+        if (!(["hard", "hard-only", "normal", "maxim"].includes(intensity))) {
+            throw new Error("Invalid intensity.");
+        }
+
+        const workingIntensity: CleanerIntensity = intensity as CleanerIntensity;
+
+        let realIntensity: ProjectCleanerIntensity = "normal";
+
+        if (workingIntensity === "hard-only") {
+            await PerformHardCleanup();
+            return;
+        }
+
         const possibleOptions = ["normal", "hard", "maxim"];
-        if (!(possibleOptions.includes(intensity))) {
+        if (!(possibleOptions.includes(workingIntensity))) {
             realIntensity = "normal";
         }
-        if (intensity === "maxim") {
+
+        if (workingIntensity === "maxim") {
             const confirmMaxim = await LogStuff(
                 ColorString(
                     "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
@@ -45,9 +60,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 undefined,
                 true,
             );
-            realIntensity = confirmMaxim ? intensity : "hard";
-        } else {
-            realIntensity = intensity as "normal" | "hard" | "maxim";
+            realIntensity = confirmMaxim ? "maxim" : "hard";
+        } else if (workingIntensity === "hard" || workingIntensity === "normal") {
+            realIntensity = workingIntensity;
         }
 
         await LogStuff(

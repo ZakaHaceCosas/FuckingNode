@@ -77,6 +77,15 @@ async function main(command: string) {
                     CF: ALL_CONFIG_FILES,
                 });
                 break;
+            case "global-clean":
+            case "hard-clean":
+                await TheCleaner({
+                    verbose: isVerbose,
+                    update: wantsToUpdate,
+                    intensity: "hard-only",
+                    CF: ALL_CONFIG_FILES,
+                });
+                break;
             case "manager":
                 await TheManager(Deno.args, ALL_CONFIG_FILES);
                 break;
@@ -99,8 +108,11 @@ async function main(command: string) {
                 await TheHelper({});
                 Deno.exit(0);
         }
+
+        Deno.exit(0);
     } catch (e) {
         await GenericErrorHandler(e);
+        Deno.exit(1);
     }
 }
 
