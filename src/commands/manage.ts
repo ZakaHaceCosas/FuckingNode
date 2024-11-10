@@ -407,8 +407,6 @@ async function ListProjects(
                 ignoreList.push(entry);
             }
 
-            console.log(ignoreList);
-
             if (ignoreList.length === 0) {
                 await LogStuff(
                     "Huh, you didn't ignore anything! Good to see you care about all your projects (not for long, I can bet).",
@@ -459,10 +457,8 @@ async function HandleIgnoreProject(
         const workingEntry = await ParsePath(entry);
         const pathToIgnoreFile = await JoinPaths(workingEntry, IGNORE_FILE);
         const hasIgnoreFile = await CheckForPath(pathToIgnoreFile);
-        console.log("HAS IGNORE FILE", hasIgnoreFile);
 
-        const currentLevels = hasIgnoreFile ? (await Deno.readTextFile(pathToIgnoreFile)).split(".\n") : [];
-        console.log(currentLevels);
+        // const currentLevels = hasIgnoreFile ? (await Deno.readTextFile(pathToIgnoreFile)).split(".\n") : [];
 
         if (ignore === true) {
             try {
@@ -474,9 +470,6 @@ async function HandleIgnoreProject(
                 }
 
                 /* else if (!currentLevels.includes(ignoranceLevel) && !currentLevels.includes("*")) */
-
-                console.log("To write", toWrite);
-                console.log("Current", currentLevels);
 
                 if (toWrite.toString() === (await CheckDivineProtection(workingEntry))) throw 1;
 

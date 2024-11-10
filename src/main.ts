@@ -8,7 +8,7 @@ import TheSettings from "./commands/settings.ts";
 
 import { I_LIKE_JS, VERSION } from "./constants.ts";
 import type { CONFIG_FILES } from "./types.ts";
-import { LogStuff, ParseFlag } from "./functions/io.ts";
+import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
 
@@ -43,7 +43,7 @@ if (ParseFlag("help", true).some((flag) => flags.includes(flag))) {
 }
 
 if (ParseFlag("version", true).some((flag) => flags.includes(flag))) {
-    console.log(VERSION);
+    console.log(ColorString(VERSION, "bright-green"));
     Deno.exit(0);
 }
 
