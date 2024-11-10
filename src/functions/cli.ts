@@ -30,9 +30,12 @@ export interface CommanderOutput {
  * @async
  * @param {string} main Main command.
  * @param {string[]} stuff Additional args for the command.
+ * @param {?boolean} speak Defaults to true. If false, the output of the command won't be shown.
  * @returns {Promise<CommanderOutput>} An object with a boolean telling if it was successful and its output.
  */
-export async function Commander(main: string, stuff: string[]): Promise<CommanderOutput> {
+export async function Commander(main: string, stuff: string[], speak?: boolean): Promise<CommanderOutput> {
+    const showOutput: boolean = speak ?? true;
+
     const decoder = new TextDecoder();
     const encoder = new TextEncoder();
     const command = new Deno.Command(main, {
@@ -43,30 +46,32 @@ export async function Commander(main: string, stuff: string[]): Promise<Commande
 
     const process = command.spawn();
 
-    for await (const chunk of process.stdout) {
-        const output = decoder.decode(chunk);
-        Deno.stdout.writeSync(encoder.encode("\x1b[2K\r")); // this should clean the stdout
-        Deno.stdout.writeSync(encoder.encode(output));
-    }
+    if (showOutput) {
+        for await (const chunk of process.stdout) {
+            const output = decoder.decode(chunk);
+            Deno.stdout.writeSync(encoder.encode("\x1b[2K\r")); // this should clean the stdout
+            Deno.stdout.writeSync(encoder.encode(output));
+        }
 
-    for await (const chunk of process.stderr) {
-        const errorOutput = decoder.decode(chunk);
-        Deno.stderr.writeSync(encoder.encode("\x1b[2K\r")); // this should clean the stderr
-        Deno.stderr.writeSync(encoder.encode(errorOutput));
+        for await (const chunk of process.stderr) {
+            const errorOutput = decoder.decode(chunk);
+            Deno.stderr.writeSync(encoder.encode("\x1b[2K\r")); // this should clean the stderr
+            Deno.stderr.writeSync(encoder.encode(errorOutput));
+        }
     }
 
     const output = await process.output();
+    let targetStdout: string = decoder.decode(output.stdout);
 
     if (!output.success) {
-        const errorMessage = output.stderr ? decoder.decode(output.stderr) : "(Error is unknown)";
-
+        const errorMessage = decoder.decode(output.stderr) || "(Error is unknown)";
+        targetStdout = errorMessage;
         await LogStuff(`An error happened with ${main} ${stuff.join(" ")}: ${errorMessage}`);
-        Deno.exit(1);
     }
 
     const result: CommanderOutput = {
         success: output.success,
-        stdout: output.success ? decoder.decode(output.stdout) : decoder.decode(output.stderr),
+        stdout: output.success ? decoder.decode(output.stdout) : targetStdout,
     };
 
     return result;
