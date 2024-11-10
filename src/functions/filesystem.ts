@@ -166,7 +166,7 @@ export function ParsePathList(target: string): string[] {
  * @export
  * @param {string} pathA First part, e.g. "./my/beginning".
  * @param {string} pathB Second part, e.g. "my/end.txt".
- * @returns {string} Result, e.g. "my/beginning/my/end.txt".
+ * @returns {string} Result, e.g. "./my/beginning/my/end.txt".
  */
 export async function JoinPaths(pathA: string, pathB: string): Promise<string> {
     try {

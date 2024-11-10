@@ -1,3 +1,4 @@
+import { greaterThan, parse } from "@std/semver";
 import { FetchGitHub } from "../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
 import { CONFIG_FILES, type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type SemVer, type UPDATE_FILE } from "../types.ts";
@@ -11,18 +12,13 @@ import { LogStuff } from "./io.ts";
  *
  * @param {string} versionA 1st version to compare.
  * @param {string} versionB 2nd version to compare.
- * @returns {number} The difference.
+ * @returns {boolean} True if `versionA` is NEWER than `versionB`, false otherwise.
  */
-function CompareSemver(versionA: string, versionB: string): number {
-    const [majorA = 0, minorA = 0, patchA = 0] = versionA.split(".").map(Number);
-    const [majorB = 0, minorB = 0, patchB = 0] = versionB.split(".").map(Number);
+function IsSemverNewer(versionA: string, versionB: string): boolean {
+    const version1 = parse(versionA);
+    const version2 = parse(versionB);
 
-    if (isNaN(majorA) || isNaN(minorA) || isNaN(patchA)) throw new Error("Invalid version format in " + versionA);
-    if (isNaN(majorB) || isNaN(minorB) || isNaN(patchB)) throw new Error("Invalid version format in " + versionB);
-
-    if (majorA !== majorB) return majorA - majorB;
-    if (minorA !== minorB) return minorA - minorB;
-    return patchA - patchB;
+    return greaterThan(version1, version2);
 }
 
 /**
@@ -54,7 +50,7 @@ export default async function TheUpdater(paths: CONFIG_FILES, force?: boolean): 
 
             const content: GITHUB_RELEASE = await response.json();
 
-            const isUpToDate = CompareSemver(content.tag_name, VERSION) <= 0;
+            const isUpToDate = IsSemverNewer(content.tag_name, VERSION);
             if (!isUpToDate) await tellAboutUpdate(content.tag_name);
 
             if (force) await LogStuff(`You're up to date! (v${VERSION})`, "tick-clear");
