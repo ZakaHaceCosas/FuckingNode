@@ -4,6 +4,7 @@
         "APPDATA",
         "autoclean",
         "Bruh",
+        "bunfig",
         "cker",
         "ckers",
         "cking",
@@ -12,6 +13,7 @@
         "Emojify",
         "fknodeignore",
         "fuckingnode",
+        "lmao",
         "lockb",
         "lockfiles",
         "mfly",
@@ -21,9 +23,9 @@
         "msvc",
         "Runtimes",
         "setx",
+        "tada",
         "therf",
-        "zakahacecosas",
-        "lmao"
+        "zakahacecosas"
     ],
     "deno.enable": true,
     "editor.formatOnSave": false,
