@@ -10,12 +10,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Added partial support for cleanup of both the Bun and Deno JavaScript runtimes.**
 - Added an install script for Microsoft Windows.
-- Added the option to flush config files, so the user can save up space.
-- Added partial support for cleanup of both the Bun and Deno JavaScript runtimes.
+- Added the option to flush config files (like `.log`s), so the user can save up space.
 - Added the ability to customize whether an ignored project should ignore updates, cleanup, or everything.
   - Now that the ignore file expects content, comments are allowed using the `--!` prefix.
-- Added better support for workspaces, by recognizing `pnpm-workspace.yaml`.
+- Added much more better support for workspaces, by recognizing `pnpm-workspace.yaml`, `yarnrc.yaml` and `bunfig.toml`.
 - Added the ability to only do a hard cleanup (global cache cleanup), by running either `global-clean`, `hard-clean`, or `clean hard-only`.
 
 ### Changed
@@ -23,9 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now all commands show their output synchronously, giving the feel of a faster CLI.
 - Now `settings schedule` is hidden behind the `--experimental-schedule` flag, as it doesn't work properly. `Deno.cron` (method used to schedule tasks) itself is currently considered unstable, FYI.
 - Now in some places instead of an "Unknown command" error, the help menu is shown so you can see what commands are valid.
-- Now `manager list` shows both the name of the project (from `package.json`, if it was possible to obtain) alongside it's absolute path. Also, now projects are alphabetically sorted by name (by their path if not possible to obtain their name).
+- Now `manager list` shows, if possible, the name of the project from the `package.json`, alongside it's absolute path. Also, now projects are alphabetically sorted by name (by their path if not possible to obtain their name).
 - Now the CLI has cool looking colors 🙂.
-- Now workspace recognition is much more precise, supporting `yarnrc.yaml` and `bunfig.toml`.
 
 ### Fixed
 
