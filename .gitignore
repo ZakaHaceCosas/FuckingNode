@@ -4,4 +4,4 @@
 # compiled executable
 dist/**
 # fake NodeJS projects so i can test the CLI
-tests/**
+real-life-tests/**
