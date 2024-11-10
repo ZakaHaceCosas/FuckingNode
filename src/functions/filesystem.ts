@@ -37,15 +37,28 @@ async function RecursivelyGetDir(path: string): Promise<FileEntry[]> {
     if (!(await CheckForPath(workingPath))) throw new Error("Path doesn't exist");
 
     const entries: FileEntry[] = [];
+    const toProcess: string[] = [workingPath]; // directories to process
+    const visitedDirs: Set<string> = new Set(); // i don't know what does this do but she told me it avoids cycles with symlinks
 
-    for await (const entry of Deno.readDir(workingPath)) {
-        if (entry.isFile) {
-            const fileInfo = await Deno.stat(await JoinPaths(workingPath, entry.name));
-            entries.push({ entry, info: fileInfo });
-        } else if (entry.isDirectory) {
-            // Recursively read the directory
-            const subEntries = await RecursivelyGetDir(await JoinPaths(workingPath, entry.name));
-            entries.push(...subEntries);
+    while (toProcess.length > 0) {
+        const currentDir = toProcess.pop()!;
+        if (visitedDirs.has(currentDir)) continue; // skip already processed dirs
+        visitedDirs.add(currentDir);
+
+        for await (const entry of Deno.readDir(currentDir)) {
+            const fullPath = await JoinPaths(currentDir, entry.name);
+            if (entry.isFile) {
+                const fileInfo = await Deno.stat(fullPath);
+                entries.push({ entry, info: fileInfo });
+            } else if (entry.isDirectory) {
+                toProcess.push(fullPath); // add subdirectories to process
+            } else if (entry.isSymlink) {
+                // skip symlinks to avoid infinite loops
+                const resolvedPath = await Deno.realPath(fullPath);
+                if (!visitedDirs.has(resolvedPath)) {
+                    toProcess.push(resolvedPath);
+                }
+            }
         }
     }
 
@@ -72,25 +85,32 @@ export async function GetDirSize(path: string): Promise<number> {
 
         const entries = await RecursivelyGetDir(workingPath);
 
-        // process all entries in parallel
-        const sizePromises = entries.map(async ({ entry }) => {
-            const fullPath = await JoinPaths(workingPath, entry.name);
-            try {
-                const pathInfo = await Deno.stat(fullPath);
-                if (pathInfo.isFile) {
-                    return pathInfo.size; // increases the size
-                } else if (pathInfo.isDirectory) {
-                    return await GetDirSize(fullPath); // if the entry happens to be another DIR, recursively analyze it
-                } else {
-                    return pathInfo.size; // just try anyway
+        // process entries in parallel, but control the number of concurrent tasks
+        const batchSize = 30; // adjust this for optimal concurrency
+        // no i did not write this batch thingy, chatGPT did I ain't lying
+        // IDK HOW TO OPTIMIZE THIS ALR?
+        // at least it's a function and not the entire app. this isn't https://github.com/foxtale-labs
+        const sizePromises: Promise<number>[] = [];
+        for (let i = 0; i < entries.length; i += batchSize) {
+            const batch = entries.slice(i, i + batchSize).map(async ({ entry }) => {
+                const fullPath = await JoinPaths(workingPath, entry.name);
+                try {
+                    const pathInfo = await Deno.stat(fullPath);
+                    if (pathInfo.isFile) {
+                        return pathInfo.size;
+                    } else if (pathInfo.isDirectory) {
+                        return await GetDirSize(fullPath); // if the entry happens to be another DIR, recursively analyze it
+                    }
+                    return 0;
+                } catch (_e) {
+                    // we should ignore this as logging ALL of these filesystem errors
+                    // will cause the user a storage issue
+                    // await LogStuff("Error: " + e, "error");
+                    return 0; // ignore errors an continue
                 }
-            } catch (_e) {
-                // we should ignore this as logging ALL of these filesystem errors
-                // will cause the user a storage issue
-                // await LogStuff("Error: " + e, "error");
-                return 0; // ignore errors an continue
-            }
-        });
+            });
+            sizePromises.push(...batch);
+        }
 
         const sizes = await Promise.all(sizePromises);
 

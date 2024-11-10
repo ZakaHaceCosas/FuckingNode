@@ -1,7 +1,7 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { CheckForPath, GetDirSize, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
-import { GetAllProjects } from "../functions/projects.ts";
+import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import { CONFIG_FILES } from "../types.ts";
 
 export default async function TheStatistics(CF: CONFIG_FILES) {
@@ -40,11 +40,11 @@ export default async function TheStatistics(CF: CONFIG_FILES) {
             message = `Insanely ${I_LIKE_JS.MFN} insane.`;
         } else if (size > 9999) {
             message =
-                `WHAT THE ${I_LIKE_JS.FKN.toUpperCase} ${I_LIKE_JS.FK.toUpperCase} ARE YOU ${I_LIKE_JS.FKN.toUpperCase} CODING IN ${I_LIKE_JS.FKN.toUpperCase} THERE??`;
+                `WHAT THE ${I_LIKE_JS.FKN.toUpperCase()} ${I_LIKE_JS.FK.toUpperCase()} ARE YOU ${I_LIKE_JS.FKN.toUpperCase()} CODING IN ${I_LIKE_JS.FKN.toUpperCase()} THERE??`;
         }
 
         await LogStuff(
-            `${workingPath} is taking ${size.toFixed(2)}MB. ${message}`,
+            `${NameProject(workingPath)} is taking ${size.toFixed(2)}MB. ${message}`,
             "trash",
         );
 

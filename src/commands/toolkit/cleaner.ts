@@ -150,7 +150,7 @@ export async function PerformHardCleanup(): Promise<void> {
             const denoDir: string | undefined = Deno.env.get("DENO_DIR");
             if (!denoDir) throw "lmao";
             await Deno.remove(denoDir);
-            await LogStuff("Done", "tick")
+            await LogStuff("Done", "tick");
             // the CLI calls this kind of behaviors "maxim" cleanup
             // yet we're doing from the "hard" preset and not the
             // "maxim" one
@@ -165,7 +165,7 @@ export async function PerformHardCleanup(): Promise<void> {
     }
 
     await Deno.remove(tmp, {
-        recursive: true
+        recursive: true,
     }); // free the user's space
 
     return;
