@@ -44,7 +44,7 @@ export default async function TheStatistics(CF: CONFIG_FILES) {
         }
 
         await LogStuff(
-            `${NameProject(workingPath)} is taking ${size.toFixed(2)}MB. ${message}`,
+            `${await NameProject(workingPath)} is taking ${size.toFixed(2)}MB. ${message}`,
             "trash",
         );
 

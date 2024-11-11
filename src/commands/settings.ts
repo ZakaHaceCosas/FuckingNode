@@ -162,7 +162,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             break;
         case "flush":
             if (!secondArg) {
-                await LogStuff("Specify what to flush.", "warn");
+                await LogStuff("Specify what to flush. Either 'logs', 'projects', 'updates', or 'all'.", "warn");
                 return;
             }
             if (ParseFlag("force", false).includes(thirdArg ?? "")) {

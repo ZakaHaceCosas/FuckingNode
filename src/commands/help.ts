@@ -95,7 +95,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             break;
         case "settings":
             await LogStuff(
-                `Currently supported settings:\n`,
+                `Currently supported settings:\n` + SETTINGS,
                 undefined,
                 true,
             );

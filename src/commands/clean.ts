@@ -225,7 +225,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         await LogStuff("Report:", "chart", false, undefined, verbose);
         for (const result of results) {
             await LogStuff(
-                `${NameProject(result.path)} -> ${ColorString(result.status, "bold")}`,
+                `${await NameProject(result.path)} -> ${ColorString(result.status, "bold")}`,
                 undefined,
                 false,
                 undefined,

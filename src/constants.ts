@@ -6,7 +6,7 @@ const _SV_VER: SemVer = {
     major: 2,
     minor: 0,
     patch: 0,
-    prerelease: ["alpha", 1],
+    prerelease: ["alpha", 2],
 };
 
 /**
