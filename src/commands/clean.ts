@@ -5,10 +5,9 @@ import {
     type SUPPORTED_LOCKFILES,
     type SUPPORTED_NOT_NODE_LOCKFILE as _NotNode,
 } from "../types.ts";
-import { IGNORE_FILE } from "../constants.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
-import { GetAllProjects, NameProject } from "../functions/projects.ts";
+import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
 import { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
 import { PerformHardCleanup, PerformNodeCleaning } from "./toolkit/cleaner.ts";
@@ -92,19 +91,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     "working",
                 );
 
-                // TODO - support new Divine protection format
-                if (await CheckForPath(IGNORE_FILE)) {
-                    await LogStuff(
-                        `${project} is protected by ${I_LIKE_JS.FKN} divine protection. Cannot touch it.`,
-                        "heads-up",
-                    );
-                    results.push({
-                        path: project,
-                        status: "Protected",
-                    });
-                    continue;
-                }
-
                 const lockfiles: SUPPORTED_LOCKFILES[] = [];
 
                 if (await CheckForPath("pnpm-lock.yaml")) {
@@ -123,10 +109,67 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     lockfiles.push("deno.lock");
                 }
 
+                let doUpdate: boolean;
+                let doClean: boolean;
+
+                const protection = await CheckDivineProtection(project);
+                switch (protection) {
+                    case "*":
+                        await LogStuff(
+                            ColorString(
+                                `${project} is fully protected by ${I_LIKE_JS.FKN} divine protection. Cannot touch it.`,
+                                "bright-yellow",
+                            ),
+                            "heads-up",
+                        );
+                        results.push({
+                            path: project,
+                            status: "Fully protected",
+                        });
+                        doUpdate = false;
+                        doClean = false;
+                        continue;
+                    case "cleanup":
+                        await LogStuff(
+                            ColorString(
+                                `${project} is cleanup protected by ${I_LIKE_JS.FKN} divine protection. Cannot clean it, but will be updated (if you specified to do so).`,
+                                "bright-yellow",
+                            ),
+                            // TODO - add handler so we can update without cleaning
+                            "heads-up",
+                        );
+                        doUpdate = true;
+                        doClean = false;
+                        break;
+                    case "updater":
+                        await LogStuff(
+                            ColorString(
+                                `${project} is update protected by ${I_LIKE_JS.FKN} divine protection. Cannot update it, but will be cleaned (if you specified to do so).`,
+                                "bright-yellow",
+                            ),
+                            "heads-up",
+                        );
+                        doUpdate = false;
+                        doClean = true;
+                        break;
+                    default:
+                        doClean = true;
+                        doUpdate = update;
+                }
+
                 if (lockfiles.length > 0) {
                     if (lockfiles.length === 1) {
                         for (const lockfile of lockfiles) {
-                            if (IsLockfileNodeLockfile(lockfile)) await PerformNodeCleaning(lockfile, project, update, realIntensity);
+                            if (IsLockfileNodeLockfile(lockfile)) {
+                                if (doClean) {
+                                    await PerformNodeCleaning(
+                                        lockfile,
+                                        project,
+                                        update ? doUpdate : false,
+                                        realIntensity,
+                                    );
+                                }
+                            }
                         }
                     } else {
                         await LogStuff(
