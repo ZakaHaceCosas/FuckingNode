@@ -14,7 +14,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         manager: SpaceString("manager  add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup", 8),
         stats: SpaceString("stats", 8),
         migrate: SpaceString("migrate", 8),
-        self_update: SpaceString("self-update", 8),
+        self_update: SpaceString("upgrade", 8),
         version: SpaceString("[--version]", 8),
         help: SpaceString("[--help]", 8),
     };
@@ -67,7 +67,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         "\n\nAdditional flags:\n" +
         OPTIONS +
         "\n\nAdditional commands:\n" +
-        SpaceString("self-update      Checks the GitHub repo for updates.", 4);
+        SpaceString("upgrade          Checks the GitHub repo for updates.", 4);
 
     if (!query) {
         await LogStuff(

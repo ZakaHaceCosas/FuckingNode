@@ -1,4 +1,4 @@
-import { greaterThan, parse } from "@std/semver";
+import { compare, greaterThan, parse } from "@std/semver";
 import { FetchGitHub } from "../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
 import { CONFIG_FILES, type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type UPDATE_FILE } from "../types.ts";
@@ -6,19 +6,18 @@ import { GetDateNow, MakeRightNowDateStandard } from "./date.ts";
 import { CheckForPath } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
 
-// made by chatgpt i'll be honest
 /**
  * Compares two SemVer versions. Returns the difference between both, so if `versionB` is more recent than `versionA` you'll get a positive number, or you'll get 0 if they're equal.
  *
  * @param {string} versionA 1st version to compare.
  * @param {string} versionB 2nd version to compare.
- * @returns {boolean} True if `versionA` is NEWER than `versionB`, false otherwise.
+ * @returns {boolean | 0} True if `versionA` is NEWER than `versionB`, false otherwise. `0` if they're the same.
  */
-function IsSemverNewer(versionA: string, versionB: string): boolean {
+function IsSemverNewer(versionA: string, versionB: string): boolean | 0 {
     const version1 = parse(versionA);
     const version2 = parse(versionB);
 
-    return greaterThan(version1, version2);
+    return (compare(version1, version2) === 0 ? 0 : greaterThan(version1, version2));
 }
 
 /**
@@ -50,7 +49,9 @@ export default async function TheUpdater(paths: CONFIG_FILES, force?: boolean): 
 
             const content: GITHUB_RELEASE = await response.json();
 
-            const isUpToDate = IsSemverNewer(content.tag_name, VERSION);
+            const isUpToDate = typeof IsSemverNewer(content.tag_name, VERSION) === "boolean"
+                ? (IsSemverNewer(content.tag_name, VERSION) as boolean)
+                : true;
             if (!isUpToDate) await tellAboutUpdate(content.tag_name);
 
             if (force) await LogStuff(`You're up to date! (v${VERSION})`, "tick-clear");

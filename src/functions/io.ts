@@ -209,7 +209,7 @@ export function ColorString(string: string, color: validColors): string {
             colorCode = "\x1b[94m";
             break;
         case "bright-yellow":
-            colorCode = "\x1b[94m";
+            colorCode = "\x1b[93m";
             break;
         case "italic":
             colorCode = "\x1b[3m";

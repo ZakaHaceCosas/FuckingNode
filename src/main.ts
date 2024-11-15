@@ -96,7 +96,12 @@ async function main(command: string) {
                 await TheMigrator({ project: Deno.args[1], target: Deno.args[2] });
                 break;
             case "self-update":
+            case "upgrade":
+                if (command.toLowerCase() === "self-update") await LogStuff(ColorString("Use upgrade instead", "bright-yellow"), "warn");
+                await LogStuff(`Currently on version ${ColorString(VERSION, "green")}`);
+                await LogStuff("Checking for updates...");
                 await init(true);
+                await LogStuff("Done", "tick-clear");
                 break;
             case "stats":
                 await LogStuff(
