@@ -135,7 +135,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                                 `${project} is cleanup protected by ${I_LIKE_JS.FKN} divine protection. Cannot clean it, but will be updated (if you specified to do so).`,
                                 "bright-yellow",
                             ),
-                            // TODO - add handler so we can update without cleaning
                             "heads-up",
                         );
                         doUpdate = true;
@@ -166,6 +165,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                                         lockfile,
                                         project,
                                         update ? doUpdate : false,
+                                        doClean,
                                         realIntensity,
                                     );
                                 }

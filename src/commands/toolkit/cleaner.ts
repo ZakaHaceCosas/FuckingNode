@@ -8,6 +8,7 @@ export async function PerformNodeCleaning(
     lockfile: SUPPORTED_NODE_LOCKFILE,
     projectInQuestion: string,
     shouldUpdate: boolean,
+    shouldClean: boolean,
     intensity: "normal" | "hard" | "maxim",
 ): Promise<void> {
     try {
@@ -48,32 +49,34 @@ export async function PerformNodeCleaning(
             await LogStuff(`${baseCommand} ${updateArg}\n`, "package");
             await Commander(baseCommand, updateArg);
         }
-        await LogStuff(
-            `Cleaning using ${baseCommand} for ${motherfuckerInQuestion}.`,
-            "package",
-        );
-        for (const pruneArg of pruneArgs) {
-            await LogStuff(`${baseCommand} ${pruneArg.join(" ")}\n`, "package");
-            await Commander(baseCommand, pruneArg);
-        }
-        if (intensity === "maxim") {
+        if (shouldClean) {
             await LogStuff(
-                `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
-                "trash",
+                `Cleaning using ${baseCommand} for ${motherfuckerInQuestion}.`,
+                "package",
             );
-            if (!(await CheckForPath(maximPath))) {
+            for (const pruneArg of pruneArgs) {
+                await LogStuff(`${baseCommand} ${pruneArg.join(" ")}\n`, "package");
+                await Commander(baseCommand, pruneArg);
+            }
+            if (intensity === "maxim") {
                 await LogStuff(
-                    `An error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${I_LIKE_JS.MF}...`,
-                    "bruh",
+                    `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
+                    "trash",
+                );
+                if (!(await CheckForPath(maximPath))) {
+                    await LogStuff(
+                        `An error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${I_LIKE_JS.MF}...`,
+                        "bruh",
+                    );
+                }
+                await Deno.remove(maximPath, {
+                    recursive: true,
+                });
+                await LogStuff(
+                    `Maxim pruned ${motherfuckerInQuestion}.`,
+                    "tick-clear",
                 );
             }
-            await Deno.remove(maximPath, {
-                recursive: true,
-            });
-            await LogStuff(
-                `Maxim pruned ${motherfuckerInQuestion}.`,
-                "tick-clear",
-            );
         }
     } catch (e) {
         throw e;
