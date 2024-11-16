@@ -32,6 +32,9 @@
         "allowUnusedLabels": false,
         "noErrorTruncation": true
     },
+    "exclude": [
+        "./src/commands/help.ignore.ts"
+    ],
     "imports": {
         "@std/fs": "jsr:@std/fs",
         "@std/path": "jsr:@std/path",
