@@ -54,7 +54,7 @@ async function AddProject(
             true,
         );
         if (!addAnyway) return;
-        addTheEntry();
+        await addTheEntry();
         return;
     }
     if (validation === "IsCoolDeno") {
@@ -67,7 +67,7 @@ async function AddProject(
             true,
         );
         if (!addAnyway) return;
-        addTheEntry();
+        await addTheEntry();
         return;
     }
     if (validation === "IsBun") {
@@ -78,7 +78,7 @@ async function AddProject(
             true,
         );
         if (!addAnyway) return;
-        addTheEntry();
+        await addTheEntry();
         return;
     }
 
@@ -87,7 +87,7 @@ async function AddProject(
     );
 
     if (!workspaces) {
-        addTheEntry();
+        await addTheEntry();
         return;
     }
 
@@ -105,7 +105,7 @@ async function AddProject(
     );
 
     if (!addWorkspaces) {
-        addTheEntry();
+        await addTheEntry();
         return;
     }
 

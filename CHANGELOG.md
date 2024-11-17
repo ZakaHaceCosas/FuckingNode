@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `upgrade` (_`self-update`_) not correctly handling GitHub's rate limit.
 - Fixed an issue where naming projects (reading their `name` from `package.json`) would crash the CLI.
 - Fixed unreliability when finding out if a project uses Node, Deno, or Bun.
+- Fixed projects not being correctly added due to missing `await` keyword.
 
 ## [1.4.2] 27-10-2024
 
