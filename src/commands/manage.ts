@@ -3,7 +3,7 @@ import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CONFIG_FILES, PkgJson } from "../types.ts";
-import { ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
+import { ColorString, ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
@@ -31,9 +31,6 @@ async function ValidateNodeProject(entry: string, appPaths: CONFIG_FILES): Promi
     if (isDuplicate) {
         return 3;
     }
-    if (!(await CheckForPath(await JoinPaths(workingEntry, "node_modules")))) {
-        return 2;
-    }
     if (!(await CheckForPath(await JoinPaths(workingEntry, "package.json")))) {
         if (await CheckForPath(await JoinPaths(workingEntry, "bun.lockb"))) {
             // we use bun's lockfile as bun doesn't have its own package file
@@ -43,6 +40,9 @@ async function ValidateNodeProject(entry: string, appPaths: CONFIG_FILES): Promi
             return 5;
         }
         return 1;
+    }
+    if (!(await CheckForPath(await JoinPaths(workingEntry, "node_modules")))) {
+        return 2;
     }
     return 0;
 }
@@ -195,7 +195,7 @@ async function AddProject(
         const addAnyway = await LogStuff(
             // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao
             // idk whats better, deno or bun. i have both installed, i could try. one day, maybe.
-            `This project appears to use the Deno runtime (good choice btw). We only support system-wide (AKA "hard") cleaning for Deno, but not individual cleaning of each of your projects. Adding this project to your list would not have any effect. Add anyway?`,
+            `This project appears to use the Deno runtime (good choice btw). It's not *fully* supported *yet*. Add anyway?`,
             "what",
             undefined,
             true,
@@ -206,7 +206,7 @@ async function AddProject(
     }
     if (validation === 6) {
         const addAnyway = await LogStuff(
-            `This project appears to use the Bun runtime. We only support system-wide (AKA "hard") cleaning for Bun, but not individual cleaning of each of your projects. Adding this project to your list would not have any effect. Add anyway?`,
+            `This project appears to use the Bun runtime. It's not *fully* supported *yet*. Add anyway?`,
             "what",
             undefined,
             true,
@@ -350,11 +350,13 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
         "bulb",
     );
     // doesn't use NameProject as it's likely to point to an invalid path
-    await LogStuff(
-        `\n${list.toString().replaceAll(",", ",\n")}\n`,
-        undefined,
-        true,
-    );
+    for (const idiot of list) {
+        await LogStuff(
+            `\n${idiot} ${ColorString("Code: " + (await ValidateNodeProject(idiot, appPaths)), "half-opaque")}\n`,
+            undefined,
+            true,
+        );
+    }
     const del = await LogStuff(
         `Will you remove all of these ${I_LIKE_JS.MFS}?`,
         "what",

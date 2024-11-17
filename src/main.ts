@@ -31,7 +31,7 @@ const wantsToUpdate = flags.includes("--update");
 async function init(update: boolean) {
     const configFiles = await FreshSetup(); // Temporarily hold the result
     const ALL_CONFIG_FILES: CONFIG_FILES = configFiles; // Assign only after it's resolved
-    await TheUpdater({CF: ALL_CONFIG_FILES, force: update, silent: !update});
+    await TheUpdater({ CF: ALL_CONFIG_FILES, force: update, silent: !update });
     return ALL_CONFIG_FILES;
 }
 
