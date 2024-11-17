@@ -1,3 +1,6 @@
+import { parse as parseYaml } from "@std/yaml";
+import { parse as parseToml } from "@std/toml";
+import { expandGlob } from "@std/fs";
 import { IGNORE_FILE } from "../constants.ts";
 import { CONFIG_FILES, DenoPkgJson, type NodePkgJson } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
@@ -98,4 +101,124 @@ export async function CheckDivineProtection(
     }
 
     return null; // nothing
+}
+
+/**
+ * Given a path, returns a number indicating if it's a valid Node project or not.
+ *
+ * `0` = valid. `1` = not valid, no package.json. `2` = not fully valid, missing node_modules.
+ * `3` = not fully valid, duplicate. `4` = path doesn't exist. `5` = uses Deno. `6` = uses Bun.
+ *
+ * @async
+ * @param {string} entry Path to the project.
+ * @param {CONFIG_FILES} appPaths Config files.
+ * @returns {Promise<0 | 1 | 2 | 3 | 4 | 5 | 6>}
+ */
+export async function ValidateNodeProject(entry: string, appPaths: CONFIG_FILES): Promise<0 | 1 | 2 | 3 | 4 | 5 | 6> {
+    const workingEntry = await ParsePath(entry);
+    const list = await GetAllProjects(appPaths);
+    const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
+
+    if (!(await CheckForPath(workingEntry))) {
+        return 4;
+    }
+    if (isDuplicate) {
+        return 3;
+    }
+    if (!(await CheckForPath(await JoinPaths(workingEntry, "package.json")))) {
+        if (await CheckForPath(await JoinPaths(workingEntry, "bun.lockb"))) {
+            // we use bun's lockfile as bun doesn't have its own package file
+            return 6;
+        }
+        if (await CheckForPath(await JoinPaths(workingEntry, "deno.json"))) {
+            return 5;
+        }
+        return 1;
+    }
+    if (!(await CheckForPath(await JoinPaths(workingEntry, "node_modules")))) {
+        return 2;
+    }
+    return 0;
+}
+
+/**
+ * Checks for workspaces within a Node, Bun, or Deno project, supporting package.json, pnpm-workspace.yaml, .yarnrc.yml, and bunfig.toml.
+ *
+ * @async
+ * @param {string} path Path to the root of the project.
+ * @returns {Promise<string[] | null>}
+ */
+export async function GetWorkspaces(path: string): Promise<string[] | null> {
+    try {
+        const workingPath: string = await ParsePath(path);
+
+        if (!(await CheckForPath(workingPath))) throw new Error("Requested path doesn't exist.");
+
+        const workspacePaths: string[] = [];
+
+        // Check package.json for Node, npm, and yarn (and Bun workspaces).
+        const packageJsonPath = await JoinPaths(workingPath, "package.json");
+        if (await CheckForPath(packageJsonPath)) {
+            const pkgJson: NodePkgJson = JSON.parse(await Deno.readTextFile(packageJsonPath));
+            if (pkgJson.workspaces) {
+                const pkgWorkspaces = Array.isArray(pkgJson.workspaces) ? pkgJson.workspaces : pkgJson.workspaces?.packages || [];
+                workspacePaths.push(...pkgWorkspaces);
+            }
+        }
+
+        // Check pnpm-workspace.yaml for pnpm workspaces
+        const pnpmWorkspacePath = await JoinPaths(workingPath, "pnpm-workspace.yaml");
+        if (await CheckForPath(pnpmWorkspacePath)) {
+            const pnpmConfig = parseYaml(await Deno.readTextFile(pnpmWorkspacePath)) as { packages: string[] };
+            if (pnpmConfig.packages && Array.isArray(pnpmConfig)) workspacePaths.push(...pnpmConfig.packages);
+        }
+
+        // Check .yarnrc.yml for Yarn workspaces
+        const yarnRcPath = await JoinPaths(workingPath, ".yarnrc.yml");
+        if (await CheckForPath(yarnRcPath)) {
+            const yarnConfig = parseYaml(await Deno.readTextFile(yarnRcPath)) as { workspaces?: string[] };
+            if (yarnConfig.workspaces && Array.isArray(yarnConfig)) workspacePaths.push(...yarnConfig.workspaces);
+        }
+
+        // Check bunfig.toml for Bun workspaces
+        const bunfigTomlPath = await JoinPaths(workingPath, "bunfig.toml");
+        if (await CheckForPath(bunfigTomlPath)) {
+            const bunConfig = parseToml(await Deno.readTextFile(bunfigTomlPath)) as { workspace?: string[] };
+            if (bunConfig.workspace && Array.isArray(bunConfig.workspace)) workspacePaths.push(...bunConfig.workspace);
+        }
+
+        // Check for Deno configuration (deno.json or deno.jsonc)
+        const denoJsonPath = await JoinPaths(workingPath, "deno.json");
+        const denoJsoncPath = await JoinPaths(workingPath, "deno.jsonc");
+        if ((await CheckForPath(denoJsonPath)) || (await CheckForPath(denoJsoncPath))) {
+            const denoConfig = JSON.parse(
+                await Deno.readTextFile(
+                    (await CheckForPath(denoJsonPath)) ? denoJsonPath : denoJsoncPath,
+                ),
+            );
+            if (denoConfig.workspace && Array.isArray(denoConfig.workspace)) {
+                for (const member of denoConfig.workspace) {
+                    const memberPath = await JoinPaths(workingPath, member);
+                    workspacePaths.push(memberPath);
+                }
+            }
+        }
+
+        if (workspacePaths.length === 0) return null;
+
+        const absoluteWorkspaces: string[] = [];
+        for (const workspacePath of workspacePaths) {
+            const fullPath = await JoinPaths(workingPath, workspacePath);
+            for await (const dir of expandGlob(fullPath)) {
+                if (dir.isDirectory) {
+                    absoluteWorkspaces.push(dir.path);
+                }
+            }
+        }
+
+        return absoluteWorkspaces;
+    } catch (e) {
+        await LogStuff(`Error looking for workspaces: ${e}`, "error");
+        return null;
+    }
 }
