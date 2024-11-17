@@ -14,11 +14,12 @@ function CompileApp(): void {
 
         const compilerArguments = [
             "compile",
-            "--allow-read",
-            "--allow-write",
-            "--allow-net",
-            "--allow-env",
-            "--allow-run",
+            "--allow-write", // write files, like project list
+            "--allow-read", // read files, like a project's package.json
+            "--allow-net", // fetch the network, to update the app
+            "--allow-env", // see ENV variables, to access .../AppData/...
+            "--allow-run", // run cleanup commands
+            "--allow-sys", // used for an easter egg that requires `os.Uptime`
             "--unstable-cron",
             "--target",
             target!,
