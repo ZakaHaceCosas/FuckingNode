@@ -47,6 +47,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed an issue where naming projects (reading their `name` from `package.json`) would crash the CLI.
 - Fixed unreliability when finding out if a project uses Node, Deno, or Bun.
 - Fixed projects not being correctly added due to missing `await` keyword.
+- Fixed `--help <command>` working but `help <command>` (without `--`) not.
 
 ## [1.4.2] 27-10-2024
 

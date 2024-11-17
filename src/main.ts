@@ -114,7 +114,7 @@ async function main(command: string) {
                 );
                 break;
             default:
-                await TheHelper({});
+                await TheHelper({query: Deno.args[1]});
                 Deno.exit(0);
         }
 

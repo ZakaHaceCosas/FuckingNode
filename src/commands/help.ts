@@ -1,5 +1,5 @@
 import { APP_NAME } from "../constants.ts";
-import { LogStuff, SpaceString } from "../functions/io.ts";
+import { ColorString, LogStuff, SpaceString } from "../functions/io.ts";
 import type { TheHelperConstructedParams } from "./constructors/command.ts";
 
 function joinObjectValues(obj: Record<string, string>): string {
@@ -10,29 +10,35 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     const { query } = params;
 
     const _USAGE = {
-        clean: SpaceString("clean    <intensity> [--update] [--verbose]", 8),
-        manager: SpaceString("manager  add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup", 8),
-        stats: SpaceString("stats", 8),
+        clean: SpaceString("clean            <intensity> [--update] [--verbose]", 8),
+        manager: SpaceString("manager          add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup", 8),
         migrate: SpaceString("migrate", 8),
         self_update: SpaceString("upgrade", 8),
-        version: SpaceString("[--version]", 8),
-        help: SpaceString("[--help]", 8),
+        version: SpaceString("[--version, -v]", 8),
+        help: SpaceString("[--help, -h]", 8),
     };
     const USAGE = joinObjectValues(_USAGE);
-    const _OPTIONS = {
-        version: SpaceString(
-            `--version                                                  Show the version of ${APP_NAME.STYLED} you're currently on.`,
-            4,
-        ),
-    };
-    const OPTIONS = joinObjectValues(_OPTIONS);
+
+    async function NoParamProvided() {
+        await LogStuff(
+            `Usage:  ${ColorString(APP_NAME.CLI, "bright-green")}\n${USAGE}\n`,
+            undefined,
+            true,
+        );
+        await LogStuff(
+            ColorString("Pro tip: Run --help <command-name> to get help with a specific command.", "bright-yellow"),
+            "bulb",
+            true
+        )
+    }
+
     const _CLEAN_OPTIONS = {
         intensity: SpaceString(
-            "<intensity>                                                Can be 'normal' (default), 'hard', or 'maxim'. The higher, the deeper (but more time-consuming) the cleaning will be.",
+            "<intensity> 'normal' | 'hard' | 'maxim'                 The higher, the deeper (but more time-consuming) the cleaning will be.",
             4,
         ),
-        update: SpaceString("--update                                                   Update all your projects before cleaning them.", 4),
-        verbose: SpaceString("--verbose                                                  Show more detailed ('verbose') logs.", 4),
+        update: SpaceString("--update                                                Update all your projects before cleaning them.", 4),
+        verbose: SpaceString("--verbose                                               Show more detailed ('verbose') logs.", 4),
     };
     const _MANAGER_OPTIONS = {
         add: SpaceString("add <path>                                                 Adds a project to your list.", 4),
@@ -56,25 +62,8 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     };
     const SETTINGS = joinObjectValues(_SETTINGS);
 
-    const FULL_HELP = `Usage: ${APP_NAME.CLI}\n` +
-        USAGE +
-        "\n\n'clean' will clean your added projects. Flags:\n" +
-        CLEAN_OPTIONS +
-        "\n\n'manager' will let you manage projects. Flags:\n" +
-        MANAGER_OPTIONS +
-        "\n\n'settings' allows you to tweak some parts of the CLI. Flags:\n" +
-        SETTINGS +
-        "\n\nAdditional flags:\n" +
-        OPTIONS +
-        "\n\nAdditional commands:\n" +
-        SpaceString("upgrade          Checks the GitHub repo for updates.", 4);
-
     if (!query) {
-        await LogStuff(
-            FULL_HELP,
-            undefined,
-            true,
-        );
+        await NoParamProvided();
         return;
     }
 
@@ -102,11 +91,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             break;
         case "":
         default:
-            await LogStuff(
-                FULL_HELP,
-                undefined,
-                true,
-            );
+            await NoParamProvided();
             break;
     }
 }
