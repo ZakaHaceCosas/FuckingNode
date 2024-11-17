@@ -1,4 +1,8 @@
 {
+    "name": "@zakahacecosas/fuckingnode",
+    "exports": {
+        ".": "./src/main.ts"
+    },
     "fmt": {
         "indentWidth": 4,
         "lineWidth": 144,
@@ -36,6 +40,7 @@
         "./src/commands/help.ignore.ts"
     ],
     "imports": {
+        "@cliffy/cmd": "jsr:@cliffy/command@^1.0.0-rc.7",
         "@std/fs": "jsr:@std/fs",
         "@std/path": "jsr:@std/path",
         "@std/yaml": "jsr:@std/yaml",
