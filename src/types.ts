@@ -174,18 +174,29 @@ export interface UPDATE_FILE {
 export type tURL = `https://${string}`;
 
 /**
- * `package.json` props we need.
+ * NodeJS `package.json` props, only the ones we need.
  *
  * @export
- * @interface PkgJson
- * @typedef {PkgJson}
+ * @interface NodePkgJson
+ * @typedef {NodePkgJson}
  */
-export interface PkgJson {
+export interface NodePkgJson {
     name?: string;
     workspaces?: string[] | {
         packages: string[];
         nohoist?: string[];
     };
+}
+
+/**
+ * DenoJS `deno.json` props, only the ones we need.
+ *
+ * @export
+ * @interface DenoPkgJson
+ * @typedef {DenoPkgJson}
+ */
+export interface DenoPkgJson {
+    name?: string;
 }
 
 /**

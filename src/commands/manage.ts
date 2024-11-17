@@ -2,7 +2,7 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import type { CONFIG_FILES, PkgJson } from "../types.ts";
+import type { CONFIG_FILES, NodePkgJson } from "../types.ts";
 import { ColorString, ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
@@ -65,7 +65,7 @@ async function GetWorkspaces(path: string): Promise<string[] | null> {
         // Check package.json for Node, npm, and yarn (and Bun workspaces).
         const packageJsonPath = await JoinPaths(workingPath, "package.json");
         if (await CheckForPath(packageJsonPath)) {
-            const pkgJson: PkgJson = JSON.parse(await Deno.readTextFile(packageJsonPath));
+            const pkgJson: NodePkgJson = JSON.parse(await Deno.readTextFile(packageJsonPath));
             if (pkgJson.workspaces) {
                 const pkgWorkspaces = Array.isArray(pkgJson.workspaces) ? pkgJson.workspaces : pkgJson.workspaces?.packages || [];
                 workspacePaths.push(...pkgWorkspaces);
