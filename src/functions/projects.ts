@@ -2,9 +2,10 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { IGNORE_FILE } from "../constants.ts";
-import type { CONFIG_FILES, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types.ts";
+import type { CONFIG_FILES, DenoPkgJson, NodeManagerUt, NodePkgJson, ProjectEnv } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
+import GenericErrorHandler from "../utils/error.ts";
 
 /**
  * Gets all the users projects and returns their paths as a `string[]`.
@@ -34,27 +35,31 @@ export async function GetAllProjects(appPaths: CONFIG_FILES): Promise<string[]> 
  * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
  */
 export async function NameProject(path: string): Promise<string> {
-    const formattedPath = ColorString(ColorString(await ParsePath(path), "italic"), "half-opaque");
+    const workingPath = await ParsePath(path);
+    const formattedPath = ColorString(ColorString(workingPath, "italic"), "half-opaque");
 
     try {
-        const nodePkgJsonPath = await JoinPaths(path, "package.json"); // bun also uses package.json (and also bunfig.toml but im lazy for that)
-        const denoPkgJsonPath = await JoinPaths(path, "deno.json");
+        const env = await GetProjectEnvironment(workingPath);
 
-        const isNode = await CheckForPath(nodePkgJsonPath);
-        const isDeno = await CheckForPath(denoPkgJsonPath);
-
-        if (isNode) {
-            const packageJson: NodePkgJson = JSON.parse(await Deno.readTextFile(nodePkgJsonPath));
+        if (env.runtime === "node") {
+            const packageJson: NodePkgJson = JSON.parse(env.main);
 
             if (!packageJson.name) return formattedPath;
 
             return `${ColorString(ColorString(packageJson.name, "bold"), "bright-green")} ${formattedPath}`;
-        } else if (isDeno) {
-            const denoJson: DenoPkgJson = JSON.parse(await Deno.readTextFile(denoPkgJsonPath));
+        } else if (env.runtime === "deno") {
+            const denoJson: DenoPkgJson = JSON.parse(env.main);
 
             if (!denoJson.name) return formattedPath;
 
             return `${ColorString(ColorString(denoJson.name, "bold"), "bright-blue")} ${formattedPath}`;
+        } else if (env.runtime === "bun") {
+            // TODO - type definition for bunfig.toml
+            const bunToml: NodePkgJson = parseYaml(env.main) as NodePkgJson;
+
+            if (!bunToml.name) return formattedPath;
+
+            return `${ColorString(ColorString(bunToml.name, "bold"), "bright-blue")} ${formattedPath}`;
         }
 
         return formattedPath; // if it's not possible to name it, just give it the raw path
@@ -123,9 +128,7 @@ export async function ValidateProject(appPaths: CONFIG_FILES, entry: string): Pr
     const list = await GetAllProjects(appPaths);
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 
-    const pivotNode = await CheckForPath(await JoinPaths(workingEntry, "package.json"));
-    const pivotDeno = await CheckForPath(await JoinPaths(workingEntry, "deno.json"));
-    const pivotBun = await CheckForPath(await JoinPaths(workingEntry, "bun.lockb"));
+    const env = await GetProjectEnvironment(workingEntry);
 
     if (!(await CheckForPath(workingEntry))) {
         return "NonExistingPath";
@@ -133,13 +136,13 @@ export async function ValidateProject(appPaths: CONFIG_FILES, entry: string): Pr
     if (isDuplicate) {
         return "IsDuplicate";
     }
-    if (!pivotNode) {
-        if (pivotBun) {
+    if (env.runtime !== "node") {
+        if (env.runtime === "bun") {
             // we use bun's lockfile as bun doesn't have its own package file
             // i mean, it has bunfig.toml but it's not often seen
             return "IsBun";
         }
-        if (pivotDeno) {
+        if (env.runtime === "deno") {
             return "IsCoolDeno"; // cool indeed
         }
         return "NoPkgJson";
@@ -230,37 +233,77 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
 }
 
 /**
- * Checks for a project's environment (package manager and JS runtime).
+ * Returns a project's environment (package manager, JS runtime, and paths to lockfile and `node_modules`).
  *
  * @export
  * @async
  * @param {string} path Path to the project's root.
  * @returns {Promise<ProjectEnv>}
  */
-export async function CheckProjectEnvironment(path: string): Promise<ProjectEnv> {
-    const workingPath = await ParsePath(path);
-    if (!(await CheckForPath(workingPath))) throw new Error("Path doesn't exist.");
+export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
+    try {
+        const workingPath = await ParsePath(path);
+        if (!(await CheckForPath(workingPath))) throw new Error("Path doesn't exist.");
+        const trash = await JoinPaths(workingPath, "node_modules");
 
-    if (await CheckForPath(await JoinPaths(workingPath, "bun.lockb"))) {
-        return { runtime: "bun", manager: "bun" };
+        const isDeno = await CheckForPath(await JoinPaths(workingPath, "deno.json")) ||
+            await CheckForPath(await JoinPaths(workingPath, "deno.jsonc")) || await CheckForPath(await JoinPaths(workingPath, "deno.lock"));
+        const isBun = await CheckForPath(await JoinPaths(workingPath, "bun.lockb")) ||
+            await CheckForPath(await JoinPaths(workingPath, "bunfig.toml"));
+
+        const mainPath = isDeno
+            ? (await CheckForPath(await JoinPaths(workingPath, "deno.json"))
+                ? await JoinPaths(workingPath, "deno.json")
+                : await JoinPaths(workingPath, "package.json"))
+            : isBun
+            ? (await CheckForPath(await JoinPaths(workingPath, "bunfig.toml"))
+                ? await JoinPaths(workingPath, "bunfig.toml")
+                : await JoinPaths(workingPath, "package.json"))
+            : await JoinPaths(workingPath, "package.json");
+
+        if (isBun) {
+            return {
+                runtime: "bun",
+                manager: "bun",
+                lockfile: await JoinPaths(workingPath, "bun.lockb"),
+                main: mainPath,
+                hall_of_trash: trash,
+            };
+        }
+        if (isDeno) {
+            return {
+                runtime: "deno",
+                manager: "deno",
+                lockfile: await JoinPaths(workingPath, "deno.lock"),
+                main: mainPath,
+                hall_of_trash: trash,
+            };
+        }
+
+        if (await CheckForPath(await JoinPaths(workingPath, "package.json"))) {
+            const manager = await DetectNodeManager(workingPath);
+            if (manager && manager.name && manager.file) {
+                return {
+                    runtime: "node",
+                    manager: manager.name,
+                    lockfile: await JoinPaths(workingPath, manager.file),
+                    main: mainPath,
+                    hall_of_trash: trash,
+                };
+            }
+        }
+
+        throw new Error("Unable to determine project environment.");
+    } catch (e) {
+        await GenericErrorHandler(e);
+        Deno.exit(1); // (for TS to shut up)
     }
-
-    if (await CheckForPath(await JoinPaths(workingPath, "deno.json"))) {
-        return { runtime: "deno", manager: "deno" };
-    }
-
-    if (await CheckForPath(await JoinPaths(workingPath, "package.json"))) {
-        const manager = await DetectNodeManager(workingPath);
-        if (manager) return { runtime: "node", manager };
-    }
-
-    throw new Error("Unable to determine project environment.");
 }
 
 /** Utility function to differentiate npm from pnpm from yarn. */
-async function DetectNodeManager(workingPath: string): Promise<"npm" | "pnpm" | "yarn" | null> {
-    if (await CheckForPath(await JoinPaths(workingPath, "package-lock.json"))) return "npm";
-    if (await CheckForPath(await JoinPaths(workingPath, "pnpm-lock.yaml"))) return "pnpm";
-    if (await CheckForPath(await JoinPaths(workingPath, "yarn.lock"))) return "yarn";
+async function DetectNodeManager(workingPath: string): Promise<NodeManagerUt | null> {
+    if (await CheckForPath(await JoinPaths(workingPath, "package-lock.json"))) return { name: "npm", file: "package-lock.json" };
+    if (await CheckForPath(await JoinPaths(workingPath, "pnpm-lock.yaml"))) return { name: "pnpm", file: "pnpm-lock.yaml" };
+    if (await CheckForPath(await JoinPaths(workingPath, "yarn.lock"))) return { name: "yarn", file: "yarn.lock" };
     return null;
 }

@@ -274,4 +274,33 @@ export interface ProjectEnv {
      * @type {("npm" | "pnpm" | "yarn" | "deno" | "bun")}
      */
     manager: "npm" | "pnpm" | "yarn" | "deno" | "bun";
+    /**
+     * Parsed path to lockfile.
+     *
+     * @type {string}
+     */
+    lockfile: string;
+    /**
+     * Path to `node_modules`.
+     *
+     * @type {string}
+     */
+    hall_of_trash: string;
+    /**
+     * Path to main file (`package.json`, `deno.json`...)
+     *
+     * @type {string}
+     */
+    main: string;
+}
+
+/**
+ * im tired, ill do better jsdoc later.
+ *
+ * @interface NodeManagerUt
+ * @typedef {NodeManagerUt}
+ */
+export interface NodeManagerUt {
+    name: "npm" | "pnpm" | "yarn";
+    file: "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock";
 }
