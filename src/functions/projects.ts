@@ -2,7 +2,7 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { IGNORE_FILE } from "../constants.ts";
-import type { CONFIG_FILES, DenoPkgJson, NodePkgJson } from "../types.ts";
+import type { CONFIG_FILES, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 
@@ -227,4 +227,40 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
         await LogStuff(`Error looking for workspaces: ${e}`, "error");
         return null;
     }
+}
+
+/**
+ * Checks for a project's environment (package manager and JS runtime).
+ *
+ * @export
+ * @async
+ * @param {string} path Path to the project's root.
+ * @returns {Promise<ProjectEnv>}
+ */
+export async function CheckProjectEnvironment(path: string): Promise<ProjectEnv> {
+    const workingPath = await ParsePath(path);
+    if (!(await CheckForPath(workingPath))) throw new Error("Path doesn't exist.");
+
+    if (await CheckForPath(await JoinPaths(workingPath, "bun.lockb"))) {
+        return { runtime: "bun", manager: "bun" };
+    }
+
+    if (await CheckForPath(await JoinPaths(workingPath, "deno.json"))) {
+        return { runtime: "deno", manager: "deno" };
+    }
+
+    if (await CheckForPath(await JoinPaths(workingPath, "package.json"))) {
+        const manager = await DetectNodeManager(workingPath);
+        if (manager) return { runtime: "node", manager };
+    }
+
+    throw new Error("Unable to determine project environment.");
+}
+
+/** Utility function to differentiate npm from pnpm from yarn. */
+async function DetectNodeManager(workingPath: string): Promise<"npm" | "pnpm" | "yarn" | null> {
+    if (await CheckForPath(await JoinPaths(workingPath, "package-lock.json"))) return "npm";
+    if (await CheckForPath(await JoinPaths(workingPath, "pnpm-lock.yaml"))) return "pnpm";
+    if (await CheckForPath(await JoinPaths(workingPath, "yarn.lock"))) return "yarn";
+    return null;
 }

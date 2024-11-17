@@ -254,3 +254,24 @@ export type CleanerIntensity = "normal" | "hard" | "hard-only" | "maxim";
  * @typedef {ProjectCleanerIntensity}
  */
 export type ProjectCleanerIntensity = "normal" | "hard" | "maxim";
+
+/**
+ * Info about a project to know its environment (runtime and package manager).
+ *
+ * @interface ProjectEnv
+ * @typedef {ProjectEnv}
+ */
+export interface ProjectEnv {
+    /**
+     * JS runtime.
+     *
+     * @type {("node" | "deno" | "bun")}
+     */
+    runtime: "node" | "deno" | "bun";
+    /**
+     * Package manager. For Deno and Bun it just says "deno" and "bun" instead of JSR or NPM (afaik Bun uses NPM) to avoid confusion.
+     *
+     * @type {("npm" | "pnpm" | "yarn" | "deno" | "bun")}
+     */
+    manager: "npm" | "pnpm" | "yarn" | "deno" | "bun";
+}
