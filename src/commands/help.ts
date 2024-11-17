@@ -1,6 +1,6 @@
 import { APP_NAME } from "../constants.ts";
 import { LogStuff, SpaceString } from "../functions/io.ts";
-import { TheHelperConstructedParams } from "./constructors/command.ts";
+import type { TheHelperConstructedParams } from "./constructors/command.ts";
 
 function joinObjectValues(obj: Record<string, string>): string {
     return Object.values(obj).join("\n");

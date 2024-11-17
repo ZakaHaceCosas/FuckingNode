@@ -1,4 +1,4 @@
-import { CONFIG_FILES } from "../../types.ts";
+import type { CONFIG_FILES } from "../../types.ts";
 
 interface ConstructorParameters {
     CF: CONFIG_FILES;

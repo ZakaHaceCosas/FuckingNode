@@ -4,7 +4,7 @@ import { RELEASE_URL, VERSION } from "../constants.ts";
 import { type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type UPDATE_FILE } from "../types.ts";
 import { GetDateNow, MakeRightNowDateStandard } from "../functions/date.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
-import { TheUpdaterConstructedParams } from "./constructors/command.ts";
+import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
 import { LogStuff } from "../functions/io.ts";
 
 /**
