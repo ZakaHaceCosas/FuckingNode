@@ -1,5 +1,5 @@
 import TheHelper from "../commands/help.ts";
-import { type ERROR_CODES, type SUPPORTED_EMOJIS, validColors } from "../types.ts";
+import type { ERROR_CODES, SUPPORTED_EMOJIS, validColors } from "../types.ts";
 import { GetAppPath } from "./config.ts";
 
 /**

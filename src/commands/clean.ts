@@ -1,17 +1,17 @@
 import { I_LIKE_JS } from "../constants.ts";
 import {
     IsLockfileNodeLockfile,
-    ProjectCleanerIntensity,
+    type ProjectCleanerIntensity,
     type SUPPORTED_LOCKFILES,
     type SUPPORTED_NOT_NODE_LOCKFILE as _NotNode,
 } from "../types.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
-import { TheCleanerConstructedParams } from "./constructors/command.ts";
+import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
 import { PerformHardCleanup, PerformNodeCleaning } from "./toolkit/cleaner.ts";
-import { CleanerIntensity } from "../types.ts";
+import type { CleanerIntensity } from "../types.ts";
 
 export default async function TheCleaner(params: TheCleanerConstructedParams) {
     const { CF, intensity, verbose, update } = params;
