@@ -3,7 +3,7 @@ import TheManager from "./commands/manage.ts";
 import TheStatistics from "./commands/stats.ts";
 import TheMigrator from "./commands/migrate.ts";
 import TheHelper from "./commands/help.ts";
-import TheUpdater from "./functions/updater.ts";
+import TheUpdater from "./commands/updater.ts";
 import TheSettings from "./commands/settings.ts";
 import TheAbouter from "./commands/about.ts";
 

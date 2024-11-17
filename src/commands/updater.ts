@@ -2,10 +2,10 @@ import { compare, greaterThan, parse } from "@std/semver";
 import { FetchGitHub } from "../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
 import { type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type UPDATE_FILE } from "../types.ts";
-import { GetDateNow, MakeRightNowDateStandard } from "./date.ts";
-import { CheckForPath } from "./filesystem.ts";
-import { TheUpdaterConstructedParams } from "../commands/constructors/command.ts";
-import { LogStuff } from "./io.ts";
+import { GetDateNow, MakeRightNowDateStandard } from "../functions/date.ts";
+import { CheckForPath } from "../functions/filesystem.ts";
+import { TheUpdaterConstructedParams } from "./constructors/command.ts";
+import { LogStuff } from "../functions/io.ts";
 
 /**
  * Compares two SemVer versions. Returns the difference between both, so if `versionB` is more recent than `versionA` you'll get a positive number, or you'll get 0 if they're equal.
