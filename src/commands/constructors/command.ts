@@ -27,3 +27,8 @@ export interface TheMigratorConstructedParams extends Omit<ConstructorParameters
 export interface TheSettingsConstructedParams extends ConstructorParameters {
     args: string[];
 }
+
+export interface TheUpdaterConstructedParams extends ConstructorParameters {
+    force: boolean;
+    silent: boolean;
+}

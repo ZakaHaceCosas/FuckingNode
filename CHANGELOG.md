@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Now that the ignore file expects content, comments are allowed using the `--!` prefix.
 - Added much more better support for workspaces, by recognizing `pnpm-workspace.yaml`, `yarnrc.yaml` and `bunfig.toml`.
 - Added the ability to only do a hard cleanup (global cache cleanup), by running either `global-clean`, `hard-clean`, or `clean hard-only`.
+- Added an about page. <!-- UNCOMMITTED, BUT ADDED -->
 
 ### Changed
 
@@ -40,6 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed the base directory for app config being recursively created on each run.
 - Fixed the app fetching config paths many times. This _should_ slightly improve performance (as it reduces path-checking operations).
 - Fixed `manager list` not listing ignored projects (showing an empty list when there are ignored projects).
+- Fixed `upgrade` (_`self-update`_) not correctly handling GitHub's rate limit.
 
 ## [1.4.2] 27-10-2024
 

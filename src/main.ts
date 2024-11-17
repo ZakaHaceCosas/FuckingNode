@@ -5,6 +5,7 @@ import TheMigrator from "./commands/migrate.ts";
 import TheHelper from "./commands/help.ts";
 import TheUpdater from "./functions/updater.ts";
 import TheSettings from "./commands/settings.ts";
+import TheAbouter from "./commands/about.ts";
 
 import { I_LIKE_JS, VERSION } from "./constants.ts";
 import type { CONFIG_FILES } from "./types.ts";
@@ -30,7 +31,7 @@ const wantsToUpdate = flags.includes("--update");
 async function init(update: boolean) {
     const configFiles = await FreshSetup(); // Temporarily hold the result
     const ALL_CONFIG_FILES: CONFIG_FILES = configFiles; // Assign only after it's resolved
-    await TheUpdater(ALL_CONFIG_FILES, update);
+    await TheUpdater({CF: ALL_CONFIG_FILES, force: update, silent: !update});
     return ALL_CONFIG_FILES;
 }
 
@@ -102,6 +103,9 @@ async function main(command: string) {
                 await LogStuff("Checking for updates...");
                 await init(true);
                 await LogStuff("Done", "tick-clear");
+                break;
+            case "about":
+                await TheAbouter();
                 break;
             case "stats":
                 await LogStuff(
