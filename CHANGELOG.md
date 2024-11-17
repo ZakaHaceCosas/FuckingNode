@@ -27,6 +27,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now in some places instead of an "Unknown command" error, the help menu is shown so you can see what commands are valid.
 - Now `manager list` shows, if possible, the name of the project from the `package.json`, alongside it's absolute path. Also, now projects are alphabetically sorted by name (by their path if not possible to obtain their name).
 - Now the CLI has cool looking colors 🙂.
+- Now, projects without a `node_modules` DIR won't show a warning before adding them.
+- Now, `manager cleanup` will show next to the project's path an error code indicating why it's in there.
 
 ### Fixed
 
@@ -42,6 +44,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed the app fetching config paths many times. This _should_ slightly improve performance (as it reduces path-checking operations).
 - Fixed `manager list` not listing ignored projects (showing an empty list when there are ignored projects).
 - Fixed `upgrade` (_`self-update`_) not correctly handling GitHub's rate limit.
+- Fixed an issue where naming projects (reading their `name` from `package.json`) would crash the CLI.
+- Fixed unreliability when finding out if a project uses Node, Deno, or Bun.
 
 ## [1.4.2] 27-10-2024
 

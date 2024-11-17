@@ -2,7 +2,7 @@ import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CONFIG_FILES } from "../types.ts";
 import { ColorString, ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import { CheckDivineProtection, GetAllProjects, GetWorkspaces, NameProject, ValidateNodeProject } from "../functions/projects.ts";
+import { CheckDivineProtection, GetAllProjects, GetWorkspaces, NameProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler from "../utils/error.ts";
 
@@ -30,23 +30,23 @@ async function AddProject(
         );
     }
 
-    const validation = await ValidateNodeProject(workingEntry, appPaths);
+    const validation = await ValidateProject(appPaths, workingEntry);
 
-    if (validation === 4) {
+    if (validation === "NonExistingPath") {
         await LogStuff(
             `Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`,
             "error",
         );
         return;
     }
-    if (validation === 3) {
+    if (validation === "IsDuplicate") {
         await LogStuff(
             `Bruh, you already added this ${I_LIKE_JS.MF}! (${projectName})`,
             "error",
         );
         return;
     }
-    if (validation === 1) {
+    if (validation === "NoPkgJson") {
         const addAnyway = await LogStuff(
             `This path doesn't have a package.json. Are you sure it's a Node project?\nConfirm you want to add it\nPS. You typed: ${workingEntry}`,
             "what",
@@ -57,11 +57,11 @@ async function AddProject(
         addTheEntry();
         return;
     }
-    if (validation === 5) {
+    if (validation === "IsCoolDeno") {
         const addAnyway = await LogStuff(
             // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao
             // idk whats better, deno or bun. i have both installed, i could try. one day, maybe.
-            `This project appears to use the Deno runtime (good choice btw). It's not *fully* supported *yet*. Add anyway?`,
+            `This project uses the Deno runtime (good choice btw). It's not *fully* supported *yet*. Add anyway?`,
             "what",
             undefined,
             true,
@@ -70,9 +70,9 @@ async function AddProject(
         addTheEntry();
         return;
     }
-    if (validation === 6) {
+    if (validation === "IsBun") {
         const addAnyway = await LogStuff(
-            `This project appears to use the Bun runtime. It's not *fully* supported *yet*. Add anyway?`,
+            `This project uses the Bun runtime. It's not *fully* supported *yet*. Add anyway?`,
             "what",
             undefined,
             true,
@@ -177,8 +177,8 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
         const listOfRemovals: string[] = [];
 
         for (const project of list) {
-            const validation = await ValidateNodeProject(project, appPaths);
-            if (validation !== 0) listOfRemovals.push(project);
+            const validation = await ValidateProject(appPaths, project);
+            if (validation !== true) listOfRemovals.push(project);
         }
 
         // this should handle duplicates, so all duplicates EXCEPT ONE are removed
@@ -218,7 +218,7 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
     // doesn't use NameProject as it's likely to point to an invalid path
     for (const idiot of list) {
         await LogStuff(
-            `\n${idiot} ${ColorString("Code: " + (await ValidateNodeProject(idiot, appPaths)), "half-opaque")}\n`,
+            `\n${idiot} ${ColorString("Code: " + (await ValidateProject(appPaths, idiot)), "half-opaque")}\n`,
             undefined,
             true,
         );

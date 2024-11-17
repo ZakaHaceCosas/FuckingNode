@@ -34,29 +34,33 @@ export async function GetAllProjects(appPaths: CONFIG_FILES): Promise<string[]> 
  * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
  */
 export async function NameProject(path: string): Promise<string> {
-    const nodePkgJsonPath = await JoinPaths(path, "package.json"); // bun also uses package.json (and also bunfig.toml but im lazy for that)
-    const denoPkgJsonPath = await JoinPaths(path, "deno.json");
-
-    const isNode = await CheckForPath(nodePkgJsonPath);
-    const isDeno = await CheckForPath(denoPkgJsonPath);
-
     const formattedPath = ColorString(ColorString(await ParsePath(path), "italic"), "half-opaque");
 
-    if (isNode) {
-        const packageJson: NodePkgJson = JSON.parse(await Deno.readTextFile(nodePkgJsonPath));
+    try {
+        const nodePkgJsonPath = await JoinPaths(path, "package.json"); // bun also uses package.json (and also bunfig.toml but im lazy for that)
+        const denoPkgJsonPath = await JoinPaths(path, "deno.json");
 
-        if (!packageJson.name) return formattedPath;
+        const isNode = await CheckForPath(nodePkgJsonPath);
+        const isDeno = await CheckForPath(denoPkgJsonPath);
 
-        return `${ColorString(ColorString(packageJson.name, "bold"), "bright-green")} ${formattedPath}`;
-    } else if (isDeno) {
-        const denoJson: DenoPkgJson = JSON.parse(await Deno.readTextFile(nodePkgJsonPath));
+        if (isNode) {
+            const packageJson: NodePkgJson = JSON.parse(await Deno.readTextFile(nodePkgJsonPath));
 
-        if (!denoJson.name) return formattedPath;
+            if (!packageJson.name) return formattedPath;
 
-        return `${ColorString(ColorString(denoJson.name, "bold"), "bright-blue")} ${formattedPath}`;
+            return `${ColorString(ColorString(packageJson.name, "bold"), "bright-green")} ${formattedPath}`;
+        } else if (isDeno) {
+            const denoJson: DenoPkgJson = JSON.parse(await Deno.readTextFile(nodePkgJsonPath));
+
+            if (!denoJson.name) return formattedPath;
+
+            return `${ColorString(ColorString(denoJson.name, "bold"), "bright-blue")} ${formattedPath}`;
+        }
+
+        return formattedPath; // if it's not possible to name it, just give it the raw path
+    } catch {
+        return formattedPath; // if it's not possible to name it, just give it the raw path
     }
-
-    return formattedPath; // if it's not possible to name it, just give it the raw path
 }
 
 /**
@@ -103,42 +107,44 @@ export async function CheckDivineProtection(
     return null; // nothing
 }
 
+type ProjectError = "NonExistingPath" | "IsDuplicate" | "IsBun" | "IsCoolDeno" | "NoPkgJson";
+
 /**
- * Given a path, returns a number indicating if it's a valid Node project or not.
- *
- * `0` = valid. `1` = not valid, no package.json. `2` = not fully valid, missing node_modules.
- * `3` = not fully valid, duplicate. `4` = path doesn't exist. `5` = uses Deno. `6` = uses Bun.
+ * Given a path to a project, returns `true` if the project is valid, or a message indicating if it's not a valid Node/Deno/Bun project.
  *
  * @async
- * @param {string} entry Path to the project.
  * @param {CONFIG_FILES} appPaths Config files.
- * @returns {Promise<0 | 1 | 2 | 3 | 4 | 5 | 6>}
+ * @param {string} entry Path to the project.
+ * @param {"node" | "deno" | "bun" | "unknown"} runtime JS runtime the project is on.
+ * @returns {Promise<true | ProjectError>} True if it's valid, a `ProjectError` otherwise.
  */
-export async function ValidateNodeProject(entry: string, appPaths: CONFIG_FILES): Promise<0 | 1 | 2 | 3 | 4 | 5 | 6> {
+export async function ValidateProject(appPaths: CONFIG_FILES, entry: string): Promise<true | ProjectError> {
     const workingEntry = await ParsePath(entry);
     const list = await GetAllProjects(appPaths);
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 
+    const pivotNode = await CheckForPath(await JoinPaths(workingEntry, "package.json"));
+    const pivotDeno = await CheckForPath(await JoinPaths(workingEntry, "deno.json"));
+    const pivotBun = await CheckForPath(await JoinPaths(workingEntry, "bun.lockb"));
+
     if (!(await CheckForPath(workingEntry))) {
-        return 4;
+        return "NonExistingPath";
     }
     if (isDuplicate) {
-        return 3;
+        return "IsDuplicate";
     }
-    if (!(await CheckForPath(await JoinPaths(workingEntry, "package.json")))) {
-        if (await CheckForPath(await JoinPaths(workingEntry, "bun.lockb"))) {
+    if (!pivotNode) {
+        if (pivotBun) {
             // we use bun's lockfile as bun doesn't have its own package file
-            return 6;
+            // i mean, it has bunfig.toml but it's not often seen
+            return "IsBun";
         }
-        if (await CheckForPath(await JoinPaths(workingEntry, "deno.json"))) {
-            return 5;
+        if (pivotDeno) {
+            return "IsCoolDeno"; // cool indeed
         }
-        return 1;
+        return "NoPkgJson";
     }
-    if (!(await CheckForPath(await JoinPaths(workingEntry, "node_modules")))) {
-        return 2;
-    }
-    return 0;
+    return true;
 }
 
 /**
