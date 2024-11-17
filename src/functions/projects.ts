@@ -2,7 +2,7 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { IGNORE_FILE } from "../constants.ts";
-import { CONFIG_FILES, DenoPkgJson, type NodePkgJson } from "../types.ts";
+import type { CONFIG_FILES, DenoPkgJson, NodePkgJson } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 
@@ -50,7 +50,7 @@ export async function NameProject(path: string): Promise<string> {
 
             return `${ColorString(ColorString(packageJson.name, "bold"), "bright-green")} ${formattedPath}`;
         } else if (isDeno) {
-            const denoJson: DenoPkgJson = JSON.parse(await Deno.readTextFile(nodePkgJsonPath));
+            const denoJson: DenoPkgJson = JSON.parse(await Deno.readTextFile(denoPkgJsonPath));
 
             if (!denoJson.name) return formattedPath;
 
