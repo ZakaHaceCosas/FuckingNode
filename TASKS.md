@@ -21,3 +21,18 @@
 
 - [ ] Add more `ColorString()` options and use them in more places.
 - [X] Add an about command.
+
+## Cross-runtime support tasks
+
+- [ ] Project-wide cleanup
+  - [X] NODE
+  - [ ] DENO
+  - [ ] BUN
+- [ ] System-wide cache cleanup
+  - [X] NODE
+  - [X] DENO
+  - [X] BUN
+- [ ] Project naming
+  - [X] NODE
+  - [X] DENO
+  - [X] BUN
