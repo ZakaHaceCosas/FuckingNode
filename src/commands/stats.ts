@@ -2,7 +2,7 @@ import { I_LIKE_JS } from "../constants.ts";
 import { CheckForPath, GetDirSize, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
-import { CONFIG_FILES } from "../types.ts";
+import type { CONFIG_FILES } from "../types.ts";
 
 export default async function TheStatistics(CF: CONFIG_FILES) {
     const projects = await GetAllProjects(CF);

@@ -2,7 +2,7 @@ import { Commander } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import type { MANAGERS, SUPPORTED_NODE_LOCKFILE } from "../types.ts";
-import { TheMigratorConstructedParams } from "./constructors/command.ts";
+import type { TheMigratorConstructedParams } from "./constructors/command.ts";
 
 export default async function TheMigrator(params: TheMigratorConstructedParams) {
     const { project, target } = params;

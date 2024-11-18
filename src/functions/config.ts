@@ -1,5 +1,5 @@
 import { APP_NAME, I_LIKE_JS } from "../constants.ts";
-import { CONFIG_FILES } from "../types.ts";
+import type { CONFIG_FILES } from "../types.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
 
