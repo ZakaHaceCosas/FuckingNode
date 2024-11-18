@@ -3,15 +3,14 @@ import { APP_NAME } from "../constants.ts";
 import TheCleaner from "./clean.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import TheHelper from "./help.ts";
-import { CONFIG_FILES } from "../types.ts";
-import { TheSettingsConstructedParams } from "./constructors/command.ts";
-
+import type { CONFIG_FILES } from "../types.ts";
+import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 async function CreateSchedule(hour: string, day: string | "*", appPaths: CONFIG_FILES) {
     const workingHour = Number(hour);
 
-    if (workingHour < 0 || workingHour > 23) {
+    if (isNaN(workingHour) || workingHour < 0 || workingHour > 23) {
         await LogStuff(
-            "Hour must be a valid number between 0 and 23.",
+            "Invalid hour. Must be a number between 0 and 23.",
             "error",
         );
         Deno.exit(1);
@@ -23,9 +22,9 @@ async function CreateSchedule(hour: string, day: string | "*", appPaths: CONFIG_
         workingDay = 1;
     } else {
         const daysBetween = Number(day);
-        if (daysBetween < 0 || daysBetween > 6) {
+        if (isNaN(daysBetween) || daysBetween < 0 || daysBetween > 6) {
             await LogStuff(
-                "Day must be a valid number between 0 and 6, or an asterisk.",
+                "Invalid day. Must be a number between 0 and 6, or an asterisk ('*') for daily.",
                 "error",
             );
             Deno.exit(1);
@@ -47,12 +46,16 @@ async function CreateSchedule(hour: string, day: string | "*", appPaths: CONFIG_
             {
                 backoffSchedule: [1500, 3000, 5000, 15000],
             },
-            () => {
-                TheCleaner({ update: false, verbose: false, intensity: "normal", CF: appPaths });
+            async () => {
+                await TheCleaner({
+                    update: false,
+                    verbose: false,
+                    intensity: "normal",
+                    CF: appPaths,
+                });
             },
         );
-        await LogStuff("That worked out! Schedule created.", "tick");
-        Deno.exit(0);
+        await LogStuff("That worked out! Schedule successfully created!", "tick");
     } catch (e) {
         await LogStuff(`Error scheduling: ${e}`, "error");
     }

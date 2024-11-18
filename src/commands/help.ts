@@ -28,8 +28,8 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         await LogStuff(
             ColorString("Pro tip: Run --help <command-name> to get help with a specific command.", "bright-yellow"),
             "bulb",
-            true
-        )
+            true,
+        );
     }
 
     const _CLEAN_OPTIONS = {
