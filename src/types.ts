@@ -182,6 +182,7 @@ export type tURL = `https://${string}`;
  */
 export interface NodePkgJson {
     name?: string;
+    version?: string;
     workspaces?: string[] | {
         packages: string[];
         nohoist?: string[];
@@ -197,6 +198,23 @@ export interface NodePkgJson {
  */
 export interface DenoPkgJson {
     name?: string;
+    version?: string;
+}
+
+/**
+ * Bun `bunfig.toml` props, only the ones we need.
+ *
+ * @export
+ * @interface BunfigToml
+ * @typedef {BunfigToml}
+ */
+export interface BunfigToml {
+    name?: string;
+    version?: string;
+    /* main?: string;
+    scripts?: Record<string, string>;
+    dependencies?: Record<string, string>;
+    devDependencies?: Record<string, string>; */
 }
 
 /**

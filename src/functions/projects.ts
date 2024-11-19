@@ -2,7 +2,7 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { IGNORE_FILE } from "../constants.ts";
-import type { CONFIG_FILES, DenoPkgJson, NodeManagerUt, NodePkgJson, ProjectEnv } from "../types.ts";
+import type { BunfigToml, CONFIG_FILES, DenoPkgJson, NodeManagerUt, NodePkgJson, ProjectEnv } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 import GenericErrorHandler from "../utils/error.ts";
@@ -55,8 +55,7 @@ export async function NameProject(path: string): Promise<string> {
 
             return `${ColorString(ColorString(denoJson.name, "bold"), "bright-blue")} ${formattedPath}`;
         } else if (env.runtime === "bun") {
-            // TODO - type definition for bunfig.toml
-            const bunToml: NodePkgJson = parseYaml(pkgFilePath) as NodePkgJson;
+            const bunToml: BunfigToml = parseYaml(pkgFilePath) as BunfigToml;
 
             if (!bunToml.name) return formattedPath;
 
