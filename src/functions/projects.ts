@@ -31,7 +31,7 @@ export async function GetAllProjects(appPaths: CONFIG_FILES): Promise<string[]> 
  * Given a path to a project, returns it's name.
  *
  * @export
- * @param {string} path Path to the **root**.
+ * @param {string} path Path to the **root** of the project.
  * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
  */
 export async function NameProject(path: string): Promise<string> {
@@ -40,26 +40,27 @@ export async function NameProject(path: string): Promise<string> {
 
     try {
         const env = await GetProjectEnvironment(workingPath);
+        const pkgFilePath = await Deno.readTextFile(env.main);
 
         if (env.runtime === "node") {
-            const packageJson: NodePkgJson = JSON.parse(env.main);
+            const packageJson: NodePkgJson = JSON.parse(pkgFilePath);
 
             if (!packageJson.name) return formattedPath;
 
             return `${ColorString(ColorString(packageJson.name, "bold"), "bright-green")} ${formattedPath}`;
         } else if (env.runtime === "deno") {
-            const denoJson: DenoPkgJson = JSON.parse(env.main);
+            const denoJson: DenoPkgJson = JSON.parse(pkgFilePath);
 
             if (!denoJson.name) return formattedPath;
 
             return `${ColorString(ColorString(denoJson.name, "bold"), "bright-blue")} ${formattedPath}`;
         } else if (env.runtime === "bun") {
             // TODO - type definition for bunfig.toml
-            const bunToml: NodePkgJson = parseYaml(env.main) as NodePkgJson;
+            const bunToml: NodePkgJson = parseYaml(pkgFilePath) as NodePkgJson;
 
             if (!bunToml.name) return formattedPath;
 
-            return `${ColorString(ColorString(bunToml.name, "bold"), "bright-blue")} ${formattedPath}`;
+            return `${ColorString(ColorString(bunToml.name, "bold"), "pink")} ${formattedPath}`;
         }
 
         return formattedPath; // if it's not possible to name it, just give it the raw path
