@@ -47,19 +47,31 @@ export async function NameProject(path: string): Promise<string> {
 
             if (!packageJson.name) return formattedPath;
 
-            return `${ColorString(ColorString(packageJson.name, "bold"), "bright-green")} ${formattedPath}`;
+            const formattedName = ColorString(packageJson.name, "bold");
+
+            const formattedVersion = packageJson.version ? ColorString(packageJson.version, "purple") : "";
+
+            return `${ColorString(formattedName, "bright-green")} ${formattedVersion} ${formattedPath}`;
         } else if (env.runtime === "deno") {
             const denoJson: DenoPkgJson = JSON.parse(pkgFilePath);
 
             if (!denoJson.name) return formattedPath;
 
-            return `${ColorString(ColorString(denoJson.name, "bold"), "bright-blue")} ${formattedPath}`;
+            const formattedName = ColorString(denoJson.name, "bold");
+
+            const formattedVersion = denoJson.version ? ColorString(denoJson.version, "purple") : "";
+
+            return `${ColorString(formattedName, "bright-blue")} ${formattedVersion} ${formattedPath}`;
         } else if (env.runtime === "bun") {
             const bunToml: BunfigToml = parseYaml(pkgFilePath) as BunfigToml;
 
             if (!bunToml.name) return formattedPath;
 
-            return `${ColorString(ColorString(bunToml.name, "bold"), "pink")} ${formattedPath}`;
+            const formattedName = ColorString(bunToml.name, "bold");
+
+            const formattedVersion = bunToml.version ? ColorString(bunToml.version, "purple") : "";
+
+            return `${ColorString(formattedName, "pink")} ${formattedVersion} ${formattedPath}`;
         }
 
         return formattedPath; // if it's not possible to name it, just give it the raw path
