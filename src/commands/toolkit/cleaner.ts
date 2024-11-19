@@ -134,10 +134,6 @@ export async function PerformHardCleanup(): Promise<void> {
         await Commander("bun", bunHardPruneArgs, true);
     }
     await LogStuff("Done", "tick");
-    await LogStuff(
-        ColorString("DENO", "bright-blue"),
-        "package",
-    );
     /* if (await CommandExists("deno")) {
         await Commander("deno", ["init"], false); // placebo 2
         await Commander("deno", denoHardPruneArgs, true);
@@ -152,6 +148,10 @@ export async function PerformHardCleanup(): Promise<void> {
         try {
             const denoDir: string | undefined = Deno.env.get("DENO_DIR");
             if (!denoDir) throw "lmao";
+            await LogStuff(
+                ColorString("DENO", "bright-blue"),
+                "package",
+            );
             await Deno.remove(denoDir);
             await LogStuff("Done", "tick");
             // the CLI calls this kind of behaviors "maxim" cleanup

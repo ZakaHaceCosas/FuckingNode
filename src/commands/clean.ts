@@ -13,6 +13,23 @@ import GenericErrorHandler from "../utils/error.ts";
 import { PerformHardCleanup, PerformNodeCleaning } from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types.ts";
 
+function ResolveProtection(protection: string | null, update: boolean): {
+    doClean: boolean,
+    doUpdate: boolean,
+    preliminaryStatus?: "Fully protected" | "Cleanup protected" |"Update protected"
+} {
+    switch (protection) {
+        case "*":
+            return { doClean: false, doUpdate: false, preliminaryStatus: "Fully protected" };
+        case "cleanup":
+            return { doClean: false, doUpdate: true, preliminaryStatus: "Cleanup protected" };
+        case "updater":
+            return { doClean: true, doUpdate: false, preliminaryStatus: "Update protected" };
+        default:
+            return { doClean: true, doUpdate: update };
+    }
+}
+
 export default async function TheCleaner(params: TheCleanerConstructedParams) {
     const { CF, intensity, verbose, update } = params;
 
@@ -42,11 +59,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         if (workingIntensity === "hard-only") {
             await PerformHardCleanup();
             return;
-        }
-
-        const possibleOptions = ["normal", "hard", "maxim"];
-        if (!(possibleOptions.includes(workingIntensity))) {
-            realIntensity = "normal";
         }
 
         if (workingIntensity === "maxim") {
@@ -109,12 +121,10 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     lockfiles.push("deno.lock");
                 }
 
-                let doUpdate: boolean;
-                let doClean: boolean;
-
                 const protection = await CheckDivineProtection(project);
-                switch (protection) {
-                    case "*":
+                const { doClean, doUpdate, preliminaryStatus } = ResolveProtection(protection, update);
+                switch (preliminaryStatus) {
+                    case "Fully protected":
                         await LogStuff(
                             ColorString(
                                 `${project} is fully protected by ${I_LIKE_JS.FKN} divine protection. Cannot touch it.`,
@@ -126,10 +136,8 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                             path: project,
                             status: "Fully protected",
                         });
-                        doUpdate = false;
-                        doClean = false;
                         continue;
-                    case "cleanup":
+                    case "Cleanup protected":
                         await LogStuff(
                             ColorString(
                                 `${project} is cleanup protected by ${I_LIKE_JS.FKN} divine protection. Cannot clean it, but will be updated (if you specified to do so).`,
@@ -137,10 +145,8 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                             ),
                             "heads-up",
                         );
-                        doUpdate = true;
-                        doClean = false;
                         break;
-                    case "updater":
+                    case "Update protected":
                         await LogStuff(
                             ColorString(
                                 `${project} is update protected by ${I_LIKE_JS.FKN} divine protection. Cannot update it, but will be cleaned (if you specified to do so).`,
@@ -148,12 +154,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                             ),
                             "heads-up",
                         );
-                        doUpdate = false;
-                        doClean = true;
                         break;
-                    default:
-                        doClean = true;
-                        doUpdate = update;
                 }
 
                 if (lockfiles.length > 0) {
@@ -164,7 +165,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                                     await PerformNodeCleaning(
                                         lockfile,
                                         project,
-                                        update ? doUpdate : false,
+                                        doUpdate,
                                         doClean,
                                         realIntensity,
                                     );
@@ -201,7 +202,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     continue;
                 }
 
-                results.push({ path: project, status: "Success" });
+                results.push({ path: project, status: preliminaryStatus ? `Success # ${preliminaryStatus}` : "Success" });
             } catch (e) {
                 await LogStuff(
                     ColorString(`Error while working around with ${project}: ${e}`, "red"),
@@ -223,15 +224,13 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
         // shows a report
         await LogStuff("Report:", "chart", false, undefined, verbose);
+        const report: string[] = [];
         for (const result of results) {
-            await LogStuff(
-                `${await NameProject(result.path)} -> ${ColorString(result.status, "bold")}`,
-                undefined,
-                false,
-                undefined,
-                verbose,
-            );
+            const theResult = `${await NameProject(result.path)} -> ${ColorString(result.status, "bold")}`;
+            report.push(theResult);
         }
+        await LogStuff(report.join("\n"), undefined, false, undefined, verbose);
+        await LogStuff("\n", undefined, false, undefined, verbose); // glue fix
 
         await LogStuff(
             ColorString(`Cleaning completed at ${new Date().toLocaleString()}`, "bright-green"),
