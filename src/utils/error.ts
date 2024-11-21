@@ -54,7 +54,7 @@ export class FknError extends Error {
         if (message !== null) {
             messageParts.push(
                 "----------",
-                "Hint: " + ColorString(message, "italic"),
+                ColorString("Hint: ", "bright-blue") + ColorString(message, "italic"),
                 "----------",
             );
         }
