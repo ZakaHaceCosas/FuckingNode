@@ -175,7 +175,8 @@ export function ParsePathList(target: string): string[] {
     const allTargets = workingTarget
         .split("\n")
         .map((line) => line.trim().replace(/,$/, ""))
-        .filter((line) => line.length > 0);
+        .filter((line) => line.length > 0)
+        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
     return allTargets.map(normalize);
 }

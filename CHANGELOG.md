@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added much more better support for workspaces, by recognizing `pnpm-workspace.yaml`, `yarnrc.yaml` and `bunfig.toml`.
 - Added the ability to only do a hard cleanup (global cache cleanup), by running either `global-clean`, `hard-clean`, or `clean hard-only`.
 - Added an about page. <!-- UNCOMMITTED, BUT ADDED -->
+- Added the `--alive` flag to `manager list` so it only lists projects that are not ignored.
 
 ### Changed
 

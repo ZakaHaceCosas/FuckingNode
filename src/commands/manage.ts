@@ -248,16 +248,15 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
  * Lists all projects.
  *
  * @async
- * @param {boolean} ignoredOnly If true, only ignored projects will be shown.
+ * @param {"limit" | "exclude" | false} ignore
  * @returns {Promise<void>}
  */
 async function ListProjects(
-    ignoredOnly: boolean,
+    ignore: "limit" | "exclude" | false,
     appPaths: CONFIG_FILES,
 ): Promise<void> {
     try {
         const list = await GetAllProjects(appPaths);
-        list.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
         if (list.length === 0) {
             await LogStuff(
@@ -267,14 +266,8 @@ async function ListProjects(
             return;
         }
 
-        if (ignoredOnly) {
-            const ignoreList: string[] = [];
-
-            for (const entry of list) {
-                const protection = await CheckDivineProtection(entry);
-                if (!protection) continue;
-                ignoreList.push(entry);
-            }
+        if (ignore === "limit") {
+            const ignoreList = await GetAllProjects(appPaths, "limit");
 
             if (ignoreList.length === 0) {
                 await LogStuff(
@@ -299,10 +292,24 @@ async function ListProjects(
                     })\n`,
                 );
             }
-            await LogStuff(toReturn.toString());
+            await LogStuff(toReturn.join("\n"));
             return;
         }
 
+        if (ignore === "exclude") {
+            const notIgnoreList = await GetAllProjects(appPaths, "exclude");
+
+            await LogStuff(
+                `Here are the ${I_LIKE_JS.MFS} you added (and haven't ignored) so far:\n`,
+                "bulb",
+            );
+            const toReturn: string[] = [];
+            for (const entry of notIgnoreList) {
+                toReturn.push(await NameProject(entry));
+            }
+            await LogStuff(toReturn.join("\n"));
+            return;
+        }
         await LogStuff(
             `Here are the ${I_LIKE_JS.MFS} you added so far:\n`,
             "bulb",
@@ -479,10 +486,23 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
             }
             break;
         case "list":
-            await ListProjects(
-                ParseFlag("ignored", false).includes(secondArg ?? ""),
-                CF,
-            );
+            if (secondArg) {
+                let ignoreParam: false | "limit" | "exclude" = false;
+                if (ParseFlag("ignored", false).includes(secondArg)) {
+                    ignoreParam = "limit";
+                } else if (ParseFlag("alive", false).includes(secondArg)) {
+                    ignoreParam = "exclude";
+                }
+                await ListProjects(
+                    ignoreParam,
+                    CF,
+                );
+            } else {
+                await ListProjects(
+                    false,
+                    CF,
+                );
+            }
             break;
         case "cleanup":
             await CleanProjects(CF);

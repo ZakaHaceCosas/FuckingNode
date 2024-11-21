@@ -12,12 +12,32 @@ import GenericErrorHandler from "../utils/error.ts";
  *
  * @export
  * @async
- * @returns {Promise<string[]>}
+ * @param {false | "limit" | "exclude"} ignored If "limit", only ignored projects are returned. If "exclude", only projects that aren't ignored are returned.
+ * @returns {Promise<string[]>} The list of projects.
  */
-export async function GetAllProjects(appPaths: CONFIG_FILES): Promise<string[]> {
+export async function GetAllProjects(appPaths: CONFIG_FILES, ignored?: false | "limit" | "exclude"): Promise<string[]> {
     try {
         const content = await Deno.readTextFile(appPaths.projects);
-        return ParsePathList(content);
+        const list = ParsePathList(content);
+
+        if (!ignored) return list;
+
+        const ignoredReturn: string[] = [];
+        const aliveReturn: string[] = [];
+
+        for (const entry of list) {
+            const protection = await CheckDivineProtection(entry);
+            if (!protection) {
+                if (ignored === "exclude") aliveReturn.push(entry);
+                continue;
+            }
+            if (ignored === "limit") ignoredReturn.push(entry);
+        }
+
+        if (ignored === "limit") return ignoredReturn;
+        if (ignored === "exclude") return aliveReturn;
+
+        return list;
     } catch (e) {
         await LogStuff(
             `Failed to read your projects - ${e}`,
