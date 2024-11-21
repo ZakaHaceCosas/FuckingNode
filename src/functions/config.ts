@@ -60,12 +60,16 @@ export async function FreshSetup(): Promise<CONFIG_FILES> {
 
         const projectPath = await GetAppPath("MOTHERFKRS");
         if (!(await CheckForPath(projectPath))) {
-            await Deno.writeTextFile(projectPath, "");
+            await Deno.writeTextFile(projectPath, "", {
+                create: true
+            });
         }
 
         const logsPath = await GetAppPath("LOGS");
         if (!(await CheckForPath(logsPath))) {
-            await Deno.writeTextFile(logsPath, "");
+            await Deno.writeTextFile(logsPath, "", {
+                create: true
+            });
         }
 
         const updatesPath = await GetAppPath("UPDATES");

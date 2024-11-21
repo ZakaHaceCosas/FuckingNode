@@ -75,10 +75,12 @@ export async function LogStuff(
     }
 
     try {
-        const logged = `${finalMessage} ... @ ${new Date().toLocaleString()}` + "\n";
+        const logged = `${new Date().toLocaleString()} / ${finalMessage}` + "\n";
 
         if (!silent) {
-            await Deno.writeTextFile(await GetAppPath("LOGS"), logged, {
+            // deno-lint-ignore no-control-regex
+            const regex = /\x1b\[[0-9;]*[a-zA-Z]/g;
+            await Deno.writeTextFile(await GetAppPath("LOGS"), logged.replace(regex, ''), {
                 append: true,
             });
         }
