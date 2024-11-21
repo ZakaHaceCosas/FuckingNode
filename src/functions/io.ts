@@ -1,5 +1,4 @@
-import TheHelper from "../commands/help.ts";
-import type { ERROR_CODES, SUPPORTED_EMOJIS, validColors } from "../types.ts";
+import type { SUPPORTED_EMOJIS, validColors } from "../types.ts";
 import { GetAppPath } from "./config.ts";
 
 /**
@@ -94,41 +93,6 @@ export async function LogStuff(
         console.error(`Error logging stuff: ${e}`);
         throw e;
     }
-}
-
-/**
- * Shorthand function to show errors in here.
- *
- * @async
- * @param {ERROR_CODES} errorCode The code of the error. They're pretty specific / verbose.
- * @param {string} currentErr If you can't provide a code, because of an unknown error, pass the `e` here so the exception is handled.
- * @returns {Promise<void>}
- */
-export async function ErrorMessage(
-    errorCode: ERROR_CODES,
-    currentErr?: string,
-): Promise<void> {
-    let message: string;
-
-    switch (errorCode) {
-        case "Manager__ProjectInteractionInvalidCauseNoPathProvided":
-            message =
-                'Provide the path to the project.\n    It can be relative (../node-project),\n    absolute (C:\\Users\\coolDev\\node-project),\n    or you can type "--self" to use the current working DIR.';
-            break;
-        case "Manager__InvalidArgumentPassed":
-            await TheHelper({ query: "manager" });
-            return;
-        default:
-            message = "Unknown error. Exception: ";
-            break;
-    }
-
-    await LogStuff(
-        ColorString("Error: ", "red") + currentErr ? message : message + currentErr,
-        "warn",
-        undefined,
-        false,
-    );
 }
 
 /**

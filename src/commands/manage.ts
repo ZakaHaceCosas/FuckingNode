@@ -1,10 +1,10 @@
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CONFIG_FILES } from "../types.ts";
-import { ColorString, ErrorMessage, LogStuff, ParseFlag } from "../functions/io.ts";
+import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { CheckDivineProtection, GetAllProjects, GetWorkspaces, NameProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
-import GenericErrorHandler from "../utils/error.ts";
+import GenericErrorHandler, { FknError } from "../utils/error.ts";
 
 /**
  * Adds a new project.
@@ -399,21 +399,32 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
         return;
     }
 
-    async function validateArgumentsForIgnoreHandler(
+    function validateArgumentsForIgnoreHandler(
         secondArg: string | null,
         thirdArg: string | null,
     ) {
-        if (!secondArg) {
-            await ErrorMessage(
-                "Manager__ProjectInteractionInvalidCauseNoPathProvided",
-            );
+        try {
+            if (!secondArg) {
+                throw new FknError(
+                    "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+                );
+            }
+            if (!thirdArg) {
+                throw new FknError(
+                    "Manager__IgnoreFile__InvalidLevel",
+                    "You didn't provide a level",
+                );
+            }
+            if (!["updater", "cleanup", "*"].includes(thirdArg)) {
+                throw new FknError(
+                    "Manager__IgnoreFile__InvalidLevel",
+                    "You provided an invalid level: " + thirdArg,
+                );
+            }
+            return true;
+        } catch {
             return false;
         }
-        if (thirdArg && !["updater", "cleanup", "*"].includes(thirdArg)) {
-            await LogStuff("err, provide level");
-            return false;
-        }
-        return true;
     }
 
     async function handleIgnoreInteraction(
@@ -427,24 +438,22 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
     switch (command.toLowerCase()) {
         case "add":
             if (!secondArg || secondArg === null) {
-                ErrorMessage(
+                throw new FknError(
                     "Manager__ProjectInteractionInvalidCauseNoPathProvided",
                 );
-                return;
             }
             await AddProject(secondArg, CF);
             break;
         case "remove":
             if (!secondArg || secondArg === null) {
-                ErrorMessage(
+                throw new FknError(
                     "Manager__ProjectInteractionInvalidCauseNoPathProvided",
                 );
-                return;
             }
             await RemoveProject(secondArg, CF);
             break;
         case "ignore":
-            if (await validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
+            if (validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
                 await handleIgnoreInteraction(
                     true,
                     secondArg!,
@@ -453,7 +462,7 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
             }
             break;
         case "revive":
-            if (await validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
+            if (validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
                 await handleIgnoreInteraction(
                     false,
                     secondArg!,
@@ -470,7 +479,8 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
             await CleanProjects(CF);
             break;
         default:
-            await ErrorMessage("Manager__InvalidArgumentPassed");
-            Deno.exit(1);
+            throw new FknError(
+                "Manager__InvalidArgumentPassed",
+            );
     }
 }
