@@ -91,7 +91,7 @@ export const I_LIKE_JS: HE_LIKES_JS = {
  *
  * @type {string}
  */
-export const IGNORE_FILE: string = ".fknodeignore";
+export const IGNORE_FILE: string = "fknode.yaml";
 
 /**
  * GitHub REST API URL from where releases are obtained.

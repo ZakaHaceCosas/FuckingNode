@@ -8,13 +8,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased <!-- 2.0.0 - major release, even tho there aren't "breaking" changes (well, adding runtimes that aren't Node to the "F*ckingNODE" project is kinda "breaking") -->
 
+### Breaking changes
+
+- `.fknodeignore` becomes `fknode.yaml`, and follows a new format detailed in the `README.md`.
+- `self-update` becomes `upgrade`.
+
 ### Added
 
 - **Added partial support for cleanup of both the Bun and Deno JavaScript runtimes.**
 - Added an install script for Microsoft Windows.
 - Added the option to flush config files (like `.log`s), so the user can save up space.
 - Added the ability to customize whether an ignored project should ignore updates, cleanup, or everything.
-  - Now that the ignore file expects content, comments are allowed using the `--!` prefix.
 - Added much more better support for workspaces, by recognizing `pnpm-workspace.yaml`, `yarnrc.yaml` and `bunfig.toml`.
 - Added the ability to only do a hard cleanup (global cache cleanup), by running either `global-clean`, `hard-clean`, or `clean hard-only`.
 - Added an about page. <!-- UNCOMMITTED, BUT ADDED -->

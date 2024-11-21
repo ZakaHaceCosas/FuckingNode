@@ -95,26 +95,27 @@ export async function CheckDivineProtection(
     const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
 
     if (!(await CheckForPath(pathToDivineFile))) return null;
-    const divineContent = new TextDecoder().decode(
-        await Deno.readFile(pathToDivineFile),
-    );
-    const cleanContent = divineContent
-        .split("\n") // split in lines
-        .filter((line) => !line.trim().startsWith("--!")) // allow comments, beginning with --!
-        .join(" ") // join into a single string
-        .trim(); // trim
+    const divineContent = await Deno.readTextFile(pathToDivineFile);
+    // todo: move to types
+    interface Config {
+        divineProtection?: ("*" | "updater" | "cleanup")[];
+    }
 
-    const hasUpdater = /updater\.?/i.test(cleanContent);
-    const hasCleanup = /cleanup\.?/i.test(cleanContent);
+    const cleanContent: Config = parseYaml(divineContent) as Config;
 
-    if (
-        (hasUpdater && hasCleanup) ||
-        cleanContent === "*" ||
-        cleanContent === ""
-    ) {
-        return "*"; // total
-        // empty files or an asterisk count as total.
+    if (!cleanContent.divineProtection) {
+        return null; // nothing ofc
+    }
+
+    const hasAsterisk = cleanContent.divineProtection.includes("*");
+    const hasUpdater = cleanContent.divineProtection.includes("updater");
+    const hasCleanup = cleanContent.divineProtection.includes("cleanup");
+
+    if (hasAsterisk) {
+        return cleanContent.divineProtection.length > 1 ? null : "*"; // total
         // two asterisks will count as null.
+    } else if (hasUpdater && hasCleanup) {
+        return "*"; // both = * = total
     } else if (hasUpdater) {
         return "updater"; // just update
     } else if (hasCleanup) {

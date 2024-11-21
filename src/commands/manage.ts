@@ -5,6 +5,7 @@ import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { CheckDivineProtection, GetAllProjects, GetWorkspaces, NameProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
+import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 
 /**
  * Adds a new project.
@@ -308,7 +309,7 @@ async function ListProjects(
 }
 
 /**
- * Ignores (or stops ignoring) a project by adding (or removing) a `.fknodeignore` file to it's root.
+ * Ignores (or stops ignoring) a project by adding (or removing) a `fknode.yaml` file to it's root.
  *
  * @async
  * @param {boolean} ignore True if you want to ignore, false if you want to stop ignoring.
@@ -326,44 +327,41 @@ async function HandleIgnoreProject(
         const pathToIgnoreFile = await JoinPaths(workingEntry, IGNORE_FILE);
         const hasIgnoreFile = await CheckForPath(pathToIgnoreFile);
 
-        // const currentLevels = hasIgnoreFile ? (await Deno.readTextFile(pathToIgnoreFile)).split(".\n") : [];
-
         if (ignore === true) {
+            const toWrite: ("*" | "updater" | "cleanup")[] = [ignoranceLevel];
+
+            let currentLevels: ("*" | "updater" | "cleanup")[] = [];
             try {
-                let toWrite: string[];
-                if (ignoranceLevel === "*") {
-                    toWrite = ["*"];
-                } else {
-                    toWrite = [ignoranceLevel];
-                }
-
-                /* else if (!currentLevels.includes(ignoranceLevel) && !currentLevels.includes("*")) */
-
-                if (toWrite.toString() === (await CheckDivineProtection(workingEntry))) throw 1;
-
-                await Deno.writeTextFile(
-                    pathToIgnoreFile,
-                    (toWrite.includes("*") && toWrite.length === 1) ? "*" : toWrite.join(".\n"),
-                );
-
-                await LogStuff(
-                    `Divine powers have successfully created ${ignoranceLevel} protection for this ${I_LIKE_JS.MF}`,
-                    "tick",
-                );
-            } catch (exception) {
-                if (exception === 1) {
-                    await LogStuff(
-                        "This project is already protected!",
-                        "error",
-                    );
-                    return 2;
-                }
-                throw exception;
+                const fileContent = await Deno.readTextFile(pathToIgnoreFile);
+                currentLevels = parseYaml(fileContent) as ("*" | "updater" | "cleanup")[];
+            } catch {
+                // no file = no levels
             }
+
+            if (
+                currentLevels.includes("*") ||
+                currentLevels.includes(ignoranceLevel)
+            ) {
+                await LogStuff(
+                    "This project is already protected!",
+                    "error",
+                );
+                return 2;
+            }
+
+            currentLevels = [...new Set([...currentLevels, ...toWrite])];
+
+            const yamlContent = stringifyYaml(currentLevels);
+            await Deno.writeTextFile(pathToIgnoreFile, yamlContent);
+
+            await LogStuff(
+                `Divine powers have successfully created ${ignoranceLevel} protection for this ${I_LIKE_JS.MF}`,
+                "tick",
+            );
             return 0;
         } else if (ignore === false) {
             if (!hasIgnoreFile) {
-                await LogStuff(`${I_LIKE_JS.MF} isn't ignored yet!`, "error");
+                await LogStuff(`${I_LIKE_JS.MF} isn't ignored!`, "error");
                 return 2;
             }
 
@@ -402,28 +400,29 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
     function validateArgumentsForIgnoreHandler(
         secondArg: string | null,
         thirdArg: string | null,
-    ) {
+    ): boolean {
         try {
             if (!secondArg) {
                 throw new FknError(
                     "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+                    "You didn't provide the path to the project you wanted to ignore/revive.",
                 );
             }
             if (!thirdArg) {
                 throw new FknError(
                     "Manager__IgnoreFile__InvalidLevel",
-                    "You didn't provide a level",
+                    "You didn't provide a level.",
                 );
             }
             if (!["updater", "cleanup", "*"].includes(thirdArg)) {
                 throw new FknError(
                     "Manager__IgnoreFile__InvalidLevel",
-                    "You provided an invalid level: " + thirdArg,
+                    `You provided an invalid level: '${thirdArg}'.`,
                 );
             }
             return true;
-        } catch {
-            return false;
+        } catch (e) {
+            throw e;
         }
     }
 
@@ -440,6 +439,7 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
             if (!secondArg || secondArg === null) {
                 throw new FknError(
                     "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+                    "You didn't provide a path.",
                 );
             }
             await AddProject(secondArg, CF);
@@ -448,6 +448,7 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
             if (!secondArg || secondArg === null) {
                 throw new FknError(
                     "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+                    "You didn't provide a path.",
                 );
             }
             await RemoveProject(secondArg, CF);
@@ -481,6 +482,7 @@ export default async function TheManager(args: string[], CF: CONFIG_FILES) {
         default:
             throw new FknError(
                 "Manager__InvalidArgumentPassed",
+                `${command} is not a valid argument.`,
             );
     }
 }
