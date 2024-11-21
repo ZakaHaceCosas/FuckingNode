@@ -1,5 +1,8 @@
 # F*ckingNode
 
+> [!NOTE]
+> This is README for V1. V2 introduces breaking changes and they aren't (yet) reflected here.
+
 ## Abstract
 
 We as humans have dedicated years of hard work to a goal: fixing Node.
@@ -12,7 +15,7 @@ We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with 
 
 By the way, _while the name implies NodeJS-only support, Deno and Bun are coming soon!_
 
-Check the v2 branch, we're working on support for non-Node projects, and also other stuff like custom settings for the CLI and more! <!-- haven't added new settings, that's still to come -->
+Check the v2 branch, we're working on support for non-Node projects, and also other stuff like custom settings for the CLI and more!
 
 ## Features
 
