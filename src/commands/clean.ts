@@ -14,9 +14,9 @@ import { PerformHardCleanup, PerformNodeCleaning } from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types.ts";
 
 function ResolveProtection(protection: string | null, update: boolean): {
-    doClean: boolean,
-    doUpdate: boolean,
-    preliminaryStatus?: "Fully protected" | "Cleanup protected" |"Update protected"
+    doClean: boolean;
+    doUpdate: boolean;
+    preliminaryStatus?: "Fully protected" | "Cleanup protected" | "Update protected";
 } {
     switch (protection) {
         case "*":
@@ -229,7 +229,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             const theResult = `${await NameProject(result.path)} -> ${ColorString(result.status, "bold")}`;
             report.push(theResult);
         }
-        await LogStuff(report.join("\n"), undefined, false, undefined, verbose);
+        await LogStuff(report.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())).join("\n"), undefined, false, undefined, verbose);
         await LogStuff("\n", undefined, false, undefined, verbose); // glue fix
 
         await LogStuff(
