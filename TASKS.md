@@ -11,17 +11,21 @@
   - [x] Make error messages consistent.
 - [x] Better help.
   - [x] Make invalid input errors show hints to help the user.
-- [x] Cleanup the codebase (it's getting kinda messy ngl).
+- [ ] Cleanup the codebase (it's getting kinda messy ngl).
+- [ ] Finish CONTRIBUTING.md
+  - [ ] Follow my own f\*cking guidelines, there are different ways of coding mixed up in the same project :skull:.
 
 ## Ideas (want to do)
 
 - [ ] macOS and Linux install scripts.
-- [ ] Actually write some f\*cking tests.
+- [ ] ~~Actually write some f\*cking tests.~~ (not happening)
+- [ ] A shorthand for the CLI, like "`fknode`", that automatically runs `clean` with the default intensity.
 
-## Trivia stuff (might do)
+## Trivial tasks (might do)
 
 - [ ] Add more `ColorString()` options and use them in more places.
 - [x] Add an about command.
+- [ ] More verbose logging maybe?
 
 ## Cross-runtime support tasks
 
@@ -37,3 +41,10 @@
   - [x] NODE
   - [x] DENO
   - [x] BUN
+
+## Settings-related tasks
+
+- [ ] Allowing the user to automate flushing of files
+  - [ ] Make it work like the updater, on startup it checks a file (settings.yaml i guess) with the date the last change was, and compares with current day.
+- [ ] Allowing to change the default intensity of the cleaner.
+- [ ] Make the scheduler work better (if it works, it doesn't work on my machine and Deno keeps it as "unstable").
