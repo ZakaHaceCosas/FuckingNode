@@ -238,6 +238,7 @@ export interface CONFIG_FILES {
     projects: string;
     logs: string;
     updates: string;
+    settings: string;
 }
 
 /**
@@ -324,4 +325,9 @@ export interface ProjectEnv {
 export interface NodeManagerUt {
     name: "npm" | "pnpm" | "yarn";
     file: "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock";
+}
+
+export interface FKNODE_SETTINGS {
+    updateFreq: number,
+    defaultCleanerIntensity: CleanerIntensity
 }

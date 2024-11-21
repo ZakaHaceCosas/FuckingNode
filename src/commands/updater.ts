@@ -6,6 +6,7 @@ import { GetDateNow, MakeRightNowDateStandard } from "../functions/date.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
 import { LogStuff } from "../functions/io.ts";
+import { stringify as stringifyYaml, parse as parseYaml } from '@std/yaml';
 
 /**
  * Compares two SemVer versions. Returns the difference between both, so if `versionB` is more recent than `versionA` you'll get a positive number, or you'll get 0 if they're equal.
@@ -60,7 +61,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
                 lastCheck: GetDateNow(),
             };
 
-            await Deno.writeTextFile(UpdaterFilePath, JSON.stringify(dataToWrite));
+            await Deno.writeTextFile(UpdaterFilePath, stringifyYaml(dataToWrite));
             return dataToWrite;
         } catch (e) {
             throw new Error("Error checking for updates: " + e);
@@ -74,11 +75,11 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
                 lastVer: VERSION,
                 lastCheck: GetDateNow(),
             };
-            await Deno.writeTextFile(UpdaterFilePath, JSON.stringify(dataToWrite));
+            await Deno.writeTextFile(UpdaterFilePath, stringifyYaml(dataToWrite));
             return false;
         }
 
-        const updateFile: UPDATE_FILE = JSON.parse(await Deno.readTextFile(UpdaterFilePath));
+        const updateFile: UPDATE_FILE = parseYaml(await Deno.readTextFile(UpdaterFilePath)) as UPDATE_FILE;
 
         if (!RIGHT_NOW_DATE_REGEX.test(updateFile.lastCheck)) {
             throw new Error(`Unable to parse date of last update. Got ${updateFile.lastCheck}.`);

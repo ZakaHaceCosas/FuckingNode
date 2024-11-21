@@ -1,4 +1,4 @@
-import type { tURL } from "./types.ts";
+import type { FKNODE_SETTINGS, tURL } from "./types.ts";
 import type { SemVer } from "@std/semver/types";
 import { format } from "@std/semver";
 
@@ -99,3 +99,8 @@ export const IGNORE_FILE: string = "fknode.yaml";
  * @type {tURL}
  */
 export const RELEASE_URL: tURL = `https://api.github.com/repos/ZakaHaceCosas/${APP_NAME.CASED}/releases/latest`;
+
+export const DEFAULT_SETTINGS: FKNODE_SETTINGS = {
+    updateFreq: 5,
+    defaultCleanerIntensity: "normal"
+}

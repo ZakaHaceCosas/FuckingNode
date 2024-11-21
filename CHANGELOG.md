@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `.fknodeignore` becomes `fknode.yaml`, and follows a new format detailed in the `README.md`.
 - `self-update` becomes `upgrade`.
+- The project list, and other config files, will reset.
 
 ### Added
 
@@ -34,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now the CLI has cool looking colors 🙂.
 - Now, projects without a `node_modules` DIR won't show a warning before adding them.
 - Now, `manager cleanup` will show next to the project's path an error code indicating why it's in there.
+- Now the app uses YAML instead of JSON for its config files.
 
 ### Fixed
 
