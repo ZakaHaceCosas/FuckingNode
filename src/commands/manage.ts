@@ -288,10 +288,18 @@ async function ListProjects(
                 `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`,
                 "bulb",
             );
+            const toReturn: string[] = [];
             for (const entry of ignoreList) {
-                await LogStuff(await NameProject(entry));
+                toReturn.push(
+                    `${await NameProject(entry)} (${
+                        ColorString(
+                            (await CheckDivineProtection(entry))!, // "!" because we know it's not null
+                            "bold",
+                        )
+                    })\n`,
+                );
             }
-
+            await LogStuff(toReturn.toString());
             return;
         }
 
