@@ -8,7 +8,7 @@
 - [ ] Better error handling.
   - [x] Throw all errors and handle them from the main loop (except of course for catch statements that don't crash AKA allow the CLI to keep doing stuff).
   - [ ] Add error codes for all errors.
-  - [ ] Make error messages consistent.
+  - [x] Make error messages consistent.
 - [x] Better help.
   - [x] Make invalid input errors show hints to help the user.
 
@@ -17,7 +17,7 @@
 - [ ] macOS and Linux install scripts.
 - [ ] Actually write some f\*cking tests.
 
-## Trivia (might do)
+## Trivia stuff (might do)
 
 - [ ] Add more `ColorString()` options and use them in more places.
 - [x] Add an about command.

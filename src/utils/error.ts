@@ -18,7 +18,7 @@ export class FknError extends Error {
      * @param {string} [currentErr] Additional error details (optional).
      */
     public async handleMessage(currentErr?: string): Promise<void> {
-        let message: string;
+        let message: string | null;
 
         switch (this.code) {
             case "Manager__ProjectInteractionInvalidCauseNoPathProvided":
@@ -28,13 +28,37 @@ export class FknError extends Error {
             case "Manager__InvalidArgumentPassed":
                 await TheHelper({ query: "manager" });
                 return;
+            case "Manager__IgnoreFile__InvalidLevel":
+                message = "Valid ignore file levels are '*' for everything, 'cleaner' for project cleanup, and 'updater' for project updating.";
+                break;
             default:
-                message = "Unknown error.";
+                message = null;
                 break;
         }
 
-        const fullMessage = currentErr ? `${message} Exception: ${currentErr}` : message;
-        await LogStuff(ColorString("Error: ", "red") + fullMessage, "error");
+        const messageParts: string[] = [
+            ColorString(`A FknError happened! CODE: ${ColorString(this.code, "bold")}`, "red"),
+        ];
+        if (this.message) {
+            messageParts.push(
+                `Thrown message:               ${ColorString(this.message, "bright-yellow")}`,
+            );
+        }
+        if (currentErr !== undefined && currentErr !== this.message) {
+            messageParts.push(
+                "----------",
+                "CurrentErr: " + ColorString(currentErr, "italic"),
+                "----------",
+            );
+        }
+        if (message !== null) {
+            messageParts.push(
+                "----------",
+                "Hint: " + ColorString(message, "italic"),
+                "----------",
+            );
+        }
+        await LogStuff(messageParts.join("\n"), "error");
     }
 
     /**
