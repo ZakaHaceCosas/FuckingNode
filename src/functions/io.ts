@@ -100,11 +100,11 @@ export async function LogStuff(
  *
  * @export
  * @param {string} prev String itself.
- * @param {number} n Amount of whitespace to add before.
+ * @param {number} nl Amount of whitespace to add before.
  * @returns {string} The spaced string.
  */
-export function SpaceString(prev: string, n: number): string {
-    return `${" ".repeat(n)}${prev}`;
+export function SpaceString(prev: string, nl: number): string {
+    return `${" ".repeat(nl)}${prev}`;
 }
 
 /**

@@ -61,9 +61,6 @@ Best practice is to run `fuckingnode manager add --self` after creating a Node p
 
 And that's it for now.
 
-> [!TIP]
-> If for any reason you want to skip a project without removing it from your list (idk, maybe you _temporarily_ don't want anyone to update deps for that specific project), create an empty `.fknodeignore` file in the root of the project and F\*ckingNode will ignore it, or just run `fuckingnode ignore --self` from the root of the project.
-
 ---
 
 ## Installation
