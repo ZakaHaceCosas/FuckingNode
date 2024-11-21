@@ -1,3 +1,4 @@
+// the things.
 import TheCleaner from "./commands/clean.ts";
 import TheManager from "./commands/manage.ts";
 import TheStatistics from "./commands/stats.ts";
@@ -22,9 +23,9 @@ async function init(update: boolean) {
 
 const ALL_CONFIG_FILES: CONFIG_FILES = await init(false);
 
-const [inputCommand] = Deno.args;
+const [firstCommand] = Deno.args;
 
-if (!inputCommand) {
+if (!firstCommand) {
     await init(false);
     await TheHelper({});
     Deno.exit(0);
@@ -33,9 +34,6 @@ if (!inputCommand) {
 const flags = Deno.args.map((arg) => {
     return arg.toLowerCase();
 });
-
-const isVerbose = flags.includes("--verbose");
-const wantsToUpdate = flags.includes("--update");
 
 if (ParseFlag("help", true).some((flag) => flags.includes(flag))) {
     await init(false);
@@ -72,8 +70,8 @@ async function main(command: string) {
         switch (command.toLowerCase()) {
             case "clean":
                 await TheCleaner({
-                    verbose: isVerbose,
-                    update: wantsToUpdate,
+                    verbose: flags.includes("--verbose"),
+                    update: flags.includes("--update"),
                     intensity: Deno.args[1] ?? "normal",
                     CF: ALL_CONFIG_FILES,
                 });
@@ -81,8 +79,8 @@ async function main(command: string) {
             case "global-clean":
             case "hard-clean":
                 await TheCleaner({
-                    verbose: isVerbose,
-                    update: wantsToUpdate,
+                    verbose: flags.includes("--verbose"),
+                    update: flags.includes("--update"),
                     intensity: "hard-only",
                     CF: ALL_CONFIG_FILES,
                 });
@@ -124,4 +122,4 @@ async function main(command: string) {
     }
 }
 
-await main(inputCommand);
+await main(firstCommand);

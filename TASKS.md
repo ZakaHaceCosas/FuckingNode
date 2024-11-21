@@ -11,6 +11,7 @@
   - [x] Make error messages consistent.
 - [x] Better help.
   - [x] Make invalid input errors show hints to help the user.
+- [x] Cleanup the codebase (it's getting kinda messy ngl).
 
 ## Ideas (want to do)
 
