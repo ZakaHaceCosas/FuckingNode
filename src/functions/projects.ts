@@ -2,7 +2,7 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { IGNORE_FILE } from "../constants.ts";
-import type { BunfigToml, CONFIG_FILES, DenoPkgJson, NodeManagerUt, NodePkgJson, ProjectEnv } from "../types.ts";
+import type { BunfigToml, CONFIG_FILES, DenoPkgJson, FkNodeConfigYaml, NodeManagerUt, NodePkgJson, ProjectEnv } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 import GenericErrorHandler from "../utils/error.ts";
@@ -116,12 +116,9 @@ export async function CheckDivineProtection(
 
     if (!(await CheckForPath(pathToDivineFile))) return null;
     const divineContent = await Deno.readTextFile(pathToDivineFile);
-    // todo: move to types
-    interface Config {
-        divineProtection?: ("*" | "updater" | "cleanup")[];
-    }
 
-    const cleanContent: Config = parseYaml(divineContent) as Config;
+
+    const cleanContent: FkNodeConfigYaml = parseYaml(divineContent) as FkNodeConfigYaml;
 
     if (!cleanContent.divineProtection) {
         return null; // nothing ofc

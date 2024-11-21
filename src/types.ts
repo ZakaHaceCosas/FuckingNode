@@ -331,3 +331,7 @@ export interface FKNODE_SETTINGS {
     updateFreq: number,
     defaultCleanerIntensity: CleanerIntensity
 }
+
+export interface FkNodeConfigYaml {
+    divineProtection?: ("*" | "updater" | "cleanup")[];
+}
