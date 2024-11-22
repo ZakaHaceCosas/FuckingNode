@@ -37,34 +37,10 @@ function CompileApp(): void {
     }
 }
 
-function CompileWindowsInstaller(): void {
-    const compiledName = `${APP_NAME.CASED}-win64.exe`;
-
-    const compilerArguments = [
-        "compile",
-        "--allow-write",
-        "--allow-read",
-        "--allow-net",
-        "--allow-env",
-        "--allow-run",
-        "--target",
-        "x86_64-pc-windows-msvc",
-        "--output",
-        `dist/INSTALLER-${compiledName}`,
-        "src/main.ts",
-    ];
-
-    const CMD = new Deno.Command("deno", { args: compilerArguments });
-
-    const p = CMD.spawn();
-    p.status.then((_status) => {});
-}
-
 await Deno.remove("./dist/", {
     recursive: true,
 });
 
-Deno.mkdir("dist/");
+Deno.mkdir("./dist/");
 
 CompileApp();
-CompileWindowsInstaller();

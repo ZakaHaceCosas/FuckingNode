@@ -1,4 +1,7 @@
 import { walk } from "@std/fs/walk";
+import { ColorString } from "../src/functions/io.ts";
+
+console.log(ColorString("we making this good", "bright-blue"));
 
 async function GetAllTsFiles(): Promise<string[]> {
     const dir = Deno.cwd(); // as the CWD from where you'll run deno task will always be the root of the project
@@ -44,5 +47,3 @@ new Deno.Command("deno", {
 new Deno.Command("deno", {
     args: ["outdated", "--update", "--latest"],
 }).spawn(); // ensure deps are on latest
-
-console.info("yay! that worked");
