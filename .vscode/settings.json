@@ -5,8 +5,7 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/help.ignore.ts": true
+        "**/Thumbs.db": true
     },
     "cSpell.words": [
         "aarch",
