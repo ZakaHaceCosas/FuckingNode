@@ -1,8 +1,9 @@
+import TheUpdater from "../commands/updater.ts";
 import { APP_NAME, DEFAULT_SETTINGS, I_LIKE_JS } from "../constants.ts";
 import type { CONFIG_FILES } from "../types.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
-import { stringify as stringifyYaml } from '@std/yaml';
+import { stringify as stringifyYaml } from "@std/yaml";
 
 /**
  * Returns file paths for all config files the app uses.
@@ -61,22 +62,34 @@ export async function FreshSetup(): Promise<CONFIG_FILES> {
         const projectPath = await GetAppPath("MOTHERFKRS");
         if (!(await CheckForPath(projectPath))) {
             await Deno.writeTextFile(projectPath, "", {
-                create: true
+                create: true,
             });
         }
 
         const logsPath = await GetAppPath("LOGS");
         if (!(await CheckForPath(logsPath))) {
             await Deno.writeTextFile(logsPath, "", {
-                create: true
+                create: true,
             });
         }
 
-        const updatesPath = await GetAppPath("UPDATES");
-
         const settingsPath = await GetAppPath("SETTINGS");
         if (!(await CheckForPath(settingsPath))) {
-            await Deno.writeTextFile(settingsPath, stringifyYaml(DEFAULT_SETTINGS))
+            await Deno.writeTextFile(settingsPath, stringifyYaml(DEFAULT_SETTINGS));
+        }
+
+        const updatesPath = await GetAppPath("UPDATES");
+        if (!(await CheckForPath(updatesPath))) {
+            await TheUpdater({
+                silent: true,
+                force: true,
+                CF: {
+                    projects: projectPath,
+                    logs: logsPath,
+                    updates: updatesPath,
+                    settings: settingsPath,
+                },
+            });
         }
 
         return {
