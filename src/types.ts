@@ -328,8 +328,8 @@ export interface NodeManagerUt {
 }
 
 export interface FKNODE_SETTINGS {
-    updateFreq: number,
-    defaultCleanerIntensity: CleanerIntensity
+    updateFreq: number;
+    defaultCleanerIntensity: CleanerIntensity;
 }
 
 export interface FkNodeConfigYaml {

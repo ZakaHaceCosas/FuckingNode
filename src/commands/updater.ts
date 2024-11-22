@@ -6,7 +6,7 @@ import { GetDateNow, MakeRightNowDateStandard } from "../functions/date.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
 import { LogStuff } from "../functions/io.ts";
-import { stringify as stringifyYaml, parse as parseYaml } from '@std/yaml';
+import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 
 /**
  * Compares two SemVer versions. Returns the difference between both, so if `versionB` is more recent than `versionA` you'll get a positive number, or you'll get 0 if they're equal.

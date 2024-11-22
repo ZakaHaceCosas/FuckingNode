@@ -102,5 +102,5 @@ export const RELEASE_URL: tURL = `https://api.github.com/repos/ZakaHaceCosas/${A
 
 export const DEFAULT_SETTINGS: FKNODE_SETTINGS = {
     updateFreq: 5,
-    defaultCleanerIntensity: "normal"
-}
+    defaultCleanerIntensity: "normal",
+};

@@ -117,7 +117,6 @@ export async function CheckDivineProtection(
     if (!(await CheckForPath(pathToDivineFile))) return null;
     const divineContent = await Deno.readTextFile(pathToDivineFile);
 
-
     const cleanContent: FkNodeConfigYaml = parseYaml(divineContent) as FkNodeConfigYaml;
 
     if (!cleanContent.divineProtection) {
