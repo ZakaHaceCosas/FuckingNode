@@ -55,8 +55,8 @@ export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
  * @async
  * @param {string} message The message to be logged.
  * @param {?SUPPORTED_EMOJIS} [emoji] Additionally, add an emoji before the log.
- * @param {?boolean} silent Optional. If true, log will be made without saving to the `.log` file.
- * @param {?boolean} question If true, the log will act as a y/N confirm. Will return true if the user confirms, false otherwise.
+ * @param {?boolean} [silent=true] Optional. If true, log will be made without saving to the `.log` file.
+ * @param {?boolean} [question=false] If true, the log will act as a y/N confirm. Will return true if the user confirms, false otherwise.
  * @param {?boolean} verbose If false, stuff will be saved to `.log` file but not written to the `stdout`. Pass here the variable you use to handle verbose logs.
  * @returns {Promise<boolean>} Boolean value if it's a question depending on user input. If it's not a question, to avoid a type error for being `void`, it always returns false.
  */
@@ -67,30 +67,28 @@ export async function LogStuff(
     question?: boolean,
     verbose?: boolean,
 ): Promise<boolean> {
-    const finalMessage = emoji ? Emojify(message, emoji) : message;
-    if (verbose === undefined) {
-        console.log(finalMessage);
-    } else if (verbose === true) {
-        console.log(finalMessage);
-    }
-
     try {
-        const logged = `${new Date().toLocaleString()} / ${finalMessage}` + "\n";
+        const finalMessage = emoji ? Emojify(message, emoji) : message;
+        const timestampedMessage = `${new Date().toLocaleString()} / ${finalMessage}\n`;
+
+        if (verbose === undefined || verbose === true) {
+            console.log(finalMessage);
+        }
 
         if (!silent) {
             // deno-lint-ignore no-control-regex
             const regex = /\x1b\[[0-9;]*[a-zA-Z]/g;
-            await Deno.writeTextFile(await GetAppPath("LOGS"), logged.replace(regex, ''), {
+
+            await Deno.writeTextFile(await GetAppPath("LOGS"), timestampedMessage.replace(regex, ''), {
                 append: true,
             });
         }
 
         if (question) {
-            const c = confirm("Confirm?");
-            return c;
-        } else {
-            return false;
+            return confirm("Confirm?");
         }
+
+        return false;
     } catch (e) {
         console.error(`Error logging stuff: ${e}`);
         throw e;
