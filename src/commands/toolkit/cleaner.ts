@@ -107,33 +107,40 @@ export async function PerformHardCleanup(): Promise<void> {
     const bunHardPruneArgs: string[] = ["pm", "cache", "rm"];
     // const denoHardPruneArgs: string[] = ["clean"];
 
-    await LogStuff(
-        ColorString("NPM", "red"),
-        "package",
-    );
-    if (await CommandExists("npm")) await Commander("npm", npmHardPruneArgs, true);
-    await LogStuff("Done", "tick");
-    await LogStuff(
-        ColorString("PNPM", "bright-yellow"),
-        "package",
-    );
-    if (await CommandExists("pnpm")) await Commander("pnpm", pnpmHardPruneArgs, true);
-    await LogStuff("Done", "tick");
-    await LogStuff(
-        ColorString("YARN", "purple"),
-        "package",
-    );
-    if (await CommandExists("yarn")) await Commander("yarn", yarnHardPruneArgs, true);
-    await LogStuff("Done", "tick");
-    await LogStuff(
-        ColorString("BUN", "pink"),
-        "package",
-    );
+    if (await CommandExists("npm")) {
+        await LogStuff(
+            ColorString("NPM", "red"),
+            "package",
+        );
+        await Commander("npm", npmHardPruneArgs, true);
+        await LogStuff("Done", "tick");
+    }
+    if (await CommandExists("pnpm")) {
+        await LogStuff(
+            ColorString("PNPM", "bright-yellow"),
+            "package",
+        );
+        await Commander("pnpm", pnpmHardPruneArgs, true);
+        await LogStuff("Done", "tick");
+    }
+    if (await CommandExists("yarn")) {
+        await LogStuff(
+            ColorString("YARN", "purple"),
+            "package",
+        );
+        await Commander("yarn", yarnHardPruneArgs, true);
+        await LogStuff("Done", "tick");
+    }
+
     if (await CommandExists("bun")) {
+        await LogStuff(
+            ColorString("BUN", "pink"),
+            "package",
+        );
         await Commander("bun", ["init", "-y"], false); // placebo
         await Commander("bun", bunHardPruneArgs, true);
+        await LogStuff("Done", "tick");
     }
-    await LogStuff("Done", "tick");
     /* if (await CommandExists("deno")) {
         await Commander("deno", ["init"], false); // placebo 2
         await Commander("deno", denoHardPruneArgs, true);
@@ -159,17 +166,23 @@ export async function PerformHardCleanup(): Promise<void> {
             // "maxim" one
             // epic.
         } catch {
-            return;
             // nothing happened.
-            // i don't know what could happen if i delete the cache *live*
-            // shouldn't be an issue as the compiled executable brings it's own
-            // deno, but well, lets try :]
         }
     }
 
-    await Deno.remove(tmp, {
-        recursive: true,
-    }); // free the user's space
+    try {
+        await Deno.remove(tmp, {
+            recursive: true,
+        }); // free the user's space
+    } catch (e) {
+        await LogStuff(
+            "[ERROR] Due to an unknown error, a temporal DIR wasn't deleted. DIR path:\n" + tmp + "\nError:\n" + e,
+            "error",
+            undefined,
+            undefined,
+            false,
+        );
+    }
 
     return;
 }
