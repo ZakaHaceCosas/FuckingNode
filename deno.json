@@ -20,7 +20,7 @@
         "compile": {
             "description": "Compiles the CLI",
             "command": "deno -A scripts/compile.ts",
-            "dependencies": ["prepare"]
+            "dependencies": ["good"]
         }
     },
     "compilerOptions": {
