@@ -40,7 +40,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         // read all projects
         const projects: string[] = await GetAllProjects(CF);
 
-        if (projects.length === 0) {
+        if (projects.length === 0 && intensity !== "hard-only") {
             await LogStuff(
                 `There isn't any ${I_LIKE_JS.MF} over here... yet...`,
                 "moon-face",
