@@ -18,25 +18,26 @@ export class FknError extends Error {
      * @param {string} [currentErr] Additional error details (optional).
      */
     public async handleMessage(currentErr?: string): Promise<void> {
-        let message: string | null;
+        let hint: string | null;
 
         switch (this.code) {
             case "Manager__ProjectInteractionInvalidCauseNoPathProvided":
-                message =
+                hint =
                     'Provide the path to the project.\n    It can be relative (../node-project),\n    absolute (C:\\Users\\coolDev\\node-project),\n    or you can type "--self" to use the current working DIR.';
                 break;
             case "Manager__InvalidArgumentPassed":
                 await TheHelper({ query: "manager" });
                 return;
             case "Manager__IgnoreFile__InvalidLevel":
-                message = "Valid ignore file levels are '*' for everything, 'cleaner' for project cleanup, and 'updater' for project updating.";
+                hint = "Valid ignore file levels are '*' for everything, 'cleaner' for project cleanup, and 'updater' for project updating.";
                 break;
-                case "Cleaner__InvalidCleanerIntensity":
-                    message = "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. Running clean with no level provided defaults to 'normal'. Run 'help clean' for more info onto what does each level do."
-                    // TODO - actually add info onto what does each level do
-                    break;
+            case "Cleaner__InvalidCleanerIntensity":
+                hint =
+                    "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. Running clean with no level provided defaults to 'normal'. Run 'help clean' for more info onto what does each level do.";
+                // TODO - actually add info onto what does each level do
+                break;
             default:
-                message = null;
+                hint = null;
                 break;
         }
 
@@ -55,10 +56,10 @@ export class FknError extends Error {
                 "----------",
             );
         }
-        if (message !== null) {
+        if (hint !== null) {
             messageParts.push(
                 "----------",
-                ColorString("Hint: ", "bright-blue") + ColorString(message, "italic"),
+                ColorString("Hint: ", "bright-blue") + ColorString(hint, "italic"),
                 "----------",
             );
         }
