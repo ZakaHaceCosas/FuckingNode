@@ -23,8 +23,10 @@ export async function GetAppPath(
         Deno.exit(1);
     }
 
+    const funny = I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")
+
     const BASE_DIR = await JoinPaths(appDataPath, APP_NAME.CLI);
-    const PROJECTS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-${I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u")}.txt`);
+    const PROJECTS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-${funny}.txt`);
     const LOGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-logs.log`);
     const UPDATES = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-updates.yaml`);
     const SETTINGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-settings.yaml`);

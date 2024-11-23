@@ -160,7 +160,7 @@ export async function ParsePath(target: string): Promise<string> {
 }
 
 /**
- * Parses a string of a lot of file paths separated by commands, and returns them as an array of individual paths.
+ * Parses a string of a lot of file paths separated by commas, and returns them as an array of individual paths.
  *
  * @export
  * @param {string} target The string to parse.
