@@ -226,7 +226,8 @@ export interface BunfigToml {
 export type ERROR_CODES =
     | "Manager__ProjectInteractionInvalidCauseNoPathProvided"
     | "Manager__InvalidArgumentPassed"
-    | "Manager__IgnoreFile__InvalidLevel";
+    | "Manager__IgnoreFile__InvalidLevel"
+    | "Cleaner__InvalidCleanerIntensity";
 
 /**
  * An object with paths to all config files.

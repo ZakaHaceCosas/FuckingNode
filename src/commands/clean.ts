@@ -12,6 +12,7 @@ import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
 import { PerformHardCleanup, PerformNodeCleaning } from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types.ts";
+import { FknError } from "../utils/error.ts";
 
 function ResolveProtection(protection: string | null, update: boolean): {
     doClean: boolean;
@@ -49,7 +50,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         }
 
         if (!(["hard", "hard-only", "normal", "maxim"].includes(intensity))) {
-            throw new Error("Invalid intensity.");
+            throw new FknError("Cleaner__InvalidCleanerIntensity", `Provided intensity '${intensity}' is not valid.`);
         }
 
         const workingIntensity: CleanerIntensity = intensity as CleanerIntensity;

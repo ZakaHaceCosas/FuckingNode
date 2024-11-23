@@ -31,6 +31,10 @@ export class FknError extends Error {
             case "Manager__IgnoreFile__InvalidLevel":
                 message = "Valid ignore file levels are '*' for everything, 'cleaner' for project cleanup, and 'updater' for project updating.";
                 break;
+                case "Cleaner__InvalidCleanerIntensity":
+                    message = "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. Running clean with no level provided defaults to 'normal'. Run 'help clean' for more info onto what does each level do."
+                    // TODO - actually add info onto what does each level do
+                    break;
             default:
                 message = null;
                 break;
