@@ -37,9 +37,14 @@ function CompileApp(): void {
     }
 }
 
-await Deno.remove("./dist/", {
-    recursive: true,
-});
+try {
+    await Deno.stat("./dist/");
+    await Deno.remove("./dist/", {
+        recursive: true,
+    });
+} catch {
+    // no dist/
+}
 
 Deno.mkdir("./dist/");
 
