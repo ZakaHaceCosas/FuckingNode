@@ -227,7 +227,8 @@ export type ERROR_CODES =
     | "Manager__ProjectInteractionInvalidCauseNoPathProvided"
     | "Manager__InvalidArgumentPassed"
     | "Manager__IgnoreFile__InvalidLevel"
-    | "Cleaner__InvalidCleanerIntensity";
+    | "Cleaner__InvalidCleanerIntensity"
+    | "Internal__Projects__CantDetermineEnv";
 
 /**
  * An object with paths to all config files.

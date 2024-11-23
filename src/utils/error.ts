@@ -36,6 +36,9 @@ export class FknError extends Error {
                     "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. Running clean with no level provided defaults to 'normal'. Run 'help clean' for more info onto what does each level do.";
                 // TODO - actually add info onto what does each level do
                 break;
+            case "Internal__Projects__CantDetermineEnv":
+                hint = "This is an internal error, there's not much you can do.";
+                break;
             default:
                 hint = null;
                 break;

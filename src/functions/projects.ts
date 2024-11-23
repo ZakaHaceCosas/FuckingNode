@@ -5,7 +5,7 @@ import { IGNORE_FILE } from "../constants.ts";
 import type { BunfigToml, CONFIG_FILES, DenoPkgJson, FkNodeConfigYaml, NodeManagerUt, NodePkgJson, ProjectEnv } from "../types.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
-import GenericErrorHandler from "../utils/error.ts";
+import GenericErrorHandler, { FknError } from "../utils/error.ts";
 
 /**
  * Gets all the users projects and returns their paths as a `string[]`.
@@ -322,7 +322,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
             }
         }
 
-        throw new Error("Unable to determine project environment.");
+        throw new FknError("Internal__Projects__CantDetermineEnv");
     } catch (e) {
         await GenericErrorHandler(e);
         Deno.exit(1); // (for TS to shut up)
