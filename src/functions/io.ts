@@ -126,15 +126,15 @@ export function ParseFlag(flag: string, min: boolean): string[] {
 }
 
 /**
- * Given a string, returns a colored version of it. Does take care of end-of-string resetting.
+ * Given a string, returns a CLI-colored version of it.
  *
  * @export
- * @param {string} string The string.
- * @param {validColors} color The color you wish to give it. Some styles that aren't "colors" are also allowed, e.g. `bold`.
- * @returns {string}
+ * @param {string | number} string The string.
+ * @param {validColors} color The color you wish to give it. Some styles that aren't "colors" are also allowed, e.g. `bold` or `half-opaque`.
+ * @returns {string} The colored string.
  */
-export function ColorString(string: string, color: validColors): string {
-    // 1) \033 2) \x1b
+export function ColorString(string: string | number, color: validColors): string {
+    const finalString = typeof string === "string" ? string : String(string);
     const RESET = "\x1b[0m";
     let colorCode = RESET;
 
@@ -161,7 +161,7 @@ export function ColorString(string: string, color: validColors): string {
             colorCode = "\x1b[35m";
             break;
         case "pink":
-            colorCode = "\x1b[38;5;213m"; // idk if this will work...
+            colorCode = "\x1b[38;5;213m"; // (custom color)
             break;
         case "half-opaque":
             colorCode = "\x1b[2m";
@@ -182,5 +182,5 @@ export function ColorString(string: string, color: validColors): string {
             break;
     }
 
-    return `${colorCode}${string}${RESET}`;
+    return `${colorCode}${finalString}${RESET}`;
 }
