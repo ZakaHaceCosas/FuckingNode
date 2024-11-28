@@ -1,9 +1,9 @@
 import TheUpdater from "../commands/updater.ts";
 import { APP_NAME, DEFAULT_SETTINGS, I_LIKE_JS } from "../constants.ts";
-import type { CONFIG_FILES } from "../types.ts";
+import type { CONFIG_FILES, FKNODE_SETTINGS } from "../types.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
-import { stringify as stringifyYaml } from "@std/yaml";
+import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 
 /**
  * Returns file paths for all config files the app uses.
@@ -77,7 +77,9 @@ export async function FreshSetup(): Promise<CONFIG_FILES> {
 
         const settingsPath = await GetAppPath("SETTINGS");
         if (!(await CheckForPath(settingsPath))) {
-            await Deno.writeTextFile(settingsPath, stringifyYaml(DEFAULT_SETTINGS));
+            await Deno.writeTextFile(settingsPath, stringifyYaml(DEFAULT_SETTINGS), {
+                create: true,
+            });
         }
 
         const updatesPath = await GetAppPath("UPDATES");
@@ -104,4 +106,17 @@ export async function FreshSetup(): Promise<CONFIG_FILES> {
         await LogStuff(`Some ${I_LIKE_JS.MFN} error happened trying to setup config files: ${e}`, "error");
         Deno.exit(1);
     }
+}
+
+/**
+ * Returns current user settings.
+ *
+ * @export
+ * @async
+ * @returns {Promise<FKNODE_SETTINGS>}
+ */
+export async function GetSettings(): Promise<FKNODE_SETTINGS> {
+    const path = await GetAppPath("SETTINGS");
+    const stuff = await parseYaml(await Deno.readTextFile(path));
+    return stuff as FKNODE_SETTINGS;
 }

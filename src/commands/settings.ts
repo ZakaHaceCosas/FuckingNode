@@ -1,11 +1,12 @@
-import { LogStuff, ParseFlag } from "../functions/io.ts";
+import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { APP_NAME } from "../constants.ts";
 import TheCleaner from "./clean.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
-import TheHelper from "./help.ts";
 import type { CONFIG_FILES } from "../types.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
-async function CreateSchedule(hour: string, day: string | "*", appPaths: CONFIG_FILES) {
+import { GetSettings } from "../functions/config.ts";
+
+async function CreateSchedule(hour: string | null, day: string | "*" | null, appPaths: CONFIG_FILES) {
     const workingHour = Number(hour);
 
     if (isNaN(workingHour) || workingHour < 0 || workingHour > 23) {
@@ -126,12 +127,21 @@ async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
     }
 }
 
+async function DisplaySettings() {
+    const settings = await GetSettings();
+    const formattedSettings = `Update frequency: Each ${ColorString(settings.updateFreq, "bright-green")} days.\nDefault cleaner intensity: ${
+        ColorString(settings.defaultCleanerIntensity, "bright-green")
+    }`;
+    await LogStuff(ColorString("No argument provided, showing current settings.", "italic"));
+    await LogStuff(`${ColorString("Your current settings are:", "bright-yellow")}\n---\n${formattedSettings}`, "bulb");
+}
+
 export default async function TheSettings(params: TheSettingsConstructedParams) {
     const { args, CF } = params;
 
     if (!args || args.length === 0) {
-        await TheHelper({ query: "settings" });
-        Deno.exit(1);
+        await DisplaySettings();
+        return;
     }
 
     const command = args[1];
@@ -139,18 +149,11 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
     const thirdArg = args[3] ? args[3].trim() : null;
 
     if (!command) {
-        await TheHelper({ query: "settings" });
+        await DisplaySettings();
         return;
     }
 
-    if (ParseFlag("experimental-schedule", false).includes(command)) {
-        if (!secondArg || !thirdArg) {
-            await LogStuff(
-                "No time schedule was provided, or it's incomplete.",
-                "warn",
-            );
-            return;
-        }
+    if (ParseFlag("experimental-schedule", false).includes(command ?? "")) {
         await CreateSchedule(secondArg, thirdArg, CF);
     }
 
@@ -174,8 +177,6 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             await Flush(secondArg, shouldForce, CF);
             break;
         default:
-            await TheHelper(
-                { query: "settings" },
-            );
+            await DisplaySettings();
     }
 }
