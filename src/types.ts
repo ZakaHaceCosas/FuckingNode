@@ -9,7 +9,7 @@ export type RIGHT_NOW_DATE = `${number}-${string}-${string} ${string}:${string}`
 /**
  * RegEx for RIGHT_NOW_DATE
  */
-export const RIGHT_NOW_DATE_REGEX = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
+export const RIGHT_NOW_DATE_REGEX: RegExp = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
 
 /**
  * Supported package files.

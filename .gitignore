@@ -1,4 +1,4 @@
-# stuff i dont want to commit
+# stuff i don't want to commit
 .command
 **.ignore.*
 # compiled executable
