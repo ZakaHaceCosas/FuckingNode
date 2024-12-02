@@ -8,15 +8,11 @@ import { type RIGHT_NOW_DATE, RIGHT_NOW_DATE_REGEX } from "../types.ts";
  */
 export function GetDateNow(): RIGHT_NOW_DATE {
     const now = new Date();
+    const timezoneOffset = now.getTimezoneOffset();
+    const localDate = new Date(now.getTime() - timezoneOffset * 60 * 1000);
 
-    const year = now.getFullYear();
-    const month = (now.getMonth() + 1).toString().padStart(2, "0");
-    const day = now.getDate().toString().padStart(2, "0");
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const formattedDate: RIGHT_NOW_DATE = `${year}-${month}-${day} ${hours}:${minutes}`;
-    return formattedDate;
+    const formattedDate = localDate.toISOString().slice(0, 16).replace("T", " ");
+    return formattedDate as RIGHT_NOW_DATE;
 }
 
 /**
@@ -25,9 +21,7 @@ export function GetDateNow(): RIGHT_NOW_DATE {
  * @param {RIGHT_NOW_DATE} date The date string you want to make standard.
  * @returns {Date}
  */
-export function MakeRightNowDateStandard(
-    date: RIGHT_NOW_DATE,
-): Date {
+export function MakeRightNowDateStandard(date: RIGHT_NOW_DATE): Date {
     if (!RIGHT_NOW_DATE_REGEX.test(date)) throw new TypeError("Provided dateString doesn't match RIGHT_NOW_DATE Regular Expression.");
 
     const [datePart, timePart] = date.split(" ");
