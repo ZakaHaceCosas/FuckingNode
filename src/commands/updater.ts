@@ -1,4 +1,4 @@
-import { compare, greaterThan, parse } from "@std/semver";
+import { compare, parse } from "@std/semver";
 import { FetchGitHub } from "../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
 import { type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type UPDATE_FILE } from "../types.ts";
@@ -7,20 +7,7 @@ import { CheckForPath } from "../functions/filesystem.ts";
 import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
 import { LogStuff } from "../functions/io.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
-
-/**
- * Compares two SemVer versions. Returns the difference between both, so if `versionB` is more recent than `versionA` you'll get a positive number, or you'll get 0 if they're equal.
- *
- * @param {string} versionA 1st version to compare.
- * @param {string} versionB 2nd version to compare.
- * @returns {boolean | 0} True if `versionA` is NEWER than `versionB`, false otherwise. `0` if they're the same.
- */
-function IsSemverNewer(versionA: string, versionB: string): boolean | 0 {
-    const version1 = parse(versionA);
-    const version2 = parse(versionB);
-
-    return (compare(version1, version2) === 0 ? 0 : greaterThan(version1, version2));
-}
+import { GetSettings } from "../functions/config.ts";
 
 /**
  * Checks for updates (in case it needs to do so). If you want to force it to check for updates, pass `true` as the 1st argument. Otherwise, pass false or no argument at all.
@@ -29,7 +16,7 @@ function IsSemverNewer(versionA: string, versionB: string): boolean | 0 {
  * @returns {Promise<void>}
  */
 export default async function TheUpdater(params: TheUpdaterConstructedParams): Promise<void> {
-    async function TellAboutUpdate(newVer: string) {
+    async function TellAboutUpdate(newVer: string): Promise<void> {
         await LogStuff(
             `There's a new version! ${newVer}. Consider downloading it from GitHub. You're on ${VERSION}, btw.`,
             "bulb",
@@ -40,9 +27,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
 
     async function CheckUpdates(): Promise<UPDATE_FILE | "rl"> {
         try {
-            const response = await FetchGitHub(
-                RELEASE_URL,
-            );
+            const response = await FetchGitHub(RELEASE_URL);
 
             if (!response.ok) {
                 if (response.status === 403) return "rl"; // (github has a rate limit, so this is not an error we should be really aware of)
@@ -51,9 +36,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
 
             const content: GITHUB_RELEASE = await response.json();
 
-            const isUpToDate = typeof IsSemverNewer(content.tag_name, VERSION) === "boolean"
-                ? (IsSemverNewer(content.tag_name, VERSION) as boolean)
-                : true;
+            const isUpToDate = (compare(parse(content.tag_name), parse(VERSION))) >= 1;
 
             const dataToWrite: UPDATE_FILE = {
                 isUpToDate: isUpToDate,
@@ -85,26 +68,32 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
             throw new Error(`Unable to parse date of last update. Got ${updateFile.lastCheck}.`);
         }
 
-        if (!updateFile.isUpToDate) {
-            return true;
-        }
+        if (!updateFile.isUpToDate) return true;
 
         const currentDate = MakeRightNowDateStandard(GetDateNow());
         const lastDate = MakeRightNowDateStandard(updateFile.lastCheck);
-        const differenceInDays = (currentDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24); // if it checks successfully, it doesn't check again until 5 days later, so no waste of net resources.
+        const differenceInDays = (currentDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24); // if it checks successfully, it doesn't check again until 5 days (by default) later, so no waste of net resources.
 
-        return differenceInDays >= 5; // check for updates each five days
+        return differenceInDays >= (await GetSettings()).updateFreq;
     }
 
-    if (!params.force) {
-        if (!(await VerifyItNeedsToUpdate())) return;
-    }
+    if (!params.force && !(await VerifyItNeedsToUpdate())) return;
+
     const needsToUpdate = await CheckUpdates();
-    if (needsToUpdate === "rl") await LogStuff("Bro was rate-limited by GitHub (update provider). Try again in a few hours.", "bruh");
-    if ((needsToUpdate as UPDATE_FILE).isUpToDate) {
-        TellAboutUpdate((needsToUpdate as UPDATE_FILE).lastVer);
+    if (needsToUpdate === "rl") {
+        await LogStuff("Bro was rate-limited by GitHub (update provider). Try again in a few hours.", "bruh");
         return;
     }
 
-    if (!params.silent) await LogStuff(`You're up to date! ${VERSION} is the latest.`, "tick");
+    const { isUpToDate, lastVer } = needsToUpdate as UPDATE_FILE;
+
+    if (isUpToDate) {
+        if (!params.silent) {
+            await LogStuff(`You're up to date! ${VERSION} is the latest.`, "tick");
+        }
+        return;
+    } else {
+        await TellAboutUpdate(lastVer);
+        return;
+    }
 }

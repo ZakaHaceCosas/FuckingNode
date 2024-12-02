@@ -22,8 +22,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added the ability to customize whether an ignored project should ignore updates, cleanup, or everything.
 - Added much more better support for workspaces, by recognizing `pnpm-workspace.yaml`, `yarnrc.yaml` and `bunfig.toml`.
 - Added the ability to only do a hard cleanup (global cache cleanup), by running either `global-clean`, `hard-clean`, or `clean hard-only`.
-- Added an about page. <!-- UNCOMMITTED, BUT ADDED -->
+- Added an about page.
 - Added the `--alive` flag to `manager list` so it only lists projects that are not ignored.
+- Added a settings command which allows to tweak:
+  - Update check frequency
+  - Default cleaner intensity
 
 ### Changed
 
