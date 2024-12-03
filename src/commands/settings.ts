@@ -10,43 +10,26 @@ async function CreateSchedule(hour: string | null, day: string | "*" | null, app
     const workingHour = Number(hour);
 
     if (isNaN(workingHour) || workingHour < 0 || workingHour > 23) {
-        await LogStuff(
-            "Invalid hour. Must be a number between 0 and 23.",
-            "error",
-        );
+        await LogStuff("Invalid hour. Must be a number between 0 and 23.", "error");
         Deno.exit(1);
     }
 
-    let workingDay: Deno.CronScheduleExpression;
+    const workingDay: Deno.CronScheduleExpression = day === "*" ? 1 : { every: Number(day) };
 
-    if (day === "*") {
-        workingDay = 1;
-    } else {
-        const daysBetween = Number(day);
-        if (isNaN(daysBetween) || daysBetween < 0 || daysBetween > 6) {
-            await LogStuff(
-                "Invalid day. Must be a number between 0 and 6, or an asterisk ('*') for daily.",
-                "error",
-            );
-            Deno.exit(1);
-        }
-
-        workingDay = {
-            every: daysBetween,
-        };
+    if (day !== "*" && (isNaN(Number(day)) || Number(day) < 0 || Number(day) > 6)) {
+        await LogStuff("Invalid day. Must be a number between 0 and 6, or an asterisk ('*') for daily.", "error");
+        Deno.exit(1);
     }
 
     try {
-        await Deno.cron(
+        Deno.cron(
             "fkn-cleaner",
             {
                 minute: 0,
                 hour: workingHour,
                 dayOfWeek: workingDay,
             },
-            {
-                backoffSchedule: [1500, 3000, 5000, 15000],
-            },
+            { backoffSchedule: [1500, 3000, 5000, 15000] },
             async () => {
                 await TheCleaner({
                     update: false,
@@ -62,11 +45,17 @@ async function CreateSchedule(hour: string | null, day: string | "*" | null, app
     }
 }
 
+async function removeFiles(files: string[]) {
+    await Promise.all(files.map(async (file) => {
+        await Deno.remove(file);
+    }));
+}
+
 async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
     const validTargets = ["logs", "projects", "updates", "all"];
     if (!validTargets.includes(what)) {
         await LogStuff(
-            "Specify what to flush, either 'logs', 'projects', 'updates', or 'all'.",
+            "Specify what to flush. Either 'logs', 'projects', 'updates', or 'all'.\nIf you want to enable auto-flush, run 'settings auto-flush enable/disable <interval>.",
             "warn",
         );
         return;
@@ -76,13 +65,13 @@ async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
 
     switch (what) {
         case "logs":
-            file = config.logs;
+            file = [config.logs];
             break;
         case "projects":
-            file = config.projects;
+            file = [config.projects];
             break;
         case "updates":
-            file = config.updates;
+            file = [config.updates];
             break;
         case "all":
             file = [
@@ -114,70 +103,56 @@ async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
     if (!shouldProceed) return;
 
     try {
-        if (typeof file === "string") {
-            await Deno.remove(file);
-        } else {
-            for (const removeFile of file) {
-                await Deno.remove(removeFile);
-            }
-        }
+        await removeFiles(file);
         await LogStuff("That worked out!", "tick-clear");
     } catch (e) {
         await LogStuff(`Error removing files: ${e}`, "error");
     }
 }
 
-async function AutoFlush(action: string, config: CONFIG_FILES, freq?: number) {
+async function AutoFlush(action: "enable" | "disable", config: CONFIG_FILES, freq?: number) {
     if (!(["enable", "disable"].includes(action))) throw new Error("Action must be either enable or disable.");
     if (action === "disable") {
         throw new Error(
-            "We use DenoJS to develop this CLI. Deno.cron() (what we use to schedule tasks) is still unstable on their side and doesn't yet allow us to remove a scheduled task. Sorry!",
+            "Cannot disable tasks. We use Deno's Cron feature to schedule tasks, which is still unstable on their side and doesn't yet allow us to remove a scheduled task.",
         );
     }
 
-    if (!freq) throw new Error("No freq.");
-
-    if (isNaN(freq)) {
-        await LogStuff(
-            "Invalid freq. Must be a number.",
-            "error",
-        );
+    if (!freq || isNaN(freq)) {
+        await LogStuff("Invalid frequency. Must be a number.", "error");
         Deno.exit(1);
     }
 
     try {
-        await Deno.cron(
-            "fkn-cleaner",
+        Deno.cron(
+            "fkn-flush",
             {
                 minute: 0,
                 hour: 0,
                 dayOfWeek: 0,
-                dayOfMonth: {
-                    every: freq,
-                },
+                dayOfMonth: { every: freq },
             },
-            {
-                backoffSchedule: [1500, 3000, 5000, 15000],
-            },
+            { backoffSchedule: [1500, 3000, 5000, 15000] },
             async () => {
                 await Flush("logs", true, config);
             },
         );
-        await LogStuff("That worked out! Schedule successfully created!", "tick");
+        await LogStuff("That worked out! Auto-flush successfully scheduled!", "tick");
     } catch (e) {
-        await LogStuff(`Error scheduling: ${e}`, "error");
+        await LogStuff(`Error scheduling auto-flush: ${e}`, "error");
     }
 }
 
 async function Repair() {
     try {
-        const c = await LogStuff(
+        const confirmation = await LogStuff(
             "Are you sure? Repairing your settings will overwrite your current setting with the defaults.",
             "warn",
             undefined,
             true,
         );
-        if (!c) return;
+        if (!confirmation) return;
+
         await FreshSetup(true);
         await LogStuff("Repaired settings (now using defaults):", "tick");
         await DisplaySettings();
@@ -200,26 +175,23 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
     const { args, CF } = params;
 
     if (!args || args.length === 0) {
-        await LogStuff(ColorString("No argument provided, showing current settings.", "italic"));
         await DisplaySettings();
         return;
     }
 
     const command = args[1];
-    const secondArg = args[2] ? args[2].trim() : null;
-    const thirdArg = args[3] ? args[3].trim() : null;
+    const secondArg = args[2]?.trim() || null;
+    const thirdArg = args[3]?.trim() || null;
 
     if (!command) {
-        await LogStuff(ColorString("No argument provided, showing current settings.", "italic"));
         await DisplaySettings();
         return;
     }
 
-    if (ParseFlag("experimental-schedule", false).includes(command ?? "")) {
+    if (ParseFlag("experimental-schedule", false).includes(command)) {
         await CreateSchedule(secondArg, thirdArg, CF);
+        return;
     }
-
-    let shouldForce: boolean = false;
 
     switch (command) {
         case "schedule":
@@ -229,26 +201,15 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             );
             break;
         case "flush":
-            if (!secondArg) {
-                await LogStuff(
-                    "Specify what to flush. Either 'logs', 'projects', 'updates', or 'all'.\nIf you want to enable auto-flush, run 'settings auto-flush enable/disable <interval>.",
-                    "warn",
-                );
-                return;
-            }
-            if (ParseFlag("force", false).includes(thirdArg ?? "")) {
-                shouldForce = true;
-            }
-            await Flush(secondArg, shouldForce, CF);
+            await Flush(secondArg ?? "", ParseFlag("force", false).includes(thirdArg ?? ""), CF);
             break;
         case "auto-flush":
-            await AutoFlush(secondArg ?? "", CF, Number(thirdArg));
+            await AutoFlush(secondArg as "enable" | "disable", CF, Number(thirdArg));
             break;
         case "repair":
             await Repair();
             break;
         default:
-            await LogStuff(ColorString("No argument provided, showing current settings.", "italic"));
             await DisplaySettings();
     }
 }
