@@ -1,4 +1,5 @@
 import TheHelper from "../commands/help.ts";
+import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import type { ERROR_CODES } from "../types.ts";
 
@@ -90,7 +91,7 @@ export default async function GenericErrorHandler(e: unknown): Promise<never> {
     if (e instanceof FknError) {
         await e.exit(e.message);
     } else {
-        const errorMessage = `${ColorString("An unknown error happened:", "red")} ${e}`;
+        const errorMessage = `${ColorString(`${I_LIKE_JS.FK}! An unknown error happened:`, "red")} ${e}`;
         await LogStuff(errorMessage, "error");
     }
     Deno.exit(1); // <- doesn't do anything if the error is a FknError because e.exit() already exits, but without this VSCode rises an error (it doesn't know e.exit() is a <never>)
