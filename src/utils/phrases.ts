@@ -13,7 +13,7 @@ const internalJokes = [
     "Proudly running on anything but a FireBlitz server", // those who know :skull:
     "not made in germany", // those who know :skull:
     `(it's called like this because node is ${I_LIKE_JS.FKN} annoying, not because i ${I_LIKE_JS.FK} it)`, // (someone really told me the 2nd one)
-    "Proudly made by ZakaHaceCosas (translates to 'ZakaMakesThings', or 'ZakaDoesStuff',... i need to standardize)", // yeah i need to do that
+    "Proudly made by ZakaHaceCosas (translates to 'ZakaMakesStuff')", // YOO
     "Proudly developed in Spain (the S is silent)", // elections here don't work, i swear
     "i should be studying chemistry and i'm writing random phrases for this thing", // real btw
     "weeb > furry", // indeed
