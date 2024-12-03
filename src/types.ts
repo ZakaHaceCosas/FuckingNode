@@ -332,6 +332,10 @@ export interface NodeManagerUt {
 export interface FKNODE_SETTINGS {
     updateFreq: number;
     defaultCleanerIntensity: CleanerIntensity;
+    autoFlushFiles: {
+        enabled: boolean;
+        freq: number;
+    };
 }
 
 export interface FkNodeConfigYaml {

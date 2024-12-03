@@ -4,7 +4,7 @@ import TheCleaner from "./clean.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import type { CONFIG_FILES } from "../types.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
-import { GetSettings } from "../functions/config.ts";
+import { FreshSetup, GetSettings } from "../functions/config.ts";
 
 async function CreateSchedule(hour: string | null, day: string | "*" | null, appPaths: CONFIG_FILES) {
     const workingHour = Number(hour);
@@ -127,12 +127,72 @@ async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
     }
 }
 
+async function AutoFlush(action: string, config: CONFIG_FILES, freq?: number) {
+    if (!(["enable", "disable"].includes(action))) throw new Error("Action must be either enable or disable.");
+    if (action === "disable") {
+        throw new Error(
+            "We use DenoJS to develop this CLI. Deno.cron() (what we use to schedule tasks) is still unstable on their side and doesn't yet allow us to remove a scheduled task. Sorry!",
+        );
+    }
+
+    if (!freq) throw new Error("No freq.");
+
+    if (isNaN(freq)) {
+        await LogStuff(
+            "Invalid freq. Must be a number.",
+            "error",
+        );
+        Deno.exit(1);
+    }
+
+    try {
+        await Deno.cron(
+            "fkn-cleaner",
+            {
+                minute: 0,
+                hour: 0,
+                dayOfWeek: 0,
+                dayOfMonth: {
+                    every: freq,
+                },
+            },
+            {
+                backoffSchedule: [1500, 3000, 5000, 15000],
+            },
+            async () => {
+                await Flush("logs", true, config);
+            },
+        );
+        await LogStuff("That worked out! Schedule successfully created!", "tick");
+    } catch (e) {
+        await LogStuff(`Error scheduling: ${e}`, "error");
+    }
+}
+
+async function Repair() {
+    try {
+        const c = await LogStuff(
+            "Are you sure? Repairing your settings will overwrite your current setting with the defaults.",
+            "warn",
+            undefined,
+            true,
+        );
+        if (!c) return;
+        await FreshSetup(true);
+        await LogStuff("Repaired settings (now using defaults):", "tick");
+        await DisplaySettings();
+    } catch (e) {
+        throw e;
+    }
+}
+
 async function DisplaySettings() {
     const settings = await GetSettings();
     const formattedSettings = `Update frequency: Each ${ColorString(settings.updateFreq, "bright-green")} days.\nDefault cleaner intensity: ${
         ColorString(settings.defaultCleanerIntensity, "bright-green")
+    }\nAuto-flush files: ${ColorString(settings.autoFlushFiles.enabled ? "enabled" : "disabled", "bright-green")}${
+        settings.autoFlushFiles.enabled && `\n    Frequency: ${ColorString(settings.autoFlushFiles.freq, "bright-green")}`
     }`;
-    await LogStuff(ColorString("No argument provided, showing current settings.", "italic"));
     await LogStuff(`${ColorString("Your current settings are:", "bright-yellow")}\n---\n${formattedSettings}`, "bulb");
 }
 
@@ -140,6 +200,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
     const { args, CF } = params;
 
     if (!args || args.length === 0) {
+        await LogStuff(ColorString("No argument provided, showing current settings.", "italic"));
         await DisplaySettings();
         return;
     }
@@ -149,6 +210,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
     const thirdArg = args[3] ? args[3].trim() : null;
 
     if (!command) {
+        await LogStuff(ColorString("No argument provided, showing current settings.", "italic"));
         await DisplaySettings();
         return;
     }
@@ -168,7 +230,10 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             break;
         case "flush":
             if (!secondArg) {
-                await LogStuff("Specify what to flush. Either 'logs', 'projects', 'updates', or 'all'.", "warn");
+                await LogStuff(
+                    "Specify what to flush. Either 'logs', 'projects', 'updates', or 'all'.\nIf you want to enable auto-flush, run 'settings auto-flush enable/disable <interval>.",
+                    "warn",
+                );
                 return;
             }
             if (ParseFlag("force", false).includes(thirdArg ?? "")) {
@@ -176,7 +241,14 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             }
             await Flush(secondArg, shouldForce, CF);
             break;
+        case "auto-flush":
+            await AutoFlush(secondArg ?? "", CF, Number(thirdArg));
+            break;
+        case "repair":
+            await Repair();
+            break;
         default:
+            await LogStuff(ColorString("No argument provided, showing current settings.", "italic"));
             await DisplaySettings();
     }
 }

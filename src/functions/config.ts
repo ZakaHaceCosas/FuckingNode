@@ -54,7 +54,7 @@ export async function GetAppPath(
  * @async
  * @returns {Promise<CONFIG_FILES>}
  */
-export async function FreshSetup(): Promise<CONFIG_FILES> {
+export async function FreshSetup(repairSetts?: boolean): Promise<CONFIG_FILES> {
     try {
         const basePath = await GetAppPath("BASE");
         if (!(await CheckForPath(basePath))) {
@@ -77,6 +77,11 @@ export async function FreshSetup(): Promise<CONFIG_FILES> {
 
         const settingsPath = await GetAppPath("SETTINGS");
         if (!(await CheckForPath(settingsPath))) {
+            await Deno.writeTextFile(settingsPath, stringifyYaml(DEFAULT_SETTINGS), {
+                create: true,
+            });
+        }
+        if (repairSetts) { // overwrite
             await Deno.writeTextFile(settingsPath, stringifyYaml(DEFAULT_SETTINGS), {
                 create: true,
             });
