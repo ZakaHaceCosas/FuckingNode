@@ -93,7 +93,9 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
         }
         return;
     } else {
-        await TellAboutUpdate(lastVer);
+        if (!params.mute) {
+            await TellAboutUpdate(lastVer);
+        }
         return;
     }
 }

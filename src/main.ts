@@ -14,14 +14,14 @@ import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
 
-async function init(update: boolean) {
+async function init(update: boolean, mute?:boolean) {
     const configFiles = await FreshSetup(); // Temporarily hold the result
     const ALL_CONFIG_FILES: CONFIG_FILES = configFiles; // Assign only after it's resolved
-    await TheUpdater({ CF: ALL_CONFIG_FILES, force: update, silent: !update });
+    await TheUpdater({ CF: ALL_CONFIG_FILES, force: update, silent: !update, mute: mute ? mute : false});
     return ALL_CONFIG_FILES;
 }
 
-const ALL_CONFIG_FILES: CONFIG_FILES = await init(false);
+const ALL_CONFIG_FILES: CONFIG_FILES = await init(false, true);
 
 const [firstCommand] = Deno.args;
 

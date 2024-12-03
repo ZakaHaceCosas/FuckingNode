@@ -31,4 +31,5 @@ export interface TheSettingsConstructedParams extends ConstructorParameters {
 export interface TheUpdaterConstructedParams extends ConstructorParameters {
     force: boolean;
     silent: boolean;
+    mute: boolean;
 }

@@ -92,6 +92,7 @@ export async function FreshSetup(repairSetts?: boolean): Promise<CONFIG_FILES> {
             await TheUpdater({
                 silent: true,
                 force: true,
+                mute: false,
                 CF: {
                     projects: projectPath,
                     logs: logsPath,

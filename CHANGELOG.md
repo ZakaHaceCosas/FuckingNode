@@ -59,6 +59,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed projects not being correctly added due to missing `await` keyword.
 - Fixed `--help <command>` working but `help <command>` (without `--`) not.
 - Fixed the log file being unreadable because it saved `\x1b` stuff.
+- Fixed the CLI writing twice the "There's a new version!" message.
 
 ## [1.4.2] 27-10-2024
 
