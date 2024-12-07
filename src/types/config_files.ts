@@ -41,9 +41,96 @@ export interface FkNodeYaml {
     /**
      * Divine protection, basically to ignore stuff.
      *
-     * @type {?("*" | "updater" | "cleanup")[]}
+     * @type {"*" | "all" | "updater" | "cleanup" | "disabled"}
      */
-    divineProtection?: ("*" | "updater" | "cleanup")[];
+    divineProtection?: "*" | "all" | "updater" | "cleanup" | "disabled";
+    /**
+     * If `--lint` is passed to `clean`, this script will be used to lint the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix).
+     *
+     * @type {?string}
+     */
+    lintCmd?: string;
+    /**
+     * If `--pretty` is passed to `clean`, this script will be used to prettify the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix).
+     *
+     * @type {?string}
+     */
+    prettyCmd?: string;
+    /**
+     * If provided, file paths in `targets` will be removed when `clean` is called with any of the `intensities`.
+     *
+     * @type {?{
+     *         intensities: CleanerIntensity[] | "*" | "all",
+     *         targets: string[]
+     *     }}
+     */
+    destroy?: {
+        intensities: CleanerIntensity[] | "*" | "all";
+        targets: string[];
+    };
+    /**
+     * If true, if an action that changes the code is performed (update, prettify, or destroy) and the Git workspace is clean (no uncommitted stuff), a commit will be made.
+     *
+     * @type {?boolean}
+     */
+    commitActions?: boolean;
+    /**
+     * If provided, if a commit is made (`commitActions`) this will be the commit message. If not provided a default message is used.
+     *
+     * @type {?string}
+     */
+    commitMessage?: string;
+}
+
+/**
+ * Validates if whatever you pass to this is a valid FkNodeYaml file.
+ *
+ * @export
+ * @param {*} obj Whatever
+ * @returns {obj is FkNodeYaml}
+ */
+export function ValidateFkNodeYaml(
+    // deno-lint-ignore no-explicit-any
+    obj: any,
+): obj is FkNodeYaml {
+    if (obj.divineProtection && !["*", "all", "updater", "cleanup", "disabled"].includes(obj.divineProtection)) {
+        return false;
+    }
+
+    if (obj.lintCmd && typeof obj.lintCmd !== "string") {
+        return false;
+    }
+    if (obj.prettyCmd && typeof obj.prettyCmd !== "string") {
+        return false;
+    }
+
+    if (obj.destroy) {
+        if (
+            !Array.isArray(obj.destroy.targets) ||
+            !obj.destroy.targets.every((
+                // deno-lint-ignore no-explicit-any
+                target: any,
+            ) => {
+                return typeof target === "string";
+            })
+        ) {
+            return false;
+        }
+
+        if (!["*", "all"].includes(obj.destroy.intensities) && !Array.isArray(obj.destroy.intensities)) {
+            return false;
+        }
+    }
+
+    if (obj.commitActions !== undefined && typeof obj.commitActions !== "boolean") {
+        return false;
+    }
+
+    if (obj.commitMessage && typeof obj.commitMessage !== "string") {
+        return false;
+    }
+
+    return true;
 }
 
 /**

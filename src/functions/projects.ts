@@ -6,7 +6,7 @@ import type { BunfigToml, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
-import type { FkNodeYaml } from "../types/config_files.ts";
+import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import type { NodePkgManagerProps } from "../types/package_managers.ts";
 import { GetAppPath } from "./config.ts";
 
@@ -29,7 +29,7 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
         const aliveReturn: string[] = [];
 
         for (const entry of list) {
-            const protection = await CheckDivineProtection(entry);
+            const protection = UnderstandProjectSettings.protection(await GetProjectSettings(entry));
             if (!protection) {
                 if (ignored === "exclude") aliveReturn.push(entry);
                 continue;
@@ -109,41 +109,64 @@ export async function NameProject(path: string): Promise<string> {
  * @export
  * @async
  * @param {string} path Path to the project
- * @returns {Promise<null | "updater" | "cleanup" | "*">} `null` means no ignore and `total` means ignore all. Rest explains itself.
+ * @returns {Promise<FkNodeYaml>} `null` means no ignore and `total` means ignore all. Rest explains itself.
  */
-export async function CheckDivineProtection(
+export async function GetProjectSettings(
     path: string,
-): Promise<null | "updater" | "cleanup" | "*"> {
+): Promise<FkNodeYaml> {
     const workingPath = await ParsePath(path);
     const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
 
-    if (!(await CheckForPath(pathToDivineFile))) return null;
+    const defaultSettings: FkNodeYaml = {
+        divineProtection: "disabled",
+        lintCmd: "__ESLINT",
+        prettyCmd: "__PRETTIER",
+        destroy: {
+            intensities: [],
+            targets: [],
+        },
+        commitActions: false,
+    };
+
+    if (!(await CheckForPath(pathToDivineFile))) return defaultSettings;
     const divineContent = await Deno.readTextFile(pathToDivineFile);
+    const cleanContent = parseYaml(divineContent);
 
-    const cleanContent: FkNodeYaml = parseYaml(divineContent) as FkNodeYaml;
-
-    if (!cleanContent.divineProtection) {
-        return null; // nothing ofc
+    if (!ValidateFkNodeYaml(cleanContent)) {
+        await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
+        return defaultSettings;
     }
 
-    const hasAsterisk = cleanContent.divineProtection.includes("*");
-    const hasUpdater = cleanContent.divineProtection.includes("updater");
-    const hasCleanup = cleanContent.divineProtection.includes("cleanup");
-
-    if (hasAsterisk) {
-        return cleanContent.divineProtection.length > 1 ? null : "*"; // total
-        // two asterisks will count as null.
-    } else if (hasUpdater && hasCleanup) {
-        return "*"; // both = * = total
-    } else if (hasUpdater) {
-        return "updater"; // just update
-    } else if (hasCleanup) {
-        return "cleanup"; // just cleanup
-    }
-
-    return null; // nothing
+    return defaultSettings;
 }
 
+/**
+ * Wraps a bunch of functions (well currently just one but more in the future) to easily work around with fknode.yaml. Where `UnderstandProjectSettings` is `A`:
+ *
+ * `A.protection(settings: FkNodeYaml)` will return "*", "updater", "cleanup", or null depending on the level of protection of the project.
+ */
+export const UnderstandProjectSettings = {
+    protection: (settings: FkNodeYaml): "*" | "updater" | "cleanup" | null => {
+        if (!settings.divineProtection) return null;
+        switch (settings.divineProtection) {
+            case "*":
+            case "all":
+                return "*";
+            case "cleanup":
+                return "cleanup";
+            case "updater":
+                return "updater";
+            case "disabled":
+                return null;
+        }
+    },
+};
+
+/**
+ * Description placeholder
+ *
+ * @typedef {ProjectError}
+ */
 type ProjectError = "NonExistingPath" | "IsDuplicate" | "NoPkgJson";
 
 /**

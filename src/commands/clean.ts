@@ -6,7 +6,7 @@ import {
 } from "../types/package_managers.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
-import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
+import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
 import { PerformHardCleanup, PerformNodeCleaning, ResolveProtection, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
@@ -91,8 +91,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     lockfiles.push("deno.lock");
                 }
 
-                const protection = await CheckDivineProtection(project);
-                const { doClean, doUpdate, preliminaryStatus } = ResolveProtection(protection, update);
+                const { doClean, doUpdate, preliminaryStatus } = await ResolveProtection(project, update);
                 switch (preliminaryStatus) {
                     case "Fully protected":
                         await LogStuff(

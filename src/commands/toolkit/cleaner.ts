@@ -3,7 +3,7 @@ import { Commander, CommandExists } from "../../functions/cli.ts";
 import { GetSettings } from "../../functions/config.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
-import { NameProject } from "../../functions/projects.ts";
+import { GetProjectSettings, NameProject, UnderstandProjectSettings } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
 import type { SUPPORTED_NODE_LOCKFILES } from "../../types/package_managers.ts";
 import { FknError } from "../../utils/error.ts";
@@ -288,7 +288,8 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
  * Tells you about the protection of a project.
  *
  * @export
- * @param {(string | null)} protection
+ * @async
+ * @param {(string )} path
  * @param {boolean} update
  * @returns {{
  *     doClean: boolean;
@@ -296,11 +297,12 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
  *     preliminaryStatus?: "Fully protected" | "Cleanup protected" | "Update protected";
  * }}
  */
-export function ResolveProtection(protection: string | null, update: boolean): {
+export async function ResolveProtection(path: string, update: boolean): Promise<{
     doClean: boolean;
     doUpdate: boolean;
     preliminaryStatus?: "Fully protected" | "Cleanup protected" | "Update protected";
-} {
+}> {
+    const protection = UnderstandProjectSettings.protection(await GetProjectSettings(path));
     switch (protection) {
         case "*":
             return { doClean: false, doUpdate: false, preliminaryStatus: "Fully protected" };
@@ -308,7 +310,7 @@ export function ResolveProtection(protection: string | null, update: boolean): {
             return { doClean: false, doUpdate: true, preliminaryStatus: "Cleanup protected" };
         case "updater":
             return { doClean: true, doUpdate: false, preliminaryStatus: "Update protected" };
-        default:
+        case null:
             return { doClean: true, doUpdate: update };
     }
 }

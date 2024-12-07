@@ -1,7 +1,14 @@
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import { CheckDivineProtection, GetAllProjects, GetWorkspaces, NameProject, ValidateProject } from "../functions/projects.ts";
+import {
+    GetAllProjects,
+    GetProjectSettings,
+    GetWorkspaces,
+    NameProject,
+    UnderstandProjectSettings,
+    ValidateProject,
+} from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
@@ -288,7 +295,7 @@ async function ListProjects(
                 toReturn.push(
                     `${await NameProject(entry)} (${
                         ColorString(
-                            (await CheckDivineProtection(entry))!, // "!" because we know it's not null
+                            (UnderstandProjectSettings.protection(await GetProjectSettings(entry)))!, // "!" because we know it's not null
                             "bold",
                         )
                     })\n`,
