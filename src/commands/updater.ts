@@ -8,7 +8,7 @@ import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
 import { LogStuff } from "../functions/io.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 import { GetSettings } from "../functions/config.ts";
-import type { UPDATE_FILE } from "../types/config_files.ts";
+import type { CF_FKNODE_UPDATES } from "../types/config_files.ts";
 
 /**
  * Checks for updates (in case it needs to do so). If you want to force it to check for updates, pass `true` as the 1st argument. Otherwise, pass false or no argument at all.
@@ -26,7 +26,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
 
     const UpdaterFilePath = params.CF.updates;
 
-    async function CheckUpdates(): Promise<UPDATE_FILE | "rl"> {
+    async function CheckUpdates(): Promise<CF_FKNODE_UPDATES | "rl"> {
         try {
             const response = await FetchGitHub(RELEASE_URL);
 
@@ -39,7 +39,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
 
             const isUpToDate = (compare(parse(VERSION), parse(content.tag_name))) >= 1;
 
-            const dataToWrite: UPDATE_FILE = {
+            const dataToWrite: CF_FKNODE_UPDATES = {
                 isUpToDate: isUpToDate,
                 lastVer: content.tag_name,
                 lastCheck: GetDateNow(),
@@ -54,7 +54,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
 
     async function VerifyItNeedsToUpdate(): Promise<boolean> {
         if (!(await CheckForPath(UpdaterFilePath))) {
-            const dataToWrite: UPDATE_FILE = {
+            const dataToWrite: CF_FKNODE_UPDATES = {
                 isUpToDate: true,
                 lastVer: VERSION,
                 lastCheck: GetDateNow(),
@@ -63,7 +63,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
             return false;
         }
 
-        const updateFile: UPDATE_FILE = parseYaml(await Deno.readTextFile(UpdaterFilePath)) as UPDATE_FILE;
+        const updateFile: CF_FKNODE_UPDATES = parseYaml(await Deno.readTextFile(UpdaterFilePath)) as CF_FKNODE_UPDATES;
 
         if (!RIGHT_NOW_DATE_REGEX.test(updateFile.lastCheck)) {
             throw new Error(`Unable to parse date of last update. Got ${updateFile.lastCheck}.`);
@@ -86,7 +86,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
         return;
     }
 
-    const { isUpToDate, lastVer } = needsToUpdate as UPDATE_FILE;
+    const { isUpToDate, lastVer } = needsToUpdate as CF_FKNODE_UPDATES;
 
     if (isUpToDate) {
         if (!params.silent) {

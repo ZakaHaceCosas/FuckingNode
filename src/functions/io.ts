@@ -1,4 +1,4 @@
-import type { SUPPORTED_EMOJIS, validColors } from "../types/misc.ts";
+import type { SUPPORTED_EMOJIS, tValidColors } from "../types/misc.ts";
 import { GetAppPath } from "./config.ts";
 
 /**
@@ -133,7 +133,7 @@ export function ParseFlag(flag: string, min: boolean): string[] {
  * @param {validColors} color The color you wish to give it. Some styles that aren't "colors" are also allowed, e.g. `bold` or `half-opaque`.
  * @returns {string} The colored string.
  */
-export function ColorString(string: string | number, color: validColors): string {
+export function ColorString(string: string | number, color: tValidColors): string {
     const finalString = typeof string === "string" ? string : String(string);
     const RESET = "\x1b[0m";
     let colorCode = RESET;

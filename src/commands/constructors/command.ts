@@ -1,7 +1,7 @@
-import type { CONFIG_FILES } from "../../types/config_files.ts";
+import type { TYPE_CONFIG_FILES } from "../../types/config_files.ts";
 
 interface ConstructorParameters {
-    CF: CONFIG_FILES;
+    CF: TYPE_CONFIG_FILES;
     // ARGS: string[];
 }
 

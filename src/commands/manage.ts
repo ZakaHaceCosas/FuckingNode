@@ -6,7 +6,7 @@ import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 import { GetProjectEnvironment } from "../functions/projects.ts";
-import type { CONFIG_FILES } from "../types/config_files.ts";
+import type { TYPE_CONFIG_FILES } from "../types/config_files.ts";
 
 /**
  * Adds a new project.
@@ -17,7 +17,7 @@ import type { CONFIG_FILES } from "../types/config_files.ts";
  */
 async function AddProject(
     entry: string,
-    appPaths: CONFIG_FILES,
+    appPaths: TYPE_CONFIG_FILES,
 ): Promise<void> {
     const workingEntry = await ParsePath(entry);
     const projectName = await NameProject(workingEntry);
@@ -137,7 +137,7 @@ async function AddProject(
  */
 async function RemoveProject(
     entry: string,
-    appPaths: CONFIG_FILES,
+    appPaths: TYPE_CONFIG_FILES,
 ): Promise<void> {
     const workingEntry = await ParsePath(entry);
     const list = await GetAllProjects(appPaths);
@@ -174,7 +174,7 @@ async function RemoveProject(
  * @async
  * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, 2 if the user doesn't remove them.
  */
-async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
+async function CleanProjects(appPaths: TYPE_CONFIG_FILES): Promise<0 | 1 | 2> {
     async function GetProjectsToRemove() {
         const list = await GetAllProjects(appPaths);
         const listOfRemovals: string[] = [];
@@ -256,7 +256,7 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
  */
 async function ListProjects(
     ignore: "limit" | "exclude" | false,
-    appPaths: CONFIG_FILES,
+    appPaths: TYPE_CONFIG_FILES,
 ): Promise<void> {
     try {
         const list = await GetAllProjects(appPaths);
@@ -400,7 +400,7 @@ async function HandleIgnoreProject(
 }
 
 // run functions based on args
-export default async function TheManager(args: string[], CF: CONFIG_FILES) {
+export default async function TheManager(args: string[], CF: TYPE_CONFIG_FILES) {
     if (!args || args.length === 0) {
         await TheHelper({ query: "manager" });
         Deno.exit(1);

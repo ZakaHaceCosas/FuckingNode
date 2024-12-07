@@ -4,9 +4,9 @@ import TheCleaner from "./clean.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 import { FreshSetup, GetSettings } from "../functions/config.ts";
-import type { CONFIG_FILES } from "../types/config_files.ts";
+import type { TYPE_CONFIG_FILES } from "../types/config_files.ts";
 
-async function CreateSchedule(hour: string | null, day: string | "*" | null, appPaths: CONFIG_FILES) {
+async function CreateSchedule(hour: string | null, day: string | "*" | null, appPaths: TYPE_CONFIG_FILES) {
     const workingHour = Number(hour);
 
     if (isNaN(workingHour) || workingHour < 0 || workingHour > 23) {
@@ -51,7 +51,7 @@ async function removeFiles(files: string[]) {
     }));
 }
 
-async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
+async function Flush(what: string, force: boolean, config: TYPE_CONFIG_FILES) {
     const validTargets = ["logs", "projects", "updates", "all"];
     if (!validTargets.includes(what)) {
         await LogStuff(
@@ -110,7 +110,7 @@ async function Flush(what: string, force: boolean, config: CONFIG_FILES) {
     }
 }
 
-async function AutoFlush(action: "enable" | "disable", config: CONFIG_FILES, freq?: number) {
+async function AutoFlush(action: "enable" | "disable", config: TYPE_CONFIG_FILES, freq?: number) {
     if (!(["enable", "disable"].includes(action))) throw new Error("Action must be either enable or disable.");
     if (action === "disable") {
         throw new Error(

@@ -1,20 +1,10 @@
 /**
- * Supported package files.
- *
- * @export
- * @typedef {SUPPORTED_PROJECT_FILE}
- */
-export type SUPPORTED_PROJECT_FILE =
-    | "package.json"
-    | "deno.json";
-
-/**
  * Supported lockfile type that the app recognizes as fully cleanable (NodeJS).
  *
  * @export
- * @typedef {SUPPORTED_NODE_LOCKFILE}
+ * @typedef {SUPPORTED_NODE_LOCKFILES}
  */
-export type SUPPORTED_NODE_LOCKFILE =
+export type SUPPORTED_NODE_LOCKFILES =
     | "package-lock.json"
     | "pnpm-lock.yaml"
     | "yarn.lock";
@@ -23,9 +13,9 @@ export type SUPPORTED_NODE_LOCKFILE =
  * Supported lockfile type that the app recognizes as partially cleanable (Deno and Bun)
  *
  * @export
- * @typedef {SUPPORTED_NOT_NODE_LOCKFILE}
+ * @typedef {SUPPORTED_NOT_NODE_LOCKFILES}
  */
-export type SUPPORTED_NOT_NODE_LOCKFILE =
+export type SUPPORTED_NOT_NODE_LOCKFILES =
     | "deno.lock"
     | "bun.lockb";
 
@@ -33,9 +23,9 @@ export type SUPPORTED_NOT_NODE_LOCKFILE =
  * All supported lockfiles.
  *
  * @export
- * @typedef {SUPPORTED_LOCKFILES}
+ * @typedef {ALL_SUPPORTED_LOCKFILES}
  */
-export type SUPPORTED_LOCKFILES = SUPPORTED_NODE_LOCKFILE | SUPPORTED_NOT_NODE_LOCKFILE;
+export type ALL_SUPPORTED_LOCKFILES = SUPPORTED_NODE_LOCKFILES | SUPPORTED_NOT_NODE_LOCKFILES;
 
 /**
  * Type guard to check if the lockfile is a SUPPORTED_NODE_LOCKFILE.
@@ -43,7 +33,7 @@ export type SUPPORTED_LOCKFILES = SUPPORTED_NODE_LOCKFILE | SUPPORTED_NOT_NODE_L
  * @param lockfile The lockfile to check.
  * @returns True if lockfile is a SUPPORTED_NODE_LOCKFILE, false otherwise.
  */
-export function IsLockfileNodeLockfile(lockfile: string): lockfile is SUPPORTED_NODE_LOCKFILE {
+export function IsLockfileNodeLockfile(lockfile: string): lockfile is SUPPORTED_NODE_LOCKFILES {
     return (
         lockfile === "package-lock.json" ||
         lockfile === "pnpm-lock.yaml" ||
@@ -55,17 +45,17 @@ export function IsLockfileNodeLockfile(lockfile: string): lockfile is SUPPORTED_
  * Package manager commands for supported managers.
  *
  * @export
- * @typedef {MANAGERS}
+ * @typedef {PKG_MANAGERS}
  */
-export type MANAGERS = "pnpm" | "npm" | "yarn" | "deno" | "bun";
+export type PKG_MANAGERS = "pnpm" | "npm" | "yarn" | "deno" | "bun";
 
 /**
- * im tired, ill do better jsdoc later.
+ * Name and lockfile of a NodeJS package manager.
  *
- * @interface NodeManagerUt
- * @typedef {NodeManagerUt}
+ * @interface NodePkgManagerProps
+ * @typedef {NodePkgManagerProps}
  */
-export interface NodeManagerUt {
+export interface NodePkgManagerProps {
     name: "npm" | "pnpm" | "yarn";
     file: "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock";
 }

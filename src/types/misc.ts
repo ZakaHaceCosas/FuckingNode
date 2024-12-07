@@ -87,9 +87,9 @@ export type tURL = `https://${string}`;
 /**
  * Colors that can be used to spice up the CLI's stdout.
  *
- * @typedef {validColors}
+ * @typedef {tValidColors}
  */
-export type validColors =
+export type tValidColors =
     | "red"
     | "white"
     | "bold"

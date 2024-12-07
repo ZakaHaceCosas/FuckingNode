@@ -1,7 +1,7 @@
 import { Commander } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
-import type { MANAGERS, SUPPORTED_NODE_LOCKFILE } from "../types/package_managers.ts";
+import type { PKG_MANAGERS, SUPPORTED_NODE_LOCKFILES } from "../types/package_managers.ts";
 import type { TheMigratorConstructedParams } from "./constructors/command.ts";
 
 export default async function TheMigrator(params: TheMigratorConstructedParams) {
@@ -14,7 +14,7 @@ export default async function TheMigrator(params: TheMigratorConstructedParams) 
     const cwd = Deno.cwd();
     let code: 0 | 1 = 0;
 
-    async function handler(remove: SUPPORTED_NODE_LOCKFILE, cmd: MANAGERS, target: string) {
+    async function handler(remove: SUPPORTED_NODE_LOCKFILES, cmd: PKG_MANAGERS, target: string) {
         try {
             await LogStuff("Please wait (this will take a while)...", "working");
             try {
@@ -71,9 +71,9 @@ export default async function TheMigrator(params: TheMigratorConstructedParams) 
         );
         if (!c) return;
 
-        if (isNpm) await handler("package-lock.json", target as MANAGERS, workingProject);
-        else if (isPnpm) await handler("pnpm-lock.yaml", target as MANAGERS, workingProject);
-        else if (isYarn) await handler("yarn.lock", target as MANAGERS, workingProject);
+        if (isNpm) await handler("package-lock.json", target as PKG_MANAGERS, workingProject);
+        else if (isPnpm) await handler("pnpm-lock.yaml", target as PKG_MANAGERS, workingProject);
+        else if (isYarn) await handler("yarn.lock", target as PKG_MANAGERS, workingProject);
     } catch (e) {
         await LogStuff(`${e}`, "error");
         code = 1;

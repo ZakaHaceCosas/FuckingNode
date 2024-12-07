@@ -2,10 +2,10 @@ import { I_LIKE_JS } from "../../constants.ts";
 import { Commander, CommandExists } from "../../functions/cli.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
-import type { SUPPORTED_NODE_LOCKFILE } from "../../types/package_managers.ts";
+import type { SUPPORTED_NODE_LOCKFILES } from "../../types/package_managers.ts";
 
 export async function PerformNodeCleaning(
-    lockfile: SUPPORTED_NODE_LOCKFILE,
+    lockfile: SUPPORTED_NODE_LOCKFILES,
     projectInQuestion: string,
     shouldUpdate: boolean,
     shouldClean: boolean,

@@ -1,7 +1,7 @@
 import { APP_NAME, I_LIKE_JS, VERSION } from "../constants.ts";
 import { ColorString } from "../functions/io.ts";
 import { LogStuff } from "../functions/io.ts";
-import type { validColors } from "../types/misc.ts";
+import type { tValidColors } from "../types/misc.ts";
 import { phrases } from "../utils/phrases.ts";
 
 function getRandomPhrase(phrases: string[]): string {
@@ -9,12 +9,12 @@ function getRandomPhrase(phrases: string[]): string {
     return phrases[randomIndex] ?? "Make JS light again!";
 }
 
-function getRandomColor(colors: string[]): validColors {
+function getRandomColor(colors: string[]): tValidColors {
     const randomIndex = Math.floor(Math.random() * colors.length);
-    return (colors[randomIndex] as validColors) ?? "white";
+    return (colors[randomIndex] as tValidColors) ?? "white";
 }
 
-const colors: validColors[] = [
+const colors: tValidColors[] = [
     "bright-blue",
     "cyan",
     "blue",

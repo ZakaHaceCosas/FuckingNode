@@ -6,8 +6,8 @@ import type { BunfigToml, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
-import type { CONFIG_FILES, FkNodeConfigYaml } from "../types/config_files.ts";
-import type { NodeManagerUt } from "../types/package_managers.ts";
+import type { FkNodeYaml, TYPE_CONFIG_FILES } from "../types/config_files.ts";
+import type { NodePkgManagerProps } from "../types/package_managers.ts";
 
 /**
  * Gets all the users projects and returns their paths as a `string[]`.
@@ -17,7 +17,7 @@ import type { NodeManagerUt } from "../types/package_managers.ts";
  * @param {false | "limit" | "exclude"} ignored If "limit", only ignored projects are returned. If "exclude", only projects that aren't ignored are returned.
  * @returns {Promise<string[]>} The list of projects.
  */
-export async function GetAllProjects(appPaths: CONFIG_FILES, ignored?: false | "limit" | "exclude"): Promise<string[]> {
+export async function GetAllProjects(appPaths: TYPE_CONFIG_FILES, ignored?: false | "limit" | "exclude"): Promise<string[]> {
     try {
         const content = await Deno.readTextFile(appPaths.projects);
         const list = ParsePathList(content);
@@ -119,7 +119,7 @@ export async function CheckDivineProtection(
     if (!(await CheckForPath(pathToDivineFile))) return null;
     const divineContent = await Deno.readTextFile(pathToDivineFile);
 
-    const cleanContent: FkNodeConfigYaml = parseYaml(divineContent) as FkNodeConfigYaml;
+    const cleanContent: FkNodeYaml = parseYaml(divineContent) as FkNodeYaml;
 
     if (!cleanContent.divineProtection) {
         return null; // nothing ofc
@@ -154,7 +154,7 @@ type ProjectError = "NonExistingPath" | "IsDuplicate" | "NoPkgJson";
  * @param {"node" | "deno" | "bun" | "unknown"} runtime JS runtime the project is on.
  * @returns {Promise<true | ProjectError>} True if it's valid, a `ProjectError` otherwise.
  */
-export async function ValidateProject(appPaths: CONFIG_FILES, entry: string): Promise<true | ProjectError> {
+export async function ValidateProject(appPaths: TYPE_CONFIG_FILES, entry: string): Promise<true | ProjectError> {
     const workingEntry = await ParsePath(entry);
     const list = await GetAllProjects(appPaths);
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
@@ -324,7 +324,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
 }
 
 /** Utility function to differentiate npm from pnpm from yarn. */
-async function DetectNodeManager(workingPath: string): Promise<NodeManagerUt | null> {
+async function DetectNodeManager(workingPath: string): Promise<NodePkgManagerProps | null> {
     if (await CheckForPath(await JoinPaths(workingPath, "package-lock.json"))) return { name: "npm", file: "package-lock.json" };
     if (await CheckForPath(await JoinPaths(workingPath, "pnpm-lock.yaml"))) return { name: "pnpm", file: "pnpm-lock.yaml" };
     if (await CheckForPath(await JoinPaths(workingPath, "yarn.lock"))) return { name: "yarn", file: "yarn.lock" };

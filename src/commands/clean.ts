@@ -1,5 +1,9 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { IsLockfileNodeLockfile, type SUPPORTED_LOCKFILES, type SUPPORTED_NOT_NODE_LOCKFILE as _NotNode } from "../types/package_managers.ts";
+import {
+    type ALL_SUPPORTED_LOCKFILES,
+    IsLockfileNodeLockfile,
+    type SUPPORTED_NOT_NODE_LOCKFILES as _NotNode,
+} from "../types/package_managers.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
@@ -103,7 +107,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     "working",
                 );
 
-                const lockfiles: SUPPORTED_LOCKFILES[] = [];
+                const lockfiles: ALL_SUPPORTED_LOCKFILES[] = [];
 
                 if (await CheckForPath("pnpm-lock.yaml")) {
                     lockfiles.push("pnpm-lock.yaml");
