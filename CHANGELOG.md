@@ -51,7 +51,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `clean` writing twice to the `stdout` what cleanup commands would do.
 - Fixed many potential unhandled errors at many places.
 - Fixed the base directory for app config being recursively created on each run.
-- Fixed the app fetching config paths many times. This _should_ slightly improve performance (as it reduces path-checking operations).
 - Fixed `manager list` not listing ignored projects (showing an empty list when there are ignored projects).
 - Fixed `upgrade` (_`self-update`_) not correctly handling GitHub's rate limit.
 - Fixed an issue where naming projects (reading their `name` from `package.json`) would crash the CLI.

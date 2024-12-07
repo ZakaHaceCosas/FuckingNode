@@ -3,10 +3,9 @@ import { APP_NAME } from "../constants.ts";
 import TheCleaner from "./clean.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
-import { FreshSetup, GetSettings } from "../functions/config.ts";
-import type { TYPE_CONFIG_FILES } from "../types/config_files.ts";
+import { FreshSetup, GetAppPath, GetSettings } from "../functions/config.ts";
 
-async function CreateSchedule(hour: string | null, day: string | "*" | null, appPaths: TYPE_CONFIG_FILES) {
+async function CreateSchedule(hour: string | null, day: string | "*" | null) {
     const workingHour = Number(hour);
 
     if (isNaN(workingHour) || workingHour < 0 || workingHour > 23) {
@@ -35,7 +34,6 @@ async function CreateSchedule(hour: string | null, day: string | "*" | null, app
                     update: false,
                     verbose: false,
                     intensity: "normal",
-                    CF: appPaths,
                 });
             },
         );
@@ -51,7 +49,7 @@ async function removeFiles(files: string[]) {
     }));
 }
 
-async function Flush(what: string, force: boolean, config: TYPE_CONFIG_FILES) {
+async function Flush(what: string, force: boolean) {
     const validTargets = ["logs", "projects", "updates", "all"];
     if (!validTargets.includes(what)) {
         await LogStuff(
@@ -65,19 +63,19 @@ async function Flush(what: string, force: boolean, config: TYPE_CONFIG_FILES) {
 
     switch (what) {
         case "logs":
-            file = [config.logs];
+            file = [await GetAppPath("LOGS")];
             break;
         case "projects":
-            file = [config.projects];
+            file = [await GetAppPath("MOTHERFKRS")];
             break;
         case "updates":
-            file = [config.updates];
+            file = [await GetAppPath("UPDATES")];
             break;
         case "all":
             file = [
-                config.logs,
-                config.projects,
-                config.updates,
+                await GetAppPath("LOGS"),
+                await GetAppPath("MOTHERFKRS"),
+                await GetAppPath("UPDATES"),
             ];
             break;
         default:
@@ -110,7 +108,7 @@ async function Flush(what: string, force: boolean, config: TYPE_CONFIG_FILES) {
     }
 }
 
-async function AutoFlush(action: "enable" | "disable", config: TYPE_CONFIG_FILES, freq?: number) {
+async function AutoFlush(action: "enable" | "disable", freq?: number) {
     if (!(["enable", "disable"].includes(action))) throw new Error("Action must be either enable or disable.");
     if (action === "disable") {
         throw new Error(
@@ -134,7 +132,7 @@ async function AutoFlush(action: "enable" | "disable", config: TYPE_CONFIG_FILES
             },
             { backoffSchedule: [1500, 3000, 5000, 15000] },
             async () => {
-                await Flush("logs", true, config);
+                await Flush("logs", true);
             },
         );
         await LogStuff("That worked out! Auto-flush successfully scheduled!", "tick");
@@ -172,7 +170,7 @@ async function DisplaySettings() {
 }
 
 export default async function TheSettings(params: TheSettingsConstructedParams) {
-    const { args, CF } = params;
+    const { args } = params;
 
     if (!args || args.length === 0) {
         await DisplaySettings();
@@ -189,7 +187,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
     }
 
     if (ParseFlag("experimental-schedule", false).includes(command)) {
-        await CreateSchedule(secondArg, thirdArg, CF);
+        await CreateSchedule(secondArg, thirdArg);
         return;
     }
 
@@ -201,10 +199,10 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             );
             break;
         case "flush":
-            await Flush(secondArg ?? "", ParseFlag("force", false).includes(thirdArg ?? ""), CF);
+            await Flush(secondArg ?? "", ParseFlag("force", false).includes(thirdArg ?? ""));
             break;
         case "auto-flush":
-            await AutoFlush(secondArg as "enable" | "disable", CF, Number(thirdArg));
+            await AutoFlush(secondArg as "enable" | "disable", Number(thirdArg));
             break;
         case "repair":
             await Repair();

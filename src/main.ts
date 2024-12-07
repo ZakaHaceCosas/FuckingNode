@@ -11,16 +11,13 @@ import { I_LIKE_JS, VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
-import type { TYPE_CONFIG_FILES } from "./types/config_files.ts";
 
 async function init(update: boolean, mute?: boolean) {
-    const configFiles = await FreshSetup(); // Temporarily hold the result
-    const ALL_CONFIG_FILES: TYPE_CONFIG_FILES = configFiles; // Assign only after it's resolved
-    await TheUpdater({ CF: ALL_CONFIG_FILES, force: update, silent: !update, mute: mute ? mute : false });
-    return ALL_CONFIG_FILES;
+    await FreshSetup(); // Temporarily hold the result
+    await TheUpdater({ force: update, silent: !update, mute: mute ? mute : false });
 }
 
-const ALL_CONFIG_FILES: TYPE_CONFIG_FILES = await init(false, true);
+await init(false, true);
 
 const [firstCommand] = Deno.args;
 
@@ -57,7 +54,7 @@ if (
         await LogStuff(
             `Okay, there we go. Report any ${I_LIKE_JS.FKN} error you find in GitHub.`,
         );
-        await TheStatistics(ALL_CONFIG_FILES);
+        await TheStatistics();
     }
     Deno.exit(0);
 }
@@ -72,7 +69,6 @@ async function main(command: string) {
                     verbose: flags.includes("--verbose"),
                     update: flags.includes("--update"),
                     intensity: Deno.args[1] ?? "normal",
-                    CF: ALL_CONFIG_FILES,
                 });
                 break;
             case "global-clean":
@@ -81,14 +77,13 @@ async function main(command: string) {
                     verbose: flags.includes("--verbose"),
                     update: flags.includes("--update"),
                     intensity: "hard-only",
-                    CF: ALL_CONFIG_FILES,
                 });
                 break;
             case "manager":
-                await TheManager(Deno.args, ALL_CONFIG_FILES);
+                await TheManager(Deno.args);
                 break;
             case "settings":
-                await TheSettings({ args: Deno.args, CF: ALL_CONFIG_FILES });
+                await TheSettings({ args: Deno.args });
                 break;
             case "migrate":
                 await TheMigrator({ project: Deno.args[1], target: Deno.args[2] });

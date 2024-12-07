@@ -1,34 +1,23 @@
-import type { TYPE_CONFIG_FILES } from "../../types/config_files.ts";
-
-interface ConstructorParameters {
-    CF: TYPE_CONFIG_FILES;
-    // ARGS: string[];
-}
-
-export interface TheCleanerConstructedParams extends ConstructorParameters {
+export interface TheCleanerConstructedParams {
     verbose: boolean;
     update: boolean;
     intensity: string;
 }
 
-export interface TheHelperConstructedParams extends Omit<ConstructorParameters, "CF"> {
+export interface TheHelperConstructedParams {
     query?: "manager" | "clean" | "settings" | string | undefined;
 }
 
-export interface TheManagerConstructedParams extends ConstructorParameters {
-    // lol
-}
-
-export interface TheMigratorConstructedParams extends Omit<ConstructorParameters, "CF"> {
+export interface TheMigratorConstructedParams {
     project: string | undefined;
     target: string | undefined;
 }
 
-export interface TheSettingsConstructedParams extends ConstructorParameters {
+export interface TheSettingsConstructedParams {
     args: string[];
 }
 
-export interface TheUpdaterConstructedParams extends ConstructorParameters {
+export interface TheUpdaterConstructedParams {
     force: boolean;
     silent: boolean;
     mute: boolean;

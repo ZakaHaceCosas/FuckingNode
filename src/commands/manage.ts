@@ -6,7 +6,7 @@ import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 import { GetProjectEnvironment } from "../functions/projects.ts";
-import type { TYPE_CONFIG_FILES } from "../types/config_files.ts";
+import { GetAppPath } from "../functions/config.ts";
 
 /**
  * Adds a new project.
@@ -17,13 +17,12 @@ import type { TYPE_CONFIG_FILES } from "../types/config_files.ts";
  */
 async function AddProject(
     entry: string,
-    appPaths: TYPE_CONFIG_FILES,
 ): Promise<void> {
     const workingEntry = await ParsePath(entry);
     const projectName = await NameProject(workingEntry);
 
     async function addTheEntry() {
-        await Deno.writeTextFile(appPaths.projects, `${workingEntry}\n`, {
+        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
         });
         await LogStuff(
@@ -32,7 +31,7 @@ async function AddProject(
         );
     }
 
-    const validation = await ValidateProject(appPaths, workingEntry);
+    const validation = await ValidateProject(workingEntry);
     const env = await GetProjectEnvironment(workingEntry);
 
     if (validation === "NonExistingPath") {
@@ -112,11 +111,11 @@ async function AddProject(
         return;
     }
 
-    await Deno.writeTextFile(appPaths.projects, `${workingEntry}\n`, {
+    await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
         append: true,
     });
     for (const workspace of workspaces) {
-        await Deno.writeTextFile(appPaths.projects, `${workspace}\n`, {
+        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workspace}\n`, {
             append: true,
         });
     }
@@ -137,16 +136,15 @@ async function AddProject(
  */
 async function RemoveProject(
     entry: string,
-    appPaths: TYPE_CONFIG_FILES,
 ): Promise<void> {
     const workingEntry = await ParsePath(entry);
-    const list = await GetAllProjects(appPaths);
+    const list = await GetAllProjects();
     const index = list.indexOf(workingEntry);
 
     if (list.includes(workingEntry)) {
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         if (list.length > 0) {
-            await Deno.writeTextFile(appPaths.projects, list.join("\n") + "\n");
+            await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
             await LogStuff(
                 `Let me guess: ${await NameProject(
                     workingEntry,
@@ -154,7 +152,9 @@ async function RemoveProject(
                 "tick-clear",
             );
         } else {
-            await Deno.remove(appPaths.projects);
+            // i don't remember my old code... why does it remove this?
+            // TODO - find out
+            await Deno.remove(await GetAppPath("MOTHERFKRS"));
             await LogStuff(
                 "Removed the last entry. The list is now empty.",
                 "moon-face",
@@ -174,13 +174,13 @@ async function RemoveProject(
  * @async
  * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, 2 if the user doesn't remove them.
  */
-async function CleanProjects(appPaths: TYPE_CONFIG_FILES): Promise<0 | 1 | 2> {
+async function CleanProjects(): Promise<0 | 1 | 2> {
     async function GetProjectsToRemove() {
-        const list = await GetAllProjects(appPaths);
+        const list = await GetAllProjects();
         const listOfRemovals: string[] = [];
 
         for (const project of list) {
-            const validation = await ValidateProject(appPaths, project);
+            const validation = await ValidateProject(project);
             if (validation !== true) listOfRemovals.push(project);
         }
 
@@ -221,7 +221,7 @@ async function CleanProjects(appPaths: TYPE_CONFIG_FILES): Promise<0 | 1 | 2> {
     // doesn't use NameProject as it's likely to point to an invalid path
     for (const idiot of list) {
         await LogStuff(
-            `\n${idiot} ${ColorString("Code: " + (await ValidateProject(appPaths, idiot)), "half-opaque")}`,
+            `\n${idiot} ${ColorString("Code: " + (await ValidateProject(idiot)), "half-opaque")}`,
             undefined,
             true,
         );
@@ -241,7 +241,7 @@ async function CleanProjects(appPaths: TYPE_CONFIG_FILES): Promise<0 | 1 | 2> {
         return 2;
     }
     for (const target of list) {
-        await RemoveProject(target, appPaths);
+        await RemoveProject(target);
     }
     await LogStuff(`That worked out!`, "tick");
     return 0;
@@ -256,10 +256,9 @@ async function CleanProjects(appPaths: TYPE_CONFIG_FILES): Promise<0 | 1 | 2> {
  */
 async function ListProjects(
     ignore: "limit" | "exclude" | false,
-    appPaths: TYPE_CONFIG_FILES,
 ): Promise<void> {
     try {
-        const list = await GetAllProjects(appPaths);
+        const list = await GetAllProjects();
 
         if (list.length === 0) {
             await LogStuff(
@@ -270,7 +269,7 @@ async function ListProjects(
         }
 
         if (ignore === "limit") {
-            const ignoreList = await GetAllProjects(appPaths, "limit");
+            const ignoreList = await GetAllProjects("limit");
 
             if (ignoreList.length === 0) {
                 await LogStuff(
@@ -300,7 +299,7 @@ async function ListProjects(
         }
 
         if (ignore === "exclude") {
-            const notIgnoreList = await GetAllProjects(appPaths, "exclude");
+            const notIgnoreList = await GetAllProjects("exclude");
 
             await LogStuff(
                 `Here are the ${I_LIKE_JS.MFS} you added (and haven't ignored) so far:\n`,
@@ -400,7 +399,7 @@ async function HandleIgnoreProject(
 }
 
 // run functions based on args
-export default async function TheManager(args: string[], CF: TYPE_CONFIG_FILES) {
+export default async function TheManager(args: string[]) {
     if (!args || args.length === 0) {
         await TheHelper({ query: "manager" });
         Deno.exit(1);
@@ -460,7 +459,7 @@ export default async function TheManager(args: string[], CF: TYPE_CONFIG_FILES) 
                     "You didn't provide a path.",
                 );
             }
-            await AddProject(secondArg, CF);
+            await AddProject(secondArg);
             break;
         case "remove":
             if (!secondArg || secondArg === null) {
@@ -469,7 +468,7 @@ export default async function TheManager(args: string[], CF: TYPE_CONFIG_FILES) 
                     "You didn't provide a path.",
                 );
             }
-            await RemoveProject(secondArg, CF);
+            await RemoveProject(secondArg);
             break;
         case "ignore":
             if (validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
@@ -498,17 +497,15 @@ export default async function TheManager(args: string[], CF: TYPE_CONFIG_FILES) 
                 }
                 await ListProjects(
                     ignoreParam,
-                    CF,
                 );
             } else {
                 await ListProjects(
                     false,
-                    CF,
                 );
             }
             break;
         case "cleanup":
-            await CleanProjects(CF);
+            await CleanProjects();
             break;
         default:
             throw new FknError(

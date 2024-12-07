@@ -2,10 +2,9 @@ import { I_LIKE_JS } from "../constants.ts";
 import { CheckForPath, GetDirSize, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
-import type { TYPE_CONFIG_FILES } from "../types/config_files.ts";
 
-export default async function TheStatistics(CF: TYPE_CONFIG_FILES) {
-    const projects = await GetAllProjects(CF);
+export default async function TheStatistics() {
+    const projects = await GetAllProjects();
 
     let totalSpace: number = 0;
 

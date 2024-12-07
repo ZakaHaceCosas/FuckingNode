@@ -7,7 +7,7 @@ import { CheckForPath } from "../functions/filesystem.ts";
 import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
 import { LogStuff } from "../functions/io.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
-import { GetSettings } from "../functions/config.ts";
+import { GetAppPath, GetSettings } from "../functions/config.ts";
 import type { CF_FKNODE_UPDATES } from "../types/config_files.ts";
 
 /**
@@ -24,7 +24,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
         );
     }
 
-    const UpdaterFilePath = params.CF.updates;
+    const UpdaterFilePath = await GetAppPath("UPDATES");
 
     async function CheckUpdates(): Promise<CF_FKNODE_UPDATES | "rl"> {
         try {

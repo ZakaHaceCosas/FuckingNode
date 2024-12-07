@@ -2,39 +2,6 @@ import type { CleanerIntensity } from "./config_params.ts";
 import type { RIGHT_NOW_DATE } from "./misc.ts";
 
 /**
- * An object with paths to all config files.
- *
- * @export
- * @typedef {TYPE_CONFIG_FILES}
- */
-export interface TYPE_CONFIG_FILES {
-    /**
-     * YAML file that stores all projects.
-     *
-     * @type {string}
-     */
-    projects: string;
-    /**
-     * LOG file that stores all logs.
-     *
-     * @type {string}
-     */
-    logs: string;
-    /**
-     * YAML file for the updater.
-     *
-     * @type {string}
-     */
-    updates: string;
-    /**
-     * YAML file for user settings.
-     *
-     * @type {string}
-     */
-    settings: string;
-}
-
-/**
  * User config
  *
  * @export

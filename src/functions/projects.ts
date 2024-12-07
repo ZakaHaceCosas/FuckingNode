@@ -6,8 +6,9 @@ import type { BunfigToml, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
-import type { FkNodeYaml, TYPE_CONFIG_FILES } from "../types/config_files.ts";
+import type { FkNodeYaml } from "../types/config_files.ts";
 import type { NodePkgManagerProps } from "../types/package_managers.ts";
+import { GetAppPath } from "./config.ts";
 
 /**
  * Gets all the users projects and returns their paths as a `string[]`.
@@ -17,9 +18,9 @@ import type { NodePkgManagerProps } from "../types/package_managers.ts";
  * @param {false | "limit" | "exclude"} ignored If "limit", only ignored projects are returned. If "exclude", only projects that aren't ignored are returned.
  * @returns {Promise<string[]>} The list of projects.
  */
-export async function GetAllProjects(appPaths: TYPE_CONFIG_FILES, ignored?: false | "limit" | "exclude"): Promise<string[]> {
+export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Promise<string[]> {
     try {
-        const content = await Deno.readTextFile(appPaths.projects);
+        const content = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
         const list = ParsePathList(content);
 
         if (!ignored) return list;
@@ -149,14 +150,13 @@ type ProjectError = "NonExistingPath" | "IsDuplicate" | "NoPkgJson";
  * Given a path to a project, returns `true` if the project is valid, or a message indicating if it's not a valid Node/Deno/Bun project.
  *
  * @async
- * @param {CONFIG_FILES} appPaths Config files.
  * @param {string} entry Path to the project.
  * @param {"node" | "deno" | "bun" | "unknown"} runtime JS runtime the project is on.
  * @returns {Promise<true | ProjectError>} True if it's valid, a `ProjectError` otherwise.
  */
-export async function ValidateProject(appPaths: TYPE_CONFIG_FILES, entry: string): Promise<true | ProjectError> {
+export async function ValidateProject(entry: string): Promise<true | ProjectError> {
     const workingEntry = await ParsePath(entry);
-    const list = await GetAllProjects(appPaths);
+    const list = await GetAllProjects();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 
     const env = await GetProjectEnvironment(workingEntry);

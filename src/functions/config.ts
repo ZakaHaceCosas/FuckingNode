@@ -1,6 +1,6 @@
 import TheUpdater from "../commands/updater.ts";
 import { APP_NAME, DEFAULT_SETTINGS, I_LIKE_JS } from "../constants.ts";
-import type { CF_FKNODE_SETTINGS, TYPE_CONFIG_FILES } from "../types/config_files.ts";
+import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
@@ -52,9 +52,9 @@ export async function GetAppPath(
  *
  * @export
  * @async
- * @returns {Promise<CONFIG_FILES>}
+ * @returns {Promise<void>}
  */
-export async function FreshSetup(repairSetts?: boolean): Promise<TYPE_CONFIG_FILES> {
+export async function FreshSetup(repairSetts?: boolean): Promise<void> {
     try {
         const basePath = await GetAppPath("BASE");
         if (!(await CheckForPath(basePath))) {
@@ -93,21 +93,10 @@ export async function FreshSetup(repairSetts?: boolean): Promise<TYPE_CONFIG_FIL
                 silent: true,
                 force: true,
                 mute: false,
-                CF: {
-                    projects: projectPath,
-                    logs: logsPath,
-                    updates: updatesPath,
-                    settings: settingsPath,
-                },
             });
         }
 
-        return {
-            projects: projectPath,
-            logs: logsPath,
-            updates: updatesPath,
-            settings: settingsPath,
-        };
+        return;
     } catch (e) {
         await LogStuff(`Some ${I_LIKE_JS.MFN} error happened trying to setup config files: ${e}`, "error");
         Deno.exit(1);

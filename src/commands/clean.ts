@@ -31,14 +31,14 @@ function ResolveProtection(protection: string | null, update: boolean): {
 }
 
 export default async function TheCleaner(params: TheCleanerConstructedParams) {
-    const { CF, intensity, verbose, update } = params;
+    const { intensity, verbose, update } = params;
 
     try {
         // original path
         const originalLocation = Deno.cwd();
 
         // read all projects
-        const projects: string[] = await GetAllProjects(CF);
+        const projects: string[] = await GetAllProjects();
 
         if (projects.length === 0 && intensity !== "hard-only") {
             await LogStuff(
