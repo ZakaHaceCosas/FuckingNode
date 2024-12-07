@@ -141,7 +141,7 @@ export async function CheckDivineProtection(
     return null; // nothing
 }
 
-type ProjectError = "NonExistingPath" | "IsDuplicate" | "IsBun" | "IsCoolDeno" | "NoPkgJson";
+type ProjectError = "NonExistingPath" | "IsDuplicate" | "NoPkgJson";
 
 /**
  * Given a path to a project, returns `true` if the project is valid, or a message indicating if it's not a valid Node/Deno/Bun project.
@@ -166,14 +166,6 @@ export async function ValidateProject(appPaths: CONFIG_FILES, entry: string): Pr
         return "IsDuplicate";
     }
     if (env.runtime !== "node") {
-        if (env.runtime === "bun") {
-            // we use bun's lockfile as bun doesn't have its own package file
-            // i mean, it has bunfig.toml but it's not often seen
-            return "IsBun";
-        }
-        if (env.runtime === "deno") {
-            return "IsCoolDeno"; // cool indeed
-        }
         return "NoPkgJson";
     }
     return true;

@@ -6,6 +6,7 @@ import { CheckDivineProtection, GetAllProjects, GetWorkspaces, NameProject, Vali
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
+import { GetProjectEnvironment } from "../functions/projects.ts";
 
 /**
  * Adds a new project.
@@ -32,6 +33,7 @@ async function AddProject(
     }
 
     const validation = await ValidateProject(appPaths, workingEntry);
+    const env = await GetProjectEnvironment(workingEntry);
 
     if (validation === "NonExistingPath") {
         await LogStuff(
@@ -58,7 +60,7 @@ async function AddProject(
         await addTheEntry();
         return;
     }
-    if (validation === "IsCoolDeno") {
+    if (env.runtime === "deno") {
         const addAnyway = await LogStuff(
             // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao
             // idk whats better, deno or bun. i have both installed, i could try. one day, maybe.
@@ -71,7 +73,7 @@ async function AddProject(
         await addTheEntry();
         return;
     }
-    if (validation === "IsBun") {
+    if (env.runtime === "bun") {
         const addAnyway = await LogStuff(
             `This project uses the Bun runtime. It's not *fully* supported *yet*. Add anyway?`,
             "what",
@@ -219,11 +221,12 @@ async function CleanProjects(appPaths: CONFIG_FILES): Promise<0 | 1 | 2> {
     // doesn't use NameProject as it's likely to point to an invalid path
     for (const idiot of list) {
         await LogStuff(
-            `\n${idiot} ${ColorString("Code: " + (await ValidateProject(appPaths, idiot)), "half-opaque")}\n`,
+            `\n${idiot} ${ColorString("Code: " + (await ValidateProject(appPaths, idiot)), "half-opaque")}`,
             undefined,
             true,
         );
     }
+    console.log("\n");
     const del = await LogStuff(
         `Will you remove all of these ${I_LIKE_JS.MFS}?`,
         "what",
