@@ -15,11 +15,11 @@
     "tasks": {
         "good": {
             "description": "Makes the code good by formatting and type-checking it.",
-            "command": "deno -A scripts/good.ts"
+            "command": "deno -A tasks/good.ts"
         },
         "compile": {
             "description": "Compiles the CLI",
-            "command": "deno -A scripts/compile.ts",
+            "command": "deno -A tasks/compile.ts",
             "dependencies": ["good"]
         }
     },
