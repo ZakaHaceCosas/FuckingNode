@@ -1,7 +1,7 @@
 {
   "version": "4",
   "specifiers": {
-    "jsr:@std/assert@^1.0.8": "1.0.8",
+    "jsr:@std/assert@^1.0.9": "1.0.9",
     "jsr:@std/collections@^1.0.9": "1.0.9",
     "jsr:@std/fs@^1.0.6": "1.0.6",
     "jsr:@std/internal@^1.0.5": "1.0.5",
@@ -12,8 +12,8 @@
     "npm:@types/node@*": "22.5.4"
   },
   "jsr": {
-    "@std/assert@1.0.8": {
-      "integrity": "ebe0bd7eb488ee39686f77003992f389a06c3da1bbd8022184804852b2fa641b",
+    "@std/assert@1.0.9": {
+      "integrity": "a9f0c611a869cc791b26f523eec54c7e187aab7932c2c8e8bea0622d13680dcd",
       "dependencies": [
         "jsr:@std/internal"
       ]
@@ -101,7 +101,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@std/assert@^1.0.8",
+      "jsr:@std/assert@^1.0.9",
       "jsr:@std/fs@^1.0.6",
       "jsr:@std/path@^1.0.8",
       "jsr:@std/semver@*",
