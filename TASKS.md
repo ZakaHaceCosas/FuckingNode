@@ -1,4 +1,4 @@
-# TODO
+# Tasks
 
 > [!TIP]
 > These are all things I want to do.
@@ -26,21 +26,39 @@
 - [ ] Add more `ColorString()` options and use them in more places.
 - [x] Add an about command.
 - [ ] More verbose logging maybe?
+- [ ] Allow to use a project's name instead of it's path, and have the app to recognize it.
 
 ## Cross-runtime support tasks
 
-- [ ] Project-wide cleanup
+- [ ] Project-wide basic cleanup
   - [x] NODE
+    - [x] NPM
+    - [x] PNPM
+    - [x] YARN
   - [ ] DENO
   - [ ] BUN
-- [ ] System-wide cache cleanup
+- [x] System-wide cache cleanup
   - [x] NODE
   - [x] DENO
   - [x] BUN
-- [ ] Project naming
+- [x] Project naming
   - [x] NODE
   - [x] DENO
   - [x] BUN
+- [ ] Migration
+  - [ ] Node pkg manager
+    - [x] Basic (remove lockfile -> install with new manager)
+    - [ ] Well done (transform lockfile to diff format -> install)
+  - [ ] Runtimes
+
+## Cleaner
+
+- [x] Basic stuff that's already done
+- [ ] Auto-running ESLint or Prettier if they're installed (maybe with `--lint` and `--prettify` flags)
+- [ ] Customizing (via `fknode.yaml`):
+  - [ ] Commands used for cleaning / update
+  - [ ] Directories to remove when cleaning (e.g. `/dist`)
+  - [ ] Enabling auto-commits, so for example a user that runs both `--update` and `--prettify` gets his changes auto-committed and pushed (only if the Git tree is clean, of course).
 
 ## Settings-related tasks
 
@@ -51,4 +69,4 @@
 
 ## Known issues
 
-- None for now :smile:
+- Scheduled tasks don't work for whatever reason. It's Deno.cron() and not us, so there isn't a "fix" for this.
