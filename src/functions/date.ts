@@ -37,3 +37,29 @@ export function MakeRightNowDateStandard(date: RIGHT_NOW_DATE): Date {
 
     return new Date(year, month - 1, day, hours, minutes);
 }
+
+/**
+ * Gets the amount of time passed between `date1` and the current date.
+ *
+ * @export
+ * @param {Date} date1
+ * @returns {string}
+ */
+export function GetElapsedTime(date1: Date): string {
+    const diffInMs = (new Date()).getTime() - date1.getTime();
+
+    const seconds = Math.floor(diffInMs / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+
+    let result = "";
+
+    if (minutes > 0) {
+        result += `${minutes}m`;
+    }
+    if (remainingSeconds > 0 || minutes === 0) {
+        result += ` ${remainingSeconds}s`.trim();
+    }
+
+    return result;
+}

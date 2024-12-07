@@ -64,7 +64,7 @@
 
 - [x] Allowing the user to automate flushing of files
   - [ ] Instead of Deno.Cron(), make it work like the updater, on startup it checks a file (settings.yaml i guess) with the date the last change was, and compares with current day.
-- [ ] Allowing to change the default intensity of the cleaner.
+- [x] Allowing to change the default intensity of the cleaner.
 - [ ] Make the scheduler work better (if it works, it doesn't work on my machine and Deno keeps it as "unstable").
 
 ## Known issues

@@ -9,47 +9,36 @@ import { ColorString, LogStuff } from "../functions/io.ts";
 import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
-import { PerformHardCleanup, PerformNodeCleaning, ValidateIntensity } from "./toolkit/cleaner.ts";
-// import type { CleanerIntensity } from "../types/config_params.ts";
+import { PerformHardCleanup, PerformNodeCleaning, ResolveProtection, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
+import type { CleanerIntensity } from "../types/config_params.ts";
+import { GetElapsedTime } from "../functions/date.ts";
 
-function ResolveProtection(protection: string | null, update: boolean): {
-    doClean: boolean;
-    doUpdate: boolean;
-    preliminaryStatus?: "Fully protected" | "Cleanup protected" | "Update protected";
-} {
-    switch (protection) {
-        case "*":
-            return { doClean: false, doUpdate: false, preliminaryStatus: "Fully protected" };
-        case "cleanup":
-            return { doClean: false, doUpdate: true, preliminaryStatus: "Cleanup protected" };
-        case "updater":
-            return { doClean: true, doUpdate: false, preliminaryStatus: "Update protected" };
-        default:
-            return { doClean: true, doUpdate: update };
-    }
-}
+export type tRESULT = { path: string; status: string; elapsedTime: string };
 
 export default async function TheCleaner(params: TheCleanerConstructedParams) {
     const { intensity, verbose, update } = params;
 
     try {
+        // start time
+        const now = new Date();
+
         // original path
         const originalLocation = Deno.cwd();
+
+        const realIntensity: CleanerIntensity = await ValidateIntensity(intensity);
+        if (realIntensity === "hard-only") {
+            await PerformHardCleanup();
+            return;
+        }
 
         // read all projects
         const projects: string[] = await GetAllProjects();
 
-        if (projects.length === 0 && intensity !== "hard-only") {
+        if (projects.length === 0) {
             await LogStuff(
                 `There isn't any ${I_LIKE_JS.MF} over here... yet...`,
                 "moon-face",
             );
-            return;
-        }
-
-        const realIntensity = await ValidateIntensity(intensity);
-        if (realIntensity === "hard-only") {
-            await PerformHardCleanup();
             return;
         }
 
@@ -61,7 +50,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             verbose,
         );
 
-        const results: { path: string; status: string }[] = [];
+        const results: tRESULT[] = [];
 
         for (const project of projects) {
             if (!(await CheckForPath(project))) {
@@ -69,14 +58,18 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     ColorString(`Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`, "red"),
                     "error",
                 );
-                results.push({ path: project, status: "Not found" });
+                results.push({
+                    path: project,
+                    status: "Not found",
+                    elapsedTime: GetElapsedTime(now),
+                });
                 continue;
             }
 
             try {
                 Deno.chdir(project);
                 await LogStuff(
-                    ColorString(`Cleaning the ${project} ${I_LIKE_JS.MF}...`, "blue"),
+                    ColorString(`Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`, "blue"),
                     "working",
                 );
 
@@ -112,6 +105,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                         results.push({
                             path: project,
                             status: "Fully protected",
+                            elapsedTime: GetElapsedTime(now),
                         });
                         continue;
                     case "Cleanup protected":
@@ -160,6 +154,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                         results.push({
                             path: project,
                             status: "Too many lockfiles.",
+                            elapsedTime: GetElapsedTime(now),
                         });
                         continue;
                     }
@@ -168,24 +163,40 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                         ColorString(`${project} has a package.json but not a lockfile. Can't ${I_LIKE_JS.FKN} clean.`, "bright-yellow"),
                         "warn",
                     );
-                    results.push({ path: project, status: "No lockfile." });
+                    results.push({
+                        path: project,
+                        status: "No lockfile.",
+                        elapsedTime: GetElapsedTime(now),
+                    });
                     continue;
                 } else {
                     await LogStuff(
                         ColorString(`No supported lockfile was found at ${project}. Skipping this ${I_LIKE_JS.MF}...`, "bright-yellow"),
                         "warn",
                     );
-                    results.push({ path: project, status: "No package.json." });
+                    results.push({
+                        path: project,
+                        status: "No package.json.",
+                        elapsedTime: GetElapsedTime(now),
+                    });
                     continue;
                 }
 
-                results.push({ path: project, status: preliminaryStatus ? `Success # ${preliminaryStatus}` : "Success" });
+                results.push({
+                    path: project,
+                    status: preliminaryStatus ? `Success # ${preliminaryStatus}` : "Success",
+                    elapsedTime: GetElapsedTime(now),
+                });
             } catch (e) {
                 await LogStuff(
                     ColorString(`Error while working around with ${project}: ${e}`, "red"),
                     "error",
                 );
-                results.push({ path: project, status: "Failed" });
+                results.push({
+                    path: project,
+                    status: "Failed",
+                    elapsedTime: GetElapsedTime(now),
+                });
                 continue;
             }
         }
@@ -198,25 +209,8 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             ColorString(`All your ${I_LIKE_JS.MFN} Node projects have been cleaned! Back to ${originalLocation}.`, "bright-green"),
             "tick",
         );
-
-        // shows a report
-        await LogStuff("Report:", "chart", false, undefined, verbose);
-        const report: string[] = [];
-        for (const result of results) {
-            const theResult = `${await NameProject(result.path)} -> ${ColorString(result.status, "bold")}`;
-            report.push(theResult);
-        }
-        await LogStuff(report.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())).join("\n"), undefined, false, undefined, verbose);
-        await LogStuff("\n", undefined, false, undefined, verbose); // glue fix
-
-        await LogStuff(
-            ColorString(`Cleaning completed at ${new Date().toLocaleString()}`, "bright-green"),
-            "tick",
-            false,
-            undefined,
-            verbose,
-        );
-        Deno.exit(0);
+        if (verbose) await ShowReport(results);
+        return;
     } catch (e) {
         await GenericErrorHandler(e);
     }

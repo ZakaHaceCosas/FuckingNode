@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added a settings command which allows to tweak:
   - Update check frequency
   - Default cleaner intensity
+- Now verbose logging in `clean` will show the time it took for each project to be cleaned.
 
 ### Changed
 
@@ -39,6 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now, projects without a `node_modules` DIR won't show a warning before adding them.
 - Now, `manager cleanup` will show next to the project's path an error code indicating why it's in there.
 - Now the app uses YAML instead of JSON for its config files.
+- Now the clean command can be used without providing an intensity (use `--` to pass flags).
 
 ### Fixed
 
