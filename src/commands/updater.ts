@@ -36,7 +36,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
 
             const content: GITHUB_RELEASE = await response.json();
 
-            const isUpToDate = (compare(parse(content.tag_name), parse(VERSION))) >= 1;
+            const isUpToDate = (compare(parse(VERSION), parse(content.tag_name))) >= 1;
 
             const dataToWrite: UPDATE_FILE = {
                 isUpToDate: isUpToDate,
