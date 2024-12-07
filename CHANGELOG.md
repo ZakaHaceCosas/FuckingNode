@@ -174,11 +174,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size of `node_modules/`, but you can pass the `--full` flag to it so it also includes your code.
-- Added `manager ignore` command. Creates a `.fknodeignore` file at the root of the project, so F*ckingNode simply ignores it whenever a cleanup is made.
+- Added `manager ignore` command. Creates a `.fknodeignore` file at the root of the project, so F\*ckingNode simply ignores it whenever a cleanup is made.
 
 ### Changed
 
-- Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename variables and all that kind of stuff. ~~I don't want to get banned~~.
+- Replaced the actual f-word with an asterisk-included version (f\*cking) app-wide. Also made an effort to rename variables and all that kind of stuff. ~~I don't want to get banned~~.
 - Now "unknown errors" when pruning a project actually show the command's `stderr`.
 
 ### Fixed

@@ -47,7 +47,7 @@ const devJokes = [
     "git commit -m 'fix previous fix again'",
     "curl parrot.live",
     "midudev would approve",
-    "#RewriteToBrainF*ck",
+    "#RewriteToBrainF\*ck",
     "No AI was used to generate these random phrases.\n\nI hope these random phrases look good enough. Happy coding!", // it's a joke lmao, i did not use AI for these
     "not powered by OpenAI",
     "an ecosystem where 'npm install is-odd' is a thing, is a broken ecosystem",

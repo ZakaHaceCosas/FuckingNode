@@ -1,4 +1,4 @@
-# F*ckingNode
+# F\*ckingNode
 
 > [!NOTE]
 > This is README for V1. V2 introduces breaking changes and they aren't (yet) reflected here.
@@ -106,7 +106,7 @@ source ~/.bash_profile    # macOS
 
 ---
 
-Hope those motherf*ckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue (or make a PR which would be awesome :smile:).
+Hope those motherf\*ckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue (or make a PR which would be awesome :smile:).
 
 Cya!
 

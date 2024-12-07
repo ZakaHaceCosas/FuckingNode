@@ -25,7 +25,7 @@ export const VERSION: string = format(_SV_VER);
 export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
     CASED: "FuckingNode",
     CLI: "fuckingnode",
-    STYLED: "F*ckingNode",
+    STYLED: "F\*ckingNode",
 };
 
 /**
