@@ -1,6 +1,6 @@
 import TheUpdater from "../commands/updater.ts";
 import { APP_NAME, DEFAULT_SETTINGS, I_LIKE_JS } from "../constants.ts";
-import type { CONFIG_FILES, FKNODE_SETTINGS } from "../types.ts";
+import type { CONFIG_FILES, FKNODE_SETTINGS } from "../types/config_files.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";

@@ -1,7 +1,7 @@
 import { GetProjectEnvironment } from "../src/functions/projects.ts";
 import { assertEquals } from "@std/assert";
-import type { ProjectEnv } from "../src/types.ts";
 import { APP_NAME } from "../src/constants.ts";
+import type { ProjectEnv } from "../src/types/runtimes.ts";
 
 // naming things is fr the hardest
 const uwu: ProjectEnv = {

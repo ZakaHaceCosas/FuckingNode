@@ -1,18 +1,13 @@
 import { I_LIKE_JS } from "../constants.ts";
-import {
-    IsLockfileNodeLockfile,
-    type ProjectCleanerIntensity,
-    type SUPPORTED_LOCKFILES,
-    type SUPPORTED_NOT_NODE_LOCKFILE as _NotNode,
-} from "../types.ts";
+import { IsLockfileNodeLockfile, type SUPPORTED_LOCKFILES, type SUPPORTED_NOT_NODE_LOCKFILE as _NotNode } from "../types/package_managers.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { CheckDivineProtection, GetAllProjects, NameProject } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
 import { PerformHardCleanup, PerformNodeCleaning } from "./toolkit/cleaner.ts";
-import type { CleanerIntensity } from "../types.ts";
 import { FknError } from "../utils/error.ts";
+import type { CleanerIntensity, ProjectCleanerIntensity } from "../types/config_params.ts";
 
 function ResolveProtection(protection: string | null, update: boolean): {
     doClean: boolean;

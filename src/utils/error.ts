@@ -1,7 +1,7 @@
 import TheHelper from "../commands/help.ts";
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
-import type { ERROR_CODES } from "../types.ts";
+import type { ERROR_CODES } from "../types/errors.ts";
 
 export class FknError extends Error {
     code: ERROR_CODES;

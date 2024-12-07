@@ -1,6 +1,7 @@
-import type { FKNODE_SETTINGS, tURL } from "./types.ts";
+import type { tURL } from "./types/misc.ts";
 import type { SemVer } from "@std/semver/types";
 import { format } from "@std/semver";
+import type { FKNODE_SETTINGS } from "./types/config_files.ts";
 
 const _SV_VER: SemVer = {
     major: 2,

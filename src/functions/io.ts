@@ -1,4 +1,4 @@
-import type { SUPPORTED_EMOJIS, validColors } from "../types.ts";
+import type { SUPPORTED_EMOJIS, validColors } from "../types/misc.ts";
 import { GetAppPath } from "./config.ts";
 
 /**

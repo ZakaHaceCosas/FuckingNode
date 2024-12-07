@@ -2,10 +2,12 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { IGNORE_FILE } from "../constants.ts";
-import type { BunfigToml, CONFIG_FILES, DenoPkgJson, FkNodeConfigYaml, NodeManagerUt, NodePkgJson, ProjectEnv } from "../types.ts";
+import type { BunfigToml, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
+import type { CONFIG_FILES, FkNodeConfigYaml } from "../types/config_files.ts";
+import type { NodeManagerUt } from "../types/package_managers.ts";
 
 /**
  * Gets all the users projects and returns their paths as a `string[]`.

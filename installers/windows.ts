@@ -2,7 +2,7 @@ import { ensureDir } from "@std/fs";
 import { join } from "@std/path";
 import { APP_NAME } from "../src/constants.ts";
 import { FetchGitHub } from "../src/utils/fetch.ts";
-import type { GITHUB_RELEASE, tURL } from "../src/types.ts";
+import type { GITHUB_RELEASE, tURL } from "../src/types/misc.ts";
 import { ParsePath } from "../src/functions/filesystem.ts";
 import GenericErrorHandler from "../src/utils/error.ts";
 

@@ -1,7 +1,7 @@
 import { APP_NAME, I_LIKE_JS, VERSION } from "../constants.ts";
 import { ColorString } from "../functions/io.ts";
 import { LogStuff } from "../functions/io.ts";
-import type { validColors } from "../types.ts";
+import type { validColors } from "../types/misc.ts";
 import { phrases } from "../utils/phrases.ts";
 
 function getRandomPhrase(phrases: string[]): string {

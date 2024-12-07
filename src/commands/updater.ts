@@ -1,13 +1,14 @@
 import { compare, parse } from "@std/semver";
 import { FetchGitHub } from "../utils/fetch.ts";
 import { RELEASE_URL, VERSION } from "../constants.ts";
-import { type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX, type UPDATE_FILE } from "../types.ts";
+import { type GITHUB_RELEASE, RIGHT_NOW_DATE_REGEX } from "../types/misc.ts";
 import { GetDateNow, MakeRightNowDateStandard } from "../functions/date.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
 import { LogStuff } from "../functions/io.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 import { GetSettings } from "../functions/config.ts";
+import type { UPDATE_FILE } from "../types/config_files.ts";
 
 /**
  * Checks for updates (in case it needs to do so). If you want to force it to check for updates, pass `true` as the 1st argument. Otherwise, pass false or no argument at all.

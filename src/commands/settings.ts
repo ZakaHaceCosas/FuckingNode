@@ -2,9 +2,9 @@ import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { APP_NAME } from "../constants.ts";
 import TheCleaner from "./clean.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
-import type { CONFIG_FILES } from "../types.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 import { FreshSetup, GetSettings } from "../functions/config.ts";
+import type { CONFIG_FILES } from "../types/config_files.ts";
 
 async function CreateSchedule(hour: string | null, day: string | "*" | null, appPaths: CONFIG_FILES) {
     const workingHour = Number(hour);

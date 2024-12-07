@@ -1,4 +1,4 @@
-import { type RIGHT_NOW_DATE, RIGHT_NOW_DATE_REGEX } from "../types.ts";
+import { type RIGHT_NOW_DATE, RIGHT_NOW_DATE_REGEX } from "../types/misc.ts";
 
 /**
  * Gets the current date (at the moment the function is called) and returns it as a `RIGHT_NOW_DATE`.

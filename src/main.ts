@@ -7,12 +7,11 @@ import TheHelper from "./commands/help.ts";
 import TheUpdater from "./commands/updater.ts";
 import TheSettings from "./commands/settings.ts";
 import TheAbouter from "./commands/about.ts";
-
 import { I_LIKE_JS, VERSION } from "./constants.ts";
-import type { CONFIG_FILES } from "./types.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
+import type { CONFIG_FILES } from "./types/config_files.ts";
 
 async function init(update: boolean, mute?: boolean) {
     const configFiles = await FreshSetup(); // Temporarily hold the result

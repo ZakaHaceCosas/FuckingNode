@@ -1,5 +1,4 @@
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import type { CONFIG_FILES } from "../types.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { CheckDivineProtection, GetAllProjects, GetWorkspaces, NameProject, ValidateProject } from "../functions/projects.ts";
@@ -7,6 +6,7 @@ import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 import { GetProjectEnvironment } from "../functions/projects.ts";
+import type { CONFIG_FILES } from "../types/config_files.ts";
 
 /**
  * Adds a new project.

@@ -27,13 +27,9 @@ async function GetAllTsFiles(): Promise<string[]> {
 const toPrepare: string[] = await GetAllTsFiles();
 
 for (const unprepared of toPrepare) {
-    const command = new Deno.Command("deno", {
+    await new Deno.Command("deno", {
         args: ["check", unprepared],
-    });
-
-    await command.output().then((out) => {
-        console.log(out.success ? "Checked" : "Failed to check", unprepared);
-    });
+    }).spawn().output();
 }
 
 new Deno.Command("deno", {
