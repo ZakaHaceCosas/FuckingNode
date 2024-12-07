@@ -1,8 +1,11 @@
 import { I_LIKE_JS } from "../../constants.ts";
 import { Commander, CommandExists } from "../../functions/cli.ts";
+import { GetSettings } from "../../functions/config.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
+import type { CleanerIntensity } from "../../types/config_params.ts";
 import type { SUPPORTED_NODE_LOCKFILES } from "../../types/package_managers.ts";
+import { FknError } from "../../utils/error.ts";
 
 export async function PerformNodeCleaning(
     lockfile: SUPPORTED_NODE_LOCKFILES,
@@ -185,4 +188,36 @@ export async function PerformHardCleanup(): Promise<void> {
     }
 
     return;
+}
+
+export async function ValidateIntensity(intensity: string): Promise<CleanerIntensity> {
+    if (!["hard", "hard-only", "normal", "maxim", "--"].includes(intensity)) {
+        throw new FknError("Cleaner__InvalidCleanerIntensity", `Provided intensity '${intensity}' is not valid.`);
+    }
+
+    const workingIntensity = intensity as CleanerIntensity | "--";
+    const defaultIntensity = (await GetSettings()).defaultCleanerIntensity;
+
+    if (workingIntensity === "--") {
+        return defaultIntensity;
+    }
+
+    if (workingIntensity === "hard-only") {
+        return "hard-only";
+    }
+
+    if (workingIntensity === "maxim") {
+        const confirmMaxim = await LogStuff(
+            ColorString(
+                "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
+                "italic",
+            ),
+            "warn",
+            undefined,
+            true,
+        );
+        return confirmMaxim === true ? "maxim" : defaultIntensity;
+    } else {
+        return defaultIntensity;
+    }
 }
