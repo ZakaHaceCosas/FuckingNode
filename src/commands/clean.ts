@@ -49,13 +49,17 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             return;
         }
 
-        if (!(["hard", "hard-only", "normal", "maxim"].includes(intensity))) {
+        if (!(["hard", "hard-only", "normal", "maxim", "--"].includes(intensity))) {
             throw new FknError("Cleaner__InvalidCleanerIntensity", `Provided intensity '${intensity}' is not valid.`);
         }
 
-        const workingIntensity: CleanerIntensity = intensity as CleanerIntensity;
+        const workingIntensity: CleanerIntensity | "--" = intensity as CleanerIntensity | "--";
 
         let realIntensity: ProjectCleanerIntensity = "normal";
+
+        if (workingIntensity === "--") {
+            realIntensity = "normal";
+        }
 
         if (workingIntensity === "hard-only") {
             await PerformHardCleanup();

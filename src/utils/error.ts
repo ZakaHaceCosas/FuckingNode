@@ -34,7 +34,7 @@ export class FknError extends Error {
                 break;
             case "Cleaner__InvalidCleanerIntensity":
                 hint =
-                    "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. Running clean with no level provided defaults to 'normal'. Run 'help clean' for more info onto what does each level do.";
+                    "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. Running clean with no level provided defaults to 'normal'. If you tried to run with flags (e.g. 'clean --verbose'), add -- before ('clean -- -verbose'). Run 'help clean' for more info onto what does each level do.";
                 // TODO - actually add info onto what does each level do
                 break;
             case "Internal__Projects__CantDetermineEnv":
