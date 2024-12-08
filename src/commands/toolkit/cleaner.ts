@@ -236,13 +236,20 @@ const ProjectCleaningFeatures = {
         intensity: CleanerIntensity,
     ) => {
         if (!settings.destroy) return;
-        if (!(settings.destroy.intensities.includes(intensity))) return;
+        if (
+            !settings.destroy.intensities.includes(intensity) &&
+            !settings.destroy.intensities.includes("*") &&
+            !settings.destroy.intensities.includes("all")
+        ) return;
         if (settings.destroy.targets.length === 0) return;
         for (const target of settings.destroy.targets) {
             if (target === "node_modules" && intensity === "maxim") continue; // avoid removing this thingy twice
             const path = await ParsePath(await JoinPaths(project, target));
+            console.log(path);
             try {
-                await Deno.remove(path);
+                await Deno.remove(path, {
+                    recursive: true,
+                });
                 await LogStuff(`Destroyed ${path} successfully`, "tick");
                 continue;
             } catch (e) {

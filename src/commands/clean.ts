@@ -1,5 +1,5 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { type ALL_SUPPORTED_LOCKFILES, IsLockfileNodeLockfile } from "../types/package_managers.ts";
+import type { ALL_SUPPORTED_LOCKFILES } from "../types/package_managers.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
@@ -126,21 +126,17 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 if (lockfiles.length > 0) {
                     if (lockfiles.length === 1) {
                         for (const lockfile of lockfiles) {
-                            if (IsLockfileNodeLockfile(lockfile)) {
-                                if (doClean) {
-                                    await PerformCleaning(
-                                        lockfile,
-                                        project,
-                                        doUpdate,
-                                        doClean,
-                                        lint,
-                                        prettify,
-                                        commit,
-                                        destroy,
-                                        realIntensity,
-                                    );
-                                }
-                            }
+                            await PerformCleaning(
+                                lockfile,
+                                project,
+                                doUpdate,
+                                doClean,
+                                lint,
+                                prettify,
+                                destroy,
+                                commit,
+                                realIntensity,
+                            );
                         }
                     } else {
                         await LogStuff(

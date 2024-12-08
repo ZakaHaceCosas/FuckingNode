@@ -60,12 +60,12 @@ export interface FkNodeYaml {
      * If provided, file paths in `targets` will be removed when `clean` is called with any of the `intensities`. If not provided defaults to `maxim` intensity and `node_modules` path. Specifying `targets` _without_ `node_modules` does not override it, meaning it'll always be cleaned.
      *
      * @type {{
-     *         intensities: CleanerIntensity[] | "*" | "all",
+     *         intensities: (CleanerIntensity | "*" | "all")[],
      *         targets: string[]
      *     }}
      */
     destroy: {
-        intensities: CleanerIntensity[] | "*" | "all";
+        intensities: (CleanerIntensity | "*" | "all")[];
         targets: string[];
     };
     /**
