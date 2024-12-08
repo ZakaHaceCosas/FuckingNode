@@ -157,7 +157,7 @@ export async function GetProjectSettings(
         return DEFAULT_FKNODE_YAML;
     }
 
-    return DEFAULT_FKNODE_YAML;
+    return cleanContent;
 }
 
 /**
