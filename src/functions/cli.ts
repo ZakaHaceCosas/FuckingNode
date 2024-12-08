@@ -65,13 +65,13 @@ export async function Commander(main: string, stuff: string[], speak?: boolean):
 
     if (!output.success) {
         const errorMessage = decoder.decode(output.stderr) || "(Error is unknown)";
-        targetStdout = errorMessage;
+        targetStdout = `${targetStdout}\n\n${errorMessage}`;
         await LogStuff(`An error happened with ${main} ${stuff.join(" ")}: ${errorMessage}`);
     }
 
     const result: CommanderOutput = {
         success: output.success,
-        stdout: output.success ? decoder.decode(output.stdout) : targetStdout,
+        stdout: targetStdout,
     };
 
     return result;

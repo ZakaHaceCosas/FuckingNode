@@ -1,5 +1,9 @@
 // i spent my time writing all of this instead of studying
 // bruh
+
+/**
+ * This file contains random phrases for the about page. You're not supposed to edit it, however funny additions are always welcome :).
+ */
 import { APP_NAME, I_LIKE_JS } from "../constants.ts";
 
 // some of these are jokes only me and some people (mostly friends) will get

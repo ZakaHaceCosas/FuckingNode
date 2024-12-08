@@ -191,6 +191,11 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
         return;
     }
 
+    if (ParseFlag("experimental-auto-flush", false).includes(command)) {
+        await AutoFlush(secondArg as "enable" | "disable", Number(thirdArg));
+        return;
+    }
+
     switch (command) {
         case "schedule":
             await LogStuff(
@@ -202,7 +207,10 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             await Flush(secondArg ?? "", ParseFlag("force", false).includes(thirdArg ?? ""));
             break;
         case "auto-flush":
-            await AutoFlush(secondArg as "enable" | "disable", Number(thirdArg));
+            await LogStuff(
+                `${APP_NAME.STYLED} runtime's (Deno) support for scheduled tasks is still unstable and this feature doesn't work properly. Use --experimental-auto-flush to try it.`,
+                "bruh",
+            );
             break;
         case "repair":
             await Repair();
