@@ -1,7 +1,7 @@
 import type { tURL } from "./types/misc.ts";
 import type { SemVer } from "@std/semver/types";
 import { format } from "@std/semver";
-import type { CF_FKNODE_SETTINGS } from "./types/config_files.ts";
+import type { CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
 
 const _SV_VER: SemVer = {
     major: 2,
@@ -108,4 +108,23 @@ export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
         enabled: true,
         freq: 30,
     },
+};
+
+/**
+ * Default settings.
+ *
+ * @type {FkNodeYaml}
+ */
+export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
+    divineProtection: "disabled",
+    lintCmd: "__ESLINT",
+    prettyCmd: "__PRETTIER",
+    destroy: {
+        intensities: ["maxim"],
+        targets: [
+            "node_modules",
+        ],
+    },
+    commitActions: false,
+    commitMessage: "__USE_DEFAULT",
 };

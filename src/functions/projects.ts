@@ -1,7 +1,7 @@
 import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
-import { IGNORE_FILE } from "../constants.ts";
+import { DEFAULT_FKNODE_YAML, IGNORE_FILE } from "../constants.ts";
 import type { BunfigToml, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
@@ -147,31 +147,17 @@ export async function GetProjectSettings(
     const workingPath = await ParsePath(path);
     const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
 
-    const defaultSettings: FkNodeYaml = {
-        divineProtection: "disabled",
-        lintCmd: "__ESLINT",
-        prettyCmd: "__PRETTIER",
-        destroy: {
-            intensities: ["maxim"],
-            targets: [
-                "node_modules",
-            ],
-        },
-        commitActions: false,
-        commitMessage: "__USE_DEFAULT",
-    };
-
-    if (!(await CheckForPath(pathToDivineFile))) return defaultSettings;
+    if (!(await CheckForPath(pathToDivineFile))) return DEFAULT_FKNODE_YAML;
     const divineContent = await Deno.readTextFile(pathToDivineFile);
     const cleanContent = parseYaml(divineContent);
 
     if (!ValidateFkNodeYaml(cleanContent)) {
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
         await Deno.writeTextFile(pathToDivineFile, `\n\n[NOTE (${GetDateNow()})]`);
-        return defaultSettings;
+        return DEFAULT_FKNODE_YAML;
     }
 
-    return defaultSettings;
+    return DEFAULT_FKNODE_YAML;
 }
 
 /**

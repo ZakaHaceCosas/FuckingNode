@@ -112,6 +112,7 @@ Where `(exec)` refers to the execution command (`npx` / `pnpm dlx` / `yarn dlx` 
 ### Others
 
 - `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile, `node_modules`, and reinstalls with the selected package manager). For now it relies on the specified package manager's ability to understand other lockfiles to ensure version compatibility. No issues _should_ occur.
+- `fuckingnode kickstart <repo-url> [path] [package-manager]` - automatically clones a Git repo in the specified path (or `<current-path>/<repo-name>` if not provided), installs dependencies with `pnpm` (or provided package manager if any), and OF COURSE automatically runs `fuckingnode manager add --self`.
 - `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode upgrade` - all do the obvious (if not obvious, `upgrade` checks for updates).
 
 And that's it for now.

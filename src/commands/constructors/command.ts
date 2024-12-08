@@ -1,3 +1,5 @@
+import type { PKG_MANAGERS } from "../../types/package_managers.ts";
+
 export interface TheCleanerConstructedParams {
     verbose: boolean;
     update: boolean;
@@ -25,4 +27,10 @@ export interface TheUpdaterConstructedParams {
     force: boolean;
     silent: boolean;
     mute: boolean;
+}
+
+export interface TheKickstartConstructedParams {
+    gitUrl: string;
+    path?: string;
+    manager: PKG_MANAGERS;
 }
