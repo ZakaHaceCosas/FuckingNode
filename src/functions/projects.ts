@@ -218,15 +218,9 @@ export async function ValidateProject(entry: string): Promise<true | ProjectErro
 
     const env = await GetProjectEnvironment(workingEntry);
 
-    if (!(await CheckForPath(workingEntry))) {
-        return "NonExistingPath";
-    }
-    if (isDuplicate) {
-        return "IsDuplicate";
-    }
-    if (env.runtime !== "node") {
-        return "NoPkgJson";
-    }
+    if (!(await CheckForPath(workingEntry))) return "NonExistingPath";
+    if (isDuplicate) return "IsDuplicate";
+    if (!(await CheckForPath(env.lockfile))) return "NoPkgJson";
     return true;
 }
 

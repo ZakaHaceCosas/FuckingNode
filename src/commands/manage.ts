@@ -223,20 +223,19 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         return 1;
     }
     await LogStuff(
-        `We've found issues! We're talking about getting rid of:`,
+        `We've found issues! We're talking about getting rid of:\n`,
         "bulb",
     );
     // doesn't use NameProject as it's likely to point to an invalid path
     for (const idiot of list) {
         await LogStuff(
-            `\n${idiot} ${ColorString("Code: " + (await ValidateProject(idiot)), "half-opaque")}`,
-            undefined,
-            true,
+            `${idiot} ${ColorString("Code: " + (await ValidateProject(idiot)), "half-opaque")}`,
+            "trash",
         );
     }
-    console.log("\n");
+    console.log(""); // glue fix
     const del = await LogStuff(
-        `Will you remove all of these ${I_LIKE_JS.MFS}?`,
+        `Remove all of these ${I_LIKE_JS.MFS}?`,
         "what",
         undefined,
         true,
