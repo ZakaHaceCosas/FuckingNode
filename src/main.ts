@@ -72,7 +72,7 @@ async function main(command: string) {
                     verbose: flags.includes("--verbose"),
                     update: flags.includes("--update"),
                     lint: flags.includes("--lint"),
-                    prettify: flags.includes("--prettify"),
+                    prettify: flags.includes("--pretty"),
                     commit: flags.includes("--commit"),
                     intensity: Deno.args[1] ?? (await GetSettings()).defaultCleanerIntensity,
                 });
@@ -83,7 +83,7 @@ async function main(command: string) {
                     verbose: flags.includes("--verbose"),
                     update: flags.includes("--update"),
                     lint: flags.includes("--lint"),
-                    prettify: flags.includes("--prettify"),
+                    prettify: flags.includes("--pretty"),
                     commit: flags.includes("--commit"),
                     intensity: "hard-only",
                 });

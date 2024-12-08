@@ -358,3 +358,20 @@ async function DetectNodeManager(workingPath: string): Promise<NodePkgManagerPro
     if (await CheckForPath(await JoinPaths(workingPath, "yarn.lock"))) return { name: "yarn", file: "yarn.lock" };
     return null;
 }
+
+/**
+ * Parses a lockfile, differentiating `.yaml` from `.json` files. Unused, (I made it to fix an issue but turns out the fix was different lmao), but keep it here just in case.
+ *
+ * @export
+ * @async
+ * @param {string} lockfilePath
+ * @returns {Promise<unknown>} Whatever the file returns :)
+ */
+export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
+    const file = await Deno.readTextFile(await ParsePath(lockfilePath));
+    if (lockfilePath.includes(".yaml") || lockfilePath.includes(".lock")) {
+        return parseYaml(file);
+    } else {
+        return JSON.parse(file);
+    }
+}

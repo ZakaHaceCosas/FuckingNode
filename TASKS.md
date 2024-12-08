@@ -66,7 +66,7 @@
 ## Cleaner
 
 - [x] Basic stuff that's already done
-- [x] Auto-running ESLint or Prettier if they're installed (maybe with `--lint` and `--prettify` flags).
+- [x] Auto-running ESLint or Prettier if they're installed (maybe with `--lint` and `--pretty` flags).
 - [ ] Customizing (via `fknode.yaml`):
   - [ ] Commands used for stuff:
     - [x] Lint
@@ -74,7 +74,7 @@
     - [ ] Update
     - [ ] Clean
   - [ ] Directories to remove when cleaning (e.g. `/dist`)
-  - [x] Enabling auto-commits, so for example a user that runs both `--update` and `--prettify` gets his changes auto-committed and pushed (only if the Git tree is clean, of course).
+  - [x] Enabling auto-commits, so for example a user that runs both `--update` and `--pretty` gets his changes auto-committed and pushed (only if the Git tree is clean, of course).
 
 ## Settings-related tasks
 

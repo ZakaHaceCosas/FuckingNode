@@ -2,7 +2,6 @@ import { I_LIKE_JS } from "../constants.ts";
 import {
     type ALL_SUPPORTED_LOCKFILES,
     IsLockfileNodeLockfile,
-    type SUPPORTED_NOT_NODE_LOCKFILES as _NotNode,
 } from "../types/package_managers.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
@@ -69,7 +68,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             try {
                 Deno.chdir(project);
                 await LogStuff(
-                    ColorString(`Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`, "blue"),
+                    `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
                     "working",
                 );
 

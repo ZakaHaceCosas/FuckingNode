@@ -73,15 +73,15 @@ const ProjectCleaningFeatures = {
         if (baseCommand === "deno") return; // unsupported
         if (!settings.lintCmd || settings.lintCmd.trim() === "") return;
         if (settings.lintCmd === "__ESLINT") {
-            const lockfile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.lockfile));
-            if (!lockfile.dependencies || !lockfile.dependencies["eslint"]) {
+            const pkgFile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.main));
+            if (!pkgFile.dependencies || !pkgFile.dependencies["eslint"]) {
                 await LogStuff(
-                    `Can't lint ${NameProject(project)}. No lint command was specified and ESLint is not installed.`,
+                    `Can't lint ${await NameProject(project)}. No lint command was specified and ESLint is not installed.`,
                 );
                 return;
             }
             if (execCommand.length === 1) {
-                await Commander(
+                const out = await Commander(
                     execCommand[0],
                     [
                         "eslint",
@@ -89,19 +89,25 @@ const ProjectCleaningFeatures = {
                         ".",
                     ],
                 );
+                if (out.success) await LogStuff(`Linted ${await NameProject(project)}!`, "tick");
+                return;
             } else {
-                await Commander(execCommand[0], [
+                const out = await Commander(execCommand[0], [
                     execCommand[1],
                     "eslint",
                     "--fix",
                     ".",
                 ]);
+                if (out.success) await LogStuff(`Linted ${await NameProject(project)}!`, "tick");
+                return;
             }
         } else {
-            await Commander(
+            const out = await Commander(
                 baseCommand,
                 ["run", settings.lintCmd],
             );
+            if (out.success) await LogStuff(`Linted ${await NameProject(project)}!`, "tick");
+            return;
         }
     },
     Prettify: async (
@@ -122,37 +128,44 @@ const ProjectCleaningFeatures = {
         }
         if (!settings.prettyCmd || settings.prettyCmd.trim() === "") return;
         if (settings.prettyCmd === "__PRETTIER") {
-            const lockfile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.lockfile));
-            if (!lockfile.dependencies || !lockfile.dependencies["eslint"]) {
+            const pkgFile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.main));
+            if (!pkgFile.dependencies || !pkgFile.dependencies["prettier"]) {
                 await LogStuff(
-                    `Can't prettify ${NameProject(project)}. No prettify command was specified and Prettier is not installed.`,
+                    `Can't prettify ${await NameProject(project)}. No prettify command was specified and Prettier is not installed.`,
                 );
                 return;
             }
             if (execCommand.length === 1) {
-                await Commander(
+                const out = await Commander(
                     execCommand[0],
                     [
                         "prettier",
                         ".",
                     ],
                 );
+                if (out.success) await LogStuff(`Prettified ${await NameProject(project)}!`, "tick");
+                return;
             } else {
-                await Commander(execCommand[0], [
+                const out = await Commander(execCommand[0], [
                     execCommand[1],
                     "prettier",
                     ".",
                 ]);
+                if (out.success) await LogStuff(`Prettified ${await NameProject(project)}!`, "tick");
+                return;
             }
         } else {
-            await Commander(
+            const out = await Commander(
                 baseCommand,
                 ["run", settings.prettyCmd],
             );
+            if (out.success) await LogStuff(`Prettified ${await NameProject(project)}!`, "tick");
+            return;
         }
     },
     Commit: async (
         settings: FkNodeYaml,
+        project: string,
         isGitClean: boolean,
         shouldUpdate: boolean,
         shouldLint: boolean,
@@ -186,21 +199,29 @@ const ProjectCleaningFeatures = {
 
         const commitMessage = getCommitMessage();
 
+        const path = await ParsePath(project);
+
         await Commander(
             "git",
             [
+                "-C",
+                path,
                 "add",
                 "-A",
             ],
         );
-        await Commander(
+        const out = await Commander(
             "git",
             [
+                "-C",
+                path,
                 "commit",
                 "-m",
                 commitMessage,
             ],
         );
+        if (out.success) await LogStuff(`Committed your changes to ${await NameProject(project)}!`, "tick");
+        return;
     },
     Destroy: async (
         settings: FkNodeYaml,
@@ -337,6 +358,7 @@ export async function PerformCleaning(
         if (shouldCommit) {
             ProjectCleaningFeatures.Commit(
                 settings,
+                motherfuckerInQuestion,
                 isGitClean,
                 shouldUpdate,
                 shouldLint,
