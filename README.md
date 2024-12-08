@@ -14,63 +14,107 @@ By the way, _while the name implies NodeJS-only support, Deno and Bun are also s
 
 ## Features
 
-> TODO: update for v2
-
 ### Cleaner
 
 Automates cleaning of each NodeJS project you add by using your manager's built in features, so a single command makes everything cleaner. It will detect your lockfile (e.g. "pnpm-lock.yaml", "package-lock.json") to know whether to use **npm**, **pnpm**, or **yarn** (currently supported managers).
 
 - `fuckingnode clean` - does the obvious.
+- `fuckingnode clean <intensity>` - does the obvious with the chosen intensity (see below).
+
+Supported flags are the following (before them you have to pass an intensity, or `--` to use the default one).
+
 - `fuckingnode clean --update` - does the obvious + updates your deps.
 - `fuckingnode clean --verbose` - does the obvious with some extra logs.
+- `fuckingnode clean --pretty` - does the obvious + prettifies your code.
+- `fuckingnode clean --lint` - does the obvious + lints your code.
+- `fuckingnode clean --commit` - does the obvious + if you used an action that changes your files (like updating or prettifying) AND your git tree is clean before using these actions, auto-commits the changes.
 
-`--flags` can be mixed to use more features at once.
-
-`clean` can take an intensity level, either "normal", "hard", or "maxim"
-
-> `clean normal`, `clean hard`, `clean maxim`, or just `clean` (defaults to normal).
+Flags can be mixed to use more features at once. The `clean` command can take an intensity level, either "normal", "hard", or "maxim". If not provided, uses the default (`normal` - you can change the default from settings).
 
 The higher the level, the more space you'll recover, but the slower the process will be.
 
-This is what each level does:
+| Level | Actions | Notes |
+| :--- | :--: | ---: |
+| **Normal** | Runs default prune / autoclean and dedupe commands. | / |
+| **Hard** | Does the previous + cleans the entire cache (`pnpm store prune` / `yarn cache clean` / `npm cache clean --force`) | _Note: While pnpm will only purge unused packages, npm will clear the entire cache, making it go slower next time._ |
+| **Maxim** | This does not run any cleanup command. It will simply remove the `node_modules/` folder of each project. | Slowest (plus you'll need to reinstall deps), hence it will ask for confirmation before starting. The good thing is that you'll probably get many GB of storage back, so this is actually useful if your drive is almost full. |
 
-- **Normal**: Runs default prune / autoclean and dedupe commands.
-- **Hard**: Does the previous + cleans the entire cache (`pnpm store prune` / `yarn cache clean` / `npm cache clean --force`). _Note: While pnpm will only purge unused packages, npm will clear the entire cache, making it go slower._
-- **Maxim**: This does not run any cleanup command. It will simply remove the `node_modules/` folder of each project. Slowest (plus you'll need to reinstall deps), hence it will ask for confirmation before starting. The good thing is that you'll probably get many GB of storage back, so this is actually useful if your drive is almost full.
+You currently cannot set an intensity for each project, if you run `clean maxim` for example, all projects from your list will be maxim pruned.
 
 ### Manager
 
-F\*ckingNode keeps a list of all paths to the projects it should clean - it's you who has to maintain it. Keep in mind paths should point to the root, where you have `/package.json`, `/lockfile`[^1], and `/node_modules`.
+F\*ckingNode keeps a list of all paths to the projects it should clean - it's you who has to maintain it. Keep in mind paths should point to the root, where you have your `/package.json`, your lockfile, and your `/node_modules`.
 
 - `fuckingnode manager list` - lists all projects.
 - `fuckingnode manager list --ignored` - lists all ignored projects.
+- `fuckingnode manager list --alive` - lists all not ignored projects.
 - `fuckingnode manager add <path>` - adds a project to list.
 - `fuckingnode manager remove <path>` - removes a project from list.
 - `fuckingnode manager ignore <path>` - ignores a project (won't be cleaned or updated).
 - `fuckingnode manager revive <path>` - stops ignoring a project.
+- `fuckingnode manager cleanup` - shows a list of invalid projects (invalid path, duplicate, etc...) and allows to remove them all at once.
 
 `<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the Current Working Directory.
 
 Best practice is to run `fuckingnode manager add --self` after creating a Node project from your CLI.
 
+### Global Settings
+
+Run `fuckingnode settings` with no args to see your current settings. Use `settings <change> <setting> <new value>` to change a setting, or `help settings` to see all commands (there are a few extra commands beside changing settings).
+
+| Command | Type | Description | Notes |
+| :--- | ---: | :--: | ---: |
+| `change default-int <value>` | `normal`, `hard`, `hard-only`, or `maxim` | Changes the default intensity for the `clean` command. | / |
+| `change update-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't release updates too often, so save up those HTTP requests. |
+| `flush <file>` | `logs`, `updates`, `projects`, or `all` | Flushes (removes) config files. | `logs` is particularly recommended. `projects` and `all` are particularly discouraged. |
+
+> [!WARNING]
+> `settings` will also show info about an "auto-flush" setting. It's given a default value for future versions - we currently don't support scheduled cleanup. `help settings` shows there's an option to schedule the cleaner - it's also unsupported as of now.
+
+### Project settings
+
+We also support adding a `fknode.yaml` file to your projects. Some commands, like `manager ignore` will add it automatically if it doesn't exist. Some other commands, like `clean -- --lint` require it to be present, otherwise continuing execution but skipping tasks that depend on this file.
+
+A full `fknode.yaml` file could look like this. All props are optional. For a more detailed explanation, open `fknode.example.yaml` in the root of this repo.
+
+```yaml
+# divineProtection is used to ignore projects, here you specify what to ignore (updating, cleaning, or everything)
+divineProtection: "updater"
+# if present, this SCRIPT will be used when you clean with the --lint flag
+lintCmd: "lint"
+# if present, this SCRIPT will be used when you clean with the --pretty flag
+prettyCmd: "prettier"
+# if present, files / DIRs you add to "targets" will be removed
+# (only when you clean with any of the "intensities")
+destroy:
+  intensities: ["hard", "maxim"] # "normal", "hard", "hard-only", or "maxim", or "*" or "all" for everything. use always an array even if you only add one intensity.
+  targets:
+    - "node_modules"
+    - "dist"
+# if true, we will auto run "git commit" with a default message when we change your code
+commitActions: true
+# if present, overrides the default commit message
+commitMessage: "F*ckingNode™️ automated maintenance tasks"
+```
+
 ### Others
 
 - `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile, `node_modules`, and reinstalls with the selected package manager). For now it relies on the specified package manager's ability to understand other lockfiles to ensure version compatibility. No issues _should_ occur.
-- `fuckingnode settings schedule <h> <d>` - schedules automated cleaning. `h` indicates what hour of the day should the cleaning be done (number from 0 to 23). `d` indicates the day interval, e.g. 3 = every 3 days (number, or an **\*** for daily cleaning).
-- `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode self-update` - all do the obvious.
+- `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode upgrade` - all do the obvious (if not obvious, `upgrade` checks for updates).
 
 And that's it for now.
 
-### Feature support table
+### Cross-runtime support
 
-Where NodeJS includes all major package managers (npm, pnpm, and yarn).
+While we've been talking about Node projects and `package.json` all the time, we actually support the three titans; Node, Deno, and Bun. However not all features are everywhere. Here's a compatibility table, where "NodeJS" includes all major package managers (npm, pnpm, and yarn).
 
 | Feature | Support | Notes |
 | :--- | ---: | ---: |
 | Automated project-wide cleaning | NodeJS-only | Deno and Bun don't provide the kind of commands (dedupe, clean, etc...) needed for this task. |
 | Automated system-wide cache cleaning | NodeJS, Deno, Bun | / |
 | Parsing of project file (pkg JSON) | NodeJS, Bun (package.json), Deno (deno.json) | Only supports parsing the props that are needed to the CLI |
-| Automated lint & prettify tasks | NodeJS, Bun, Deno | I just added this feature lol, testing is still needed. |
+| Automated prettify tasks | NodeJS, Bun, Deno | Testing is still needed. Deno doesn't support setting `prettyCmd` it'll always use `deno fmt`. |
+| Automated lint tasks | NodeJS, Bun | Testing is still needed. |
 | Automated dependency updates | NodeJS, Bun, Deno | Only NodeJS is tested. |
 
 ---
@@ -118,5 +162,3 @@ source ~/.bash_profile    # macOS
 Hope those motherf\*ckers don't annoy you again! And hey, if you find any issue with the program, just open up an issue (or make a PR which would be awesome :smile:).
 
 Cya!
-
-[^1]: npm, pnpm, and yarn are supported, each one having it's own lockfile.

@@ -5,6 +5,7 @@
         ".": "./src/main.ts"
     },
     "fmt": {
+        "exclude": ["README.md"],
         "indentWidth": 4,
         "lineWidth": 144,
         "proseWrap": "never",
