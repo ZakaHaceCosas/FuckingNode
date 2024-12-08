@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now verbose logging in `clean` will show the time it took for each project to be cleaned.
 - (WIP) Added support for automating linting and prettifying of projects. Added the ability to auto-commit these changes as well.
 - Added `settings change` command to change certain settings.
+- Added a `kickstart` command to quickly start up a project.
 
 ### Changed
 
