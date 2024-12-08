@@ -143,6 +143,7 @@ const ProjectCleaningFeatures = {
                     execCommand[0],
                     [
                         "prettier",
+                        "--w",
                         ".",
                     ],
                 );
@@ -152,6 +153,7 @@ const ProjectCleaningFeatures = {
                 const out = await Commander(execCommand[0], [
                     execCommand[1],
                     "prettier",
+                    "--w",
                     ".",
                 ]);
                 if (out.success) await LogStuff(`Prettified ${projectName}!`, "tick");
