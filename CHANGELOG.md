@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `.fknodeignore` becomes `fknode.yaml`, and follows a new format detailed in the `README.md`.
 - `self-update` becomes `upgrade`.
-- The project list, and other config files, will reset.
+- The project list and other config files will "reset" when downloading this update (simply because file names changed from `.json` to `.yaml`). You can recover old data from `C:\Users\YOUR_USER\AppData\FuckingNode\`, or the macOS / Linux `APPDATA` equivalent.
 
 ### Added
 
@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Default cleaner intensity
 - Now verbose logging in `clean` will show the time it took for each project to be cleaned.
 - (WIP) Added support for automating linting and prettifying of projects. Added the ability to auto-commit these changes as well.
+- Added `settings change` command to change certain settings.
 
 ### Changed
 

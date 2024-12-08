@@ -40,22 +40,6 @@ export class FknError extends Error {
             case "Internal__Projects__CantDetermineEnv":
                 hint = "This is an internal error, there's not much you can do.";
                 break;
-            case "Project__Cleaner__LintingWithNoLinter":
-                hint =
-                    "If you don't specify a lintCmd in your fknode.yaml, we default to ESLint, but we before check you devDependencies for it. If it's not installed, this error throws.";
-                break;
-            case "Project__Cleaner__PrettifyingWithNoPrettifier":
-                hint =
-                    "If you don't specify a prettyCmd in your fknode.yaml, we default to Prettier, but we before check you devDependencies for it. If it's not installed, this error throws.";
-                break;
-            case "Project__FkNodeYaml__MissingLintCmd":
-                hint =
-                    "Your lintCmd is empty in your fknode.yaml. PS. This does not happen when it's actually 'missing' because when using --lint, projects without a lintCmd default to ESLint.";
-                break;
-            case "Project__FkNodeYaml__MissingPrettyCmd":
-                hint =
-                    "Your prettyCmd is empty in your fknode.yaml. PS. This does not happen when it's actually 'missing' because when using --lint, projects without a prettyCmd default to Prettier.";
-                break;
             default:
                 hint = null;
                 break;

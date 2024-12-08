@@ -4,6 +4,9 @@ import TheCleaner from "./clean.ts";
 import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 import { FreshSetup, GetAppPath, GetSettings } from "../functions/config.ts";
+import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
+import type { CleanerIntensity } from "../types/config_params.ts";
+import { stringify as stringifyYaml } from "@std/yaml";
 
 async function CreateSchedule(hour: string | null, day: string | "*" | null) {
     const workingHour = Number(hour);
@@ -162,6 +165,53 @@ async function Repair() {
     }
 }
 
+async function ChangeSetting(setting: "default-int" | "update-freq", value: string) {
+    try {
+        const currentSettings = await GetSettings();
+
+        switch (setting) {
+            case "default-int": {
+                if (!["normal", "hard", "hard-only", "maxim"].includes(value)) {
+                    await LogStuff(`${value} is not valid. Enter either 'normal', 'hard', 'hard-only', or 'maxim'.`);
+                    return;
+                }
+                const newValue: CleanerIntensity = value as CleanerIntensity;
+                const newSettings: CF_FKNODE_SETTINGS = {
+                    ...currentSettings,
+                    defaultCleanerIntensity: newValue,
+                };
+                await Deno.writeTextFile(
+                    await GetAppPath("SETTINGS"),
+                    stringifyYaml(newSettings),
+                );
+                break;
+            }
+            case "update-freq": {
+                const newValue = Number(value);
+                if (isNaN(newValue)) {
+                    await LogStuff(`${value} is not valid. Enter a number.`);
+                    return;
+                }
+                if (Math.ceil(newValue) <= 0) {
+                    await LogStuff(`${value} is not valid. You must input a value greater than 0.`);
+                    return;
+                }
+                const newSettings: CF_FKNODE_SETTINGS = {
+                    ...currentSettings,
+                    updateFreq: Math.ceil(newValue),
+                };
+                await Deno.writeTextFile(
+                    await GetAppPath("SETTINGS"),
+                    stringifyYaml(newSettings),
+                );
+                break;
+            }
+        }
+    } catch (e) {
+        throw e;
+    }
+}
+
 async function DisplaySettings() {
     const settings = await GetSettings();
     const formattedSettings = `Update frequency: Each ${ColorString(settings.updateFreq, "bright-green")} days.\nDefault cleaner intensity: ${
@@ -217,6 +267,31 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             break;
         case "repair":
             await Repair();
+            break;
+        case "change":
+            if (!secondArg) {
+                await LogStuff("Invalid option, use 'change default-int' or 'change update-freq' to tweak settings.");
+                return;
+            }
+            switch (secondArg) {
+                case "default-int":
+                    if (!thirdArg) {
+                        await LogStuff("Provide a value to update this setting to.");
+                        return;
+                    }
+                    await ChangeSetting("default-int", thirdArg);
+                    break;
+                case "update-freq":
+                    if (!thirdArg) {
+                        await LogStuff("Provide a value to update this setting to.");
+                        return;
+                    }
+                    await ChangeSetting("update-freq", thirdArg);
+                    break;
+                default:
+                    await LogStuff("Invalid option, use 'change default-int' or 'change update-freq' to tweak settings.");
+                    break;
+            }
             break;
         default:
             await DisplaySettings();
