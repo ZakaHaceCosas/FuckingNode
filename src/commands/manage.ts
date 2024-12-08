@@ -26,7 +26,7 @@ async function AddProject(
     entry: string,
 ): Promise<void> {
     const workingEntry = await ParsePath(entry);
-    const projectName = await NameProject(workingEntry, "all");
+    const projectName = await NameProject(workingEntry, "name-ver");
 
     async function addTheEntry() {
         await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {

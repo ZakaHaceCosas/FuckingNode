@@ -13,11 +13,9 @@ import { I_LIKE_JS, VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetSettings } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
-import type { PKG_MANAGERS } from "./types/package_managers.ts";
 
 async function init(update: boolean, mute?: boolean) {
     await FreshSetup(); // Temporarily hold the result
-
     await TheUpdater({
         force: update,
         silent: !update,
@@ -105,7 +103,7 @@ async function main(command: string) {
                 await TheKickstart({
                     gitUrl: Deno.args[1] ?? "",
                     path: Deno.args[2] ?? "",
-                    manager: Deno.args[3] as PKG_MANAGERS, // simply convert the type, TheKickstart validates it later
+                    manager: Deno.args[3] ?? "",
                 });
                 break;
             case "settings":

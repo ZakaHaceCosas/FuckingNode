@@ -27,13 +27,12 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
 
     const workingPath: string = path ? await ParsePath(path) : await ParsePath(await JoinPaths(Deno.cwd(), projectName));
 
-    if (!(["npm", "pnpm", "yarn", "deno", "bun"].includes(manager))) {
-        throw new Error(`${manager} isn't a valid package manager. Specify either pnpm, yarn, deno, bun, or npm.`);
-    }
-    const workingManager: PKG_MANAGERS = manager ? manager : "pnpm";
+    const workingManager: PKG_MANAGERS = manager
+        ? (["npm", "pnpm", "yarn", "deno", "bun"].includes(manager)) ? (manager as PKG_MANAGERS) : "pnpm"
+        : "pnpm";
 
     try {
-        await LogStuff("Let's begin! Wait a moment please (this can take a while...)", "tick-clear");
+        await LogStuff("Let's begin! Wait a moment please...", "tick-clear");
 
         const gitOutput = await Commander("git", ["clone", gitUrl, workingPath], true);
         if (!gitOutput.success) throw new Error(`Error cloning repository: ${gitOutput.stdout}`);
@@ -41,7 +40,7 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
         Deno.chdir(workingPath);
 
         await LogStuff(
-            `Installation began using ${workingManager}. For whatever reason the command's output is not shown until it's 100% done, but it works. Don't worry, we'll tell you when it's done. Have a coffee meanwhile!`,
+            `Installation began using ${workingManager}. Have a coffee meanwhile!`,
             "tick-clear",
         );
         const managerOutput = await Commander(workingManager, ["install"]);
