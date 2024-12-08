@@ -45,11 +45,23 @@
   - [x] NODE
   - [x] DENO
   - [x] BUN
+- [ ] Project updating
+  - [x] NODE
+  - [ ] DENO
+  - [ ] BUN
 - [ ] Migration
   - [ ] Node pkg manager
     - [x] Basic (remove lockfile -> install with new manager)
     - [ ] Well done (transform lockfile to diff format -> install)
   - [ ] Runtimes
+- [ ] Project prettifying
+  - [x] NODE
+  - [ ] DENO
+  - [ ] BUN
+- [ ] Project linting
+  - [x] NODE
+  - [ ] DENO
+  - [ ] BUN
 
 ## Cleaner
 
