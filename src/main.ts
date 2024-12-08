@@ -7,10 +7,13 @@ import TheHelper from "./commands/help.ts";
 import TheUpdater from "./commands/updater.ts";
 import TheSettings from "./commands/settings.ts";
 import TheAbouter from "./commands/about.ts";
+import TheKickstart from "./commands/kickstart.ts";
+// other things
 import { I_LIKE_JS, VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetSettings } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
+import type { PKG_MANAGERS } from "./types/package_managers.ts";
 
 async function init(update: boolean, mute?: boolean) {
     await FreshSetup(); // Temporarily hold the result
@@ -92,6 +95,13 @@ async function main(command: string) {
                 break;
             case "manager":
                 await TheManager(Deno.args);
+                break;
+            case "kickstart":
+                await TheKickstart({
+                    gitUrl: Deno.args[1] ?? "",
+                    path: Deno.args[2] ?? "",
+                    manager: Deno.args[3] as PKG_MANAGERS, // simply convert the type, TheKickstart validates it later
+                });
                 break;
             case "settings":
                 await TheSettings({ args: Deno.args });

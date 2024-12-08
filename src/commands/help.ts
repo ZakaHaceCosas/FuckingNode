@@ -25,13 +25,18 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     const _USAGE: helpThing = [
         [
             "clean",
-            "<intensity> [--update] [--verbose]",
+            "<intensity | --> [--update] [--verbose] [--lint] [--pretty] [--commit]",
             "Cleans all of your projects.",
         ],
         [
             "manager",
             "add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup",
             "Manages your projects.",
+        ],
+        [
+            "kickstart",
+            "<git-url> [path] [npm | pnpm | yarn | deno | bun]",
+            `Quickly clones a repo, installs deps, setups ${APP_NAME.CASED}, and opens Visual Studio Code.`,
         ],
         [
             "settings",
@@ -82,6 +87,26 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "Update all your projects before cleaning them.",
         ],
         ["--verbose", null, "Show more detailed ('verbose') logs."],
+        [
+            "--lint",
+            null,
+            "Lint the project's code if possible. You'll need either ESLint in your devDependencies or a custom lint script specified in the fknode.yaml.",
+        ],
+        [
+            "--pretty",
+            null,
+            "Prettify the project's code if possible. You'll need either Prettier in your devDependencies or a custom prettify script specified in the fknode.yaml.",
+        ],
+        [
+            "--destroy",
+            null,
+            "Remove additional files and DIRs (e.g. 'dist/', 'out/', etc...) when cleaning. Requires you to specify files and DIRs to remove from the fknode.yaml)."
+        ],
+        [
+            "--commit",
+            null,
+            `If your Git working tree was clean before ${APP_NAME.CASED} touched it, and you performed actions that change the code (e.g. --pretty or --update), it'll commit them using a default commit message. Requires "commitActions" to be set to true in your fknode.yaml. You can override the default commit message with "commitMessage" in your fknode.yaml.`
+        ]
     ];
     const _MANAGER_OPTIONS: helpThing = [
         [

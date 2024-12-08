@@ -33,10 +33,14 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
     const workingManager: PKG_MANAGERS = manager ? manager : "pnpm";
 
     try {
-        const gitOutput = await Commander("git", ["clone", gitUrl, workingPath]);
+        await LogStuff("Let's begin! Wait a moment please (this can take a while...)", "tick-clear");
+
+        const gitOutput = await Commander("git", ["clone", gitUrl, workingPath], true);
         if (!gitOutput.success) throw new Error(`Error cloning repository: ${gitOutput.stdout}`);
 
         Deno.chdir(workingPath);
+
+        await LogStuff(`Installation began using ${workingManager}. For whatever reason the command's output is not shown until it's 100% done, but it works. Don't worry, we'll tell you when it's done. Have a coffee meanwhile!`, "tick-clear");
         const managerOutput = await Commander(workingManager, ["install"]);
         if (!managerOutput.success) throw new Error(`Error installing dependencies: ${managerOutput.stdout}`);
 
@@ -47,7 +51,8 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
         const vscOutput = await Commander("code", [workingPath]);
         if (!vscOutput.success) throw new Error(`Error launching VSCode: ${vscOutput.stdout}`);
 
-        await LogStuff(`Great! ${await NameProject(workingPath, "name-ver")} is now setup. Enjoy!`);
+        await LogStuff(`Great! ${await NameProject(workingPath, "name-ver")} is now setup. Enjoy!`, "tick-clear");
+        Deno.exit(0);
     } catch (e) {
         await LogStuff(`Unknown error: ${e}`, "error");
         Deno.exit(1);
