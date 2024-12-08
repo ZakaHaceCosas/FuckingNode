@@ -58,7 +58,7 @@ export function GetElapsedTime(date1: Date): string {
         result += `${minutes}m`;
     }
     if (remainingSeconds > 0 || minutes === 0) {
-        result += ` ${remainingSeconds}s`.trim();
+        result += ` ${remainingSeconds}s`;
     }
 
     return result;

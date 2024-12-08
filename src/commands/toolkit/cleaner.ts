@@ -27,6 +27,7 @@ const ProjectCleaningFeatures = {
         );
         await LogStuff(`${command} ${args}\n`, "package");
         await Commander(command, args);
+        return;
     },
     Clean: async (
         command: string,
@@ -35,22 +36,23 @@ const ProjectCleaningFeatures = {
         intensity: CleanerIntensity,
         maximPath: string,
     ) => {
+        const projectName = await NameProject(project, "name");
         await LogStuff(
-            `Cleaning using ${command} for ${project}.`,
+            `Cleaning using ${command} for ${projectName}.`,
             "package",
         );
-        for (const arg of args!) {
+        for (const arg of args) {
             await LogStuff(`${command} ${args.join(" ")}\n`, "package");
             await Commander(command, arg);
         }
         if (intensity === "maxim") {
             await LogStuff(
-                `Maxim pruning for ${project} (path: ${maximPath}).`,
+                `Maxim pruning for ${projectName}`,
                 "trash",
             );
             if (!(await CheckForPath(maximPath))) {
                 await LogStuff(
-                    `An error happened with maxim pruning at ${project}. Skipping this ${I_LIKE_JS.MF}...`,
+                    `An error happened with maxim pruning at ${projectName}. Skipping this ${I_LIKE_JS.MF}...`,
                     "bruh",
                 );
             }
@@ -58,7 +60,7 @@ const ProjectCleaningFeatures = {
                 recursive: true,
             });
             await LogStuff(
-                `Maxim pruned ${project}.`,
+                `Maxim pruned ${projectName}.`,
                 "tick-clear",
             );
         }

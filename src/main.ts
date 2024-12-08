@@ -17,7 +17,12 @@ import type { PKG_MANAGERS } from "./types/package_managers.ts";
 
 async function init(update: boolean, mute?: boolean) {
     await FreshSetup(); // Temporarily hold the result
-    await TheUpdater({ force: update, silent: !update, mute: mute ? mute : false });
+
+    await TheUpdater({
+        force: update,
+        silent: !update,
+        mute: mute ? mute : false,
+    });
 }
 
 await init(false, true);

@@ -188,7 +188,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 });
             } catch (e) {
                 await LogStuff(
-                    ColorString(`Error while working around with ${project}: ${e}`, "red"),
+                    ColorString(`Error while working around with ${await NameProject(project, "name")}: ${e}`, "red"),
                     "error",
                 );
                 results.push({
