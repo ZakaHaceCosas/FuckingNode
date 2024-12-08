@@ -3,21 +3,220 @@ import { Commander, CommandExists } from "../../functions/cli.ts";
 import { GetSettings } from "../../functions/config.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
-import { GetProjectEnvironment } from "../../functions/projects.ts";
-import { GetProjectSettings, NameProject, UnderstandProjectSettings } from "../../functions/projects.ts";
+import { GetProjectEnvironment, GetProjectSettings, NameProject, UnderstandProjectSettings } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
-import type { SUPPORTED_NODE_LOCKFILES } from "../../types/package_managers.ts";
-import type { NodePkgJson } from "../../types/runtimes.ts";
+import type { ALL_SUPPORTED_LOCKFILES } from "../../types/package_managers.ts";
+import type { NodePkgJson, ProjectEnv } from "../../types/runtimes.ts";
 import { FknError } from "../../utils/error.ts";
 import { IsWorkingTreeClean } from "../../utils/git.ts";
 import type { tRESULT } from "../clean.ts";
+import type { FkNodeYaml } from "../../types/config_files.ts";
+
+type tBaseCommand = "npm" | "pnpm" | "yarn" | "deno" | "bun";
+type tExecCommand = ["npx"] | ["pnpm", "dlx"] | ["yarn", "dlx"] | ["bunx"] | ["deno", "run"];
+
+const ProjectCleaningFeatures = {
+    Update: async (
+        command: string,
+        project: string,
+        args: string[],
+    ) => {
+        await LogStuff(
+            `Updating using ${command} for ${project}.`,
+            "package",
+        );
+        await LogStuff(`${command} ${args}\n`, "package");
+        await Commander(command, args);
+    },
+    Clean: async (
+        command: string,
+        project: string,
+        args: string[][],
+        intensity: CleanerIntensity,
+        maximPath: string,
+    ) => {
+        await LogStuff(
+            `Cleaning using ${command} for ${project}.`,
+            "package",
+        );
+        for (const arg of args!) {
+            await LogStuff(`${command} ${args.join(" ")}\n`, "package");
+            await Commander(command, arg);
+        }
+        if (intensity === "maxim") {
+            await LogStuff(
+                `Maxim pruning for ${project} (path: ${maximPath}).`,
+                "trash",
+            );
+            if (!(await CheckForPath(maximPath))) {
+                await LogStuff(
+                    `An error happened with maxim pruning at ${project}. Skipping this ${I_LIKE_JS.MF}...`,
+                    "bruh",
+                );
+            }
+            await Deno.remove(maximPath, {
+                recursive: true,
+            });
+            await LogStuff(
+                `Maxim pruned ${project}.`,
+                "tick-clear",
+            );
+        }
+    },
+    Lint: async (
+        settings: FkNodeYaml,
+        project: string,
+        baseCommand: tBaseCommand,
+        execCommand: tExecCommand,
+        env: ProjectEnv,
+    ) => {
+        if (!settings.lintCmd || settings.lintCmd.trim() === "") {
+            throw new FknError(
+                "Project__FkNodeYaml__MissingLintCmd",
+                `You specified to lint ${NameProject(project)}, but no lint command was found in your fknode.yaml file!`,
+            );
+        }
+        if (settings.lintCmd === "__ESLINT") {
+            const lockfile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.lockfile));
+            if (!lockfile.dependencies || !lockfile.dependencies["eslint"]) {
+                throw new FknError(
+                    "Project__Cleaner__LintingWithNoLinter",
+                    `You specified to lint ${
+                        NameProject(project)
+                    }, but no lint command was found in your fknode.yaml file, so we defaulted to ESLint, but it's not installed!`,
+                );
+            }
+            if (execCommand.length === 1) {
+                await Commander(
+                    execCommand[0],
+                    [
+                        "eslint",
+                        "--fix",
+                        ".",
+                    ],
+                );
+            } else {
+                await Commander(execCommand[0], [
+                    execCommand[1],
+                    "eslint",
+                    "--fix",
+                    ".",
+                ]);
+            }
+        } else {
+            await Commander(
+                baseCommand,
+                ["run", settings.lintCmd],
+            );
+        }
+    },
+    Prettify: async (
+        settings: FkNodeYaml,
+        project: string,
+        baseCommand: tBaseCommand,
+        execCommand: tExecCommand,
+        env: ProjectEnv,
+    ) => {
+        if (!settings.prettyCmd || settings.prettyCmd.trim() === "") {
+            throw new FknError(
+                "Project__FkNodeYaml__MissingPrettyCmd",
+                `You specified to prettify ${
+                    NameProject(project)
+                }, but no prettify command was found in your fknode.yaml file!`,
+            );
+        }
+        if (settings.prettyCmd === "__PRETTIER") {
+            const lockfile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.lockfile));
+            if (!lockfile.dependencies || !lockfile.dependencies["eslint"]) {
+                throw new FknError(
+                    "Project__Cleaner__PrettifyingWithNoPrettifier",
+                    `You specified to prettify ${
+                        NameProject(project)
+                    }, but no prettifying command was found in your fknode.yaml file, so we defaulted to Prettier, but it's not installed!`,
+                );
+            }
+            if (execCommand.length === 1) {
+                await Commander(
+                    execCommand[0],
+                    [
+                        "prettier",
+                        ".",
+                    ],
+                );
+            } else {
+                await Commander(execCommand[0], [
+                    execCommand[1],
+                    "prettier",
+                    ".",
+                ]);
+            }
+        } else {
+            await Commander(
+                baseCommand,
+                ["run", settings.prettyCmd],
+            );
+        }
+    },
+    Commit: async (
+        settings: FkNodeYaml,
+        isGitClean: boolean,
+        shouldUpdate: boolean,
+        shouldLint: boolean,
+        shouldPrettify: boolean
+    ) => {
+        // TODO - use FknError here too (lazy rn)
+        if (!shouldUpdate && !shouldLint && !shouldPrettify) {
+            await LogStuff("No actions to be committed.", "bruh");
+            return;
+        }
+        if (settings.commitActions === false) {
+            await LogStuff("No committing allowed.", "bruh");
+            return;
+        }
+        if (!isGitClean) {
+            await LogStuff("Tree isn't clean, can't commit", "bruh");
+        }
+        const getCommitMessage = () => {
+            if (settings.commitMessage) {
+                return settings.commitMessage;
+            }
+
+            const tasks: string[] = [];
+
+            if (shouldUpdate) tasks.push("updating");
+            if (shouldLint) tasks.push("linting");
+            if (shouldPrettify) tasks.push("prettifying");
+
+            const taskString = tasks.join(" and ");
+            return `Code ${taskString} tasks (Auto-generated by F*ckingNode v${VERSION})`;
+        };
+
+        const commitMessage = getCommitMessage();
+
+        await Commander(
+            "git",
+            [
+                "add",
+                "-A",
+            ],
+        );
+        await Commander(
+            "git",
+            [
+                "commit",
+                "-m",
+                commitMessage,
+            ],
+        );
+    }
+};
 
 /**
  * Cleans a project.
  *
  * @export
  * @async
- * @param {SUPPORTED_NODE_LOCKFILES} lockfile
+ * @param {ALL_SUPPORTED_LOCKFILES} lockfile
  * @param {string} projectInQuestion
  * @param {boolean} shouldUpdate
  * @param {boolean} shouldClean
@@ -26,8 +225,8 @@ import type { tRESULT } from "../clean.ts";
  * @param {("normal" | "hard" | "maxim")} intensity
  * @returns {Promise<void>}
  */
-export async function PerformNodeCleaning(
-    lockfile: SUPPORTED_NODE_LOCKFILES,
+export async function PerformCleaning(
+    lockfile: ALL_SUPPORTED_LOCKFILES,
     projectInQuestion: string,
     shouldUpdate: boolean,
     shouldClean: boolean,
@@ -46,197 +245,89 @@ export async function PerformNodeCleaning(
         const isGitClean = await IsWorkingTreeClean(motherfuckerInQuestion);
         const settings = await GetProjectSettings(motherfuckerInQuestion);
 
-        let baseCommand: "npm" | "pnpm" | "yarn";
-        let execCommand: ["npx"] | ["pnpm", "dlx"] | ["yarn", "dlx"];
+        let baseCommand: tBaseCommand;
+        let execCommand: tExecCommand;
         let pruneArgs: string[][];
-        let updateArg: string[];
+        let updateArgs: string[];
+        let canClean: boolean;
         switch (lockfile) {
             case "package-lock.json":
                 baseCommand = "npm";
                 pruneArgs = [["dedupe"], ["prune"]];
-                updateArg = ["update"];
+                updateArgs = ["update"];
                 execCommand = ["npx"];
+                canClean = true;
                 break;
             case "pnpm-lock.yaml":
                 baseCommand = "pnpm";
                 pruneArgs = [["dedupe"], ["prune"]];
-                updateArg = ["update"];
+                updateArgs = ["update"];
                 execCommand = ["pnpm", "dlx"];
+                canClean = true;
                 break;
             case "yarn.lock":
                 baseCommand = "yarn";
                 pruneArgs = [["autoclean", "--force"]];
-                updateArg = ["upgrade"];
+                updateArgs = ["upgrade"];
                 execCommand = ["yarn", "dlx"];
+                canClean = true;
                 break;
-            default:
-                throw new Error("Invalid lockfile provided");
+            case "bun.lockb":
+                baseCommand = "bun";
+                updateArgs = ["update"];
+                execCommand = ["bunx"];
+                canClean = false;
+                break;
+            case "deno.lock":
+                baseCommand = "deno";
+                updateArgs = ["outdated", "--update"];
+                execCommand = ["deno", "run"];
+                canClean = false;
+                break;
         }
 
         if (shouldUpdate) {
-            await LogStuff(
-                `Updating using ${baseCommand} for ${motherfuckerInQuestion}.`,
-                "package",
+            await ProjectCleaningFeatures.Update(
+                baseCommand,
+                motherfuckerInQuestion,
+                updateArgs,
             );
-            await LogStuff(`${baseCommand} ${updateArg}\n`, "package");
-            await Commander(baseCommand, updateArg);
         }
-        if (shouldClean) {
-            await LogStuff(
-                `Cleaning using ${baseCommand} for ${motherfuckerInQuestion}.`,
-                "package",
+        if (canClean && shouldClean) {
+            await ProjectCleaningFeatures.Clean(
+                baseCommand,
+                motherfuckerInQuestion,
+                pruneArgs!,
+                intensity,
+                maximPath,
             );
-            for (const pruneArg of pruneArgs) {
-                await LogStuff(`${baseCommand} ${pruneArg.join(" ")}\n`, "package");
-                await Commander(baseCommand, pruneArg);
-            }
-            if (intensity === "maxim") {
-                await LogStuff(
-                    `Maxim pruning for ${motherfuckerInQuestion} (path: ${maximPath}).`,
-                    "trash",
-                );
-                if (!(await CheckForPath(maximPath))) {
-                    await LogStuff(
-                        `An error happened with maxim pruning at ${motherfuckerInQuestion}. Skipping this ${I_LIKE_JS.MF}...`,
-                        "bruh",
-                    );
-                }
-                await Deno.remove(maximPath, {
-                    recursive: true,
-                });
-                await LogStuff(
-                    `Maxim pruned ${motherfuckerInQuestion}.`,
-                    "tick-clear",
-                );
-            }
         }
         if (shouldLint) {
-            if (!settings.lintCmd || settings.lintCmd.trim() === "") {
-                throw new FknError(
-                    "Project__FkNodeYaml__MissingLintCmd",
-                    `You specified to lint ${NameProject(motherfuckerInQuestion)}, but no lint command was found in your fknode.yaml file!`,
-                );
-            }
-            if (settings.lintCmd === "__ESLINT") {
-                const lockfile: NodePkgJson = await JSON.parse(await Deno.readTextFile(workingEnv.lockfile));
-                if (!lockfile.dependencies || !lockfile.dependencies["eslint"]) {
-                    throw new FknError(
-                        "Project__Cleaner__LintingWithNoLinter",
-                        `You specified to lint ${
-                            NameProject(motherfuckerInQuestion)
-                        }, but no lint command was found in your fknode.yaml file, so we defaulted to ESLint, but it's not installed!`,
-                    );
-                }
-                if (execCommand.length === 1) {
-                    await Commander(
-                        execCommand[0],
-                        [
-                            "eslint",
-                            "--fix",
-                            ".",
-                        ],
-                    );
-                } else {
-                    await Commander(execCommand[0], [
-                        execCommand[1],
-                        "eslint",
-                        "--fix",
-                        ".",
-                    ]);
-                }
-            } else {
-                await Commander(
-                    baseCommand,
-                    ["run", settings.lintCmd],
-                );
-            }
+            await ProjectCleaningFeatures.Lint(
+                settings,
+                motherfuckerInQuestion,
+                baseCommand,
+                execCommand,
+                workingEnv,
+            );
         }
         if (shouldPrettify) {
-            if (!settings.prettyCmd || settings.prettyCmd.trim() === "") {
-                throw new FknError(
-                    "Project__FkNodeYaml__MissingPrettyCmd",
-                    `You specified to prettify ${
-                        NameProject(motherfuckerInQuestion)
-                    }, but no prettify command was found in your fknode.yaml file!`,
-                );
-            }
-            if (settings.prettyCmd === "__PRETTIER") {
-                const lockfile: NodePkgJson = await JSON.parse(await Deno.readTextFile(workingEnv.lockfile));
-                if (!lockfile.dependencies || !lockfile.dependencies["eslint"]) {
-                    throw new FknError(
-                        "Project__Cleaner__PrettifyingWithNoPrettifier",
-                        `You specified to prettify ${
-                            NameProject(motherfuckerInQuestion)
-                        }, but no prettifying command was found in your fknode.yaml file, so we defaulted to Prettier, but it's not installed!`,
-                    );
-                }
-                if (execCommand.length === 1) {
-                    await Commander(
-                        execCommand[0],
-                        [
-                            "prettier",
-                            ".",
-                        ],
-                    );
-                } else {
-                    await Commander(execCommand[0], [
-                        execCommand[1],
-                        "prettier",
-                        ".",
-                    ]);
-                }
-            } else {
-                await Commander(
-                    baseCommand,
-                    ["run", settings.prettyCmd],
-                );
-            }
+            await ProjectCleaningFeatures.Prettify(
+                settings,
+                motherfuckerInQuestion,
+                baseCommand,
+                execCommand,
+                workingEnv,
+            );
         }
         if (shouldCommit) {
-            // TODO - use FknError here too (lazy rn)
-            if (!shouldUpdate && !shouldLint && !shouldPrettify) {
-                await LogStuff("No actions to be committed.", "bruh");
-                return;
-            }
-            if (settings.commitActions === false) {
-                await LogStuff("No committing allowed.", "bruh");
-                return;
-            }
-            if (!isGitClean) {
-                await LogStuff("Tree isn't clean, can't commit", "bruh");
-            }
-            const getCommitMessage = () => {
-                if (settings.commitMessage) {
-                    return settings.commitMessage;
-                }
-
-                const tasks: string[] = [];
-
-                if (shouldUpdate) tasks.push("updating");
-                if (shouldLint) tasks.push("linting");
-                if (shouldPrettify) tasks.push("prettifying");
-
-                const taskString = tasks.join(" and ");
-                return `Code ${taskString} tasks (Auto-generated by F*ckingNode v${VERSION})`;
-            };
-
-            const commitMessage = getCommitMessage();
-
-            await Commander(
-                "git",
-                [
-                    "add",
-                    "-A",
-                ],
-            );
-            await Commander(
-                "git",
-                [
-                    "commit",
-                    "-m",
-                    commitMessage,
-                ],
-            );
+            ProjectCleaningFeatures.Commit(
+                settings,
+                isGitClean,
+                shouldUpdate,
+                shouldLint,
+                shouldPrettify
+            )
         }
     } catch (e) {
         throw e;

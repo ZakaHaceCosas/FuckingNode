@@ -1,8 +1,5 @@
 # F\*ckingNode
 
-> [!NOTE]
-> This is README for V1. V2 introduces breaking changes and they aren't (yet) reflected here.
-
 ## Abstract
 
 We as humans have dedicated years of hard work to a goal: fixing Node.
@@ -13,11 +10,11 @@ We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with 
 
 > ### (yes i'm calling it like that and i'm shipping that to production, don't question me)
 
-By the way, _while the name implies NodeJS-only support, Deno and Bun are coming soon!_
-
-Check the v2 branch, we're working on support for non-Node projects, and also other stuff like custom settings for the CLI and more!
+By the way, _while the name implies NodeJS-only support, Deno and Bun are also supported!_
 
 ## Features
+
+> TODO: update for v2
 
 ### Cleaner
 
@@ -63,6 +60,18 @@ Best practice is to run `fuckingnode manager add --self` after creating a Node p
 - `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode self-update` - all do the obvious.
 
 And that's it for now.
+
+### Feature support table
+
+Where NodeJS includes all major package managers (npm, pnpm, and yarn).
+
+| Feature | Support | Notes |
+| :--- | ---: | ---: |
+| Automated project-wide cleaning | NodeJS-only | Deno and Bun don't provide the kind of commands (dedupe, clean, etc...) needed for this task. |
+| Automated system-wide cache cleaning | NodeJS, Deno, Bun | / |
+| Parsing of project file (pkg JSON) | NodeJS, Bun (package.json), Deno (deno.json) | Only supports parsing the props that are needed to the CLI |
+| Automated lint & prettify tasks | NodeJS, Bun, Deno | I just added this feature lol, testing is still needed. |
+| Automated dependency updates | NodeJS, Bun, Deno | Only NodeJS is tested. |
 
 ---
 

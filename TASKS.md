@@ -47,30 +47,34 @@
   - [x] BUN
 - [ ] Project updating
   - [x] NODE
-  - [ ] DENO
-  - [ ] BUN
+  - [x] DENO (untested)
+  - [x] BUN (untested)
 - [ ] Migration
   - [ ] Node pkg manager
     - [x] Basic (remove lockfile -> install with new manager)
     - [ ] Well done (transform lockfile to diff format -> install)
   - [ ] Runtimes
-- [ ] Project prettifying
+- [x] Project prettifying (all untested)
   - [x] NODE
-  - [ ] DENO
-  - [ ] BUN
-- [ ] Project linting
+  - [x] DENO
+  - [x] BUN
+- [x] Project linting (all untested)
   - [x] NODE
-  - [ ] DENO
-  - [ ] BUN
+  - [x] DENO
+  - [x] BUN
 
 ## Cleaner
 
 - [x] Basic stuff that's already done
-- [ ] Auto-running ESLint or Prettier if they're installed (maybe with `--lint` and `--prettify` flags).
+- [x] Auto-running ESLint or Prettier if they're installed (maybe with `--lint` and `--prettify` flags).
 - [ ] Customizing (via `fknode.yaml`):
-  - [ ] Commands used for cleaning / update
+  - [ ] Commands used for stuff:
+    - [x] Lint
+    - [x] Prettify
+    - [ ] Update
+    - [ ] Clean
   - [ ] Directories to remove when cleaning (e.g. `/dist`)
-  - [ ] Enabling auto-commits, so for example a user that runs both `--update` and `--prettify` gets his changes auto-committed and pushed (only if the Git tree is clean, of course).
+  - [x] Enabling auto-commits, so for example a user that runs both `--update` and `--prettify` gets his changes auto-committed and pushed (only if the Git tree is clean, of course).
 
 ## Settings-related tasks
 
