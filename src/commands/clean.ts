@@ -1,8 +1,5 @@
 import { I_LIKE_JS } from "../constants.ts";
-import {
-    type ALL_SUPPORTED_LOCKFILES,
-    IsLockfileNodeLockfile,
-} from "../types/package_managers.ts";
+import { type ALL_SUPPORTED_LOCKFILES, IsLockfileNodeLockfile } from "../types/package_managers.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";

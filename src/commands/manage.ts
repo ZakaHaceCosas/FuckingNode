@@ -26,7 +26,7 @@ async function AddProject(
     entry: string,
 ): Promise<void> {
     const workingEntry = await ParsePath(entry);
-    const projectName = await NameProject(workingEntry);
+    const projectName = await NameProject(workingEntry, "all");
 
     async function addTheEntry() {
         await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
@@ -104,7 +104,7 @@ async function AddProject(
         `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these Node workspaces:\n\n${
             workspaces.map(
                 async (thingy) => {
-                    return await NameProject(thingy);
+                    return await NameProject(thingy, "all");
                 },
             )
         }.\n\nShould we add them to your list as well, so they're all cleaned?`,
@@ -155,6 +155,7 @@ async function RemoveProject(
             await LogStuff(
                 `Let me guess: ${await NameProject(
                     workingEntry,
+                    "name",
                 )} was another "revolutionary cutting edge project" that you're now removing, right?`,
                 "tick-clear",
             );
@@ -293,7 +294,7 @@ async function ListProjects(
             const toReturn: string[] = [];
             for (const entry of ignoreList) {
                 toReturn.push(
-                    `${await NameProject(entry)} (${
+                    `${await NameProject(entry, "all")} (${
                         ColorString(
                             (UnderstandProjectSettings.protection(await GetProjectSettings(entry)))!, // "!" because we know it's not null
                             "bold",
@@ -314,7 +315,7 @@ async function ListProjects(
             );
             const toReturn: string[] = [];
             for (const entry of notIgnoreList) {
-                toReturn.push(await NameProject(entry));
+                toReturn.push(await NameProject(entry, "all"));
             }
             await LogStuff(toReturn.join("\n"));
             return;
@@ -324,7 +325,7 @@ async function ListProjects(
             "bulb",
         );
         for (const entry of list) {
-            await LogStuff(await NameProject(entry));
+            await LogStuff(await NameProject(entry, "all"));
         }
         return;
     } catch (e) {

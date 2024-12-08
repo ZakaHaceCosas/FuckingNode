@@ -56,9 +56,10 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
  *
  * @export
  * @param {string} path Path to the **root** of the project.
+ * @param {?"name" | "path" | "name-ver" | "all"} wanted What to return. `name` returns the name, `path` the file path, `name-ver` a `name@version` string, and `all` returns everything together.
  * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
  */
-export async function NameProject(path: string): Promise<string> {
+export async function NameProject(path: string, wanted?: "name" | "path" | "name-ver" | "all"): Promise<string> {
     const workingPath = await ParsePath(path);
     const formattedPath = ColorString(ColorString(workingPath, "italic"), "half-opaque");
 
@@ -66,39 +67,67 @@ export async function NameProject(path: string): Promise<string> {
         const env = await GetProjectEnvironment(workingPath);
         const pkgFilePath = await Deno.readTextFile(env.main);
 
-        if (env.runtime === "node") {
-            const packageJson: NodePkgJson = JSON.parse(pkgFilePath);
+        let fullNamedProject: string;
+        let formattedName: string;
+        let formattedVersion: string;
+        let formattedNameVer: string;
 
-            if (!packageJson.name) return formattedPath;
+        switch (env.runtime) {
+            case "node": {
+                const packageJson: NodePkgJson = JSON.parse(pkgFilePath);
 
-            const formattedName = ColorString(packageJson.name, "bold");
+                if (!packageJson.name) return formattedPath;
 
-            const formattedVersion = packageJson.version ? ColorString(packageJson.version, "purple") : "";
+                formattedName = ColorString(packageJson.name, "bold");
 
-            return `${ColorString(formattedName, "bright-green")} ${formattedVersion} ${formattedPath}`;
-        } else if (env.runtime === "deno") {
-            const denoJson: DenoPkgJson = JSON.parse(pkgFilePath);
+                formattedVersion = packageJson.version ? ColorString(packageJson.version, "purple") : "";
 
-            if (!denoJson.name) return formattedPath;
+                formattedNameVer = `${ColorString(formattedName, "bright-green")}@${formattedVersion}`;
 
-            const formattedName = ColorString(denoJson.name, "bold");
+                fullNamedProject = `${formattedNameVer} ${formattedPath}`;
+                break;
+            }
+            case "deno": {
+                const denoJson: DenoPkgJson = JSON.parse(pkgFilePath);
 
-            const formattedVersion = denoJson.version ? ColorString(denoJson.version, "purple") : "";
+                if (!denoJson.name) return formattedPath;
 
-            return `${ColorString(formattedName, "bright-blue")} ${formattedVersion} ${formattedPath}`;
-        } else if (env.runtime === "bun") {
-            const bunToml: BunfigToml = parseYaml(pkgFilePath) as BunfigToml;
+                formattedName = ColorString(denoJson.name, "bold");
 
-            if (!bunToml.name) return formattedPath;
+                formattedVersion = denoJson.version ? ColorString(denoJson.version, "purple") : "";
 
-            const formattedName = ColorString(bunToml.name, "bold");
+                formattedNameVer = `${ColorString(formattedName, "bright-blue")}@${formattedVersion}`;
 
-            const formattedVersion = bunToml.version ? ColorString(bunToml.version, "purple") : "";
+                fullNamedProject = `${formattedNameVer} ${formattedPath}`;
+                break;
+            }
+            case "bun": {
+                const bunToml: BunfigToml = parseYaml(pkgFilePath) as BunfigToml;
 
-            return `${ColorString(formattedName, "pink")} ${formattedVersion} ${formattedPath}`;
+                if (!bunToml.name) return formattedPath;
+
+                formattedName = ColorString(bunToml.name, "bold");
+
+                formattedVersion = bunToml.version ? ColorString(bunToml.version, "purple") : "";
+
+                formattedNameVer = `${ColorString(formattedName, "pink")}@${formattedVersion}`;
+
+                fullNamedProject = `${formattedNameVer} ${formattedPath}`;
+                break;
+            }
         }
 
-        return formattedPath; // if it's not possible to name it, just give it the raw path
+        switch (wanted) {
+            case "all":
+                return fullNamedProject;
+            case "name":
+                return formattedName;
+            case "path":
+                return formattedPath;
+            case "name-ver":
+            default:
+                return formattedNameVer;
+        }
     } catch {
         return formattedPath; // if it's not possible to name it, just give it the raw path
     }
