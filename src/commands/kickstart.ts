@@ -40,7 +40,10 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
 
         Deno.chdir(workingPath);
 
-        await LogStuff(`Installation began using ${workingManager}. For whatever reason the command's output is not shown until it's 100% done, but it works. Don't worry, we'll tell you when it's done. Have a coffee meanwhile!`, "tick-clear");
+        await LogStuff(
+            `Installation began using ${workingManager}. For whatever reason the command's output is not shown until it's 100% done, but it works. Don't worry, we'll tell you when it's done. Have a coffee meanwhile!`,
+            "tick-clear",
+        );
         const managerOutput = await Commander(workingManager, ["install"]);
         if (!managerOutput.success) throw new Error(`Error installing dependencies: ${managerOutput.stdout}`);
 

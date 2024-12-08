@@ -100,13 +100,13 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "--destroy",
             null,
-            "Remove additional files and DIRs (e.g. 'dist/', 'out/', etc...) when cleaning. Requires you to specify files and DIRs to remove from the fknode.yaml)."
+            "Remove additional files and DIRs (e.g. 'dist/', 'out/', etc...) when cleaning. Requires you to specify files and DIRs to remove from the fknode.yaml).",
         ],
         [
             "--commit",
             null,
-            `If your Git working tree was clean before ${APP_NAME.CASED} touched it, and you performed actions that change the code (e.g. --pretty or --update), it'll commit them using a default commit message. Requires "commitActions" to be set to true in your fknode.yaml. You can override the default commit message with "commitMessage" in your fknode.yaml.`
-        ]
+            `If your Git working tree was clean before ${APP_NAME.CASED} touched it, and you performed actions that change the code (e.g. --pretty or --update), it'll commit them using a default commit message. Requires "commitActions" to be set to true in your fknode.yaml. You can override the default commit message with "commitMessage" in your fknode.yaml.`,
+        ],
     ];
     const _MANAGER_OPTIONS: helpThing = [
         [
