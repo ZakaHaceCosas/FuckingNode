@@ -16,10 +16,13 @@ prettyCmd: "prettier"
 # if present, files / DIRs you add to "targets" will be removed
 # (only when you clean with any of the "intensities")
 destroy:
-  intensities: ["hard", "maxim"] # "normal", "hard", "hard-only", or "maxim". it's an array so you can add many. use always an array even if you only add one intensity. you can also pass "*" or "all" instead of typing all intensities.
-  targets:
-    - "node_modules"
-    - "dist"
+    intensities: [
+        "hard",
+        "maxim",
+    ] # "normal", "hard", "hard-only", or "maxim". it's an array so you can add many. use always an array even if you only add one intensity. you can also pass "*" or "all" instead of typing all intensities.
+    targets:
+        - "node_modules"
+        - "dist"
 # if all these conditions are met:
 # - commitActions is true
 # - your git working tree was clean before fuckingnode touched it

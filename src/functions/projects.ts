@@ -9,6 +9,7 @@ import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import type { NodePkgManagerProps } from "../types/package_managers.ts";
 import { GetAppPath } from "./config.ts";
+import { GetDateNow } from "./date.ts";
 
 /**
  * Gets all the users projects and returns their paths as a `string[]`.
@@ -122,10 +123,13 @@ export async function GetProjectSettings(
         lintCmd: "__ESLINT",
         prettyCmd: "__PRETTIER",
         destroy: {
-            intensities: [],
-            targets: [],
+            intensities: ["maxim"],
+            targets: [
+                "node_modules",
+            ],
         },
         commitActions: false,
+        commitMessage: "__USE_DEFAULT",
     };
 
     if (!(await CheckForPath(pathToDivineFile))) return defaultSettings;
@@ -134,6 +138,7 @@ export async function GetProjectSettings(
 
     if (!ValidateFkNodeYaml(cleanContent)) {
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
+        await Deno.writeTextFile(pathToDivineFile, `\n\n[NOTE (${GetDateNow()})]`);
         return defaultSettings;
     }
 

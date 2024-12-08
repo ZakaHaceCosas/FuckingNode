@@ -70,21 +70,15 @@ const ProjectCleaningFeatures = {
         execCommand: tExecCommand,
         env: ProjectEnv,
     ) => {
-        if (!settings.lintCmd || settings.lintCmd.trim() === "") {
-            throw new FknError(
-                "Project__FkNodeYaml__MissingLintCmd",
-                `You specified to lint ${NameProject(project)}, but no lint command was found in your fknode.yaml file!`,
-            );
-        }
+        if (baseCommand === "deno") return; // unsupported
+        if (!settings.lintCmd || settings.lintCmd.trim() === "") return;
         if (settings.lintCmd === "__ESLINT") {
             const lockfile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.lockfile));
             if (!lockfile.dependencies || !lockfile.dependencies["eslint"]) {
-                throw new FknError(
-                    "Project__Cleaner__LintingWithNoLinter",
-                    `You specified to lint ${
-                        NameProject(project)
-                    }, but no lint command was found in your fknode.yaml file, so we defaulted to ESLint, but it's not installed!`,
+                await LogStuff(
+                    `Can't lint ${NameProject(project)}. No lint command was specified and ESLint is not installed.`,
                 );
+                return;
             }
             if (execCommand.length === 1) {
                 await Commander(
@@ -117,21 +111,23 @@ const ProjectCleaningFeatures = {
         execCommand: tExecCommand,
         env: ProjectEnv,
     ) => {
-        if (!settings.prettyCmd || settings.prettyCmd.trim() === "") {
-            throw new FknError(
-                "Project__FkNodeYaml__MissingPrettyCmd",
-                `You specified to prettify ${NameProject(project)}, but no prettify command was found in your fknode.yaml file!`,
-            );
+        if (baseCommand === "deno") {
+            await Commander(
+                "deno",
+                [
+                    "fmt",
+                ],
+            ); // customization unsupported
+            return;
         }
+        if (!settings.prettyCmd || settings.prettyCmd.trim() === "") return;
         if (settings.prettyCmd === "__PRETTIER") {
             const lockfile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.lockfile));
             if (!lockfile.dependencies || !lockfile.dependencies["eslint"]) {
-                throw new FknError(
-                    "Project__Cleaner__PrettifyingWithNoPrettifier",
-                    `You specified to prettify ${
-                        NameProject(project)
-                    }, but no prettifying command was found in your fknode.yaml file, so we defaulted to Prettier, but it's not installed!`,
+                await LogStuff(
+                    `Can't prettify ${NameProject(project)}. No prettify command was specified and Prettier is not installed.`,
                 );
+                return;
             }
             if (execCommand.length === 1) {
                 await Commander(
@@ -162,7 +158,6 @@ const ProjectCleaningFeatures = {
         shouldLint: boolean,
         shouldPrettify: boolean,
     ) => {
-        // TODO - use FknError here too (lazy rn)
         if (!shouldUpdate && !shouldLint && !shouldPrettify) {
             await LogStuff("No actions to be committed.", "bruh");
             return;
@@ -206,6 +201,27 @@ const ProjectCleaningFeatures = {
                 commitMessage,
             ],
         );
+    },
+    Destroy: async (
+        settings: FkNodeYaml,
+        project: string,
+        intensity: CleanerIntensity,
+    ) => {
+        if (!settings.destroy) return;
+        if (!(settings.destroy.intensities.includes(intensity))) return;
+        if (settings.destroy.targets.length === 0) return;
+        for (const target of settings.destroy.targets) {
+            if (target === "node_modules" && intensity === "maxim") continue; // avoid removing this thingy twice
+            const path = await ParsePath(await JoinPaths(project, target));
+            try {
+                await Deno.remove(path);
+                await LogStuff(`Destroyed ${path} successfully`, "tick");
+                continue;
+            } catch (e) {
+                await LogStuff(`Error destroying ${path}: ${e}`, "error");
+                continue;
+            }
+        }
     },
 };
 
