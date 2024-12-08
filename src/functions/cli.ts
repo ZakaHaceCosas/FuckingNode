@@ -1,5 +1,3 @@
-import { LogStuff } from "./io.ts";
-
 /**
  * Output of a CLI command called using Commander.
  *
@@ -16,62 +14,51 @@ export interface CommanderOutput {
     /**
      * Output of the command. Uses `stdout` or `stderr` depending on whether the command was successful.
      *
-     * @type {string}
+     * @type {?string}
      */
-    stdout: string;
+    stdout?: string;
 }
 
 /**
  * Executes commands and automatically handles errors.
  *
- * Also, it _tries_ to log their content so they look "real" - that still has some known issues. But it works for now, so there's no reason to touch it.
+ * Also, it logs their content synchronously (unless you hide output) so they look "real". PS. THAT ONE TOOK IT'S TIME
  *
  * @export
  * @async
  * @param {string} main Main command.
  * @param {string[]} stuff Additional args for the command.
- * @param {?boolean} speak Defaults to true. If false, the output of the command won't be shown.
+ * @param {?boolean} showOutput Defaults to true. If false, the output of the command won't be shown and it'll be returned in the `CommanderOutput` promise instead.
  * @returns {Promise<CommanderOutput>} An object with a boolean telling if it was successful and its output.
  */
-export async function Commander(main: string, stuff: string[], speak?: boolean): Promise<CommanderOutput> {
-    const showOutput: boolean = speak ?? true;
+export async function Commander(main: string, stuff: string[], showOutput?: boolean): Promise<CommanderOutput> {
+    if (showOutput === false) {
+        const command = new Deno.Command(main, {
+            args: stuff,
+            stdout: "piped",
+            stderr: "piped",
+        });
 
-    const decoder = new TextDecoder();
-    const encoder = new TextEncoder();
+        const process = await command.output();
+
+        const result: CommanderOutput = {
+            success: process.success,
+            stdout: process.success ? new TextDecoder().decode(process.stdout) : new TextDecoder().decode(process.stderr),
+        };
+
+        return result;
+    }
     const command = new Deno.Command(main, {
         args: stuff,
-        stdout: "piped",
-        stderr: "piped",
+        stdout: "inherit",
+        stderr: "inherit",
+        stdin: "inherit",
     });
 
     const process = command.spawn();
 
-    if (showOutput) {
-        for await (const chunk of process.stdout) {
-            const output = decoder.decode(chunk);
-            Deno.stdout.writeSync(encoder.encode("\x1b[2K\r")); // this should clean the stdout
-            Deno.stdout.writeSync(encoder.encode(output));
-        }
-
-        for await (const chunk of process.stderr) {
-            const errorOutput = decoder.decode(chunk);
-            Deno.stderr.writeSync(encoder.encode("\x1b[2K\r")); // this should clean the stderr
-            Deno.stderr.writeSync(encoder.encode(errorOutput));
-        }
-    }
-
-    const output = await process.output();
-    let targetStdout: string = decoder.decode(output.stdout);
-
-    if (!output.success) {
-        const errorMessage = decoder.decode(output.stderr) || "(Error is unknown)";
-        targetStdout = `${targetStdout}\n\n${errorMessage}`;
-        await LogStuff(`An error happened with ${main} ${stuff.join(" ")}: ${errorMessage}`);
-    }
-
     const result: CommanderOutput = {
-        success: output.success,
-        stdout: targetStdout,
+        success: (await process.status).success,
     };
 
     return result;

@@ -35,7 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Now `self-update` is called `upgrade`.
-- Now all commands show their output synchronously, giving the feel of a faster CLI.
+- Now all commands show their output fully synchronously, giving the feel of a faster CLI and properly reflecting what is being done.
 - Now `settings schedule` is hidden behind the `--experimental-schedule` flag, as it doesn't work properly. `Deno.cron` (method used to schedule tasks) itself is currently considered unstable, FYI.
 - Now in some places instead of an "Unknown command" error, the help menu is shown so you can see what commands are valid.
 - Now `manager list` shows, if possible, the name of the project from the `package.json`, alongside it's absolute path. Also, now projects are alphabetically sorted by name (by their path if not possible to obtain their name). This also applies to any other listing, like cleaner reports when using `--verbose`.
