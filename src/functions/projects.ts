@@ -104,12 +104,12 @@ export async function NameProject(path: string): Promise<string> {
 }
 
 /**
- * Checks if a project is ignored ("protected by divine protection"), and if so, tells you if it's protected from whether cleanups, updates, or both.
+ * Gets a project's fknode.yaml, parses it and returns it.
  *
  * @export
  * @async
  * @param {string} path Path to the project
- * @returns {Promise<FkNodeYaml>} `null` means no ignore and `total` means ignore all. Rest explains itself.
+ * @returns {Promise<FkNodeYaml>} A FkNodeYaml object.
  */
 export async function GetProjectSettings(
     path: string,

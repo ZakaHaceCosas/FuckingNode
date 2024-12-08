@@ -33,7 +33,10 @@ async function CreateSchedule(hour: string | null, day: string | "*" | null) {
                 await TheCleaner({
                     update: false,
                     verbose: false,
-                    intensity: "normal",
+                    prettify: false,
+                    lint: false,
+                    commit: false,
+                    intensity: (await GetSettings()).defaultCleanerIntensity,
                 });
             },
         );

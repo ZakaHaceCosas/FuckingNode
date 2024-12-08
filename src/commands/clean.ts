@@ -16,7 +16,7 @@ import { GetElapsedTime } from "../functions/date.ts";
 export type tRESULT = { path: string; status: string; elapsedTime: string };
 
 export default async function TheCleaner(params: TheCleanerConstructedParams) {
-    const { intensity, verbose, update } = params;
+    const { intensity, verbose, update, lint, prettify, commit } = params;
 
     try {
         // start time
@@ -137,6 +137,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                                         project,
                                         doUpdate,
                                         doClean,
+                                        lint,
+                                        prettify,
+                                        commit,
                                         realIntensity,
                                     );
                                 }

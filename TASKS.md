@@ -54,7 +54,7 @@
 ## Cleaner
 
 - [x] Basic stuff that's already done
-- [ ] Auto-running ESLint or Prettier if they're installed (maybe with `--lint` and `--prettify` flags)
+- [ ] Auto-running ESLint or Prettier if they're installed (maybe with `--lint` and `--prettify` flags).
 - [ ] Customizing (via `fknode.yaml`):
   - [ ] Commands used for cleaning / update
   - [ ] Directories to remove when cleaning (e.g. `/dist`)

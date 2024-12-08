@@ -9,7 +9,7 @@ import TheSettings from "./commands/settings.ts";
 import TheAbouter from "./commands/about.ts";
 import { I_LIKE_JS, VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
-import { FreshSetup } from "./functions/config.ts";
+import { FreshSetup, GetSettings } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
 
 async function init(update: boolean, mute?: boolean) {
@@ -27,28 +27,31 @@ if (!firstCommand) {
     Deno.exit(0);
 }
 
-const flags = Deno.args.map((arg) => {
-    return arg.toLowerCase();
-});
+const flags = Deno.args.map((arg) => arg.toLowerCase());
 
-if (ParseFlag("help", true).some((flag) => flags.includes(flag))) {
+function hasFlag(flag: string, allowShort: boolean): boolean {
+    return ParseFlag(flag, allowShort).some((f) => flags.includes(f));
+}
+
+if (hasFlag("help", true)) {
     await init(false);
     await TheHelper({ query: Deno.args[1] });
     Deno.exit(0);
 }
 
-if (ParseFlag("version", true).some((flag) => flags.includes(flag))) {
+if (hasFlag("version", true)) {
     console.log(ColorString(VERSION, "bright-green"));
     Deno.exit(0);
 }
 
-if (
-    ParseFlag("experimental-stats", false).some((flag) => flags.includes(flag))
-) {
+if (hasFlag("experimental-stats", false)) {
     await init(false);
     if (
-        confirm(
+        await LogStuff(
             "Experimental features are hidden behind a flag for a reason. Are you sure?",
+            "warn",
+            undefined,
+            true,
         )
     ) {
         await LogStuff(
@@ -68,7 +71,10 @@ async function main(command: string) {
                 await TheCleaner({
                     verbose: flags.includes("--verbose"),
                     update: flags.includes("--update"),
-                    intensity: Deno.args[1] ?? "normal",
+                    lint: flags.includes("--lint"),
+                    prettify: flags.includes("--prettify"),
+                    commit: flags.includes("--commit"),
+                    intensity: Deno.args[1] ?? (await GetSettings()).defaultCleanerIntensity,
                 });
                 break;
             case "global-clean":
@@ -76,6 +82,9 @@ async function main(command: string) {
                 await TheCleaner({
                     verbose: flags.includes("--verbose"),
                     update: flags.includes("--update"),
+                    lint: flags.includes("--lint"),
+                    prettify: flags.includes("--prettify"),
+                    commit: flags.includes("--commit"),
                     intensity: "hard-only",
                 });
                 break;

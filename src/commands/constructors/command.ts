@@ -1,6 +1,9 @@
 export interface TheCleanerConstructedParams {
     verbose: boolean;
     update: boolean;
+    lint: boolean;
+    prettify: boolean;
+    commit: boolean;
     intensity: string;
 }
 

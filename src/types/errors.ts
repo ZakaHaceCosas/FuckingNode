@@ -9,4 +9,8 @@ export type ERROR_CODES =
     | "Manager__InvalidArgumentPassed"
     | "Manager__IgnoreFile__InvalidLevel"
     | "Cleaner__InvalidCleanerIntensity"
-    | "Internal__Projects__CantDetermineEnv";
+    | "Internal__Projects__CantDetermineEnv"
+    | "Project__FkNodeYaml__MissingLintCmd"
+    | "Project__Cleaner__LintingWithNoLinter"
+    | "Project__Cleaner__PrettifyingWithNoPrettifier"
+    | "Project__FkNodeYaml__MissingPrettyCmd";

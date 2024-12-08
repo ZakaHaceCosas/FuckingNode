@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Update check frequency
   - Default cleaner intensity
 - Now verbose logging in `clean` will show the time it took for each project to be cleaned.
+- (WIP) Added support for automating linting and prettifying of projects. Added the ability to auto-commit these changes as well.
 
 ### Changed
 
