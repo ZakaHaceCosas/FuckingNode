@@ -27,6 +27,9 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
 
     const workingPath: string = path ? await ParsePath(path) : await ParsePath(await JoinPaths(Deno.cwd(), projectName));
 
+    if (!(["npm", "pnpm", "yarn", "deno", "bun"].includes(manager))) {
+        throw new Error(`${manager} isn't a valid package manager. Specify either pnpm, yarn, deno, bun, or npm.`);
+    }
     const workingManager: PKG_MANAGERS = manager ? manager : "pnpm";
 
     try {
