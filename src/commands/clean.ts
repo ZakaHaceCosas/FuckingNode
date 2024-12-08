@@ -9,7 +9,7 @@ import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
-import { PerformHardCleanup, PerformNodeCleaning, ResolveProtection, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
+import { PerformCleaning, PerformHardCleanup, ResolveProtection, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { GetElapsedTime } from "../functions/date.ts";
 
@@ -132,7 +132,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                         for (const lockfile of lockfiles) {
                             if (IsLockfileNodeLockfile(lockfile)) {
                                 if (doClean) {
-                                    await PerformNodeCleaning(
+                                    await PerformCleaning(
                                         lockfile,
                                         project,
                                         doUpdate,

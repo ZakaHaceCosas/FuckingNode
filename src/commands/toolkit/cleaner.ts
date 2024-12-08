@@ -120,9 +120,7 @@ const ProjectCleaningFeatures = {
         if (!settings.prettyCmd || settings.prettyCmd.trim() === "") {
             throw new FknError(
                 "Project__FkNodeYaml__MissingPrettyCmd",
-                `You specified to prettify ${
-                    NameProject(project)
-                }, but no prettify command was found in your fknode.yaml file!`,
+                `You specified to prettify ${NameProject(project)}, but no prettify command was found in your fknode.yaml file!`,
             );
         }
         if (settings.prettyCmd === "__PRETTIER") {
@@ -162,7 +160,7 @@ const ProjectCleaningFeatures = {
         isGitClean: boolean,
         shouldUpdate: boolean,
         shouldLint: boolean,
-        shouldPrettify: boolean
+        shouldPrettify: boolean,
     ) => {
         // TODO - use FknError here too (lazy rn)
         if (!shouldUpdate && !shouldLint && !shouldPrettify) {
@@ -208,7 +206,7 @@ const ProjectCleaningFeatures = {
                 commitMessage,
             ],
         );
-    }
+    },
 };
 
 /**
@@ -326,8 +324,8 @@ export async function PerformCleaning(
                 isGitClean,
                 shouldUpdate,
                 shouldLint,
-                shouldPrettify
-            )
+                shouldPrettify,
+            );
         }
     } catch (e) {
         throw e;
