@@ -74,6 +74,7 @@ async function main(command: string) {
                     lint: flags.includes("--lint"),
                     prettify: flags.includes("--pretty"),
                     commit: flags.includes("--commit"),
+                    destroy: flags.includes("--destroy"),
                     intensity: Deno.args[1] ?? (await GetSettings()).defaultCleanerIntensity,
                 });
                 break;
@@ -85,6 +86,7 @@ async function main(command: string) {
                     lint: flags.includes("--lint"),
                     prettify: flags.includes("--pretty"),
                     commit: flags.includes("--commit"),
+                    destroy: flags.includes("--destroy"),
                     intensity: "hard-only",
                 });
                 break;

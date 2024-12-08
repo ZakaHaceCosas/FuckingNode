@@ -27,6 +27,7 @@ Supported flags are the following (before them you have to pass an intensity, or
 - `fuckingnode clean --verbose` - does the obvious with some extra logs.
 - `fuckingnode clean --pretty` - does the obvious + prettifies your code.
 - `fuckingnode clean --lint` - does the obvious + lints your code.
+- `fuckingnode clean --destroy` - does the obvious + removes additional directories specified in your config file (e.g. `dist/`, `out/`, `.expo/`, etc...).
 - `fuckingnode clean --commit` - does the obvious + if you used an action that changes your files (like updating or prettifying) AND your git tree is clean before using these actions, auto-commits the changes.
 
 Flags can be mixed to use more features at once. The `clean` command can take an intensity level, either "normal", "hard", or "maxim". If not provided, uses the default (`normal` - you can change the default from settings).

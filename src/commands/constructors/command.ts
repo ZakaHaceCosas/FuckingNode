@@ -4,6 +4,7 @@ export interface TheCleanerConstructedParams {
     lint: boolean;
     prettify: boolean;
     commit: boolean;
+    destroy: boolean;
     intensity: string;
 }
 

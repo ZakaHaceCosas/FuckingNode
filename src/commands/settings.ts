@@ -39,6 +39,7 @@ async function CreateSchedule(hour: string | null, day: string | "*" | null) {
                     prettify: false,
                     lint: false,
                     commit: false,
+                    destroy: false,
                     intensity: (await GetSettings()).defaultCleanerIntensity,
                 });
             },

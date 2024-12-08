@@ -259,6 +259,7 @@ const ProjectCleaningFeatures = {
  * @param {boolean} shouldUpdate
  * @param {boolean} shouldClean
  * @param {boolean} shouldPrettify
+ * @param {boolean} shouldDestroy
  * @param {boolean} shouldCommit
  * @param {("normal" | "hard" | "maxim")} intensity
  * @returns {Promise<void>}
@@ -270,6 +271,7 @@ export async function PerformCleaning(
     shouldClean: boolean,
     shouldLint: boolean,
     shouldPrettify: boolean,
+    shouldDestroy: boolean,
     shouldCommit: boolean,
     intensity: "normal" | "hard" | "maxim",
 ): Promise<void> {
@@ -358,8 +360,15 @@ export async function PerformCleaning(
                 workingEnv,
             );
         }
+        if (shouldDestroy) {
+            await ProjectCleaningFeatures.Destroy(
+                settings,
+                motherfuckerInQuestion,
+                intensity,
+            );
+        }
         if (shouldCommit) {
-            ProjectCleaningFeatures.Commit(
+            await ProjectCleaningFeatures.Commit(
                 settings,
                 motherfuckerInQuestion,
                 isGitClean,
