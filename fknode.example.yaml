@@ -30,7 +30,10 @@ destroy:
 # we will auto run "git commit" with a default message
 commitActions: true
 # if present, overrides the default commit message
-commitMessage: "F*ckingNode™️ automated maintenance tasks"
+commitMessage: "F*ckingNode™️ v2 automated maintenance tasks"
+# if present, overrides the default update command for your repo
+# like lintCmd and prettyCmd, must be a script
+updateCmdOverride: "dep:fix"
 
 # feel free to copy this into your own fknode.yaml
 # #FuckingNodeRocks

@@ -48,6 +48,7 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
 
         return result;
     }
+
     const command = new Deno.Command(main, {
         args: stuff,
         stdout: "inherit",

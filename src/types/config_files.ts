@@ -77,9 +77,15 @@ export interface FkNodeYaml {
     /**
      * If provided, if a commit is made (`commitActions`) this will be the commit message. If not provided a default message is used. `__USE_DEFAULT` indicates to use the default.
      *
-     * @type {string}
+     * @type {(string | "__USE_DEFAULT")}
      */
     commitMessage: string | "__USE_DEFAULT";
+    /**
+     * If provided, uses the provided runtime script command for the updating stage, overriding the default command. Like `lintCmd` or `prettyCmd`, it must be a runtime script.
+     *
+     * @type {(string | "__USE_DEFAULT")}
+     */
+    updateCmdOverride: string | "__USE_DEFAULT";
 }
 
 /**
@@ -127,6 +133,10 @@ export function ValidateFkNodeYaml(
     }
 
     if (obj.commitMessage && typeof obj.commitMessage !== "string") {
+        return false;
+    }
+
+    if (obj.updateCmdOverride && typeof obj.updateCmdOverride !== "string") {
         return false;
     }
 

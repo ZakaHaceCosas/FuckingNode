@@ -32,6 +32,8 @@ const ProjectCleaningFeatures = {
     Clean: async (
         command: string,
         project: string,
+        settings: FkNodeYaml,
+        baseCommand: tBaseCommand,
         args: string[][],
         intensity: CleanerIntensity,
         maximPath: string,
@@ -41,6 +43,14 @@ const ProjectCleaningFeatures = {
             `Cleaning using ${command} for ${projectName}.`,
             "package",
         );
+        if (settings.updateCmdOverride && settings.updateCmdOverride.trim() !== "" && settings.updateCmdOverride !== "__USE_DEFAULT") {
+            const out = await Commander(
+                baseCommand,
+                ["run", settings.updateCmdOverride],
+            );
+            if (out.success) await LogStuff(`Cleaned ${projectName}!`, "tick");
+            return;
+        }
         for (const arg of args) {
             await LogStuff(`${command} ${args.join(" ")}\n`, "package");
             await Commander(command, arg);
@@ -61,9 +71,10 @@ const ProjectCleaningFeatures = {
             });
             await LogStuff(
                 `Maxim pruned ${projectName}.`,
-                "tick-clear",
+                "tick",
             );
         }
+        return;
     },
     Lint: async (
         settings: FkNodeYaml,
@@ -170,6 +181,34 @@ const ProjectCleaningFeatures = {
             return;
         }
     },
+    Destroy: async (
+        settings: FkNodeYaml,
+        project: string,
+        intensity: CleanerIntensity,
+    ) => {
+        if (!settings.destroy) return;
+        if (
+            !settings.destroy.intensities.includes(intensity) &&
+            !settings.destroy.intensities.includes("*") &&
+            !settings.destroy.intensities.includes("all")
+        ) return;
+        if (settings.destroy.targets.length === 0) return;
+        for (const target of settings.destroy.targets) {
+            if (target === "node_modules" && intensity === "maxim") continue; // avoid removing this thingy twice
+            const path = await ParsePath(await JoinPaths(project, target));
+            console.log(path);
+            try {
+                await Deno.remove(path, {
+                    recursive: true,
+                });
+                await LogStuff(`Destroyed ${path} successfully`, "tick");
+                continue;
+            } catch (e) {
+                await LogStuff(`Error destroying ${path}: ${e}`, "error");
+                continue;
+            }
+        }
+    },
     Commit: async (
         settings: FkNodeYaml,
         project: string,
@@ -190,7 +229,7 @@ const ProjectCleaningFeatures = {
             await LogStuff("Tree isn't clean, can't commit", "bruh");
         }
         const getCommitMessage = () => {
-            if (settings.commitMessage) {
+            if (settings.commitMessage && settings.commitMessage.trim() !== "" && settings.updateCmdOverride !== "__USE_DEFAULT") {
                 return settings.commitMessage;
             }
 
@@ -229,34 +268,6 @@ const ProjectCleaningFeatures = {
         );
         if (out.success) await LogStuff(`Committed your changes to ${await NameProject(project, "name-ver")}!`, "tick");
         return;
-    },
-    Destroy: async (
-        settings: FkNodeYaml,
-        project: string,
-        intensity: CleanerIntensity,
-    ) => {
-        if (!settings.destroy) return;
-        if (
-            !settings.destroy.intensities.includes(intensity) &&
-            !settings.destroy.intensities.includes("*") &&
-            !settings.destroy.intensities.includes("all")
-        ) return;
-        if (settings.destroy.targets.length === 0) return;
-        for (const target of settings.destroy.targets) {
-            if (target === "node_modules" && intensity === "maxim") continue; // avoid removing this thingy twice
-            const path = await ParsePath(await JoinPaths(project, target));
-            console.log(path);
-            try {
-                await Deno.remove(path, {
-                    recursive: true,
-                });
-                await LogStuff(`Destroyed ${path} successfully`, "tick");
-                continue;
-            } catch (e) {
-                await LogStuff(`Error destroying ${path}: ${e}`, "error");
-                continue;
-            }
-        }
     },
 };
 
@@ -348,6 +359,8 @@ export async function PerformCleaning(
             await ProjectCleaningFeatures.Clean(
                 baseCommand,
                 motherfuckerInQuestion,
+                settings,
+                baseCommand,
                 pruneArgs!,
                 intensity,
                 maximPath,
