@@ -38,8 +38,7 @@ function CompileApp(): void {
 }
 
 try {
-    await;
-    Deno.stat("./dist/");
+    await Deno.stat("./dist/");
     await Deno.remove("./dist/", {
         recursive: true,
     });
