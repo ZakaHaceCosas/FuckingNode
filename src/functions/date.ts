@@ -52,14 +52,5 @@ export function GetElapsedTime(date1: Date): string {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
 
-    let result = "";
-
-    if (minutes > 0) {
-        result += `${minutes}m`;
-    }
-    if (remainingSeconds > 0 || minutes === 0) {
-        result += ` ${remainingSeconds}s`;
-    }
-
-    return result;
+    return `${minutes}m ${remainingSeconds}s`;
 }

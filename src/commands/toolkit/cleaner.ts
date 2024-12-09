@@ -52,7 +52,7 @@ const ProjectCleaningFeatures = {
             return;
         }
         for (const arg of args) {
-            await LogStuff(`${command} ${args.join(" ")}\n`, "package");
+            await LogStuff(`${command} ${arg.join(" ")}\n`, "package");
             await Commander(command, arg);
         }
         if (intensity === "maxim") {
@@ -85,7 +85,7 @@ const ProjectCleaningFeatures = {
     ) => {
         if (baseCommand === "deno") return; // unsupported
         if (!settings.lintCmd || settings.lintCmd.trim() === "") return;
-        const projectName = await NameProject(project, "name-ver");
+        const projectName = await NameProject(project, "name");
         if (settings.lintCmd === "__ESLINT") {
             const pkgFile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.main));
             if (!pkgFile.dependencies || !pkgFile.dependencies["eslint"]) {
@@ -131,7 +131,7 @@ const ProjectCleaningFeatures = {
         execCommand: tExecCommand,
         env: ProjectEnv,
     ) => {
-        const projectName = await NameProject(project, "name-ver");
+        const projectName = await NameProject(project, "name");
         if (baseCommand === "deno") {
             const out = await Commander(
                 "deno",
@@ -196,7 +196,6 @@ const ProjectCleaningFeatures = {
         for (const target of settings.destroy.targets) {
             if (target === "node_modules" && intensity === "maxim") continue; // avoid removing this thingy twice
             const path = await ParsePath(await JoinPaths(project, target));
-            console.log(path);
             try {
                 await Deno.remove(path, {
                     recursive: true,
@@ -204,6 +203,10 @@ const ProjectCleaningFeatures = {
                 await LogStuff(`Destroyed ${path} successfully`, "tick");
                 continue;
             } catch (e) {
+                if (String(e).includes("os error 2")) {
+                    await LogStuff(`Error destroying ${ColorString(path, "bold")}: it does not exist!`, "error");
+                    continue;
+                }
                 await LogStuff(`Error destroying ${path}: ${e}`, "error");
                 continue;
             }
@@ -266,7 +269,7 @@ const ProjectCleaningFeatures = {
                 commitMessage,
             ],
         );
-        if (out.success) await LogStuff(`Committed your changes to ${await NameProject(project, "name-ver")}!`, "tick");
+        if (out.success) await LogStuff(`Committed your changes to ${await NameProject(project, "name")}!`, "tick");
         return;
     },
 };
