@@ -54,11 +54,11 @@
     - [x] Basic (remove lockfile -> install with new manager)
     - [ ] Well done (transform lockfile to diff format -> install)
   - [ ] Runtimes
-- [x] Project prettifying (all untested)
+- [x] Project prettifying
   - [x] NODE
   - [x] DENO
   - [x] BUN
-- [x] Project linting (all untested)
+- [x] Project linting
   - [x] NODE
   - [x] DENO
   - [x] BUN
