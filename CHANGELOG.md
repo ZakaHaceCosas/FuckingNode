@@ -17,6 +17,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - **Added partial support for cleanup of both the Bun and Deno JavaScript runtimes.**
+- Added new capabilities besides cleaning and updating.
+  - Automatic linting of projects.
+  - Automatic prettifying of projects.
+  - Automatic removal of unneeded files (e.g. `dist/`, `out/`, etc...).
+  - Added the ability to auto-commit these changes (only if there weren't previous uncommitted changes).
 - Added an install script for Microsoft Windows.
 - Added the option to flush config files (like `.log`s), so the user can save up space.
 - Added the ability to customize whether an ignored project should ignore updates, cleanup, or everything.
@@ -28,9 +33,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Update check frequency
   - Default cleaner intensity
 - Now verbose logging in `clean` will show the time it took for each project to be cleaned.
-- (WIP) Added support for automating linting and prettifying of projects. Added the ability to auto-commit these changes as well.
 - Added `settings change` command to change certain settings.
 - Added a `kickstart` command to quickly start up a project.
+- Added the ability to override the command used by the `--update` task in `clean`, via `fknode.yaml`.
 
 ### Changed
 
