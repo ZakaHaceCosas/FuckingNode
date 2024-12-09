@@ -85,4 +85,4 @@
 
 ## Known issues
 
-- Scheduled tasks don't work for whatever reason. It's Deno.cron() and not us, so there isn't a "fix" for this.
+- [ ] Scheduled tasks don't work for whatever reason. ~~It's Deno.cron() and not us, so there isn't a "fix" for this.~~ Found a ["fix"](https://docs.deno.com/deploy/kv/manual/cron/), but it's gonna be hard: we need to manage to use Deno.cron() from the damn top module.
