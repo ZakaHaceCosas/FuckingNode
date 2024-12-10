@@ -131,8 +131,8 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
         [
             "manager",
-            "list",
-            "Lists all of your added projects.",
+            "list [--ignored / --alive]",
+            "Lists all of your added projects. You can use --ignored or --alive to filter ignored projects.",
         ],
         [
             "manager",
@@ -165,6 +165,11 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             null,
             `Resets all settings to their default value.`,
         ],
+        [
+            "change",
+            "<update-freq | default-int> <value>",
+            "Allows to change chosen settings."
+        ]
     ];
     const SETTINGS = formatCmd(_SETTINGS);
 
