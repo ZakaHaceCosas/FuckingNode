@@ -22,7 +22,7 @@ function formatCmd(obj: helpThing): string {
 export default async function TheHelper(params: TheHelperConstructedParams) {
     const { query } = params;
 
-    const _USAGE: helpThing = [
+    const USAGE = formatCmd([
         [
             "clean",
             "<intensity | --> [--update] [--verbose] [--lint] [--pretty] [--commit]",
@@ -56,8 +56,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "[command]",
             "Shows this menu, or the help menu for a specific command, if provided.",
         ],
-    ];
-    const USAGE = formatCmd(_USAGE);
+    ]);
 
     async function NoParamProvided() {
         await LogStuff(
@@ -75,7 +74,39 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         );
     }
 
-    const _CLEAN_OPTIONS: helpThing = [
+    const MANAGER_OPTIONS = formatCmd([
+        [
+            "manager",
+            "add <path>",
+            "Adds a project to your list.",
+        ],
+        [
+            "manager",
+            "remove <path>",
+            "Removes a project from your list.",
+        ],
+        [
+            "manager",
+            "ignore <path>",
+            "Ignores a project so it's not cleaned or updated but still on your list.",
+        ],
+        [
+            "manager",
+            "revive <path>",
+            "Stops ignoring an ignored project.",
+        ],
+        [
+            "manager",
+            "list [--ignored / --alive]",
+            "Lists all of your added projects. You can use --ignored or --alive to filter ignored projects.",
+        ],
+        [
+            "manager",
+            "cleanup",
+            "Shows invalid (invalid path, duplicates...) and lets you remove them.",
+        ],
+    ]);
+    const CLEAN_OPTIONS = formatCmd([
         [
             "clean",
             "<intensity>",
@@ -107,44 +138,8 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             null,
             `If your Git working tree was clean before ${APP_NAME.CASED} touched it, and you performed actions that change the code (e.g. --pretty or --update), it'll commit them using a default commit message. Requires "commitActions" to be set to true in your fknode.yaml. You can override the default commit message with "commitMessage" in your fknode.yaml.`,
         ],
-    ];
-    const _MANAGER_OPTIONS: helpThing = [
-        [
-            "manager",
-            "add <path>",
-            "Adds a project to your list.",
-        ],
-        [
-            "manager",
-            "remove <path>",
-            "Removes a project from your list.",
-        ],
-        [
-            "manager",
-            "ignore <path>",
-            "Ignores a project so it's not cleaned or updated but still on your list.",
-        ],
-        [
-            "manager",
-            "revive <path>",
-            "Stops ignoring an ignored project.",
-        ],
-        [
-            "manager",
-            "list [--ignored / --alive]",
-            "Lists all of your added projects. You can use --ignored or --alive to filter ignored projects.",
-        ],
-        [
-            "manager",
-            "cleanup",
-            "Shows invalid (invalid path, duplicates...) and lets you remove them.",
-        ],
-    ];
-
-    const MANAGER_OPTIONS = formatCmd(_MANAGER_OPTIONS);
-    const CLEAN_OPTIONS = formatCmd(_CLEAN_OPTIONS);
-
-    const _SETTINGS: helpThing = [
+    ]);
+    const SETTINGS_OPTIONS = formatCmd([
         [
             "flush",
             "<'logs' | 'updates' | 'projects' | 'all'> [--force]",
@@ -168,17 +163,18 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "change",
             "<update-freq | default-int> <value>",
-            "Allows to change chosen settings."
-        ]
-    ];
-    const SETTINGS = formatCmd(_SETTINGS);
+            "Allows to change chosen settings.",
+        ],
+    ]);
+    const KICKSTART_OPTIONS = formatCmd([
+        [
+            "kickstart",
+            "<git-url> [path] [manager]",
+            "Clones the repo provided with <git-url> into specified [path], or CWD/<repo-name> if not given, and auto-installs dependencies with provided [manager], or pnpm by default. If you don't have pnpm it doesn't auto-choose another manager. Use pnpm >:D.",
+        ],
+    ]);
 
-    if (!query) {
-        await NoParamProvided();
-        return;
-    }
-
-    switch (query) {
+    switch ((query ?? "").trim()) {
         case "clean":
             await LogStuff(
                 "'clean' will clean your added projects. Flags:\n" +
@@ -197,11 +193,18 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             break;
         case "settings":
             await LogStuff(
-                `Currently supported settings:\n` + SETTINGS,
+                `'settings' lets you view and manage settings related commands. Options:\n${SETTINGS_OPTIONS}`,
                 undefined,
                 true,
             );
             break;
+        case "kickstart":
+            await LogStuff(
+                `'kickstart' allows you to kickstart a dev repo easily. Options:\n${KICKSTART_OPTIONS}`,
+            );
+            break;
+        case "migrate": // todo
+        case undefined:
         case "":
         default:
             await NoParamProvided();
