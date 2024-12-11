@@ -15,6 +15,9 @@ import type { FkNodeYaml } from "../../types/config_files.ts";
 type tBaseCommand = "npm" | "pnpm" | "yarn" | "deno" | "bun";
 type tExecCommand = ["npx"] | ["pnpm", "dlx"] | ["yarn", "dlx"] | ["bunx"] | ["deno", "run"];
 
+/**
+ * All project cleaning features.
+ */
 const ProjectCleaningFeatures = {
     Update: async (
         command: string,
@@ -622,4 +625,29 @@ export async function ResolveProtection(path: string, update: boolean): Promise<
         case null:
             return { doClean: true, doUpdate: update };
     }
+}
+
+/**
+ * Resolves all lockfiles of a project.
+ *
+ * @export
+ * @async
+ * @param {string} path
+ * @returns {Promise<ALL_SUPPORTED_LOCKFILES[]>}
+ */
+export async function ResolveLockfiles(path: string): Promise<ALL_SUPPORTED_LOCKFILES[]> {
+    const lockfiles: ALL_SUPPORTED_LOCKFILES[] = [];
+    const possibleLockfiles = [
+        "pnpm-lock.yaml",
+        "package-lock.json",
+        "yarn.lock",
+        "bun.lockb",
+        "deno.lock",
+    ];
+    for (const lockfile of possibleLockfiles) {
+        if (await CheckForPath(await JoinPaths(path, lockfile))) {
+            lockfiles.push(path as ALL_SUPPORTED_LOCKFILES);
+        }
+    }
+    return lockfiles;
 }

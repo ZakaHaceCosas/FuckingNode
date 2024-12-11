@@ -1,11 +1,10 @@
 import { I_LIKE_JS } from "../constants.ts";
-import type { ALL_SUPPORTED_LOCKFILES } from "../types/package_managers.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
-import { PerformCleaning, PerformHardCleanup, ResolveProtection, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
+import { PerformCleaning, PerformHardCleanup, ResolveLockfiles, ResolveProtection, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { GetElapsedTime } from "../functions/date.ts";
 
@@ -13,15 +12,14 @@ export type tRESULT = { path: string; status: string; elapsedTime: string };
 
 export default async function TheCleaner(params: TheCleanerConstructedParams) {
     const { intensity, verbose, update, lint, prettify, destroy, commit } = params;
+    // start time
+    const now = new Date();
 
     try {
-        // start time
-        const now = new Date();
-
         // original path
         const originalLocation = Deno.cwd();
-
         const realIntensity: CleanerIntensity = await ValidateIntensity(intensity);
+
         if (realIntensity === "hard-only") {
             await PerformHardCleanup();
             return;
@@ -69,25 +67,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     "working",
                 );
 
-                const lockfiles: ALL_SUPPORTED_LOCKFILES[] = [];
-
-                if (await CheckForPath("pnpm-lock.yaml")) {
-                    lockfiles.push("pnpm-lock.yaml");
-                }
-                if (await CheckForPath("package-lock.json")) {
-                    lockfiles.push("package-lock.json");
-                }
-                if (await CheckForPath("yarn.lock")) {
-                    lockfiles.push("yarn.lock");
-                }
-                if (await CheckForPath("bun.lockb")) {
-                    lockfiles.push("bun.lockb");
-                }
-                if (await CheckForPath("deno.lock")) {
-                    lockfiles.push("deno.lock");
-                }
-
+                const lockfiles = await ResolveLockfiles(project);
                 const { doClean, doUpdate, preliminaryStatus } = await ResolveProtection(project, update);
+
                 switch (preliminaryStatus) {
                     case "Fully protected":
                         await LogStuff(

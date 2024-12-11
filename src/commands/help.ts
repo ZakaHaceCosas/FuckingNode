@@ -173,6 +173,23 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "Clones the repo provided with <git-url> into specified [path], or CWD/<repo-name> if not given, and auto-installs dependencies with provided [manager], or pnpm by default. If you don't have pnpm it doesn't auto-choose another manager. Use pnpm >:D.",
         ],
     ]);
+    const MIGRATE_OPTIONS = formatCmd([
+        [
+            "migrate",
+            "<project> <target>",
+            "Automatically migrates a given <project> to a given <target> package manager (npm, pnpm, and yarn). Does not support cross-runtime migration, and relies on each manager's ability to understand the other one's package manager formats.",
+        ],
+    ]);
+    const ABOUT_OPTIONS = formatCmd([
+        [
+            "about",
+            null,
+            "Shows a simple (but cool looking!) about screen. No params taken. The sentence below the app name is randomized from an internal list, by the way.",
+        ],
+    ]);
+    const HELP_OPTIONS = formatCmd([
+        ["help", "[command]", "Shows help for the given command, or general help if no command (or invalid command) given."],
+    ]);
 
     switch ((query ?? "").trim()) {
         case "clean":
@@ -203,7 +220,15 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
                 `'kickstart' allows you to kickstart a dev repo easily. Options:\n${KICKSTART_OPTIONS}`,
             );
             break;
-        case "migrate": // todo
+        case "migrate":
+            await LogStuff(MIGRATE_OPTIONS);
+            break;
+        case "about":
+            await LogStuff(ABOUT_OPTIONS);
+            break;
+        case "help":
+            await LogStuff(HELP_OPTIONS);
+            break;
         case undefined:
         case "":
         default:

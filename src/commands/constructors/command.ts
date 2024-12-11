@@ -9,7 +9,7 @@ export interface TheCleanerConstructedParams {
 }
 
 export interface TheHelperConstructedParams {
-    query?: "manager" | "clean" | "settings" | "kickstart" | "migrate" | string | undefined;
+    query?: string | undefined;
 }
 
 export interface TheMigratorConstructedParams {
