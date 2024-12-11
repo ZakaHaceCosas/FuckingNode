@@ -5,7 +5,7 @@ console.log(ColorString("we making this good", "bright-blue"));
 
 async function GetAllTsFiles(): Promise<string[]> {
     const dir = Deno.cwd(); // as the CWD from where you'll run deno task will always be the root of the project
-    const exclude = ["real-life-tests", "tests"];
+    const exclude = ["real-life-tests"];
     const tsFiles: string[] = [];
 
     for await (

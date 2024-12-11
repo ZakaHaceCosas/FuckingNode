@@ -1,4 +1,6 @@
-import type { tURL } from "../types/misc.ts"; /**
+import type { tURL } from "../types/misc.ts";
+
+/**
  * Fetches a resource using GitHub's headers.
  *
  * @export
