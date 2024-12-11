@@ -150,21 +150,21 @@ async function RemoveProject(
 
     if (list.includes(workingEntry)) {
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
+        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
         if (list.length > 0) {
-            await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
             await LogStuff(
                 `Let me guess: ${await NameProject(
                     workingEntry,
                     "name",
-                )} was another "revolutionary cutting edge project" that you're now removing, right?`,
+                )} was another "revolutionary cutting edge project" that's now gone, right?`,
                 "tick-clear",
             );
         } else {
-            // i don't remember my old code... why does it remove this?
-            // TODO - find out
-            await Deno.remove(await GetAppPath("MOTHERFKRS"));
             await LogStuff(
-                "Removed the last entry. The list is now empty.",
+                `Removed ${await NameProject(
+                    workingEntry,
+                    "name",
+                )}. That was your last project, the list is now empty.`,
                 "moon-face",
             );
         }

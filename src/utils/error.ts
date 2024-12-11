@@ -3,9 +3,24 @@ import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import type { ERROR_CODES } from "../types/errors.ts";
 
+/**
+ * Errors that we know about, or that are caused by the user.
+ *
+ * @export
+ * @class FknError
+ * @typedef {FknError}
+ * @extends {Error}
+ */
 export class FknError extends Error {
     code: ERROR_CODES;
 
+    /**
+     * Creates an instance of FknError.
+     *
+     * @constructor
+     * @param {ERROR_CODES} code
+     * @param {?string} [message]
+     */
     constructor(code: ERROR_CODES, message?: string) {
         super(message);
         this.name = "FknError";
@@ -34,11 +49,11 @@ export class FknError extends Error {
                 break;
             case "Cleaner__InvalidCleanerIntensity":
                 hint =
-                    "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. Running clean with no level provided defaults to 'normal'. If you tried to run with flags (e.g. 'clean --verbose'), add -- before ('clean -- -verbose'). Run 'help clean' for more info onto what does each level do.";
-                // TODO - actually add info onto what does each level do
+                    "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. If you want to use flags without providing an intensity (e.g. 'clean --verbose'), add -- before ('clean -- -verbose'). Run 'help clean' for more info onto what does each level do.";
                 break;
             case "Internal__Projects__CantDetermineEnv":
-                hint = "This is an internal error, there's not much you can do.";
+                hint =
+                    "This is an internal error regarding determination of a project's environment, there's not much that you can do. You might want to try again, or open an issue on GitHub.";
                 break;
             default:
                 hint = null;
