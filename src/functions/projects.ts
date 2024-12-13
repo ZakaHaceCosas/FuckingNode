@@ -153,7 +153,9 @@ export async function GetProjectSettings(
 
     if (!ValidateFkNodeYaml(cleanContent)) {
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
-        await Deno.writeTextFile(pathToDivineFile, `\n\n[NOTE (${GetDateNow()})]`);
+        await Deno.writeTextFile(pathToDivineFile, `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode)]`, {
+            append: true,
+        });
         return DEFAULT_FKNODE_YAML;
     }
 

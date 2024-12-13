@@ -99,31 +99,53 @@ export function ValidateFkNodeYaml(
     // deno-lint-ignore no-explicit-any
     obj: any,
 ): obj is FkNodeYaml {
-    if (obj.divineProtection && !["*", "updater", "cleanup", "disabled"].includes(obj.divineProtection)) {
+    if (!obj || typeof obj !== "object") {
+        return false;
+    }
+
+    if (
+        obj.divineProtection !== "*" &&
+        obj.divineProtection !== "disabled" &&
+        !(
+            Array.isArray(obj.divineProtection) &&
+            obj.divineProtection.every(
+                // deno-lint-ignore no-explicit-any
+                (item: any) => {
+                    return ["updater", "cleaner", "linter", "prettifier", "destroyer"].includes(item);
+                },
+            )
+        )
+    ) {
         return false;
     }
 
     if (obj.lintCmd && typeof obj.lintCmd !== "string") {
         return false;
     }
+
     if (obj.prettyCmd && typeof obj.prettyCmd !== "string") {
         return false;
     }
 
     if (obj.destroy) {
         if (
+            typeof obj.destroy !== "object" ||
             !Array.isArray(obj.destroy.targets) ||
-            !obj.destroy.targets.every((
+            !obj.destroy.targets.every(
                 // deno-lint-ignore no-explicit-any
-                target: any,
-            ) => {
-                return typeof target === "string";
-            })
+                (target: any) => typeof target === "string",
+            ) ||
+            !(
+                obj.destroy.intensities === "*" ||
+                (Array.isArray(obj.destroy.intensities) &&
+                    obj.destroy.intensities.every(
+                        // deno-lint-ignore no-explicit-any
+                        (intensity: any) => {
+                            return ["low", "medium", "high", "*"].includes(intensity);
+                        },
+                    ))
+            )
         ) {
-            return false;
-        }
-
-        if (!["*"].includes(obj.destroy.intensities) && !Array.isArray(obj.destroy.intensities)) {
             return false;
         }
     }
@@ -132,11 +154,17 @@ export function ValidateFkNodeYaml(
         return false;
     }
 
-    if (obj.commitMessage && typeof obj.commitMessage !== "string") {
+    if (
+        obj.commitMessage !== undefined &&
+        typeof obj.commitMessage !== "string"
+    ) {
         return false;
     }
 
-    if (obj.updateCmdOverride && typeof obj.updateCmdOverride !== "string") {
+    if (
+        obj.updateCmdOverride !== undefined &&
+        typeof obj.updateCmdOverride !== "string"
+    ) {
         return false;
     }
 
