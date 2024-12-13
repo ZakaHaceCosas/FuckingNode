@@ -1,7 +1,7 @@
 import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
-import { DEFAULT_FKNODE_YAML, IGNORE_FILE } from "../constants.ts";
+import { DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { BunfigToml, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff, NaturalizeFormattedString } from "./io.ts";
@@ -153,7 +153,7 @@ export async function GetProjectSettings(
 
     if (!ValidateFkNodeYaml(cleanContent)) {
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
-        await Deno.writeTextFile(pathToDivineFile, `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode)]`, {
+        await Deno.writeTextFile(pathToDivineFile, `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()}]`, {
             append: true,
         });
         return DEFAULT_FKNODE_YAML;
@@ -206,18 +206,17 @@ export const UnderstandProjectSettings = {
 };
 
 /**
- * Description placeholder
+ * Possible errors.
  *
  * @typedef {ProjectError}
  */
-type ProjectError = "NonExistingPath" | "IsDuplicate" | "NoPkgJson";
+type ProjectError = "IsDuplicate" | "NoPkgJson";
 
 /**
  * Given a path to a project, returns `true` if the project is valid, or a message indicating if it's not a valid Node/Deno/Bun project.
  *
  * @async
  * @param {string} entry Path to the project.
- * @param {"node" | "deno" | "bun" | "unknown"} runtime JS runtime the project is on.
  * @returns {Promise<true | ProjectError>} True if it's valid, a `ProjectError` otherwise.
  */
 export async function ValidateProject(entry: string): Promise<true | ProjectError> {
@@ -227,7 +226,6 @@ export async function ValidateProject(entry: string): Promise<true | ProjectErro
 
     const env = await GetProjectEnvironment(workingEntry);
 
-    if (!(await CheckForPath(workingEntry))) return "NonExistingPath";
     if (isDuplicate) return "IsDuplicate";
     if (!(await CheckForPath(env.lockfile))) return "NoPkgJson";
     return true;

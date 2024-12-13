@@ -19,6 +19,9 @@ async function AddProject(
     entry: string,
 ): Promise<void> {
     const workingEntry = await ParsePath(entry);
+    if (!(await CheckForPath(workingEntry))) {
+        throw new FknError("Manager__NonExistingPath", `Path "${workingEntry}" doesn't exist.`);
+    }
     const projectName = await NameProject(workingEntry, "name-ver");
 
     async function addTheEntry() {
@@ -34,13 +37,6 @@ async function AddProject(
     const validation = await ValidateProject(workingEntry);
     const env = await GetProjectEnvironment(workingEntry);
 
-    if (validation === "NonExistingPath") {
-        await LogStuff(
-            `Huh? That path doesn't exist!\nPS. You typed ${workingEntry}, just in case it's a typo.`,
-            "error",
-        );
-        return;
-    }
     if (validation === "IsDuplicate") {
         await LogStuff(
             `Bruh, you already added this ${I_LIKE_JS.MF}! (${projectName})`,

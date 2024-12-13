@@ -55,6 +55,10 @@ export class FknError extends Error {
                 hint =
                     "This is an internal error regarding determination of a project's environment, there's not much that you can do. You might want to try again, or open an issue on GitHub.";
                 break;
+            case "Manager__NonExistingPath":
+                hint =
+                    "Check for typos - the path you provided wasn't found in the filesystem. If you're sure the path is right, maybe it's a permission issue. If not, open an issue on GitHub so we can fix our tool that fixes NodeJS ;).";
+                break;
             default:
                 hint = null;
                 break;
