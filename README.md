@@ -41,6 +41,9 @@ The higher the level, the more space you'll recover, but the slower the process 
 
 You currently cannot set an intensity for each project, if you run `clean maxim` for example, all projects from your list will be maxim pruned.
 
+> [!NOTE]
+> Deno and Bun don't fully support this feature. See [Cross-runtime support](https://github.com/ZakaHaceCosas/FuckingNode/blob/v2/README.md#cross-runtime-support) for more info.
+
 ### Manager
 
 F\*ckingNode keeps a list of all paths to the projects it should clean - it's you who has to maintain it. Keep in mind paths should point to the root, where you have your `/package.json`, your lockfile, and your `/node_modules`.
@@ -65,10 +68,10 @@ Run `fuckingnode settings` with no args to see your current settings. Use `setti
 | Command | Type | Description | Notes |
 | :--- | ---: | :--: | ---: |
 | `change default-int <value>` | `normal`, `hard`, `hard-only`, or `maxim` | Changes the default intensity for the `clean` command. | / |
-| `change update-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't release updates too often, so save up those HTTP requests. |
-| `flush <file>` | `logs`, `updates`, `projects`, or `all` | Flushes (removes) config files. | `logs` is particularly recommended. `projects` and `all` are particularly discouraged. |
+| `change update-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests. |
+| `flush <file>` | `logs`, `updates`, `projects`, or `all` | Flushes (removes) config files. | `logs` is particularly recommended. `projects` and `all` are discouraged. |
 
-> [!WARNING]
+> [!NOTE]
 > `settings` will also show info about an "auto-flush" setting. It's given a default value for future versions - we currently don't support scheduled cleanup. `help settings` shows there's an option to schedule the cleaner - it's also unsupported as of now.
 
 ### Project settings
@@ -121,16 +124,16 @@ And that's it for now.
 
 ## Cross-runtime support
 
-While we've been talking about Node projects and `package.json` all the time, we actually support the three titans; Node, Deno, and Bun. However not all features are everywhere. Here's a compatibility table, where "NodeJS" includes all major package managers (npm, pnpm, and yarn).
+While we've been talking about Node projects and `package.json` all the time, we actually support the three titans; Node, Deno, and Bun. However not all features are everywhere. Here are our compatibility tables, where "NodeJS" includes all major package managers (npm, pnpm, and yarn).
 
 | Feature | Support | Notes |
 | :--- | ---: | ---: |
 | Automated project-wide cleaning | NodeJS-only | Deno and Bun don't provide the kind of commands (dedupe, clean, etc...) needed for this task. |
 | Automated system-wide cache cleaning | NodeJS, Deno, Bun | / |
-| Parsing of project file (pkg JSON) | NodeJS, Bun (package.json), Deno (deno.json) | Only supports parsing the props that are needed to the CLI |
-| Automated prettify tasks | NodeJS, Bun, Deno | Testing is still needed. Deno doesn't support setting `prettyCmd` it'll always use `deno fmt`. |
-| Automated lint tasks | NodeJS, Bun | Testing is still needed. |
-| Automated dependency updates | NodeJS, Bun, Deno | Only NodeJS is tested. |
+| Parsing of project file | NodeJS, Bun, Deno (deno.json) | Only looks for specific files (e.g. it won't look for `package.json` in a Deno project, even though Deno allows `package.json`). |
+| Automated prettify tasks | NodeJS, Bun, Deno | Deno doesn't support setting `prettyCmd`. It'll always use `deno fmt`. |
+| Automated lint tasks | NodeJS, Bun | / |
+| Automated dependency updates | NodeJS, Bun, Deno | / |
 
 ---
 
@@ -171,6 +174,8 @@ source ~/.bash_profile    # macOS
 2. Open this project from the root.
 3. Run `deno task compile`.
 4. An executable for each platform will be created at `dist/`. Run the executable for your platform (file names are specific to each platform).
+
+If you have Deno installed, you can also just `deno -A src/main.ts [...commands]` from the root.
 
 ---
 
