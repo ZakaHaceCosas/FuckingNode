@@ -62,10 +62,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
             try {
                 Deno.chdir(project);
-                await LogStuff(
-                    `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
-                    "working",
-                );
 
                 const lockfiles = await ResolveLockfiles(project);
                 const { doClean, doUpdate, doPrettify, doLint, doDestroy } = UnderstandProjectSettings.protection(
@@ -83,6 +79,10 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 if (lockfiles.length > 0) {
                     if (lockfiles.length === 1) {
                         for (const lockfile of lockfiles) {
+                            await LogStuff(
+                                `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
+                                "working",
+                            );
                             await PerformCleaning(
                                 lockfile,
                                 project,
