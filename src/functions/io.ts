@@ -79,9 +79,13 @@ export async function LogStuff(
             // deno-lint-ignore no-control-regex
             const regex = /\x1b\[[0-9;]*[a-zA-Z]/g;
 
-            await Deno.writeTextFile(await GetAppPath("LOGS"), timestampedMessage.replace(regex, ""), {
-                append: true,
-            });
+            await Deno.writeTextFile(
+                await GetAppPath("LOGS"),
+                timestampedMessage
+                    .replace(regex, "")
+                    .replace("\n\n", "\n"), // (fix for adding \n to messages that already have an \n for whatever reason)
+                { append: true },
+            );
         }
 
         if (question) {

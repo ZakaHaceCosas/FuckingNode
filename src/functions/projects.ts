@@ -153,9 +153,13 @@ export async function GetProjectSettings(
 
     if (!ValidateFkNodeYaml(cleanContent)) {
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
-        await Deno.writeTextFile(pathToDivineFile, `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()}]`, {
-            append: true,
-        });
+        await Deno.writeTextFile(
+            pathToDivineFile,
+            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()}]`,
+            {
+                append: true,
+            },
+        );
         return DEFAULT_FKNODE_YAML;
     }
 
