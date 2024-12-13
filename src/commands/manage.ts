@@ -1,7 +1,7 @@
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, ValidateProject } from "../functions/projects.ts";
+import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
@@ -137,34 +137,44 @@ async function AddProject(
 async function RemoveProject(
     entry: string,
 ): Promise<void> {
-    const workingEntry = await ParsePath(entry);
+    const workingEntry = await SpotProject(entry.trim());
+
+    if (!workingEntry) {
+        await LogStuff(
+            `Bruh, that mf wasn't found.\nAnother typo? We took: ${entry.trim()}`,
+            "error",
+        );
+        return;
+    }
+
     const list = await GetAllProjects();
     const index = list.indexOf(workingEntry);
 
-    if (list.includes(workingEntry)) {
-        if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
-        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
-        if (list.length > 0) {
-            await LogStuff(
-                `Let me guess: ${await NameProject(
-                    workingEntry,
-                    "name",
-                )} was another "revolutionary cutting edge project" that's now gone, right?`,
-                "tick-clear",
-            );
-        } else {
-            await LogStuff(
-                `Removed ${await NameProject(
-                    workingEntry,
-                    "name",
-                )}. That was your last project, the list is now empty.`,
-                "moon-face",
-            );
-        }
-    } else {
+    if (!list.includes(workingEntry)) {
         await LogStuff(
             `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry}`,
             "error",
+        );
+        return;
+    }
+
+    if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
+    await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
+    if (list.length > 0) {
+        await LogStuff(
+            `Let me guess: ${await NameProject(
+                workingEntry,
+                "name",
+            )} was another "revolutionary cutting edge project" that's now gone, right?`,
+            "tick-clear",
+        );
+    } else {
+        await LogStuff(
+            `Removed ${await NameProject(
+                workingEntry,
+                "name",
+            )}. That was your last project, the list is now empty.`,
+            "moon-face",
         );
     }
 }

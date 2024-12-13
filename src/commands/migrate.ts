@@ -1,6 +1,7 @@
 import { Commander } from "../functions/cli.ts";
-import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
+import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
+import { SpotProject } from "../functions/projects.ts";
 import type { PKG_MANAGERS, SUPPORTED_NODE_LOCKFILES } from "../types/package_managers.ts";
 import type { TheMigratorConstructedParams } from "./constructors/command.ts";
 
@@ -46,11 +47,15 @@ export default async function TheMigrator(params: TheMigratorConstructedParams) 
     }
 
     try {
-        const workingProject = await ParsePath(project);
-        const workingTarget = target.toLowerCase().trimEnd().trimStart();
+        const workingProject = await SpotProject(project);
+        const workingTarget = target.toLowerCase().trim();
 
         if (!(["pnpm", "npm", "yarn"].includes(workingTarget))) {
             throw new Error(`${workingTarget} is not a valid target. Use either "pnpm", "npm", or "yarn".`);
+        }
+
+        if (!workingProject) {
+            throw new Error(`${project} wasn't found. Is the project name right?`);
         }
 
         const isNpm = await CheckForPath(await JoinPaths(workingProject, "package-lock.json"));
