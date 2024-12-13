@@ -1,16 +1,15 @@
-# F\*ckingNode
+# The f\*cking chaos ends here
 
-## Abstract
+Because dev life is messy enough. We can't fix your bugs, but we can:
 
-We as humans have dedicated years of hard work to a goal: fixing Node.
+- help you recover disk space
+- help you keep your 69 side-projects and their 420 dependencies up-to-date
+- help you prettify your code so it doesn't suck
+- help you remove those built executables abandoned in your `/out` directory for ages
 
-We created NPM, PNPM, YARN, added ES6, async/await, `fs.promises`, even TS with `--experimental-strip-types`, we changed the order and made Deno, then we got hungry and made Bun, then we made Deno 2... Everything has been getting us closer to a better Node, and now we're one step closer to fixing NodeJS.
+\- from a single command. It's not magic, it's F\*ckingNode—and that name is shipping to production.
 
-**F\*ckingNode**, a CLI utility to automate cleanup of a Node user's worst nightmare: `node_modules/`.
-
-> ### (yes i'm calling it like that and i'm shipping that to production, don't question me)
-
-By the way, _while the name implies NodeJS-only support, Deno and Bun are also supported!_
+Deno and Bun are also (partially) supported.
 
 ## Features
 
@@ -37,7 +36,7 @@ The higher the level, the more space you'll recover, but the slower the process 
 | Level | Actions | Notes |
 | :--- | :--: | ---: |
 | **Normal** | Runs default prune / autoclean and dedupe commands. | / |
-| **Hard** | Does the previous + cleans the entire cache (`pnpm store prune` / `yarn cache clean` / `npm cache clean --force`) | _Note: While pnpm will only purge unused packages, npm will clear the entire cache, making it go slower next time._ |
+| **Hard** | Does the previous + cleans the entire cache (`pnpm store prune` / `yarn cache clean` / `npm cache clean --force`) | *Note: While pnpm will only purge unused packages, npm will clear the entire cache, making it go slower next time.* |
 | **Maxim** | This does not run any cleanup command. It will simply remove the `node_modules/` folder of each project. | Slowest (plus you'll need to reinstall deps), hence it will ask for confirmation before starting. The good thing is that you'll probably get many GB of storage back, so this is actually useful if your drive is almost full. |
 
 You currently cannot set an intensity for each project, if you run `clean maxim` for example, all projects from your list will be maxim pruned.
@@ -76,11 +75,11 @@ Run `fuckingnode settings` with no args to see your current settings. Use `setti
 
 We also support adding a `fknode.yaml` file to your projects. Some commands, like `manager ignore` will add it automatically if it doesn't exist. Some other commands, like `clean -- --lint` require it to be present, otherwise continuing execution but skipping tasks that depend on this file.
 
-A full `fknode.yaml` file could look like this. All props are optional. For a more detailed explanation, open `fknode.example.yaml` in the root of this repo.
+A full `fknode.yaml` file could look like this. All props are optional. For a detailed explanation, open `fknode.example.yaml` in the root of this repo.
 
 ```yaml
-# divineProtection is used to ignore projects, here you specify what to ignore (updating, cleaning, or everything)
-divineProtection: "updater"
+# divineProtection is used to ignore projects, here you specify what to ignore (updating, cleaning, linting... or just everything)
+divineProtection: ["updater"]
 # if present, this SCRIPT will be used when you clean with the --lint flag
 lintCmd: "lint"
 # if present, this SCRIPT will be used when you clean with the --pretty flag
@@ -88,7 +87,7 @@ prettyCmd: "prettier"
 # if present, files / DIRs you add to "targets" will be removed
 # (only when you clean with any of the "intensities")
 destroy:
-  intensities: ["hard", "maxim"] # "normal", "hard", "hard-only", or "maxim", or "*" or "all" for everything. use always an array even if you only add one intensity.
+  intensities: ["hard", "maxim"] # "normal", "hard", "hard-only", or "maxim", or "*" or for everything. use always an array even if you only add one intensity.
   targets:
     - "node_modules"
     - "dist"
@@ -107,20 +106,20 @@ Where `(exec)` refers to the execution command (`npx` / `pnpm dlx` / `yarn dlx` 
 | `divineProtection` | `disabled` | / |
 | `lintCmd` | `(exec) eslint --fix .`, except for Deno (unsupported). | If provided, `(run) <your script>` is used instead. |
 | `prettyCmd` | `(exec) prettier .`, except for Deno (`deno fmt`). | If provided, `(run) <your script>` is used instead. |
-| `destroy` | intensities: `maxim`, targets: `node_modules`. | If you pass a list of targets _without_ `node_modules` and do a `maxim` cleanup, `node_modules` will be cleaned anyway. |
+| `destroy` | intensities: `maxim`, targets: `node_modules`. | If you pass a list of targets *without* `node_modules` and do a `maxim` cleanup, `node_modules` will be cleaned anyway. |
 | `commitActions` | false | / |
 | `commitMessage` | `"Code <TASKS> tasks (Auto-generated by F*ckingNode <VER>)"` | Where `<TASKS>` is a list of the tasks executed ("linting", or "linting and updating" for example) and `<VER>` is the version of the CLI you're using. |
 | `updateCmdOverride` | The project's default update command | If provided, `(run) <your script>` is used instead. |
 
 ### Others
 
-- `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile, `node_modules`, and reinstalls with the selected package manager). For now it relies on the specified package manager's ability to understand other lockfiles to ensure version compatibility. No issues _should_ occur.
+- `fuckingnode migrate <path> <"pnpm" | "npm" | "yarn">` - migrates a project to the specified package manager (basically removes lockfile, `node_modules`, and reinstalls with the selected package manager). For now it relies on the specified package manager's ability to understand other lockfiles to ensure version compatibility. No issues *should* occur.
 - `fuckingnode kickstart <repo-url> [path] [package-manager]` - automatically clones a Git repo in the specified path (or `<current-path>/<repo-name>` if not provided), installs dependencies with `pnpm` (or provided package manager if any), and OF COURSE automatically runs `fuckingnode manager add --self`.
 - `fuckingnode --help`, `fuckingnode --version`, and `fuckingnode upgrade` - all do the obvious (if not obvious, `upgrade` checks for updates).
 
 And that's it for now.
 
-### Cross-runtime support
+## Cross-runtime support
 
 While we've been talking about Node projects and `package.json` all the time, we actually support the three titans; Node, Deno, and Bun. However not all features are everywhere. Here's a compatibility table, where "NodeJS" includes all major package managers (npm, pnpm, and yarn).
 

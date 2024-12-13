@@ -3,7 +3,7 @@ import { Commander, CommandExists } from "../../functions/cli.ts";
 import { GetSettings } from "../../functions/config.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
-import { GetProjectEnvironment, GetProjectSettings, NameProject, UnderstandProjectSettings } from "../../functions/projects.ts";
+import { GetProjectEnvironment, GetProjectSettings, NameProject } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
 import type { ALL_SUPPORTED_LOCKFILES } from "../../types/package_managers.ts";
 import type { NodePkgJson, ProjectEnv } from "../../types/runtimes.ts";
@@ -192,8 +192,7 @@ const ProjectCleaningFeatures = {
         if (!settings.destroy) return;
         if (
             !settings.destroy.intensities.includes(intensity) &&
-            !settings.destroy.intensities.includes("*") &&
-            !settings.destroy.intensities.includes("all")
+            !settings.destroy.intensities.includes("*")
         ) return;
         if (settings.destroy.targets.length === 0) return;
         for (const target of settings.destroy.targets) {
@@ -594,37 +593,6 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
         "tick",
         false,
     );
-}
-
-/**
- * Tells you about the protection of a project.
- *
- * @export
- * @async
- * @param {(string )} path
- * @param {boolean} update
- * @returns {{
- *     doClean: boolean;
- *     doUpdate: boolean;
- *     preliminaryStatus?: "Fully protected" | "Cleanup protected" | "Update protected";
- * }}
- */
-export async function ResolveProtection(path: string, update: boolean): Promise<{
-    doClean: boolean;
-    doUpdate: boolean;
-    preliminaryStatus?: "Fully protected" | "Cleanup protected" | "Update protected";
-}> {
-    const protection = UnderstandProjectSettings.protection(await GetProjectSettings(path));
-    switch (protection) {
-        case "*":
-            return { doClean: false, doUpdate: false, preliminaryStatus: "Fully protected" };
-        case "cleanup":
-            return { doClean: false, doUpdate: true, preliminaryStatus: "Cleanup protected" };
-        case "updater":
-            return { doClean: true, doUpdate: false, preliminaryStatus: "Update protected" };
-        case null:
-            return { doClean: true, doUpdate: update };
-    }
 }
 
 /**

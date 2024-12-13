@@ -1,9 +1,9 @@
-# divineProtection is used to ignore projects
-# can be "*" / "all" to always ignore,
-# "updater" to only ignore the update command
-# "cleanup" to only ignore the cleaning command
-# "disabled" to disable ignoring (you can also just remove the field)
-divineProtection: "updater"
+# divineProtection is used to ignore projects.
+# can be "*" to always ignore, or can include specific items so only those are ignored:
+# "updater", "cleaner", "linter", "destroyer", and "prettifier" can be added
+# can also be "disabled" to disable ignoring (you can also just remove the field)
+# UNLESS IT'S "*" OR "disabled", IT MUST BE AN ARRAY, EVEN IF IT'S JUST ONE ITEM
+divineProtection: ["updater"]
 # if present, this SCRIPT will be used when you clean with the --lint flag
 # IT MUST BE THE NAME OF A SCRIPT DEFINED IN THE "scripts" FIELD ON YOUR package.json
 # when --lint is present but this not, we default to "eslint --fix ."
@@ -19,7 +19,7 @@ destroy:
     intensities: [
         "hard",
         "maxim",
-    ] # "normal", "hard", "hard-only", or "maxim". it's an array so you can add many. use always an array even if you only add one intensity. you can also pass "*" or "all" instead of typing all intensities.
+    ] # "normal", "hard", "hard-only", or "maxim". it's an array so you can add many. use always an array even if you only add one intensity. you can also pass "*" instead of typing all intensities.
     targets:
         - "node_modules"
         - "dist"

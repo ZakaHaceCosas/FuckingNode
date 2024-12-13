@@ -1,10 +1,10 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
-import { GetAllProjects, NameProject } from "../functions/projects.ts";
+import { GetAllProjects, GetProjectSettings, NameProject, UnderstandProjectSettings } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
-import { PerformCleaning, PerformHardCleanup, ResolveLockfiles, ResolveProtection, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
+import { PerformCleaning, PerformHardCleanup, ResolveLockfiles, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { GetElapsedTime } from "../functions/date.ts";
 
@@ -68,42 +68,17 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 );
 
                 const lockfiles = await ResolveLockfiles(project);
-                const { doClean, doUpdate, preliminaryStatus } = await ResolveProtection(project, update);
+                const { doClean, doUpdate, doPrettify, doLint, doDestroy } = UnderstandProjectSettings.protection(
+                    await GetProjectSettings(project),
+                    {
+                        update,
+                        lint,
+                        destroy,
+                        prettify,
+                    },
+                );
 
-                switch (preliminaryStatus) {
-                    case "Fully protected":
-                        await LogStuff(
-                            ColorString(
-                                `${project} is fully protected by ${I_LIKE_JS.FKN} divine protection. Cannot touch it.`,
-                                "bright-yellow",
-                            ),
-                            "heads-up",
-                        );
-                        results.push({
-                            path: project,
-                            status: "Fully protected",
-                            elapsedTime: GetElapsedTime(now),
-                        });
-                        continue;
-                    case "Cleanup protected":
-                        await LogStuff(
-                            ColorString(
-                                `${project} is cleanup protected by ${I_LIKE_JS.FKN} divine protection. Cannot clean it, but will be updated (if you specified to do so).`,
-                                "bright-yellow",
-                            ),
-                            "heads-up",
-                        );
-                        break;
-                    case "Update protected":
-                        await LogStuff(
-                            ColorString(
-                                `${project} is update protected by ${I_LIKE_JS.FKN} divine protection. Cannot update it, but will be cleaned (if you specified to do so).`,
-                                "bright-yellow",
-                            ),
-                            "heads-up",
-                        );
-                        break;
-                }
+                // TODO - readd preliminary status (basically showing '... # * protected' in report and a log warning for the user)
 
                 if (lockfiles.length > 0) {
                     if (lockfiles.length === 1) {
@@ -113,9 +88,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                                 project,
                                 doUpdate,
                                 doClean,
-                                lint,
-                                prettify,
-                                destroy,
+                                doLint,
+                                doPrettify,
+                                doDestroy,
                                 commit,
                                 realIntensity,
                             );
@@ -161,7 +136,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
                 results.push({
                     path: project,
-                    status: preliminaryStatus ? `Success # ${preliminaryStatus}` : "Success",
+                    status: /* preliminaryStatus ? `Success # ${preliminaryStatus}` : */ "Success",
                     elapsedTime: GetElapsedTime(now),
                 });
             } catch (e) {

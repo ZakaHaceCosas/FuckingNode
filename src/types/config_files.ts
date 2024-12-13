@@ -39,11 +39,11 @@ export interface CF_FKNODE_SETTINGS {
  */
 export interface FkNodeYaml {
     /**
-     * Divine protection, basically to ignore stuff.
+     * Divine protection, basically to ignore stuff. Must always be an array.
      *
-     * @type {"*" | "all" | "updater" | "cleanup" | "disabled"}
+     * @type {("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled"}
      */
-    divineProtection: "*" | "all" | "updater" | "cleanup" | "disabled";
+    divineProtection: ("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled";
     /**
      * If `--lint` is passed to `clean`, this script will be used to lint the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__ESLINT` overrides these rules (it's the default).
      *
@@ -60,12 +60,12 @@ export interface FkNodeYaml {
      * If provided, file paths in `targets` will be removed when `clean` is called with any of the `intensities`. If not provided defaults to `maxim` intensity and `node_modules` path. Specifying `targets` _without_ `node_modules` does not override it, meaning it'll always be cleaned.
      *
      * @type {{
-     *         intensities: (CleanerIntensity | "*" | "all")[],
+     *         intensities: (CleanerIntensity | "*")[],
      *         targets: string[]
      *     }}
      */
     destroy: {
-        intensities: (CleanerIntensity | "*" | "all")[];
+        intensities: (CleanerIntensity | "*")[];
         targets: string[];
     };
     /**
@@ -99,7 +99,7 @@ export function ValidateFkNodeYaml(
     // deno-lint-ignore no-explicit-any
     obj: any,
 ): obj is FkNodeYaml {
-    if (obj.divineProtection && !["*", "all", "updater", "cleanup", "disabled"].includes(obj.divineProtection)) {
+    if (obj.divineProtection && !["*", "updater", "cleanup", "disabled"].includes(obj.divineProtection)) {
         return false;
     }
 
@@ -123,7 +123,7 @@ export function ValidateFkNodeYaml(
             return false;
         }
 
-        if (!["*", "all"].includes(obj.destroy.intensities) && !Array.isArray(obj.destroy.intensities)) {
+        if (!["*"].includes(obj.destroy.intensities) && !Array.isArray(obj.destroy.intensities)) {
             return false;
         }
     }

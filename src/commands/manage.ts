@@ -1,14 +1,7 @@
 import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import {
-    GetAllProjects,
-    GetProjectSettings,
-    GetWorkspaces,
-    NameProject,
-    UnderstandProjectSettings,
-    ValidateProject,
-} from "../functions/projects.ts";
+import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
@@ -292,10 +285,15 @@ async function ListProjects(
             );
             const toReturn: string[] = [];
             for (const entry of ignoreList) {
+                const protection = (await GetProjectSettings(entry)).divineProtection; // array
+                let protectionString: string;
+                if (!(Array.isArray(protection))) protectionString = "ERROR: CANNOT READ SETTINGS, CHECK YOUR FKNODE.YAML!";
+                else protectionString = protection.join(" and ");
+
                 toReturn.push(
                     `${await NameProject(entry, "all")} (${
                         ColorString(
-                            (UnderstandProjectSettings.protection(await GetProjectSettings(entry)))!, // "!" because we know it's not null
+                            protectionString,
                             "bold",
                         )
                     })\n`,

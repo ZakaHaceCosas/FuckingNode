@@ -30,8 +30,8 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
         const aliveReturn: string[] = [];
 
         for (const entry of list) {
-            const protection = UnderstandProjectSettings.protection(await GetProjectSettings(entry));
-            if (!protection) {
+            const protection = (await GetProjectSettings(entry)).divineProtection;
+            if (!protection || protection === "disabled") {
                 if (ignored === "exclude") aliveReturn.push(entry);
                 continue;
             }
@@ -166,19 +166,40 @@ export async function GetProjectSettings(
  * `A.protection(settings: FkNodeYaml)` will return "*", "updater", "cleanup", or null depending on the level of protection of the project.
  */
 export const UnderstandProjectSettings = {
-    protection: (settings: FkNodeYaml): "*" | "updater" | "cleanup" | null => {
-        if (!settings.divineProtection) return null;
-        switch (settings.divineProtection) {
-            case "*":
-            case "all":
-                return "*";
-            case "cleanup":
-                return "cleanup";
-            case "updater":
-                return "updater";
-            case "disabled":
-                return null;
+    /**
+     * Tells you about the protection of a project. Returns an object where 'true' means allowed and 'false' means protected.
+     */
+    protection: (settings: FkNodeYaml, options: {
+        update: boolean;
+        prettify: boolean;
+        lint: boolean;
+        destroy: boolean;
+    }) => {
+        if (!settings.divineProtection || settings.divineProtection === "disabled") {
+            return {
+                doClean: true,
+                doUpdate: options.update,
+                doPrettify: options.prettify,
+                doLint: options.lint,
+                doDestroy: options.destroy,
+            };
+        } else if (settings.divineProtection === "*") {
+            return {
+                doClean: false,
+                doUpdate: false,
+                doPrettify: false,
+                doLint: false,
+                doDestroy: false,
+            };
         }
+        const protection = settings.divineProtection;
+        return {
+            doClean: protection.includes("cleaner") ? false : true,
+            doUpdate: protection.includes("updater") ? false : options.update,
+            doPrettify: protection.includes("prettifier") ? false : options.prettify,
+            doLint: protection.includes("linter") ? false : options.lint,
+            doDestroy: protection.includes("destroyer") ? false : options.destroy,
+        };
     },
 };
 
@@ -383,4 +404,23 @@ export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
     } else {
         return JSON.parse(file);
     }
+}
+
+/**
+ * Tries to spot the given project name inside of the project list. If not found, returns null.
+ *
+ * @export
+ * @async
+ * @param {string} name
+ * @returns {Promise<string | null>}
+ */
+export async function SpotProject(name: string): Promise<string | null> {
+    const allProjects = await GetAllProjects();
+    for (const project of allProjects) {
+        const projectName = await NameProject(project, "name");
+        if (name === projectName) {
+            return project;
+        }
+    }
+    return null;
 }
