@@ -4,7 +4,7 @@ import { expandGlob } from "@std/fs";
 import { DEFAULT_FKNODE_YAML, IGNORE_FILE } from "../constants.ts";
 import type { BunfigToml, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
-import { ColorString, LogStuff } from "./io.ts";
+import { ColorString, LogStuff, NaturalizeFormattedString } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import type { NodePkgManagerProps } from "../types/package_managers.ts";
@@ -409,7 +409,7 @@ export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
 }
 
 /**
- * Tries to spot the given project name inside of the project list. If not found, returns null.
+ * Tries to spot the given project name inside of the project list. If not found, returns null. It also works when you pass a path, parsing it to handle `--self` and relative paths.
  *
  * @export
  * @async
@@ -418,10 +418,14 @@ export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
  */
 export async function SpotProject(name: string): Promise<string | null> {
     const allProjects = await GetAllProjects();
+    const workingProject = await ParsePath(name);
+    if (allProjects.includes(workingProject)) {
+        return workingProject;
+    }
     for (const project of allProjects) {
         const projectName = await NameProject(project, "name");
-        if (name === projectName) {
-            return project;
+        if (name.toLowerCase() === NaturalizeFormattedString(projectName).toLowerCase()) {
+            return project; // (assume it's already ParsePath-ed())
         }
     }
     return null;

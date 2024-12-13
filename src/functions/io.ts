@@ -184,3 +184,15 @@ export function ColorString(string: string | number, color: tValidColors): strin
 
     return `${colorCode}${finalString}${RESET}`;
 }
+
+/**
+ * In case you have a formatted string (CLI-colored) and want to compare it to a regular string, use this function - otherwise control characters will make JS think strings are different even if they aren't.
+ *
+ * @export
+ * @param {string} string Formatted string
+ * @returns {string} Naturalized string
+ */
+export function NaturalizeFormattedString(string: string): string {
+    // deno-lint-ignore no-control-regex
+    return string.replace(/\x1b\[[0-9;]*m/g, "");
+}
