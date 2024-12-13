@@ -36,8 +36,8 @@ The higher the level, the more space you'll recover, but the slower the process 
 | Level | Actions | Notes |
 | :--- | :--: | ---: |
 | **Normal** | Runs default prune / autoclean and dedupe commands. | / |
-| **Hard** | Does the previous + cleans the entire cache (`pnpm store prune` / `yarn cache clean` / `npm cache clean --force`) | *Note: While pnpm will only purge unused packages, npm will clear the entire cache, making it go slower next time.* |
-| **Maxim** | This does not run any cleanup command. It will simply remove the `node_modules/` folder of each project. | Slowest (plus you'll need to reinstall deps), hence it will ask for confirmation before starting. The good thing is that you'll probably get many GB of storage back, so this is actually useful if your drive is almost full. |
+| **Hard** | Does the previous + cleans the entire cache (`pnpm store prune` / `yarn cache clean` / `npm cache clean --force`) | While pnpm will only purge unused packages, npm will clear the entire cache, making it go slower next time you install stuff. |
+| **Maxim** | This does not run any cleanup command. It will simply remove the `node_modules/` folder of each project. | Slowest. You'll need to reinstall deps after this, hence it'll ask for confirmation before starting. Good thing is you'll likely recover many GB of storage, making `maxim` useful if your drive is almost full. |
 
 You currently cannot set an intensity for each project, if you run `clean maxim` for example, all projects from your list will be maxim pruned.
 
