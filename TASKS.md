@@ -26,7 +26,7 @@
 - [ ] Add more `ColorString()` options and use them in more places.
 - [x] Add an about command.
 - [ ] More verbose logging maybe?
-- [ ] Allow to use a project's name instead of it's path, and have the app to recognize it.
+- [x] Allow to use a project's name instead of it's path, and have the app to recognize it.
 
 ## Cross-runtime support tasks
 
