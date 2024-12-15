@@ -63,7 +63,7 @@ if (hasFlag("experimental-stats", false)) {
         await LogStuff(
             `Okay, there we go. Report any ${I_LIKE_JS.FKN} error you find in GitHub.`,
         );
-        await TheStatistics();
+        await TheStatistics(Deno.args[1] ?? "");
     }
     Deno.exit(0);
 }
