@@ -7,3 +7,5 @@ dist/**
 real-life-tests/**
 # .ps1 and .sh installers
 scripts/new/**
+# website
+website/**
