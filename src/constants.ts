@@ -108,6 +108,7 @@ export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
         enabled: true,
         freq: 30,
     },
+    favoriteEditor: "vscode",
 };
 
 /**

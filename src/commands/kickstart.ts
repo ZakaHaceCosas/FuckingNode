@@ -1,7 +1,8 @@
 import { Commander } from "../functions/cli.ts";
+import { GetSettings } from "../functions/config.ts";
 import { JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
-import { NameProject } from "../functions/projects.ts";
+import { GetProjectEnvironment, NameProject } from "../functions/projects.ts";
 import type { PKG_MANAGERS } from "../types/package_managers.ts";
 import type { TheKickstartConstructedParams } from "./constructors/command.ts";
 
@@ -27,9 +28,9 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
 
     const workingPath: string = path ? await ParsePath(path) : await ParsePath(await JoinPaths(Deno.cwd(), projectName));
 
-    const workingManager: PKG_MANAGERS = manager
+    const workingManager: PKG_MANAGERS | "__DEFAULT" = manager
         ? (["npm", "pnpm", "yarn", "deno", "bun"].includes(manager)) ? (manager as PKG_MANAGERS) : "pnpm"
-        : "pnpm";
+        : "__DEFAULT";
 
     try {
         await LogStuff("Let's begin! Wait a moment please...", "tick-clear");
@@ -39,19 +40,33 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
 
         Deno.chdir(workingPath);
 
+        const env = await GetProjectEnvironment(workingPath);
+        const managerToUse = workingManager === "__DEFAULT" ? env.manager : workingManager;
+
         await LogStuff(
-            `Installation began using ${workingManager}. Have a coffee meanwhile!`,
+            `Installation began using ${managerToUse}. Have a coffee meanwhile!`,
             "tick-clear",
         );
-        const managerOutput = await Commander(workingManager, ["install"]);
+        const managerOutput = await Commander(managerToUse, ["install"]);
         if (!managerOutput.success) throw new Error(`Error installing dependencies: ${managerOutput.stdout}`);
 
         // lol
         const selfOutput = await Commander("fuckingnode", ["manager", "add", "--self"]);
         if (!selfOutput.success) throw new Error(`Error setting up your favorite CLI tool (fuckingnode) in this project! ${selfOutput.stdout}`);
 
-        const vscOutput = await Commander("code", [workingPath]);
-        if (!vscOutput.success) throw new Error(`Error launching VSCode: ${vscOutput.stdout}`);
+        const favEditor = (await GetSettings()).favoriteEditor;
+        let command: "code" | "subl";
+        switch (favEditor) {
+            case "sublime":
+                command = "subl";
+                break;
+            case "vscode":
+                command = "code";
+                break;
+        }
+
+        const editorOutput = await Commander(command, [workingPath]);
+        if (!editorOutput.success) throw new Error(`Error launching ${favEditor}: ${editorOutput.stdout}`);
 
         await LogStuff(`Great! ${await NameProject(workingPath, "name-ver")} is now setup. Enjoy!`, "tick-clear");
         Deno.exit(0);

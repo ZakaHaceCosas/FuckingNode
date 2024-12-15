@@ -28,6 +28,7 @@ export interface CF_FKNODE_SETTINGS {
         enabled: boolean;
         freq: number;
     };
+    favoriteEditor: "vscode" | "sublime";
 }
 
 /**

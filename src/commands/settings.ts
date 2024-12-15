@@ -166,7 +166,7 @@ async function Repair() {
     }
 }
 
-async function ChangeSetting(setting: "default-int" | "update-freq", value: string) {
+async function ChangeSetting(setting: "default-int" | "update-freq" | "fav-editor", value: string) {
     try {
         const currentSettings = await GetSettings();
 
@@ -207,7 +207,23 @@ async function ChangeSetting(setting: "default-int" | "update-freq", value: stri
                 );
                 break;
             }
+            case "fav-editor": {
+                if (!["vscode", "sublime"].includes(value)) {
+                    await LogStuff(`${value} is not valid. Enter either 'vscode' or 'sublime'. (More editors soon).`);
+                    return;
+                }
+                const newSettings: CF_FKNODE_SETTINGS = {
+                    ...currentSettings,
+                    favoriteEditor: (value as "vscode" | "sublime"),
+                };
+                await Deno.writeTextFile(
+                    await GetAppPath("SETTINGS"),
+                    stringifyYaml(newSettings),
+                );
+                break;
+            }
         }
+        return;
     } catch (e) {
         throw e;
     }
@@ -219,7 +235,7 @@ async function DisplaySettings() {
         ColorString(settings.defaultCleanerIntensity, "bright-green")
     }\nAuto-flush files: ${ColorString(settings.autoFlushFiles.enabled ? "enabled" : "disabled", "bright-green")}${
         settings.autoFlushFiles.enabled && `\n    Frequency: ${ColorString(settings.autoFlushFiles.freq, "bright-green")}`
-    }`;
+    }\nFavorite editor: ${ColorString(settings.favoriteEditor, "bright-green")}`;
     await LogStuff(`${ColorString("Your current settings are:", "bright-yellow")}\n---\n${formattedSettings}`, "bulb");
 }
 

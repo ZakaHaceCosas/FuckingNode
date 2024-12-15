@@ -32,9 +32,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added a settings command which allows to tweak:
   - Update check frequency
   - Default cleaner intensity
+  - Favorite editor (for new `kickstart` command).
 - Now verbose logging in `clean` will show the time it took for each project to be cleaned.
 - Added `settings change` command to change certain settings.
-- Added a `kickstart` command to quickly start up a project.
+- Added a `kickstart` command to quickly clone a Git repo and start it up a project.
 - Added the ability to override the command used by the `--update` task in `clean`, via `fknode.yaml`.
 
 ### Changed
