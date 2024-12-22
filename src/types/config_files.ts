@@ -36,7 +36,6 @@ export interface CF_FKNODE_SETTINGS {
  *
  * @export
  * @interface FkNodeYaml
- * @typedef {FkNodeYaml}
  */
 export interface FkNodeYaml {
     /**
@@ -44,19 +43,19 @@ export interface FkNodeYaml {
      *
      * @type {("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled"}
      */
-    divineProtection: ("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled";
+    divineProtection?: ("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled";
     /**
      * If `--lint` is passed to `clean`, this script will be used to lint the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__ESLINT` overrides these rules (it's the default).
      *
      * @type {string}
      */
-    lintCmd: string | "__ESLINT";
+    lintCmd?: string | "__ESLINT";
     /**
      * If `--pretty` is passed to `clean`, this script will be used to prettify the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__PRETTIER` overrides these rules (it's the default).
      *
      * @type {string}
      */
-    prettyCmd: string | "__PRETTIER";
+    prettyCmd?: string | "__PRETTIER";
     /**
      * If provided, file paths in `targets` will be removed when `clean` is called with any of the `intensities`. If not provided defaults to `maxim` intensity and `node_modules` path. Specifying `targets` _without_ `node_modules` does not override it, meaning it'll always be cleaned.
      *
@@ -65,7 +64,7 @@ export interface FkNodeYaml {
      *         targets: string[]
      *     }}
      */
-    destroy: {
+    destroy?: {
         intensities: (CleanerIntensity | "*")[];
         targets: string[];
     };
@@ -74,19 +73,19 @@ export interface FkNodeYaml {
      *
      * @type {boolean}
      */
-    commitActions: boolean;
+    commitActions?: boolean;
     /**
      * If provided, if a commit is made (`commitActions`) this will be the commit message. If not provided a default message is used. `__USE_DEFAULT` indicates to use the default.
      *
      * @type {(string | "__USE_DEFAULT")}
      */
-    commitMessage: string | "__USE_DEFAULT";
+    commitMessage?: string | "__USE_DEFAULT";
     /**
      * If provided, uses the provided runtime script command for the updating stage, overriding the default command. Like `lintCmd` or `prettyCmd`, it must be a runtime script.
      *
      * @type {(string | "__USE_DEFAULT")}
      */
-    updateCmdOverride: string | "__USE_DEFAULT";
+    updateCmdOverride?: string | "__USE_DEFAULT";
 }
 
 /**
@@ -105,6 +104,7 @@ export function ValidateFkNodeYaml(
     }
 
     if (
+        obj.divineProtection !== undefined &&
         obj.divineProtection !== "*" &&
         obj.divineProtection !== "disabled" &&
         !(
@@ -120,15 +120,19 @@ export function ValidateFkNodeYaml(
         return false;
     }
 
-    if (obj.lintCmd && typeof obj.lintCmd !== "string") {
+    if (
+        obj.lintCmd !== undefined && typeof obj.lintCmd !== "string"
+    ) {
         return false;
     }
 
-    if (obj.prettyCmd && typeof obj.prettyCmd !== "string") {
+    if (
+        obj.prettyCmd !== undefined && typeof obj.prettyCmd !== "string"
+    ) {
         return false;
     }
 
-    if (obj.destroy) {
+    if (obj.destroy !== undefined) {
         if (
             typeof obj.destroy !== "object" ||
             !Array.isArray(obj.destroy.targets) ||
