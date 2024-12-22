@@ -214,7 +214,7 @@ export const UnderstandProjectSettings = {
  *
  * @typedef {ProjectError}
  */
-type ProjectError = "IsDuplicate" | "NoPkgJson";
+type ProjectError = "IsDuplicate" | "NoPkgJson" | "NoRootDir";
 
 /**
  * Given a path to a project, returns `true` if the project is valid, or a message indicating if it's not a valid Node/Deno/Bun project.
@@ -225,6 +225,7 @@ type ProjectError = "IsDuplicate" | "NoPkgJson";
  */
 export async function ValidateProject(entry: string): Promise<true | ProjectError> {
     const workingEntry = await ParsePath(entry);
+    if (!(await CheckForPath(workingEntry))) return "NoRootDir";
     const list = await GetAllProjects();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 
@@ -328,7 +329,7 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
 export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
     try {
         const workingPath = await ParsePath(path);
-        if (!(await CheckForPath(workingPath))) throw new Error("Path doesn't exist.");
+        if (!(await CheckForPath(workingPath))) throw new Error("(PROJECT-ENV) Path doesn't exist.");
         const trash = await JoinPaths(workingPath, "node_modules");
 
         const isDeno = await CheckForPath(await JoinPaths(workingPath, "deno.json")) ||

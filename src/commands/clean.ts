@@ -98,7 +98,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     } else {
                         await LogStuff(
                             ColorString(
-                                `More than one lockfile is a ${I_LIKE_JS.MFLY} bad practice. Future versions might add a handler for these cases, but for now we'll skip this.`,
+                                `More than one lockfile is a bad practice; we can't handle this ${I_LIKE_JS.MF}.`,
                                 "bright-yellow",
                             ),
                             "error",
