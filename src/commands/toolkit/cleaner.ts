@@ -601,11 +601,11 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
  * @export
  * @async
  * @param {string} path
- * @returns {Promise<ALL_SUPPORTED_LOCKFILES[]>}
+ * @returns {Promise<ALL_SUPPORTED_LOCKFILES[]>} All lockfiles
  */
 export async function ResolveLockfiles(path: string): Promise<ALL_SUPPORTED_LOCKFILES[]> {
     const lockfiles: ALL_SUPPORTED_LOCKFILES[] = [];
-    const possibleLockfiles = [
+    const possibleLockfiles: ALL_SUPPORTED_LOCKFILES[] = [
         "pnpm-lock.yaml",
         "package-lock.json",
         "yarn.lock",
@@ -614,7 +614,7 @@ export async function ResolveLockfiles(path: string): Promise<ALL_SUPPORTED_LOCK
     ];
     for (const lockfile of possibleLockfiles) {
         if (await CheckForPath(await JoinPaths(path, lockfile))) {
-            lockfiles.push(path as ALL_SUPPORTED_LOCKFILES);
+            lockfiles.push(lockfile);
         }
     }
     return lockfiles;
