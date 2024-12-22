@@ -223,6 +223,9 @@ async function ChangeSetting(setting: "default-int" | "update-freq" | "fav-edito
                 break;
             }
         }
+
+        await LogStuff(`Settings successfully updated! ${setting} is now ${value}`, "tick-clear");
+
         return;
     } catch (e) {
         throw e;
@@ -287,7 +290,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             break;
         case "change":
             if (!secondArg) {
-                await LogStuff("Invalid option, use 'change default-int' or 'change update-freq' to tweak settings.");
+                await LogStuff("Invalid option, use 'change default-int', 'change update-freq', or 'change fav-editor' to tweak settings.");
                 return;
             }
             switch (secondArg) {
@@ -310,7 +313,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
                         await LogStuff("Provide a value to update this setting to.");
                         return;
                     }
-                    await ChangeSetting("update-freq", thirdArg);
+                    await ChangeSetting("fav-editor", thirdArg);
                     break;
                 default:
                     await LogStuff("Invalid option, use 'change default-int', 'change update-freq', or 'change fav-editor' to tweak settings.");

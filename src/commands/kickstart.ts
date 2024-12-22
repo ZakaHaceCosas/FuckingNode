@@ -65,8 +65,12 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
                 break;
         }
 
-        const editorOutput = await Commander(command, [workingPath]);
-        if (!editorOutput.success) throw new Error(`Error launching ${favEditor}: ${editorOutput.stdout}`);
+        if (["subl", "code"].includes(command)) {
+            const editorOutput = await Commander(command, [workingPath]);
+            if (!editorOutput.success) throw new Error(`Error launching ${favEditor}: ${editorOutput.stdout}`);
+        } else {
+            await LogStuff(`Error: ${favEditor} is not a supported editor!`, "error");
+        }
 
         await LogStuff(`Great! ${await NameProject(workingPath, "name-ver")} is now setup. Enjoy!`, "tick-clear");
         Deno.exit(0);
