@@ -4,6 +4,7 @@ import { APP_NAME } from "../src/constants.ts";
 import type { ProjectEnv } from "../src/types/runtimes.ts";
 
 // naming things is fr the hardest
+// TODO - im stupid people cant just clone this repo and run the tests (they depend on my local file structure)
 const uwu: ProjectEnv = {
     main: `C:\\Users\\Zaka\\${APP_NAME.CASED}\\real-life-tests\\uwu\\package.json`,
     runtime: "node",
