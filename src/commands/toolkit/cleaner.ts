@@ -232,6 +232,7 @@ const ProjectCleaningFeatures = {
         }
         if (!isGitClean) {
             await LogStuff("Tree isn't clean, can't commit", "bruh");
+            return;
         }
         const getCommitMessage = () => {
             if (settings.commitMessage && settings.commitMessage.trim() !== "" && settings.updateCmdOverride !== "__USE_DEFAULT") {
