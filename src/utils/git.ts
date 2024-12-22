@@ -32,7 +32,8 @@ export async function IsWorkingTreeClean(path: string): Promise<boolean> {
             return false;
         }
 
-        const output = await Commander(
+        // check for uncommitted changes
+        const localChanges = await Commander(
             "git",
             [
                 "-C",
@@ -43,12 +44,32 @@ export async function IsWorkingTreeClean(path: string): Promise<boolean> {
             false,
         );
         if (
-            !output.success ||
-            output.stdout!.trim().length !== 0 // anything that isn't 0 means something is in the tree
+            !localChanges.success || localChanges.stdout!.trim().length !== 0 // anything that isn't 0 means something is in the tree
         ) {
             return false; // if anything happens we assume the tree isn't clean, just in case.
         }
-        return true;
+
+        // check if the local branch is behind the remote
+        const remoteStatus = await Commander(
+            "git",
+            [
+                "-C",
+                resolvedPath,
+                "rev-list",
+                "--count",
+                "--left-only",
+                "@{u}...HEAD",
+            ],
+            false,
+        );
+        if (
+            remoteStatus.success &&
+            parseInt(remoteStatus.stdout!.trim(), 10) > 0
+        ) {
+            return false; // local branch is behind the remote, so we shouldn't change stuff
+        }
+
+        return true; // clean working tree and up to date with remote, we can do whatever we want
     } catch (e) {
         await LogStuff(`An error happened validating the Git working tree: ${e}`, "error");
         return false;
