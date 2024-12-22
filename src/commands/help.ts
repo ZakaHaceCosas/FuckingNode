@@ -162,7 +162,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
         [
             "change",
-            "<update-freq | default-int> <value>",
+            "<update-freq | default-int | fav-editor> <value>",
             "Allows to change chosen settings.",
         ],
     ]);

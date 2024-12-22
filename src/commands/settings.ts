@@ -305,8 +305,15 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
                     }
                     await ChangeSetting("update-freq", thirdArg);
                     break;
+                case "fav-editor":
+                    if (!thirdArg) {
+                        await LogStuff("Provide a value to update this setting to.");
+                        return;
+                    }
+                    await ChangeSetting("update-freq", thirdArg);
+                    break;
                 default:
-                    await LogStuff("Invalid option, use 'change default-int' or 'change update-freq' to tweak settings.");
+                    await LogStuff("Invalid option, use 'change default-int', 'change update-freq', or 'change fav-editor' to tweak settings.");
                     break;
             }
             break;
