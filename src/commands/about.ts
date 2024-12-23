@@ -39,13 +39,13 @@ export default async function TheAbouter() {
     await LogStuff(colorizeText(ascii));
     await LogStuff(ColorString(ColorString(getRandomPhrase(phrases), "italic"), "bright-green"));
     await LogStuff(`Version ${ColorString(VERSION, "bright-yellow")}`, "package");
-    console.log("");
+    await LogStuff("");
     await LogStuff(
         `Written in ${ColorString("TypeScript", "bright-blue")}.\n` +
             `Running in ${ColorString("Deno", "bright-yellow")}.\n` +
             `Developed in ${ColorString("Spain", "red")} by ${ColorString("ZakaHaceCosas", "bright-green")}.`,
     );
-    console.log("");
+    await LogStuff("");
     await LogStuff(
         `${I_LIKE_JS.FK} communism, love freedom. this one's open-source: ${
             ColorString(`https://github.com/ZakaHaceCosas/${APP_NAME.CASED}`, "pink")

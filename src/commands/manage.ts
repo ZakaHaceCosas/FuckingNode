@@ -136,7 +136,6 @@ async function RemoveProject(
     isBareRemoval: boolean,
 ): Promise<void> {
     const workingEntry = isBareRemoval ? await ParsePath(entry) : await SpotProject(entry.trim());
-    console.log(workingEntry);
 
     if (!workingEntry) {
         await LogStuff(

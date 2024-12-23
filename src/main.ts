@@ -46,7 +46,7 @@ if (hasFlag("help", true)) {
 }
 
 if (hasFlag("version", true)) {
-    console.log(ColorString(VERSION, "bright-green"));
+    await LogStuff(ColorString(VERSION, "bright-green"), "bulb");
     Deno.exit(0);
 }
 
