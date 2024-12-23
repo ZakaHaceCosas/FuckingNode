@@ -2,7 +2,6 @@
  * Output of a CLI command called using Commander.
  *
  * @interface CommanderOutput
- * @typedef {CommanderOutput}
  */
 export interface CommanderOutput {
     /**

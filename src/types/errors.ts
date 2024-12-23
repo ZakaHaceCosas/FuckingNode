@@ -2,7 +2,6 @@
  * All possible error codes.
  *
  * @export
- * @typedef {ERROR_CODES}
  */
 export type ERROR_CODES =
     | "Manager__ProjectInteractionInvalidCauseNoPathProvided"

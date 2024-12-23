@@ -2,7 +2,6 @@
  * Supported lockfile type that the app recognizes as fully cleanable (NodeJS).
  *
  * @export
- * @typedef {SUPPORTED_NODE_LOCKFILES}
  */
 export type SUPPORTED_NODE_LOCKFILES =
     | "package-lock.json"
@@ -13,7 +12,6 @@ export type SUPPORTED_NODE_LOCKFILES =
  * Supported lockfile type that the app recognizes as partially cleanable (Deno and Bun)
  *
  * @export
- * @typedef {SUPPORTED_NOT_NODE_LOCKFILES}
  */
 export type SUPPORTED_NOT_NODE_LOCKFILES =
     | "deno.lock"
@@ -23,7 +21,6 @@ export type SUPPORTED_NOT_NODE_LOCKFILES =
  * All supported lockfiles.
  *
  * @export
- * @typedef {ALL_SUPPORTED_LOCKFILES}
  */
 export type ALL_SUPPORTED_LOCKFILES = SUPPORTED_NODE_LOCKFILES | SUPPORTED_NOT_NODE_LOCKFILES;
 
@@ -45,7 +42,6 @@ export function IsLockfileNodeLockfile(lockfile: string): lockfile is SUPPORTED_
  * Package manager commands for supported managers.
  *
  * @export
- * @typedef {PKG_MANAGERS}
  */
 export type PKG_MANAGERS = "pnpm" | "npm" | "yarn" | "deno" | "bun";
 
@@ -53,7 +49,6 @@ export type PKG_MANAGERS = "pnpm" | "npm" | "yarn" | "deno" | "bun";
  * Name and lockfile of a NodeJS package manager.
  *
  * @interface NodePkgManagerProps
- * @typedef {NodePkgManagerProps}
  */
 export interface NodePkgManagerProps {
     name: "npm" | "pnpm" | "yarn";

@@ -213,8 +213,6 @@ export const UnderstandProjectSettings = {
 
 /**
  * Possible errors.
- *
- * @typedef {ProjectError}
  */
 type ProjectError = "IsDuplicate" | "NoPkgJson" | "NoRootDir";
 

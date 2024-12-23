@@ -32,7 +32,6 @@ export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
  * Different variants of the f-word for in-app usage. Not fully "explicit" as an asterisk is used, like in f*ck.
  *
  * @interface HE_LIKES_JS
- * @typedef {HE_LIKES_JS}
  */
 interface HE_LIKES_JS {
     /**

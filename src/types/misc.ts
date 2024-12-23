@@ -2,7 +2,6 @@
  * Date in a YEAR-MONTH-DAY HOUR:MINUTE format.
  *
  * @export
- * @typedef {RIGHT_NOW_DATE}
  */
 export type RIGHT_NOW_DATE = `${number}-${string}-${string} ${string}:${string}`;
 
@@ -15,7 +14,6 @@ export const RIGHT_NOW_DATE_REGEX: RegExp = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
  * Valid emojis
  *
  * @export
- * @typedef {SUPPORTED_EMOJIS}
  */
 export type SUPPORTED_EMOJIS =
     | "danger"
@@ -37,8 +35,6 @@ export type SUPPORTED_EMOJIS =
 
 /**
  * A GitHub release asset.
- *
- * @typedef {GitHubReleaseAsset}
  */
 type GitHubReleaseAsset = {
     url: string;
@@ -59,7 +55,6 @@ type GitHubReleaseAsset = {
  *
  * @export
  * @interface GITHUB_RELEASE
- * @typedef {GITHUB_RELEASE}
  */
 export interface GITHUB_RELEASE {
     /**
@@ -80,14 +75,11 @@ export interface GITHUB_RELEASE {
  * A string preceded with "https://"
  *
  * @export
- * @typedef {tURL}
  */
 export type tURL = `https://${string}`;
 
 /**
  * Colors that can be used to spice up the CLI's stdout.
- *
- * @typedef {tValidColors}
  */
 export type tValidColors =
     | "red"

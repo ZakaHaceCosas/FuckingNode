@@ -6,7 +6,6 @@ import type { RIGHT_NOW_DATE } from "./misc.ts";
  *
  * @export
  * @interface CF_FKNODE_SETTINGS
- * @typedef {CF_FKNODE_SETTINGS}
  */
 export interface CF_FKNODE_SETTINGS {
     /**
@@ -181,7 +180,6 @@ export function ValidateFkNodeYaml(
  *
  * @export
  * @interface CF_FKNODE_UPDATES
- * @typedef {CF_FKNODE_UPDATES}
  */
 export interface CF_FKNODE_UPDATES {
     /**

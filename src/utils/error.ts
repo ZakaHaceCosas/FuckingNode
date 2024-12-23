@@ -8,7 +8,6 @@ import type { ERROR_CODES } from "../types/errors.ts";
  *
  * @export
  * @class FknError
- * @typedef {FknError}
  * @extends {Error}
  */
 export class FknError extends Error {

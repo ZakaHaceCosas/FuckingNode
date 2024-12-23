@@ -3,7 +3,6 @@
  *
  * @export
  * @interface NodePkgJson
- * @typedef {NodePkgJson}
  */
 export interface NodePkgJson {
     name?: string;
@@ -21,7 +20,6 @@ export interface NodePkgJson {
  *
  * @export
  * @interface DenoPkgJson
- * @typedef {DenoPkgJson}
  */
 export interface DenoPkgJson {
     name?: string;
@@ -34,7 +32,6 @@ export interface DenoPkgJson {
  *
  * @export
  * @interface BunfigToml
- * @typedef {BunfigToml}
  */
 export interface BunfigToml {
     name?: string;
@@ -49,7 +46,6 @@ export interface BunfigToml {
  * Info about a project to know its environment (runtime and package manager).
  *
  * @interface ProjectEnv
- * @typedef {ProjectEnv}
  */
 export interface ProjectEnv {
     /**
