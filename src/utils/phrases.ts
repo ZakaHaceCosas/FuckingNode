@@ -41,7 +41,7 @@ const coolJokes = [
     "runs faster than a Roblox server on a saturday",
     "stay safe",
     "i don't get paid for writing phrases... here's another one",
-    `This PC has been running for ${Deno.osUptime() / 60} minutes.`,
+    `This PC has been running for ${Math.ceil(Deno.osUptime() / 60)} minutes.`,
     "Freedom for Venezuela!",
 ];
 
