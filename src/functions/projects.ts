@@ -64,6 +64,8 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
     const formattedPath = ColorString(ColorString(workingPath, "italic"), "half-opaque");
 
     try {
+        const exists = await CheckForPath(workingPath);
+        if (!exists) throw new Error("(path doesn't exist, this won't be shown and the formatted path will be returned instead)");
         const env = await GetProjectEnvironment(workingPath);
         const pkgFilePath = await Deno.readTextFile(env.main);
 

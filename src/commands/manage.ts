@@ -127,13 +127,16 @@ async function AddProject(
  * Removes a project.
  *
  * @async
- * @param {string} entry
+ * @param {string} entry Path to the project.
+ * @param {boolean} isBareRemoval If true, it'll remove the project without spotting, assuming it's a valid path.
  * @returns {Promise<void>}
  */
 async function RemoveProject(
     entry: string,
+    isBareRemoval: boolean,
 ): Promise<void> {
-    const workingEntry = await SpotProject(entry.trim());
+    const workingEntry = isBareRemoval ? await ParsePath(entry) : await SpotProject(entry.trim());
+    console.log(workingEntry);
 
     if (!workingEntry) {
         await LogStuff(
@@ -143,7 +146,7 @@ async function RemoveProject(
         return;
     }
 
-    const list = await GetAllProjects();
+    const list = await GetAllProjects(false);
     const index = list.indexOf(workingEntry);
 
     if (!list.includes(workingEntry)) {
@@ -156,6 +159,7 @@ async function RemoveProject(
 
     if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
     await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
+
     if (list.length > 0) {
         await LogStuff(
             `Let me guess: ${await NameProject(
@@ -247,7 +251,7 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         return 2;
     }
     for (const target of list) {
-        await RemoveProject(target);
+        await RemoveProject(target, true);
     }
     await LogStuff(`That worked out!`, "tick");
     return 0;
@@ -479,7 +483,7 @@ export default async function TheManager(args: string[]) {
                     "You didn't provide a path.",
                 );
             }
-            await RemoveProject(secondArg);
+            await RemoveProject(secondArg, false);
             break;
         case "ignore":
             if (validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
