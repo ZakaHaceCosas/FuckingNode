@@ -26,6 +26,7 @@ export interface NodePkgJson {
 export interface DenoPkgJson {
     name?: string;
     version?: string;
+    imports?: Record<string, string>;
 }
 
 /**

@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `settings change` command to change certain settings.
 - Added a `kickstart` command to quickly clone a Git repo and start it up a project.
 - Added the ability to override the command used by the `--update` task in `clean`, via `fknode.yaml`.
+- Added `stats` as a different command. It's now stabilized and instead of showing a project's size, it shows other relevant data. Many more props to be added in future minor releases.
 
 ### Changed
 

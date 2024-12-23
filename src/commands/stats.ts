@@ -1,8 +1,9 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { CheckForPath, GetDirSize, ParsePath } from "../functions/filesystem.ts";
-import { LogStuff } from "../functions/io.ts";
-import { SpotProject } from "../functions/projects.ts";
+import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
+import { ColorString, LogStuff } from "../functions/io.ts";
+import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import { NameProject } from "../functions/projects.ts";
+import type { DenoPkgJson, NodePkgJson } from "../types/runtimes.ts";
 
 export default async function TheStatistics(target: string) {
     const project = await SpotProject(target);
@@ -11,28 +12,39 @@ export default async function TheStatistics(target: string) {
         return;
     }
 
-    // await LogStuff(`This is ${I_LIKE_JS.MFLY} going to take a while. Have a coffee meanwhile!`, "bruh");
+    const env = await GetProjectEnvironment(project);
+    const name = await NameProject(project, "all");
 
-    const size = await GetDirSize(project);
+    await LogStuff(
+        `${name}\n${ColorString(env.runtime, "bold")} runtime & ${ColorString(env.manager, "bold")} pkg manager\nMain file: ${env.main}`,
+    );
 
-    let message: string = I_LIKE_JS.MF;
-
-    if (size < 50) {
-        message = "That's actually okay ngl.";
-    } else if (size > 500) {
-        message = `Big ${I_LIKE_JS.MF}.`;
-    } else if (size > 1000) {
-        message = `Giant ${I_LIKE_JS.MF} (we're over a GB!)`;
-    } else if (size > 5000) {
-        message = `Insanely ${I_LIKE_JS.MFN} insane.`;
-    } else if (size > 9999) {
-        message =
-            `WHAT THE ${I_LIKE_JS.FKN.toUpperCase()} ${I_LIKE_JS.FK.toUpperCase()} ARE YOU ${I_LIKE_JS.FKN.toUpperCase()} CODING IN ${I_LIKE_JS.FKN.toUpperCase()} THERE??`;
+    const main = JSON.parse(await Deno.readTextFile(env.main));
+    let deps: Record<string, string> | undefined;
+    switch (env.runtime) {
+        case "bun":
+            deps = (main as NodePkgJson).dependencies;
+            break;
+        case "deno":
+            deps = (main as DenoPkgJson).imports;
+            break;
+        case "node":
+            deps = (main as NodePkgJson).dependencies;
+            break;
     }
 
-    const name = await NameProject(project, "name");
-    await LogStuff(
-        `${name} is taking ${size.toFixed(2)}MB. ${message}`,
-        "trash",
-    );
+    if (!deps) {
+        await LogStuff("No dependencies found (impressive).");
+    } else {
+        await LogStuff(`\nDepends on ${ColorString(Object.keys(deps).length, "bold")} ${I_LIKE_JS.MFS}:\n${
+            ColorString(
+                `${
+                    Object.entries(deps)
+                        .map(([dep, version]) => `${dep}@${version}`)
+                        .join("\n")
+                }`,
+                "bold",
+            )
+        }`);
+    }
 }

@@ -9,7 +9,7 @@ import TheSettings from "./commands/settings.ts";
 import TheAbouter from "./commands/about.ts";
 import TheKickstart from "./commands/kickstart.ts";
 // other things
-import { I_LIKE_JS, VERSION } from "./constants.ts";
+import { VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetSettings } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
@@ -47,24 +47,6 @@ if (hasFlag("help", true)) {
 
 if (hasFlag("version", true)) {
     await LogStuff(ColorString(VERSION, "bright-green"), "bulb");
-    Deno.exit(0);
-}
-
-if (hasFlag("experimental-stats", false)) {
-    await init(false);
-    if (
-        await LogStuff(
-            "Experimental features are hidden behind a flag for a reason. Are you sure?",
-            "warn",
-            undefined,
-            true,
-        )
-    ) {
-        await LogStuff(
-            `Okay, there we go. Report any ${I_LIKE_JS.FKN} error you find in GitHub.`,
-        );
-        await TheStatistics(Deno.args[1] ?? "");
-    }
     Deno.exit(0);
 }
 
@@ -124,10 +106,7 @@ async function main(command: string) {
                 await TheAbouter();
                 break;
             case "stats":
-                await LogStuff(
-                    "stats has been proven to be an unstable and not-working command. Use --experimental-stats if you want to try it.",
-                    "warn",
-                );
+                await TheStatistics(Deno.args[1] ?? "");
                 break;
             default:
                 await TheHelper({ query: Deno.args[1] });

@@ -62,6 +62,8 @@
   - [x] NODE
   - [x] DENO
   - [x] BUN
+- [ ] Other tasks
+  - [ ] Partially remove `bunfig.toml` support (in reality bun projects use the NodeJS pkg JSON, bunfig is only useful for identifying projects in the end) (& rename `NodePkgJson` to `NodeAndBunPkgJson` i guess)
 
 ## Cleaner
 
