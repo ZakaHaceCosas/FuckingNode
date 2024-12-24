@@ -2,7 +2,7 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { expandGlob } from "@std/fs";
 import { DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import type { BunfigToml, DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
+import type { DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff, NaturalizeFormattedString } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
@@ -75,7 +75,8 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
         let formattedNameVer: string;
 
         switch (env.runtime) {
-            case "node": {
+            case "node":
+            case "bun": {
                 const packageJson: NodePkgJson = JSON.parse(pkgFilePath);
 
                 if (!packageJson.name) return formattedPath;
@@ -84,7 +85,7 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
 
                 formattedVersion = packageJson.version ? ColorString(packageJson.version, "purple") : "";
 
-                formattedNameVer = `${ColorString(formattedName, "bright-green")}@${formattedVersion}`;
+                formattedNameVer = `${ColorString(formattedName, env.runtime === "node" ? "bright-green" : "pink")}@${formattedVersion}`;
 
                 fullNamedProject = `${formattedNameVer} ${formattedPath}`;
                 break;
@@ -99,20 +100,6 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
                 formattedVersion = denoJson.version ? ColorString(denoJson.version, "purple") : "";
 
                 formattedNameVer = `${ColorString(formattedName, "bright-blue")}@${formattedVersion}`;
-
-                fullNamedProject = `${formattedNameVer} ${formattedPath}`;
-                break;
-            }
-            case "bun": {
-                const bunToml: BunfigToml = parseYaml(pkgFilePath) as BunfigToml;
-
-                if (!bunToml.name) return formattedPath;
-
-                formattedName = ColorString(bunToml.name, "bold");
-
-                formattedVersion = bunToml.version ? ColorString(bunToml.version, "purple") : "";
-
-                formattedNameVer = `${ColorString(formattedName, "pink")}@${formattedVersion}`;
 
                 fullNamedProject = `${formattedNameVer} ${formattedPath}`;
                 break;
@@ -332,20 +319,17 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
         if (!(await CheckForPath(workingPath))) throw new Error("(PROJECT-ENV) Path doesn't exist.");
         const trash = await JoinPaths(workingPath, "node_modules");
 
-        const isDeno = await CheckForPath(await JoinPaths(workingPath, "deno.json")) ||
-            await CheckForPath(await JoinPaths(workingPath, "deno.jsonc")) || await CheckForPath(await JoinPaths(workingPath, "deno.lock"));
-        const isBun = await CheckForPath(await JoinPaths(workingPath, "bun.lockb")) ||
-            await CheckForPath(await JoinPaths(workingPath, "bunfig.toml"));
+        const denoPaths = ["deno.json", "deno.jsonc", "deno.lock"];
+        const bunPaths = ["bunfig.toml", "bun.lockb"];
 
-        const mainPath = isDeno
-            ? (await CheckForPath(await JoinPaths(workingPath, "deno.json"))
-                ? await JoinPaths(workingPath, "deno.json")
-                : await JoinPaths(workingPath, "package.json"))
-            : isBun
-            ? (await CheckForPath(await JoinPaths(workingPath, "bunfig.toml"))
-                ? await JoinPaths(workingPath, "bunfig.toml")
-                : await JoinPaths(workingPath, "package.json"))
-            : await JoinPaths(workingPath, "package.json");
+        const isDeno = await Promise.any(
+            denoPaths.map(async (file) => CheckForPath(await JoinPaths(workingPath, file))),
+        ).catch(() => false);
+        const isBun = await Promise.any(
+            bunPaths.map(async (file) => CheckForPath(await JoinPaths(workingPath, file))),
+        ).catch(() => false);
+
+        const mainPath = isDeno ? await JoinPaths(workingPath, "deno.json") : await JoinPaths(workingPath, "package.json");
 
         if (isBun) {
             return {

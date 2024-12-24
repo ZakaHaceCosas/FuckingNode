@@ -1,5 +1,5 @@
 /**
- * NodeJS `package.json` props, only the ones we need.
+ * NodeJS and BunJS `package.json` props, only the ones we need.
  *
  * @export
  * @interface NodePkgJson
@@ -25,21 +25,6 @@ export interface DenoPkgJson {
     name?: string;
     version?: string;
     imports?: Record<string, string>;
-}
-
-/**
- * Bun `bunfig.toml` props, only the ones we need.
- *
- * @export
- * @interface BunfigToml
- */
-export interface BunfigToml {
-    name?: string;
-    version?: string;
-    /* main?: string;
-    scripts?: Record<string, string>;
-    dependencies?: Record<string, string>;
-    devDependencies?: Record<string, string>; */
 }
 
 /**
