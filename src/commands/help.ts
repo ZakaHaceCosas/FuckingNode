@@ -147,16 +147,6 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "Flushes (removes) chosen config files.",
         ],
         [
-            "schedule",
-            `<hour> <day>`,
-            `Schedule ${APP_NAME.STYLED}'s cleanup.\n  Runs every <day> days at the <hour> of the day.\n  "schedule 15 3", will schedule the cleaner to run with your default intensity every 3 days at 15:00.`,
-        ],
-        [
-            "auto-flush",
-            `<day>`,
-            `Schedule flushing files every <day> days. Only supports flushing log files.`,
-        ],
-        [
             "repair",
             null,
             `Resets all settings to their default value.`,

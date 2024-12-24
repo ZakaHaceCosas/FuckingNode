@@ -1,66 +1,16 @@
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
-import { APP_NAME } from "../constants.ts";
-import TheCleaner from "./clean.ts";
-import { ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
+import { BulkRemoveFiles, ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 import { FreshSetup, GetAppPath, GetSettings } from "../functions/config.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { stringify as stringifyYaml } from "@std/yaml";
 
-async function CreateSchedule(hour: string | null, day: string | "*" | null) {
-    const workingHour = Number(hour);
-
-    if (isNaN(workingHour) || workingHour < 0 || workingHour > 23) {
-        await LogStuff("Invalid hour. Must be a number between 0 and 23.", "error");
-        Deno.exit(1);
-    }
-
-    const workingDay: Deno.CronScheduleExpression = day === "*" ? 1 : { every: Number(day) };
-
-    if (day !== "*" && (isNaN(Number(day)) || Number(day) < 0 || Number(day) > 6)) {
-        await LogStuff("Invalid day. Must be a number between 0 and 6, or an asterisk ('*') for daily.", "error");
-        Deno.exit(1);
-    }
-
-    try {
-        Deno.cron(
-            "fkn-cleaner",
-            {
-                minute: 0,
-                hour: workingHour,
-                dayOfWeek: workingDay,
-            },
-            { backoffSchedule: [1500, 3000, 5000, 15000] },
-            async () => {
-                await TheCleaner({
-                    update: false,
-                    verbose: false,
-                    prettify: false,
-                    lint: false,
-                    commit: false,
-                    destroy: false,
-                    intensity: (await GetSettings()).defaultCleanerIntensity,
-                });
-            },
-        );
-        await LogStuff("That worked out! Schedule successfully created!", "tick");
-    } catch (e) {
-        await LogStuff(`Error scheduling: ${e}`, "error");
-    }
-}
-
-async function removeFiles(files: string[]) {
-    await Promise.all(files.map(async (file) => {
-        await Deno.remove(file);
-    }));
-}
-
 async function Flush(what: string, force: boolean) {
     const validTargets = ["logs", "projects", "updates", "all"];
     if (!validTargets.includes(what)) {
         await LogStuff(
-            "Specify what to flush. Either 'logs', 'projects', 'updates', or 'all'.\nIf you want to enable auto-flush, run 'settings auto-flush enable/disable <interval>.",
+            "Specify what to flush. Either 'logs', 'projects', 'updates', or 'all'.",
             "warn",
         );
         return;
@@ -108,43 +58,10 @@ async function Flush(what: string, force: boolean) {
     if (!shouldProceed) return;
 
     try {
-        await removeFiles(file);
+        await BulkRemoveFiles(file);
         await LogStuff("That worked out!", "tick-clear");
     } catch (e) {
         await LogStuff(`Error removing files: ${e}`, "error");
-    }
-}
-
-async function AutoFlush(action: "enable" | "disable", freq?: number) {
-    if (!(["enable", "disable"].includes(action))) throw new Error("Action must be either enable or disable.");
-    if (action === "disable") {
-        throw new Error(
-            "Cannot disable tasks. We use Deno's Cron feature to schedule tasks, which is still unstable on their side and doesn't yet allow us to remove a scheduled task.",
-        );
-    }
-
-    if (!freq || isNaN(freq)) {
-        await LogStuff("Invalid frequency. Must be a number.", "error");
-        Deno.exit(1);
-    }
-
-    try {
-        Deno.cron(
-            "fkn-flush",
-            {
-                minute: 0,
-                hour: 0,
-                dayOfWeek: 0,
-                dayOfMonth: { every: freq },
-            },
-            { backoffSchedule: [1500, 3000, 5000, 15000] },
-            async () => {
-                await Flush("logs", true);
-            },
-        );
-        await LogStuff("That worked out! Auto-flush successfully scheduled!", "tick");
-    } catch (e) {
-        await LogStuff(`Error scheduling auto-flush: ${e}`, "error");
     }
 }
 
@@ -259,31 +176,9 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
         return;
     }
 
-    if (ParseFlag("experimental-schedule", false).includes(command)) {
-        await CreateSchedule(secondArg, thirdArg);
-        return;
-    }
-
-    if (ParseFlag("experimental-auto-flush", false).includes(command)) {
-        await AutoFlush(secondArg as "enable" | "disable", Number(thirdArg));
-        return;
-    }
-
     switch (command) {
-        case "schedule":
-            await LogStuff(
-                `${APP_NAME.STYLED} runtime's (Deno) support for scheduled tasks is still unstable and this feature doesn't work properly. Use --experimental-schedule to try it.`,
-                "bruh",
-            );
-            break;
         case "flush":
             await Flush(secondArg ?? "", ParseFlag("force", false).includes(thirdArg ?? ""));
-            break;
-        case "auto-flush":
-            await LogStuff(
-                `${APP_NAME.STYLED} runtime's (Deno) support for scheduled tasks is still unstable and this feature doesn't work properly. Use --experimental-auto-flush to try it.`,
-                "bruh",
-            );
             break;
         case "repair":
             await Repair();

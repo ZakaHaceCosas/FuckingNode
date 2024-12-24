@@ -123,3 +123,19 @@ export function ConvertBytesToMegaBytes(size: number | number[], useKbIfLow: boo
 
     return parseFloat(sizeInMB.toFixed(realPrecision)); // Return in MB
 }
+
+/**
+ * Takes an array of paths and removes all of them, with recursive removal enabled.
+ *
+ * @export
+ * @async
+ * @param {string[]} files Array of file paths to remove
+ * @returns {Promise<void>}
+ */
+export async function BulkRemoveFiles(files: string[]): Promise<void> {
+    await Promise.all(files.map(async (file) => {
+        await Deno.remove(await ParsePath(file), {
+            recursive: true
+        });
+    }));
+}

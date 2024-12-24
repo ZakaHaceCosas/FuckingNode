@@ -71,9 +71,6 @@ Run `fuckingnode settings` with no args to see your current settings. Use `setti
 | `change update-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests. |
 | `flush <file>` | `logs`, `updates`, `projects`, or `all` | Flushes (removes) config files. | `logs` is particularly recommended. `projects` and `all` are discouraged. |
 
-> [!NOTE]
-> `settings` will also show info about an "auto-flush" setting. It's given a default value for future versions - we currently don't support scheduled cleanup. `help settings` shows there's an option to schedule the cleaner - it's also unsupported as of now.
-
 ### Project settings
 
 We also support adding a `fknode.yaml` file to your projects. Some commands, like `manager ignore` will add it automatically if it doesn't exist. Some other commands, like `clean -- --lint` require it to be present, otherwise continuing execution but skipping tasks that depend on this file.
