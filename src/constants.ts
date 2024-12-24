@@ -3,6 +3,11 @@ import type { SemVer } from "@std/semver/types";
 import { format } from "@std/semver";
 import type { CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
 
+/**
+ * Current app version as a SemVer object.
+ *
+ * @type {SemVer}
+ */
 const _SV_VER: SemVer = {
     major: 2,
     minor: 0,
@@ -100,6 +105,11 @@ export const IGNORE_FILE: string = "fknode.yaml";
  */
 export const RELEASE_URL: tURL = `https://api.github.com/repos/ZakaHaceCosas/${APP_NAME.CASED}/releases/latest`;
 
+/**
+ * Default app settings.
+ *
+ * @type {CF_FKNODE_SETTINGS}
+ */
 export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
     updateFreq: 5,
     defaultCleanerIntensity: "normal",
@@ -111,7 +121,7 @@ export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
 };
 
 /**
- * Default settings.
+ * Default project settings.
  *
  * @type {FkNodeYaml}
  */

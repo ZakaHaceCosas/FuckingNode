@@ -25,7 +25,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     const USAGE = formatCmd([
         [
             "clean",
-            "<intensity | --> [--update] [--verbose] [--lint] [--pretty] [--commit]",
+            "<intensity | --> [--update] [--verbose] [--lint] [--pretty] [--commit] [--destroy]",
             "Cleans all of your projects.",
         ],
         [
@@ -36,7 +36,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "kickstart",
             "<git-url> [path] [npm | pnpm | yarn | deno | bun]",
-            `Quickly clones a repo, installs deps, setups ${APP_NAME.CASED}, and opens Visual Studio Code.`,
+            `Quickly clones a repo, installs deps, setups ${APP_NAME.CASED}, and opens your favorite editor.`,
         ],
         [
             "settings",
@@ -61,8 +61,6 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     async function NoParamProvided() {
         await LogStuff(
             `Usage: ${ColorString(APP_NAME.CLI, "bright-green")} <command> [params...]\n\n${USAGE}\n`,
-            undefined,
-            true,
         );
         await LogStuff(
             ColorString(
@@ -70,7 +68,6 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
                 "bright-yellow",
             ),
             "bulb",
-            true,
         );
     }
 
@@ -109,8 +106,8 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     const CLEAN_OPTIONS = formatCmd([
         [
             "clean",
-            "<intensity>",
-            "'normal' | 'hard' | 'maxim' - The higher, the deeper (but more time-consuming) the cleaning will be.",
+            "<intensity> [...flags]",
+            "'normal' | 'hard' | 'hard-only' | 'maxim' - The higher, the deeper (but more time-consuming) the cleaning will be.",
         ],
         [
             "--update",
@@ -131,12 +128,16 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "--destroy",
             null,
-            "Remove additional files and DIRs (e.g. 'dist/', 'out/', etc...) when cleaning. Requires you to specify files and DIRs to remove from the fknode.yaml).",
+            "Remove additional files and DIRs (e.g. 'dist/', 'out/', etc...) when cleaning. Requires you to specify files and DIRs to remove in the fknode.yaml.",
         ],
         [
             "--commit",
             null,
-            `If your Git working tree was clean before ${APP_NAME.CASED} touched it, and you performed actions that change the code (e.g. --pretty or --update), it'll commit them using a default commit message. Requires "commitActions" to be set to true in your fknode.yaml. You can override the default commit message with "commitMessage" in your fknode.yaml.`,
+            `Commit any action that changes the code (e.g. --pretty or --update) when all of these are true:\n${
+                SpaceString(`- "commitActions" is set to true in your fknode.yaml.`, 4)
+            }\n${SpaceString(`- Local working tree was clean before ${APP_NAME.CASED} touched it.`, 4)}\n${
+                SpaceString(`- Local repo is not behind upstream.`, 4)
+            }\n  Uses a default commit message; override it by setting "commitMessage" in your fknode.yaml.`,
         ],
     ]);
     const SETTINGS_OPTIONS = formatCmd([
@@ -170,7 +171,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "kickstart",
             "<git-url> [path] [manager]",
-            "Clones the repo provided with <git-url> into specified [path], or CWD/<repo-name> if not given, and auto-installs dependencies with provided [manager], or pnpm by default. If you don't have pnpm it doesn't auto-choose another manager. Use pnpm >:D.",
+            "Clones <git-url> to [path] (or ./<repo-name> by default), installs deps with [manager] (or default (pnpm, bun, or deno) if not given), opens your editor (VSCode by default, change from settings), and adds the project to your list.",
         ],
     ]);
     const MIGRATE_OPTIONS = formatCmd([
@@ -180,48 +181,54 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "Automatically migrates a given <project> to a given <target> package manager (npm, pnpm, and yarn). Does not support cross-runtime migration, and relies on each manager's ability to understand the other one's package manager formats.",
         ],
     ]);
+    const UPGRADE_OPTIONS = formatCmd([
+        [
+            "upgrade",
+            null,
+            "Checks for updates.",
+        ],
+    ]);
     const ABOUT_OPTIONS = formatCmd([
         [
             "about",
             null,
-            "Shows a simple (but cool looking!) about screen. No params taken. The sentence below the app name is randomized from an internal list, by the way.",
+            "Shows a simple (but cool looking!) about screen. No params taken. Includes random sentences below the logo.",
         ],
     ]);
     const HELP_OPTIONS = formatCmd([
-        ["help", "[command]", "Shows help for the given command, or general help if no command (or invalid command) given."],
+        [
+            "help",
+            "[command]",
+            "Shows help for the given command, or general help if no command (or invalid command) given.",
+        ],
     ]);
 
     switch ((query ?? "").trim()) {
         case "clean":
             await LogStuff(
-                "'clean' will clean your added projects. Flags:\n" +
-                    CLEAN_OPTIONS,
-                undefined,
-                true,
+                `'clean' will clean your added projects. Options and flags:\n${CLEAN_OPTIONS}`,
             );
             break;
         case "manager":
             await LogStuff(
-                "'manager' will let you manage projects. Flags:\n" +
-                    MANAGER_OPTIONS,
-                undefined,
-                true,
+                `'manager' will let you manage projects. Options:\n${MANAGER_OPTIONS}`,
             );
             break;
         case "settings":
             await LogStuff(
-                `'settings' lets you view and manage settings related commands. Options:\n${SETTINGS_OPTIONS}`,
-                undefined,
-                true,
+                `'settings' lets you manage app configurations and more. Options:\n${SETTINGS_OPTIONS}`,
             );
             break;
         case "kickstart":
             await LogStuff(
-                `'kickstart' allows you to kickstart a dev repo easily. Options:\n${KICKSTART_OPTIONS}`,
+                `'kickstart' allows you to kickstart a repo easily. Options:\n${KICKSTART_OPTIONS}`,
             );
             break;
         case "migrate":
             await LogStuff(MIGRATE_OPTIONS);
+            break;
+        case "UPGRADE":
+            await LogStuff(UPGRADE_OPTIONS);
             break;
         case "about":
             await LogStuff(ABOUT_OPTIONS);
