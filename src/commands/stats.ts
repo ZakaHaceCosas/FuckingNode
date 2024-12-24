@@ -1,59 +1,50 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { CheckForPath, GetDirSize, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import { LogStuff } from "../functions/io.ts";
-import { GetAllProjects } from "../functions/projects.ts";
-import { CONFIG_FILES } from "../types.ts";
+import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
+import { ColorString, LogStuff } from "../functions/io.ts";
+import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
+import { NameProject } from "../functions/projects.ts";
+import type { DenoPkgJson, NodePkgJson } from "../types/runtimes.ts";
 
-export default async function TheStatistics(CF: CONFIG_FILES) {
-    const projects = await GetAllProjects(CF);
-
-    let totalSpace: number = 0;
-
-    await LogStuff(`This is ${I_LIKE_JS.MFLY} going to take a while. Have a coffee meanwhile!`, "bruh");
-
-    for (const project of projects) {
-        const workingPath = await ParsePath(project);
-
-        const nodeGarbagePath = await JoinPaths(workingPath, "node_modules");
-
-        if (!(await CheckForPath(workingPath))) {
-            await LogStuff(`${workingPath} doesn't exist?`, "warn");
-            continue;
-        }
-        if (!(await CheckForPath(nodeGarbagePath))) {
-            await LogStuff(`${workingPath} doesn't have a node_modules DIR. What's up?`, "warn");
-            continue;
-        }
-
-        let size = await GetDirSize(nodeGarbagePath);
-        size += await GetDirSize(workingPath);
-
-        let message: string = I_LIKE_JS.MF;
-
-        if (size < 50) {
-            message = "That's actually okay ngl.";
-        } else if (size > 500) {
-            message = `Big ${I_LIKE_JS.MF}.`;
-        } else if (size > 1000) {
-            message = `Giant ${I_LIKE_JS.MF} (we're over a GB!)`;
-        } else if (size > 5000) {
-            message = `Insanely ${I_LIKE_JS.MFN} insane.`;
-        } else if (size > 9999) {
-            message =
-                `WHAT THE ${I_LIKE_JS.FKN.toUpperCase} ${I_LIKE_JS.FK.toUpperCase} ARE YOU ${I_LIKE_JS.FKN.toUpperCase} CODING IN ${I_LIKE_JS.FKN.toUpperCase} THERE??`;
-        }
-
-        await LogStuff(
-            `${workingPath} is taking ${size.toFixed(2)}MB. ${message}`,
-            "trash",
-        );
-
-        totalSpace += size;
+export default async function TheStatistics(target: string) {
+    const project = await SpotProject(target);
+    if (!project || !(await CheckForPath(project))) {
+        await LogStuff(`We couldn't find a project in ${await ParsePath(target)}. What's up?`, "warn");
+        return;
     }
 
-    console.log(""); // glue stick fix
+    const env = await GetProjectEnvironment(project);
+    const name = await NameProject(project, "all");
+
     await LogStuff(
-        `In total, your ${I_LIKE_JS.MFS} are taking up to ${totalSpace.toFixed(2)}MB.`,
-        "bruh",
+        `${name}\n${ColorString(env.runtime, "bold")} runtime & ${ColorString(env.manager, "bold")} pkg manager\nMain file: ${env.main}`,
     );
+
+    const main = JSON.parse(await Deno.readTextFile(env.main));
+    let deps: Record<string, string> | undefined;
+    switch (env.runtime) {
+        case "bun":
+            deps = (main as NodePkgJson).dependencies;
+            break;
+        case "deno":
+            deps = (main as DenoPkgJson).imports;
+            break;
+        case "node":
+            deps = (main as NodePkgJson).dependencies;
+            break;
+    }
+
+    if (!deps) {
+        await LogStuff("No dependencies found (impressive).");
+    } else {
+        await LogStuff(`\nDepends on ${ColorString(Object.keys(deps).length, "bold")} ${I_LIKE_JS.MFS}:\n${
+            ColorString(
+                `${
+                    Object.entries(deps)
+                        .map(([dep, version]) => `${dep}@${version}`)
+                        .join("\n")
+                }`,
+                "bold",
+            )
+        }`);
+    }
 }

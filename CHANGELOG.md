@@ -6,18 +6,52 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased <!-- 1.5.0 -->
+## [2.0.0] Unreleased <!-- 2.0.0 - major release, even tho there aren't "breaking" changes (well, adding runtimes that aren't Node to the "F*ckingNODE" project is kinda "breaking") -->
+
+### Breaking changes
+
+- `.fknodeignore` becomes `fknode.yaml`, and follows a new format detailed in the `README.md`.
+- `self-update` becomes `upgrade`.
+- The project list and other config files will "reset" when downloading this update (simply because file names changed from `.json` to `.yaml`). You can recover old data from `C:\Users\YOUR_USER\AppData\FuckingNode\`, or the macOS / Linux `APPDATA` equivalent.
+- `manager revive` and `manager ignore` have been removed, as ignoring is now more complex. **You can still ignore projects manually from the `fknode.yaml`**. We will (hopefully) readd ignoring CLI commands in a future release.
 
 ### Added
 
+- **Added partial support for cleanup of both the Bun and Deno JavaScript runtimes.**
+- Added new capabilities besides cleaning and updating.
+  - Automatic linting of projects.
+  - Automatic prettifying of projects.
+  - Automatic removal of unneeded files (e.g. `dist/`, `out/`, etc...).
+  - Added the ability to auto-commit these changes (only if there weren't previous uncommitted changes).
 - Added an install script for Microsoft Windows.
-- Added the option to flush config files, so the user can save up space.
+- Added the option to flush config files (like `.log`s), so the user can save up space.
+- Added the ability to customize whether an ignored project should ignore updates, cleanup, or everything.
+- Added much more better support for workspaces, by recognizing `pnpm-workspace.yaml`, `yarnrc.yaml` and `bunfig.toml`.
+- Added the ability to only do a hard cleanup (global cache cleanup), by running either `global-clean`, `hard-clean`, or `clean hard-only`.
+- Added an about page.
+- Added the `--alive` flag to `manager list` so it only lists projects that are not ignored.
+- Added a `settings` command which allows to tweak:
+  - Update check frequency
+  - Default cleaner intensity
+  - Favorite editor (for new `kickstart` command).
+- Now verbose logging in `clean` will show the time it took for each project to be cleaned.
+- Added a `kickstart` command to quickly clone a Git repo and start it up a project.
+- Added the ability to override the command used by the `--update` task in `clean`, via `fknode.yaml`.
+- Added `stats` as a different command. It's now stabilized and instead of showing a project's size, it shows other relevant data. Many more props to be added in future minor releases.
+- Added the ability to use a project's name instead of their path in some cases.
+  - For example, `manager remove myProject` instead of `remove "C:\\Users\\Zaka\\myProject"`, as long as the `name` field in `package.json` (or it's equivalent) is set to `myProject`.
 
 ### Changed
 
-- Now all commands show their output synchronously, giving the feel of a faster CLI.
-- Now `settings schedule` is hidden behind the `--experimental-schedule` flag, as it doesn't work properly. `Deno.cron` (method used to schedule tasks) itself is currently considered unstable, FYI.
+- Now `self-update` is called `upgrade`.
+- Now all commands show their output fully synchronously, giving the feel of a faster CLI and properly reflecting what is being done.
 - Now in some places instead of an "Unknown command" error, the help menu is shown so you can see what commands are valid.
+- Now `manager list` shows, if possible, the name of the project from the `package.json`, alongside it's absolute path. Also, now projects are alphabetically sorted by name (by their path if not possible to obtain their name). This also applies to any other listing, like cleaner reports when using `--verbose`.
+- Now the CLI has cool looking colors 🙂.
+- Now, projects without a `node_modules` DIR won't show a warning before adding them.
+- Now, `manager cleanup` will show next to the project's path an error code indicating why it's in there.
+- Now the app uses YAML instead of JSON for its config files.
+- Now the clean command can be used without providing an intensity (use `--` to pass flags).
 
 ### Fixed
 
@@ -30,7 +64,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `clean` writing twice to the `stdout` what cleanup commands would do.
 - Fixed many potential unhandled errors at many places.
 - Fixed the base directory for app config being recursively created on each run.
-- Fixed the app fetching config paths many times. This _should_ slightly improve performance (as it reduces path-checking operations).
+- Fixed `manager list` not listing ignored projects (showing an empty list when there are ignored projects).
+- Fixed `upgrade` (_`self-update`_) not correctly handling GitHub's rate limit.
+- Fixed an issue where naming projects (reading their `name` from `package.json`) would crash the CLI.
+- Fixed unreliability when finding out if a project uses Node, Deno, or Bun.
+- Fixed projects not being correctly added due to missing `await` keyword.
+- Fixed `--help <command>` working but `help <command>` (without `--`) not.
+- Fixed the log file being unreadable because it saved `\x1b` stuff.
+- Fixed the CLI writing twice the "There's a new version!" message.
+
+### Removed
+
+- `settings schedule`. Due to `Deno.cron()`s limitations, this feature is not viable as of now.
+- `manager ignore` and `manager revive` as commands. Since ignoring projects (which is STILL A FEATURE) is now more complex, ignoring from the CLI requires to be remade from scratch. It'll be likely re-added in a future release.
 
 ## [1.4.2] 27-10-2024
 
@@ -144,11 +190,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added `stats` command. Shows stats, AKA how much storage your projects are taking up. By default only counts the size of `node_modules/`, but you can pass the `--full` flag to it so it also includes your code.
-- Added `manager ignore` command. Creates a `.fknodeignore` file at the root of the project, so F*ckingNode simply ignores it whenever a cleanup is made.
+- Added `manager ignore` command. Creates a `.fknodeignore` file at the root of the project, so F\*ckingNode simply ignores it whenever a cleanup is made.
 
 ### Changed
 
-- Replaced the actual f-word with an asterisk-included version (f*cking) app-wide. Also made an effort to rename variables and all that kind of stuff. ~~I don't want to get banned~~.
+- Replaced the actual f-word with an asterisk-included version (f\*cking) app-wide. Also made an effort to rename variables and all that kind of stuff. ~~I don't want to get banned~~.
 - Now "unknown errors" when pruning a project actually show the command's `stderr`.
 
 ### Fixed

@@ -1,11 +1,26 @@
-import type { SemVer, tURL } from "./types.ts";
+import type { tURL } from "./types/misc.ts";
+import type { SemVer } from "@std/semver/types";
+import { format } from "@std/semver";
+import type { CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
 
 /**
- * Current version of the app
+ * Current app version as a SemVer object.
  *
  * @type {SemVer}
  */
-export const VERSION: SemVer = "1.5.0";
+const _SV_VER: SemVer = {
+    major: 2,
+    minor: 0,
+    patch: 0,
+    prerelease: ["alpha", 7],
+};
+
+/**
+ * Current version of the app. Uses the SemVer format.
+ *
+ * @type {string}
+ */
+export const VERSION: string = format(_SV_VER);
 
 /**
  * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
@@ -15,14 +30,13 @@ export const VERSION: SemVer = "1.5.0";
 export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
     CASED: "FuckingNode",
     CLI: "fuckingnode",
-    STYLED: "F*ckingNode",
+    STYLED: "F\*ckingNode",
 };
 
 /**
  * Different variants of the f-word for in-app usage. Not fully "explicit" as an asterisk is used, like in f*ck.
  *
  * @interface HE_LIKES_JS
- * @typedef {HE_LIKES_JS}
  */
 interface HE_LIKES_JS {
     /**
@@ -82,7 +96,7 @@ export const I_LIKE_JS: HE_LIKES_JS = {
  *
  * @type {string}
  */
-export const IGNORE_FILE: string = ".fknodeignore";
+export const IGNORE_FILE: string = "fknode.yaml";
 
 /**
  * GitHub REST API URL from where releases are obtained.
@@ -90,3 +104,38 @@ export const IGNORE_FILE: string = ".fknodeignore";
  * @type {tURL}
  */
 export const RELEASE_URL: tURL = `https://api.github.com/repos/ZakaHaceCosas/${APP_NAME.CASED}/releases/latest`;
+
+/**
+ * Default app settings.
+ *
+ * @type {CF_FKNODE_SETTINGS}
+ */
+export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
+    updateFreq: 5,
+    defaultCleanerIntensity: "normal",
+    autoFlushFiles: {
+        enabled: true,
+        freq: 30,
+    },
+    favoriteEditor: "vscode",
+};
+
+/**
+ * Default project settings.
+ *
+ * @type {FkNodeYaml}
+ */
+export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
+    divineProtection: "disabled",
+    lintCmd: "__ESLINT",
+    prettyCmd: "__PRETTIER",
+    destroy: {
+        intensities: ["maxim"],
+        targets: [
+            "node_modules",
+        ],
+    },
+    commitActions: false,
+    commitMessage: "__USE_DEFAULT",
+    updateCmdOverride: "__USE_DEFAULT",
+};
