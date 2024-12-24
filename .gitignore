@@ -3,8 +3,6 @@
 **.ignore.*
 # compiled executable
 dist/**
-# fake NodeJS projects so i can test the CLI
-tests/environment/**
 # .ps1 and .sh installers
 scripts/new/**
 # website
