@@ -6,7 +6,7 @@ import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
 const CONSTANTS = {
     CWD: Deno.cwd(),
     ENV_PATH: await JoinPaths(Deno.cwd(), "tests/environment"),
-}
+};
 
 // naming things is fr the hardest
 const uwu: ProjectEnv = {

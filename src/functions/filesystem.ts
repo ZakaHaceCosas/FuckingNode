@@ -135,7 +135,7 @@ export function ConvertBytesToMegaBytes(size: number | number[], useKbIfLow: boo
 export async function BulkRemoveFiles(files: string[]): Promise<void> {
     await Promise.all(files.map(async (file) => {
         await Deno.remove(await ParsePath(file), {
-            recursive: true
+            recursive: true,
         });
     }));
 }
