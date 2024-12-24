@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `.fknodeignore` becomes `fknode.yaml`, and follows a new format detailed in the `README.md`.
 - `self-update` becomes `upgrade`.
 - The project list and other config files will "reset" when downloading this update (simply because file names changed from `.json` to `.yaml`). You can recover old data from `C:\Users\YOUR_USER\AppData\FuckingNode\`, or the macOS / Linux `APPDATA` equivalent.
+- `manager revive` and `manager ignore` have been removed, as ignoring is now more complex. **You can still ignore projects manually from the `fknode.yaml`**. We will (hopefully) readd ignoring CLI commands in a future release.
 
 ### Added
 
@@ -76,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Removed
 
 - `settings schedule`. Due to `Deno.cron()`s limitations, this feature is not viable as of now.
+- `manager ignore` and `manager revive` as commands. Since ignoring projects (which is STILL A FEATURE) is now more complex, ignoring from the CLI requires to be remade from scratch. It'll be likely re-added in a future release.
 
 ## [1.4.2] 27-10-2024
 

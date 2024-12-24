@@ -1,10 +1,9 @@
-import { I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
+import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
-import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
 
@@ -339,80 +338,6 @@ async function ListProjects(
     }
 }
 
-/**
- * Ignores (or stops ignoring) a project by adding (or removing) a `fknode.yaml` file to it's root.
- *
- * @async
- * @param {boolean} ignore True if you want to ignore, false if you want to stop ignoring.
- * @param {string} entry The path to the project's root.
- * @param {string} ignoranceLevel Allows to specify whether this project should ignore updates, cleanup, or both, by writing stuff to the ignore file.
- * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if failure (will log the error), 2 if the project's status is not valid (e.g. ignoring an already ignored project or stop ignoring a project that was not ignored).
- */
-async function HandleIgnoreProject(
-    ignore: boolean,
-    entry: string,
-    ignoranceLevel: "updater" | "cleanup" | "*",
-): Promise<0 | 1 | 2> {
-    try {
-        const workingEntry = await ParsePath(entry);
-        const pathToIgnoreFile = await JoinPaths(workingEntry, IGNORE_FILE);
-        const hasIgnoreFile = await CheckForPath(pathToIgnoreFile);
-
-        if (ignore === true) {
-            const toWrite: ("*" | "updater" | "cleanup")[] = [ignoranceLevel];
-
-            let currentLevels: ("*" | "updater" | "cleanup")[] = [];
-            try {
-                const fileContent = await Deno.readTextFile(pathToIgnoreFile);
-                currentLevels = parseYaml(fileContent) as ("*" | "updater" | "cleanup")[];
-            } catch {
-                // no file = no levels
-            }
-
-            if (
-                currentLevels.includes("*") ||
-                currentLevels.includes(ignoranceLevel)
-            ) {
-                await LogStuff(
-                    "This project is already protected!",
-                    "error",
-                );
-                return 2;
-            }
-
-            currentLevels = [...new Set([...currentLevels, ...toWrite])];
-
-            const yamlContent = stringifyYaml(currentLevels);
-            await Deno.writeTextFile(pathToIgnoreFile, yamlContent);
-
-            await LogStuff(
-                `Divine powers have successfully created ${ignoranceLevel} protection for this ${I_LIKE_JS.MF}`,
-                "tick",
-            );
-            return 0;
-        } else if (ignore === false) {
-            if (!hasIgnoreFile) {
-                await LogStuff(`${I_LIKE_JS.MF} isn't ignored!`, "error");
-                return 2;
-            }
-
-            await Deno.remove(pathToIgnoreFile);
-
-            await LogStuff(
-                `Divine powers have abandoned this ${I_LIKE_JS.MF}`,
-                "tick",
-            );
-            return 0;
-        } else {
-            throw new Error("Invalid option. Ignore or stop ignore?");
-        }
-    } catch (e) {
-        await LogStuff(`Something went ${I_LIKE_JS.FKN} wrong: ${e}`, "error");
-        return 1;
-    }
-}
-
-// run functions based on args
 export default async function TheManager(args: string[]) {
     if (!args || args.length === 0) {
         await TheHelper({ query: "manager" });
@@ -421,48 +346,10 @@ export default async function TheManager(args: string[]) {
 
     const command = args[1];
     const secondArg = args[2] ? args[2].trim() : null;
-    const thirdArg = args[3] ? args[3].trim() : null;
 
     if (!command) {
         await TheHelper({ query: "manager" });
         return;
-    }
-
-    function validateArgumentsForIgnoreHandler(
-        secondArg: string | null,
-        thirdArg: string | null,
-    ): boolean {
-        try {
-            if (!secondArg) {
-                throw new FknError(
-                    "Manager__ProjectInteractionInvalidCauseNoPathProvided",
-                    "You didn't provide the path to the project you wanted to ignore/revive.",
-                );
-            }
-            if (!thirdArg) {
-                throw new FknError(
-                    "Manager__IgnoreFile__InvalidLevel",
-                    "You didn't provide a level.",
-                );
-            }
-            if (!["updater", "cleanup", "*"].includes(thirdArg)) {
-                throw new FknError(
-                    "Manager__IgnoreFile__InvalidLevel",
-                    `You provided an invalid level: '${thirdArg}'.`,
-                );
-            }
-            return true;
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    async function handleIgnoreInteraction(
-        isIgnoring: boolean,
-        secondArg: string,
-        thirdArg?: "updater" | "cleanup" | "*",
-    ) {
-        await HandleIgnoreProject(isIgnoring, secondArg, thirdArg ?? "*");
     }
 
     switch (command.toLowerCase()) {
@@ -483,23 +370,6 @@ export default async function TheManager(args: string[]) {
                 );
             }
             await RemoveProject(secondArg, false);
-            break;
-        case "ignore":
-            if (validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
-                await handleIgnoreInteraction(
-                    true,
-                    secondArg!,
-                    thirdArg as "updater" | "cleanup" | "*",
-                );
-            }
-            break;
-        case "revive":
-            if (validateArgumentsForIgnoreHandler(secondArg, thirdArg)) {
-                await handleIgnoreInteraction(
-                    false,
-                    secondArg!,
-                );
-            }
             break;
         case "list":
             if (secondArg) {

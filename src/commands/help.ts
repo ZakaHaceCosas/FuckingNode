@@ -30,7 +30,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
         [
             "manager",
-            "add <path> | remove <path> | ignore <path> | revive <path> | list | cleanup",
+            "add <path> | remove <path> | list | cleanup",
             "Manages your projects.",
         ],
         [
@@ -81,16 +81,6 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "manager",
             "remove <path>",
             "Removes a project from your list.",
-        ],
-        [
-            "manager",
-            "ignore <path>",
-            "Ignores a project so it's not cleaned or updated but still on your list.",
-        ],
-        [
-            "manager",
-            "revive <path>",
-            "Stops ignoring an ignored project.",
         ],
         [
             "manager",
