@@ -22,6 +22,10 @@
             "description": "Compiles the CLI",
             "command": "deno -A tasks/compile.ts",
             "dependencies": ["good"]
+        },
+        "test": {
+            "description": "Runs all tests",
+            "command": "deno test --allow-all"
         }
     },
     "compilerOptions": {
