@@ -319,17 +319,16 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
         if (!(await CheckForPath(workingPath))) throw new Error("(PROJECT-ENV) Path doesn't exist.");
         const trash = await JoinPaths(workingPath, "node_modules");
 
-        const denoPaths = ["deno.json", "deno.jsonc", "deno.lock"];
-        const bunPaths = ["bunfig.toml", "bun.lockb"];
+        const isDeno = await CheckForPath(await JoinPaths(workingPath, "deno.json")) ||
+            await CheckForPath(await JoinPaths(workingPath, "deno.jsonc")) || await CheckForPath(await JoinPaths(workingPath, "deno.lock"));
+        const isBun = await CheckForPath(await JoinPaths(workingPath, "bun.lockb")) ||
+            await CheckForPath(await JoinPaths(workingPath, "bunfig.toml"));
 
-        const isDeno = await Promise.any(
-            denoPaths.map(async (file) => CheckForPath(await JoinPaths(workingPath, file))),
-        ).catch(() => false);
-        const isBun = await Promise.any(
-            bunPaths.map(async (file) => CheckForPath(await JoinPaths(workingPath, file))),
-        ).catch(() => false);
-
-        const mainPath = isDeno ? await JoinPaths(workingPath, "deno.json") : await JoinPaths(workingPath, "package.json");
+        const mainPath = isDeno
+            ? (await CheckForPath(await JoinPaths(workingPath, "deno.json"))
+                ? await JoinPaths(workingPath, "deno.json")
+                : await JoinPaths(workingPath, "package.json"))
+            : await JoinPaths(workingPath, "package.json");
 
         if (isBun) {
             return {
