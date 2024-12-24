@@ -37,6 +37,28 @@ function CompileApp(): void {
     }
 }
 
+function CompileInstaller(): void {
+    const compiledName = `${APP_NAME.CASED}-INSTALLER-win64.exe`;
+
+    const compilerArguments = [
+        "compile",
+        "--allow-write", // write files, like project list
+        "--allow-read", // read files, like a project's package.json
+        "--allow-net", // fetch the network, to update the app
+        "--allow-env", // see ENV variables, to access .../AppData/...
+        "--allow-run", // run cleanup commands
+        "--allow-sys", // used for an easter egg that requires `os.Uptime`
+        "--unstable-cron",
+        "--target",
+        "x86_64-pc-windows-msvc",
+        "--output",
+        `dist/${compiledName}`,
+        "src/main.ts",
+    ];
+
+    new Deno.Command("deno", { args: compilerArguments }).spawn().status.then((_status) => {});
+}
+
 try {
     await Deno.stat("./dist/");
     await Deno.remove("./dist/", {
@@ -49,3 +71,4 @@ try {
 Deno.mkdir("./dist/");
 
 CompileApp();
+CompileInstaller();
