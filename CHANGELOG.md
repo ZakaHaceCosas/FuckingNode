@@ -30,12 +30,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added the ability to only do a hard cleanup (global cache cleanup), by running either `global-clean`, `hard-clean`, or `clean hard-only`.
 - Added an about page.
 - Added the `--alive` flag to `manager list` so it only lists projects that are not ignored.
-- Added a settings command which allows to tweak:
+- Added a `settings` command which allows to tweak:
   - Update check frequency
   - Default cleaner intensity
   - Favorite editor (for new `kickstart` command).
 - Now verbose logging in `clean` will show the time it took for each project to be cleaned.
-- Added `settings change` command to change certain settings.
 - Added a `kickstart` command to quickly clone a Git repo and start it up a project.
 - Added the ability to override the command used by the `--update` task in `clean`, via `fknode.yaml`.
 - Added `stats` as a different command. It's now stabilized and instead of showing a project's size, it shows other relevant data. Many more props to be added in future minor releases.
