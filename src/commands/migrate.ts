@@ -1,13 +1,21 @@
 import { Commander } from "../functions/cli.ts";
-import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
+import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
-import type { MANAGERS, SUPPORTED_LOCKFILE } from "../types.ts";
+import { SpotProject } from "../functions/projects.ts";
+import type { PKG_MANAGERS, SUPPORTED_NODE_LOCKFILES } from "../types/package_managers.ts";
+import type { TheMigratorConstructedParams } from "./constructors/command.ts";
 
-export default async function TheMigrator(project: string, target: MANAGERS) {
+export default async function TheMigrator(params: TheMigratorConstructedParams) {
+    const { project, target } = params;
+    if (!project) throw new Error("No project (path) specified.");
+    if (!target) throw new Error("No target (pnpm, npm, yarn) specified.");
+    const MANAGERS = ["pnpm", "npm", "yarn"];
+    if (!MANAGERS.includes(target)) throw new Error("Target isn't a valid package manager (pnpm, npm, yarn).");
+
     const cwd = Deno.cwd();
     let code: 0 | 1 = 0;
 
-    async function handler(remove: SUPPORTED_LOCKFILE, cmd: MANAGERS, target: string) {
+    async function handler(remove: SUPPORTED_NODE_LOCKFILES, cmd: PKG_MANAGERS, target: string) {
         try {
             await LogStuff("Please wait (this will take a while)...", "working");
             try {
@@ -39,11 +47,15 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
     }
 
     try {
-        const workingProject = await ParsePath(project);
-        const workingTarget = target.toLowerCase().trimEnd().trimStart();
+        const workingProject = await SpotProject(project);
+        const workingTarget = target.toLowerCase().trim();
 
         if (!(["pnpm", "npm", "yarn"].includes(workingTarget))) {
             throw new Error(`${workingTarget} is not a valid target. Use either "pnpm", "npm", or "yarn".`);
+        }
+
+        if (!workingProject) {
+            throw new Error(`${project} wasn't found. Is the project name right?`);
         }
 
         const isNpm = await CheckForPath(await JoinPaths(workingProject, "package-lock.json"));
@@ -64,9 +76,9 @@ export default async function TheMigrator(project: string, target: MANAGERS) {
         );
         if (!c) return;
 
-        if (isNpm) await handler("package-lock.json", target, workingProject);
-        else if (isPnpm) await handler("pnpm-lock.yaml", target, workingProject);
-        else if (isYarn) await handler("yarn.lock", target, workingProject);
+        if (isNpm) await handler("package-lock.json", target as PKG_MANAGERS, workingProject);
+        else if (isPnpm) await handler("pnpm-lock.yaml", target as PKG_MANAGERS, workingProject);
+        else if (isYarn) await handler("yarn.lock", target as PKG_MANAGERS, workingProject);
     } catch (e) {
         await LogStuff(`${e}`, "error");
         code = 1;
