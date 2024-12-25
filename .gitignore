@@ -5,3 +5,6 @@
 dist/**
 # fake NodeJS projects so i can test the CLI
 tests/**
+# Nixos builds
+result/
+result
