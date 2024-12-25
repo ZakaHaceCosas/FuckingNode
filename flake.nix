@@ -31,12 +31,14 @@
         nativeBuildInputs = [ pkgs.makeWrapper ];
 
         installPhase = ''
-          mkdir -p $out/bin && cp -r $src/* $out/bin
+          mkdir -p $out
+          mkdir $out/bin
+          cp $src $out/bin/fuckingnode
         '';
 
         fixupPhase = ''
-          chmod 755 $out/bin/*
-          patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/bin/fuckingnode
+          chmod +w $out/bin/fuckingnode
+          chmod +x $out/bin/fuckingnode
         '';
 
         meta = {
