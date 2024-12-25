@@ -18,7 +18,7 @@ Deno and Bun are also (partially) supported.
 Automates cleaning of each NodeJS project you add by using your manager's built in features, so a single command makes everything cleaner. It will detect your lockfile (e.g. "pnpm-lock.yaml", "package-lock.json") to know whether to use **npm**, **pnpm**, or **yarn** (currently supported managers).
 
 - `fuckingnode clean` - does the obvious.
-- `fuckingnode clean <intensity>` - does the obvious with the chosen intensity (see below).
+- `fuckingnode clean <intensity>` - does the obvious with the chosen intensity (see the table below).
 
 Supported flags are the following (before them you have to pass an intensity, or `--` to use the default one).
 
@@ -53,11 +53,9 @@ F\*ckingNode keeps a list of all paths to the projects it should clean - it's yo
 - `fuckingnode manager list --alive` - lists all not ignored projects.
 - `fuckingnode manager add <path>` - adds a project to list.
 - `fuckingnode manager remove <path>` - removes a project from list.
-- `fuckingnode manager ignore <path>` - ignores a project (won't be cleaned or updated).
-- `fuckingnode manager revive <path>` - stops ignoring a project.
 - `fuckingnode manager cleanup` - shows a list of invalid projects (invalid path, duplicate, etc...) and allows to remove them all at once.
 
-`<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the Current Working Directory.
+`<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the Current Working Directory. Except for `add`, you can also use a project's name defined in it's `package.json` (or equivalent) `name` field, e.g. `manager remove my-fkng-framework`.
 
 Best practice is to run `fuckingnode manager add --self` after creating a Node project from your CLI.
 
