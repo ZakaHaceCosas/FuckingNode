@@ -15,10 +15,10 @@ import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 export async function GetAppPath(
     path: "BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES" | "SETTINGS",
 ): Promise<string> {
-    const appDataPath = Deno.env.get("APPDATA");
+    const appDataPath = Deno.build.os === "windows" ? Deno.env.get("APPDATA") : Deno.env.get("XDG_CONFIG_HOME");
     if (!appDataPath) {
         console.error(
-            `${I_LIKE_JS.MFN} APPDATA variable not found. Something seriously went ${I_LIKE_JS.MFLY} wrong.`,
+            `${I_LIKE_JS.MFN} ${Deno.build.os === "windows" ? "APPDATA" : "XDG_CONFIG_HOME"} environment variable not found, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong.`,
         );
         Deno.exit(1);
     }
