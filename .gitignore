@@ -7,3 +7,6 @@ dist/**
 scripts/new/**
 # website
 website/**
+# Nixos builds
+result/
+result
