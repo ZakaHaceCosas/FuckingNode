@@ -40,6 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added `stats` as a different command. It's now stabilized and instead of showing a project's size, it shows other relevant data. Many more props to be added in future minor releases.
 - Added the ability to use a project's name instead of their path in some cases.
   - For example, `manager remove myProject` instead of `remove "C:\\Users\\Zaka\\myProject"`, as long as the `name` field in `package.json` (or it's equivalent) is set to `myProject`.
+- Added support for Linux and macOS (that should actually work). Also, thanks to @dimkauzh, added support for NixOS.
 
 ### Changed
 

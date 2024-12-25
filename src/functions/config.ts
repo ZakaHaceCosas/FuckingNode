@@ -18,7 +18,9 @@ export async function GetAppPath(
     const appDataPath = Deno.build.os === "windows" ? Deno.env.get("APPDATA") : Deno.env.get("XDG_CONFIG_HOME");
     if (!appDataPath) {
         console.error(
-            `${I_LIKE_JS.MFN} ${Deno.build.os === "windows" ? "APPDATA" : "XDG_CONFIG_HOME"} environment variable not found, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong.`,
+            `${I_LIKE_JS.MFN} ${
+                Deno.build.os === "windows" ? "APPDATA" : "XDG_CONFIG_HOME"
+            } environment variable not found, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong.`,
         );
         Deno.exit(1);
     }
