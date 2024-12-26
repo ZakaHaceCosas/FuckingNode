@@ -9,4 +9,5 @@ export type ERROR_CODES =
     | "Manager__IgnoreFile__InvalidLevel"
     | "Cleaner__InvalidCleanerIntensity"
     | "Internal__Projects__CantDetermineEnv"
-    | "Manager__NonExistingPath";
+    | "Manager__NonExistingPath"
+    | "Internal__NoEnvForConfigPath";

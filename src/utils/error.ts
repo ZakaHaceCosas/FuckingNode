@@ -58,6 +58,11 @@ export class FknError extends Error {
                 hint =
                     "Check for typos - the path you provided wasn't found in the filesystem. If you're sure the path is right, maybe it's a permission issue. If not, open an issue on GitHub so we can fix our tool that fixes NodeJS ;).";
                 break;
+            case "Internal__NoEnvForConfigPath":
+                hint = `We tried to find ${
+                    ColorString(Deno.build.os === "windows" ? "APPDATA env variable" : "XDG_CONFIG_HOME and HOME env variables", "bold")
+                } but failed, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong. If these aren't the right environment variables for your system's config path (currently using APPDATA on Windows, /home/user/.config on macOS and Linux), please raise an issue on GitHub.`;
+                break;
             default:
                 hint = null;
                 break;
@@ -85,7 +90,11 @@ export class FknError extends Error {
                 "----------",
             );
         }
-        await LogStuff(messageParts.join("\n"), "error");
+
+        this.code === "Internal__NoEnvForConfigPath"
+            ? console.error(messageParts.join("\n")) // if no env, LogStuff() won't work
+            : await LogStuff(messageParts.join("\n"), "error");
+        return;
     }
 
     /**

@@ -1,6 +1,7 @@
 import TheUpdater from "../commands/updater.ts";
 import { APP_NAME, DEFAULT_SETTINGS, I_LIKE_JS } from "../constants.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
+import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { LogStuff } from "./io.ts";
 import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
@@ -15,39 +16,45 @@ import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 export async function GetAppPath(
     path: "BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES" | "SETTINGS",
 ): Promise<string> {
-    const appDataPath = Deno.build.os === "windows" 
-        ? Deno.env.get("APPDATA") 
-        : (Deno.env.get("XDG_CONFIG_HOME") || `${Deno.env.get("HOME")}/.config`);
-    if (!appDataPath) {
-        console.error(
-            `${I_LIKE_JS.MFN} environment error! We tried to find: ${
-                Deno.build.os === "windows" ? "APPDATA env variable" : "XDG_CONFIG_HOME and HOME env variables"
-            } but failed, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong. If these aren't the right environment variables for your system's config path (currently using APPDATA on Windows, /home/user/.config on macOS and Linux), please raise an issue on GitHub.`,
-        );
+    try {
+        const appDataPath = Deno.build.os === "windows"
+            ? Deno.env.get("APPDATA")
+            : (Deno.env.get("XDG_CONFIG_HOME") || `${Deno.env.get("HOME")}/.config`);
+
+        if (!appDataPath) {
+            throw new FknError(
+                "Internal__NoEnvForConfigPath",
+                `We searched for ${
+                    Deno.build.os === "windows" ? "APPDATA" : "XDG_CONFIG_HOME and HOME"
+                } in env, but couldn't find it. Please report this on GitHub.`,
+            );
+        }
+
+        const funny = I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u");
+
+        const BASE_DIR = await JoinPaths(appDataPath, APP_NAME.CLI);
+        const PROJECTS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-${funny}.txt`);
+        const LOGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-logs.log`);
+        const UPDATES = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-updates.yaml`);
+        const SETTINGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-settings.yaml`);
+
+        switch (path) {
+            case "BASE":
+                return BASE_DIR;
+            case "MOTHERFKRS":
+                return PROJECTS;
+            case "LOGS":
+                return LOGS;
+            case "UPDATES":
+                return UPDATES;
+            case "SETTINGS":
+                return SETTINGS;
+            default:
+                throw new Error("Invalid path requested");
+        }
+    } catch (e) {
+        await GenericErrorHandler(e);
         Deno.exit(1);
-    }
-
-    const funny = I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u");
-
-    const BASE_DIR = await JoinPaths(appDataPath, APP_NAME.CLI);
-    const PROJECTS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-${funny}.txt`);
-    const LOGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-logs.log`);
-    const UPDATES = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-updates.yaml`);
-    const SETTINGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-settings.yaml`);
-
-    switch (path) {
-        case "BASE":
-            return BASE_DIR;
-        case "MOTHERFKRS":
-            return PROJECTS;
-        case "LOGS":
-            return LOGS;
-        case "UPDATES":
-            return UPDATES;
-        case "SETTINGS":
-            return SETTINGS;
-        default:
-            throw new Error("Invalid path requested");
     }
 }
 
