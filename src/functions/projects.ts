@@ -218,7 +218,7 @@ export async function ValidateProject(entry: string): Promise<true | ProjectErro
     const env = await GetProjectEnvironment(workingEntry);
 
     if (isDuplicate) return "IsDuplicate";
-    if (!(await CheckForPath(env.lockfile))) return "NoPkgJson";
+    if (!(await CheckForPath(env.lockfile.path))) return "NoPkgJson";
     return true;
 }
 
@@ -335,9 +335,12 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     path: mainPath,
                     content: await JSON.parse(await Deno.readTextFile(mainPath)),
                 },
+                lockfile: {
+                    name: "bun.lockb",
+                    path: await JoinPaths(workingPath, "bun.lockb"),
+                },
                 runtime: "bun",
                 manager: "bun",
-                lockfile: await JoinPaths(workingPath, "bun.lockb"),
                 hall_of_trash: trash,
             };
         }
@@ -347,9 +350,12 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     path: mainPath,
                     content: await JSON.parse(await Deno.readTextFile(mainPath)),
                 },
+                lockfile: {
+                    name: "deno.lock",
+                    path: await JoinPaths(workingPath, "deno.lock"),
+                },
                 runtime: "deno",
                 manager: "deno",
-                lockfile: await JoinPaths(workingPath, "deno.lock"),
                 hall_of_trash: trash,
             };
         }
@@ -362,9 +368,12 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                         path: mainPath,
                         content: await JSON.parse(await Deno.readTextFile(mainPath)),
                     },
+                    lockfile: {
+                        name: manager.file,
+                        path: await JoinPaths(workingPath, manager.file),
+                    },
                     runtime: "node",
                     manager: manager.name,
-                    lockfile: await JoinPaths(workingPath, manager.file),
                     hall_of_trash: trash,
                 };
             }

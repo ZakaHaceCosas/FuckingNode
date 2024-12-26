@@ -14,7 +14,7 @@ export interface TheHelperConstructedParams {
 
 export interface TheMigratorConstructedParams {
     project: string | undefined;
-    target: string | undefined;
+    desiredManager: string | undefined;
 }
 
 export interface TheSettingsConstructedParams {

@@ -25,7 +25,7 @@ const uwu: ProjectEnv = {
     },
     runtime: "node",
     manager: "npm",
-    lockfile: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package-lock.json`),
+    lockfile: { name: "package-lock.json", path: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package-lock.json`) },
     hall_of_trash: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/node_modules`),
 };
 

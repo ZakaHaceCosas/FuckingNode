@@ -1,3 +1,5 @@
+import type { ALL_SUPPORTED_LOCKFILES } from "./package_managers.ts";
+
 /**
  * NodeJS and BunJS `package.json` props, only the ones we need.
  *
@@ -46,11 +48,22 @@ export interface ProjectEnv {
      */
     manager: "npm" | "pnpm" | "yarn" | "deno" | "bun";
     /**
-     * Parsed path to lockfile.
-     *
-     * @type {string}
+     * Project's lockfile
      */
-    lockfile: string;
+    lockfile: {
+        /**
+         * Parsed path to lockfile.
+         *
+         * @type {string}
+         */
+        path: string;
+        /**
+         * Bare name of the lockfile (`package-lock.json`, `deno.lock`)
+         *
+         * @type {ALL_SUPPORTED_LOCKFILES}
+         */
+        name: ALL_SUPPORTED_LOCKFILES;
+    };
     /**
      * Path to `node_modules`.
      *
