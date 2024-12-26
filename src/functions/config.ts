@@ -15,12 +15,14 @@ import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
 export async function GetAppPath(
     path: "BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES" | "SETTINGS",
 ): Promise<string> {
-    const appDataPath = Deno.build.os === "windows" ? Deno.env.get("APPDATA") : Deno.env.get("XDG_CONFIG_HOME");
+    const appDataPath = Deno.build.os === "windows" 
+        ? Deno.env.get("APPDATA") 
+        : (Deno.env.get("XDG_CONFIG_HOME") || `${Deno.env.get("HOME")}/.config`);
     if (!appDataPath) {
         console.error(
-            `${I_LIKE_JS.MFN} ${
-                Deno.build.os === "windows" ? "APPDATA" : "XDG_CONFIG_HOME"
-            } environment variable not found, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong.`,
+            `${I_LIKE_JS.MFN} environment error! We tried to find: ${
+                Deno.build.os === "windows" ? "APPDATA env variable" : "XDG_CONFIG_HOME and HOME env variables"
+            } but failed, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong. If these aren't the right environment variables for your system's config path (currently using APPDATA on Windows, /home/user/.config on macOS and Linux), please raise an issue on GitHub.`,
         );
         Deno.exit(1);
     }
