@@ -37,7 +37,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
 
             const content: GITHUB_RELEASE = await response.json();
 
-            const isUpToDate = (compare(parse(VERSION), parse(content.tag_name))) >= 1;
+            const isUpToDate = (compare(parse(VERSION), parse(content.tag_name))) >= 0;
 
             const dataToWrite: CF_FKNODE_UPDATES = {
                 isUpToDate: isUpToDate,
@@ -86,7 +86,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
         return;
     }
 
-    const { isUpToDate, lastVer } = needsToUpdate as CF_FKNODE_UPDATES;
+    const { isUpToDate, lastVer } = needsToUpdate;
 
     if (isUpToDate) {
         if (!params.silent) {
