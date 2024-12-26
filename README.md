@@ -140,7 +140,7 @@ While we've been talking about Node projects and `package.json` all the time, we
 2. Run it.
 3. You're done! It should have automatically installed. The `fuckingnode` CLI command should now work out of the box.
 
-### Other systems (mac & Linux)
+### Linux and macOS
 
 1. Download the program from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). macOS and Linux have support for both x84_64 and ARM.
 2. Place your downloaded file anywhere, like `/scripts` or `/home/USER/my-scripts`.
@@ -161,6 +161,22 @@ export PATH="$PATH:/home/USER/my-scripts/fuckingnode" # keep '$PATH' and replace
 # then, reload your config
 source ~/.bashrc          # Linux
 source ~/.bash_profile    # macOS
+```
+
+### NixOS
+
+Add the repo to your `flake.nix`.
+
+```nix
+inputs = {
+    fuckingnode.url = "github:ZakaHaceCosas/FuckingNode";
+}
+```
+
+Then, add this to your system packages:
+
+```nix
+inputs.fuckingnode.packages."${system}".default
 ```
 
 ### Compiling from source
