@@ -21,12 +21,8 @@ export interface CF_FKNODE_SETTINGS {
      */
     defaultCleanerIntensity: CleanerIntensity;
     /**
-     * Auto flush config files
+     * User's favorite code editor.
      */
-    autoFlushFiles: {
-        enabled: boolean;
-        freq: number;
-    };
     favoriteEditor: "vscode" | "sublime";
 }
 

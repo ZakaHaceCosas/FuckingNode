@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fixed the updater thinking you're on an outdated version when you aren't.
+- Fixed settings displaying `autoFlush` related settings (that's not a feature).
 
 ## [2.0.1] 26-12-2024
 

@@ -65,18 +65,19 @@ async function Flush(what: string, force: boolean) {
     }
 }
 
-async function Repair() {
+async function ResetSettings() {
     try {
         const confirmation = await LogStuff(
-            "Are you sure? Repairing your settings will overwrite your current setting with the defaults.",
+            "Are you sure you want to reset your settings to the defaults? Current settings will be lost",
             "warn",
             undefined,
             true,
         );
+
         if (!confirmation) return;
 
         await FreshSetup(true);
-        await LogStuff("Repaired settings (now using defaults):", "tick");
+        await LogStuff("Switched to defaults successfully:", "tick");
         await DisplaySettings();
     } catch (e) {
         throw e;
@@ -153,8 +154,6 @@ async function DisplaySettings() {
     const settings = await GetSettings();
     const formattedSettings = `Update frequency: Each ${ColorString(settings.updateFreq, "bright-green")} days.\nDefault cleaner intensity: ${
         ColorString(settings.defaultCleanerIntensity, "bright-green")
-    }\nAuto-flush files: ${ColorString(settings.autoFlushFiles.enabled ? "enabled" : "disabled", "bright-green")}${
-        settings.autoFlushFiles.enabled && `\n    Frequency: ${ColorString(settings.autoFlushFiles.freq, "bright-green")}`
     }\nFavorite editor: ${ColorString(settings.favoriteEditor, "bright-green")}`;
     await LogStuff(`${ColorString("Your current settings are:", "bright-yellow")}\n---\n${formattedSettings}`, "bulb");
 }
@@ -181,39 +180,21 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             await Flush(secondArg ?? "", ParseFlag("force", false).includes(thirdArg ?? ""));
             break;
         case "repair":
-            await Repair();
+            await ResetSettings();
             break;
         case "change":
-            if (!secondArg) {
+            if (!secondArg || !(["default-int", "update-freq", "fav-editor"].includes(secondArg))) {
                 await LogStuff("Invalid option, use 'change default-int', 'change update-freq', or 'change fav-editor' to tweak settings.");
                 return;
             }
-            switch (secondArg) {
-                case "default-int":
-                    if (!thirdArg) {
-                        await LogStuff("Provide a value to update this setting to.");
-                        return;
-                    }
-                    await ChangeSetting("default-int", thirdArg);
-                    break;
-                case "update-freq":
-                    if (!thirdArg) {
-                        await LogStuff("Provide a value to update this setting to.");
-                        return;
-                    }
-                    await ChangeSetting("update-freq", thirdArg);
-                    break;
-                case "fav-editor":
-                    if (!thirdArg) {
-                        await LogStuff("Provide a value to update this setting to.");
-                        return;
-                    }
-                    await ChangeSetting("fav-editor", thirdArg);
-                    break;
-                default:
-                    await LogStuff("Invalid option, use 'change default-int', 'change update-freq', or 'change fav-editor' to tweak settings.");
-                    break;
+            if (!thirdArg || thirdArg.trim().length === 0) {
+                await LogStuff("Provide a value to update this setting to.");
+                return;
             }
+            await ChangeSetting(
+                secondArg as "default-int" | "update-freq" | "fav-editor",
+                thirdArg,
+            );
             break;
         default:
             await DisplaySettings();
