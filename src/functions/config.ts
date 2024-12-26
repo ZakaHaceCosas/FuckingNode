@@ -17,9 +17,15 @@ export async function GetAppPath(
     path: "BASE" | "MOTHERFKRS" | "LOGS" | "UPDATES" | "SETTINGS",
 ): Promise<string> {
     try {
+        const envPaths = {
+            windows: "APPDATA",
+            linux: "XDG_CONFIG_HOME",
+            linuxFallback: await JoinPaths(Deno.env.get("HOME") ?? "", ".config"),
+        };
+
         const appDataPath = Deno.build.os === "windows"
-            ? Deno.env.get("APPDATA")
-            : (Deno.env.get("XDG_CONFIG_HOME") || `${Deno.env.get("HOME")}/.config`);
+            ? Deno.env.get(envPaths.windows)
+            : (Deno.env.get(envPaths.linux) || envPaths.linuxFallback);
 
         if (!appDataPath) {
             throw new FknError(
