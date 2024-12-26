@@ -58,9 +58,20 @@ export interface ProjectEnv {
      */
     hall_of_trash: string;
     /**
-     * Path to main file (`package.json`, `deno.json`...)
-     *
-     * @type {string}
+     * Main file (`package.json`, `deno.json`...)
      */
-    main: string;
+    main: {
+        /**
+         * Path to the main file
+         *
+         * @type {string}
+         */
+        path: string;
+        /**
+         * Contents of the main file
+         *
+         * @type {(NodePkgJson | DenoPkgJson)}
+         */
+        content: NodePkgJson | DenoPkgJson;
+    };
 }

@@ -90,8 +90,8 @@ const ProjectCleaningFeatures = {
         if (!settings.lintCmd || settings.lintCmd.trim() === "") return;
         const projectName = await NameProject(project, "name");
         if (settings.lintCmd === "__ESLINT") {
-            const pkgFile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.main));
-            if (!pkgFile.dependencies || !pkgFile.dependencies["eslint"]) {
+            const dependencies = (env.main.content as NodePkgJson).dependencies;
+            if (!dependencies || !dependencies["eslint"]) {
                 await LogStuff(
                     `Can't lint ${projectName}. No lint command was specified and ESLint is not installed.`,
                 );
@@ -147,8 +147,8 @@ const ProjectCleaningFeatures = {
         }
         if (!settings.prettyCmd || settings.prettyCmd.trim() === "") return;
         if (settings.prettyCmd === "__PRETTIER") {
-            const pkgFile: NodePkgJson = await JSON.parse(await Deno.readTextFile(env.main));
-            if (!pkgFile.dependencies || !pkgFile.dependencies["prettier"]) {
+            const dependencies = (env.main.content as NodePkgJson).dependencies;
+            if (!dependencies || !dependencies["prettier"]) {
                 await LogStuff(
                     `Can't prettify ${projectName}. No prettify command was specified and Prettier is not installed.`,
                 );

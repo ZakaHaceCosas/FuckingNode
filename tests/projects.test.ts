@@ -15,9 +15,14 @@ const PROJECT_ROOTS = {
     ONE: await JoinPaths(CONSTANTS.ENV_PATH, "./uwu"),
 };
 
+const uwuMain = await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package.json`);
+
 // naming things is fr the hardest
 const uwu: ProjectEnv = {
-    main: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package.json`),
+    main: {
+        path: uwuMain,
+        content: JSON.parse(await Deno.readTextFile(uwuMain)),
+    },
     runtime: "node",
     manager: "npm",
     lockfile: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package-lock.json`),

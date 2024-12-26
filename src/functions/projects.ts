@@ -67,7 +67,6 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
         const exists = await CheckForPath(workingPath);
         if (!exists) throw new Error("(path doesn't exist, this won't be shown and the formatted path will be returned instead)");
         const env = await GetProjectEnvironment(workingPath);
-        const pkgFilePath = await Deno.readTextFile(env.main);
 
         let fullNamedProject: string;
         let formattedName: string;
@@ -77,7 +76,7 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
         switch (env.runtime) {
             case "node":
             case "bun": {
-                const packageJson: NodePkgJson = JSON.parse(pkgFilePath);
+                const packageJson: NodePkgJson = env.main.content;
 
                 if (!packageJson.name) return formattedPath;
 
@@ -91,7 +90,7 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
                 break;
             }
             case "deno": {
-                const denoJson: DenoPkgJson = JSON.parse(pkgFilePath);
+                const denoJson: DenoPkgJson = env.main.content;
 
                 if (!denoJson.name) return formattedPath;
 
@@ -332,19 +331,25 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
 
         if (isBun) {
             return {
+                main: {
+                    path: mainPath,
+                    content: await JSON.parse(await Deno.readTextFile(mainPath)),
+                },
                 runtime: "bun",
                 manager: "bun",
                 lockfile: await JoinPaths(workingPath, "bun.lockb"),
-                main: mainPath,
                 hall_of_trash: trash,
             };
         }
         if (isDeno) {
             return {
+                main: {
+                    path: mainPath,
+                    content: await JSON.parse(await Deno.readTextFile(mainPath)),
+                },
                 runtime: "deno",
                 manager: "deno",
                 lockfile: await JoinPaths(workingPath, "deno.lock"),
-                main: mainPath,
                 hall_of_trash: trash,
             };
         }
@@ -353,10 +358,13 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
             const manager = await DetectNodeManager(workingPath);
             if (manager && manager.name && manager.file) {
                 return {
+                    main: {
+                        path: mainPath,
+                        content: await JSON.parse(await Deno.readTextFile(mainPath)),
+                    },
                     runtime: "node",
                     manager: manager.name,
                     lockfile: await JoinPaths(workingPath, manager.file),
-                    main: mainPath,
                     hall_of_trash: trash,
                 };
             }

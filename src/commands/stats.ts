@@ -19,17 +19,14 @@ export default async function TheStatistics(target: string) {
         `${name}\n${ColorString(env.runtime, "bold")} runtime & ${ColorString(env.manager, "bold")} pkg manager\nMain file: ${env.main}`,
     );
 
-    const main = JSON.parse(await Deno.readTextFile(env.main));
     let deps: Record<string, string> | undefined;
     switch (env.runtime) {
-        case "bun":
-            deps = (main as NodePkgJson).dependencies;
-            break;
         case "deno":
-            deps = (main as DenoPkgJson).imports;
+            deps = (env.main.content as DenoPkgJson).imports;
             break;
+        case "bun":
         case "node":
-            deps = (main as NodePkgJson).dependencies;
+            deps = (env.main.content as NodePkgJson).dependencies;
             break;
     }
 
