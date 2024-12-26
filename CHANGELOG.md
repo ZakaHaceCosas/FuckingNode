@@ -6,6 +6,12 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] 26-12-2024
+
+### Fixed
+
+- This release SHOULD have fixed macOS and Linux compatibility. Report any issues you find, please. Thank you.
+
 ## [2.0.0] 25-12-2024 <!-- 2.0.0 - major release, even tho there aren't "breaking" changes (well, adding runtimes that aren't Node to the "F*ckingNODE" project is kinda "breaking") -->
 
 ### Breaking changes
