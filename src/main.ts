@@ -92,7 +92,7 @@ async function main(command: string) {
                 await TheSettings({ args: Deno.args });
                 break;
             case "migrate":
-                await TheMigrator({ project: Deno.args[1], target: Deno.args[2] });
+                await TheMigrator({ project: Deno.args[1], desiredManager: Deno.args[2] });
                 break;
             case "self-update":
             case "upgrade":
