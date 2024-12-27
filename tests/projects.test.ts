@@ -1,40 +1,41 @@
-import { GetProjectEnvironment } from "../src/functions/projects.ts";
+import { GetAllProjects, GetProjectEnvironment, GetWorkspaces } from "../src/functions/projects.ts";
 import { assertEquals } from "@std/assert";
 import type { ProjectEnv } from "../src/types/runtimes.ts";
 import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
-import { GetAllProjects } from "../src/functions/projects.ts";
-import { GetAppPath } from "../src/functions/config.ts";
-import { GetWorkspaces } from "../src/functions/projects.ts";
+import { CONSTANTS } from "./constants.ts";
+import { mocks } from "./mocks.ts";
 
-const CONSTANTS = {
-    CWD: Deno.cwd(),
-    ENV_PATH: await JoinPaths(Deno.cwd(), "tests/environment"),
-};
-
-const PROJECT_ROOTS = {
-    ONE: await JoinPaths(CONSTANTS.ENV_PATH, "./uwu"),
-};
-
-const uwuMain = await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package.json`);
-
-// naming things is fr the hardest
-const uwu: ProjectEnv = {
-    main: {
-        path: uwuMain,
-        content: JSON.parse(await Deno.readTextFile(uwuMain)),
+const TEST_PROJECTS = {
+    // (naming things is fr the hardest)
+    UWU: {
+        ROOT: await JoinPaths(CONSTANTS.ENV_PATH, "./uwu"),
+        MAIN: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package.json`),
+        LOCKFILE: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package-lock.json`),
+        NODE_MODULES: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/node_modules`),
+        WORKSPACE_PATH: await ParsePath(`${CONSTANTS.ENV_PATH}/hi`),
     },
-    runtime: "node",
-    manager: "npm",
-    lockfile: { name: "package-lock.json", path: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/package-lock.json`) },
-    hall_of_trash: await ParsePath(`${CONSTANTS.ENV_PATH}/uwu/node_modules`),
 };
 
+const MOCK_ENV = {
+    UWU: {
+        main: {
+            path: TEST_PROJECTS.UWU.MAIN,
+            content: JSON.parse(await Deno.readTextFile(TEST_PROJECTS.UWU.MAIN)),
+        },
+        runtime: "node",
+        manager: "npm",
+        lockfile: { name: "package-lock.json", path: TEST_PROJECTS.UWU.LOCKFILE },
+        hall_of_trash: TEST_PROJECTS.UWU.NODE_MODULES,
+    } as ProjectEnv,
+};
+
+// ACTUAL TESTS
 Deno.test(
     {
         name: "reads node env",
         fn: async () => {
-            const env = await GetProjectEnvironment(PROJECT_ROOTS.ONE);
-            assertEquals(env, uwu);
+            const env = await GetProjectEnvironment(TEST_PROJECTS.UWU.ROOT);
+            assertEquals(env, MOCK_ENV.UWU);
         },
     },
 );
@@ -43,8 +44,8 @@ Deno.test(
     {
         name: "reads workspaces",
         fn: async () => {
-            const env = await GetWorkspaces(PROJECT_ROOTS.ONE);
-            assertEquals(env, [await ParsePath(`${CONSTANTS.ENV_PATH}/hi`)]);
+            const workspaces = await GetWorkspaces(TEST_PROJECTS.UWU.ROOT);
+            assertEquals(workspaces, [TEST_PROJECTS.UWU.WORKSPACE_PATH]);
         },
     },
 );
@@ -54,17 +55,14 @@ Deno.test(
         name: "returns all projects",
         fn: async () => {
             const originalReadTextFile = Deno.readTextFile;
-
             // mock readTextFile
-            Deno.readTextFile = async (path: string | URL) => {
-                if (path === (await GetAppPath("MOTHERFKRS"))) {
-                    return `${CONSTANTS.ENV_PATH}/uwu`; // we give /uwu instead of \\uwu in purpose to ensure paths are parsed before returning them
-                }
-                return await originalReadTextFile(path);
-            };
+            Deno.readTextFile = mocks.readTextFile();
 
             const projects = await GetAllProjects();
-            assertEquals(projects, [PROJECT_ROOTS.ONE]);
+            assertEquals(projects, [TEST_PROJECTS.UWU.ROOT]);
+
+            // Restore the original method
+            Deno.readTextFile = originalReadTextFile;
         },
     },
 );
