@@ -57,7 +57,7 @@ export async function AddProject(
         await addTheEntry();
         return;
     }
-    if (env.runtime === "deno" || force !== true) {
+    if (env.runtime === "deno" && force !== true) {
         const addAnyway = await LogStuff(
             // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao
             // idk whats better, deno or bun. i have both installed, i could try. one day, maybe.
@@ -70,7 +70,7 @@ export async function AddProject(
         await addTheEntry();
         return;
     }
-    if (env.runtime === "bun" || force !== true) {
+    if (env.runtime === "bun" && force !== true) {
         const addAnyway = await LogStuff(
             `This project uses the Bun runtime. It's not *fully* supported *yet*. Add anyway?`,
             "what",

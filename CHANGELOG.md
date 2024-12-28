@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed settings displaying `autoFlush` related settings (that's not a feature).
 - Fixed `kickstart` not knowing where was the project cloned (hence failing).
 - Fixed `kickstart` cloning into non-empty DIRs or paths that aren't a DIR (hence, again, failing).
+- Fixed `kickstart`'s process being blocked by add confirmation for Deno and Bun projects.
 
 ## [2.0.1] 26-12-2024
 
