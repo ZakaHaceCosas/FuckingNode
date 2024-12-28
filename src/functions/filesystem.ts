@@ -19,6 +19,33 @@ export async function CheckForPath(path: string): Promise<boolean> {
 }
 
 /**
+ * Checks for a directory, returns a string depending on the result.
+ *
+ * @export
+ * @async
+ * @param {string} path
+ */
+export async function CheckForDir(path: string): Promise<
+    "NotDir" | "Valid" | "ValidButNotEmpty" | "NotFound"
+> {
+    try {
+        const info = await Deno.stat(path);
+        if (!info.isDirectory) return "NotDir";
+        for await (const _ of Deno.readDir(path)) {
+            // If we find a single entry, it's not empty.
+            return "ValidButNotEmpty";
+        }
+        return "Valid";
+    } catch (e) {
+        if (e instanceof Deno.errors.NotFound) {
+            return "NotFound"; // path doesn't exist.
+        } else {
+            throw e; // unexpected sh*t happened
+        }
+    }
+}
+
+/**
  * Parses a string path, to ensure string cleanness and handle things like relative paths or `--self`.
  *
  * @export

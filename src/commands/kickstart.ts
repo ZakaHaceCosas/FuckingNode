@@ -1,6 +1,6 @@
 import { Commander } from "../functions/cli.ts";
 import { GetSettings } from "../functions/config.ts";
-import { JoinPaths, ParsePath } from "../functions/filesystem.ts";
+import { CheckForDir, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject } from "../functions/projects.ts";
 import type { PKG_MANAGERS } from "../types/package_managers.ts";
@@ -21,6 +21,14 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
         if (!projectName) throw new Error(`RegEx Error: Can't spot the project name in ${gitUrl}`);
 
         const clonePath: string = path ? await ParsePath(path) : await ParsePath(await JoinPaths(Deno.cwd(), projectName));
+
+        const clonePathValidator = await CheckForDir(clonePath);
+        if (clonePathValidator === "ValidButNotEmpty") {
+            throw new Error(`${clonePath} is not empty! Stuff would break if we tried to kickstart with this path, so choose another one!`);
+        }
+        if (clonePathValidator === "NotDir") {
+            throw new Error(`${path} is not a directory...`);
+        }
 
         const workingManager: PKG_MANAGERS | "__DEFAULT" = manager
             ? (["npm", "pnpm", "yarn", "deno", "bun"].includes(manager)) ? (manager as PKG_MANAGERS) : "pnpm"
