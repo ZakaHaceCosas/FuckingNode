@@ -423,7 +423,7 @@ export async function PerformCleaning(
  */
 export async function PerformHardCleanup(): Promise<void> {
     await LogStuff(
-        ColorString("Time for hard-pruning! Wait patiently, please (caches can take a while to clean).", "italic"),
+        `Time for hard-pruning! ${ColorString("Wait patiently, please (caches will take a while to clean).", "italic")}`,
         "package",
     );
 
@@ -485,7 +485,7 @@ export async function PerformHardCleanup(): Promise<void> {
     // deno requires this glue fix
     // because apparently i cannot clear the cache of deno
     // using a program thats written in deno
-    // and it throws an error and exists the CLI
+    // and it throws an error and exits the CLI
     // epic.
     if (await CommandExists("deno")) {
         try {

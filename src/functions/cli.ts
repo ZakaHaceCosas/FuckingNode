@@ -65,7 +65,7 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
 }
 
 /**
- * Validates if a command exists. Useful to check if the user has some tool installed before running anything.
+ * Validates if a command exists. Useful to check if the user has some tool installed before running anything. Uses `-v` as an arg to whatever command you pass.
  *
  * @export
  * @async
@@ -74,11 +74,13 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
  */
 export async function CommandExists(cmd: string): Promise<boolean> {
     try {
-        const process = new Deno.Command(cmd, { stdout: "null", stderr: "null", stdin: "null" });
+        const process = new Deno.Command(cmd, {
+            args: ["-v"], // this single line fixed a bug that has been present for at least two months 😭
+            stdout: "null",
+            stderr: "null",
+        });
 
-        const status = await process.spawn().status;
-
-        return status.success;
+        return (await process.output()).success;
     } catch {
         // error = false
         return false;

@@ -126,7 +126,7 @@ While we've been talking about Node projects and `package.json` all the time, we
 | Feature | Support | Notes |
 | :--- | ---: | ---: |
 | Automated project-wide cleaning | NodeJS-only | Deno and Bun don't provide the kind of commands (dedupe, clean, etc...) needed for this task. |
-| Automated system-wide cache cleaning | NodeJS, Deno, Bun | / |
+| Automated system-wide cache cleaning | NodeJS, Bun | Deno doesn't allow to clean _it's own_ cache while using it (if unclear, this CLI is built with Deno). A gluefix is in the codebase, but doesn't _always_ work. |
 | Parsing of project file | NodeJS, Bun, Deno (deno.json) | Only looks for specific files (e.g. it won't look for `package.json` in a Deno project, even though Deno allows `package.json`). |
 | Automated prettify tasks | NodeJS, Bun, Deno | Deno doesn't support setting `prettyCmd`. It'll always use `deno fmt`. |
 | Automated lint tasks | NodeJS, Bun | / |

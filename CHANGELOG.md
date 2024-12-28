@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
+- Fixed a long standing issue with hard cleanup: it didn't properly detect if you had certain managers like `npm`, skipping them when it shouldn't. _(That has been in there since october :skull:)_.
 - Fixed the updater thinking you're on an outdated version when you aren't.
 - Fixed settings displaying `autoFlush` related settings (that's not a feature).
 - Fixed `kickstart` not knowing where was the project cloned (hence failing).
