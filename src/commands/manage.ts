@@ -10,12 +10,15 @@ import { GetAppPath } from "../functions/config.ts";
 /**
  * Adds a new project.
  *
+ * @export
  * @async
  * @param {string} entry Path to the project.
+ * @param {boolean} force If true, it'll skip Deno & Bun warnings.
  * @returns {Promise<void>}
  */
-async function AddProject(
+export async function AddProject(
     entry: string,
+    force?: boolean,
 ): Promise<void> {
     const workingEntry = await ParsePath(entry);
     if (!(await CheckForPath(workingEntry))) {
@@ -54,7 +57,7 @@ async function AddProject(
         await addTheEntry();
         return;
     }
-    if (env.runtime === "deno") {
+    if (env.runtime === "deno" || force !== true) {
         const addAnyway = await LogStuff(
             // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao
             // idk whats better, deno or bun. i have both installed, i could try. one day, maybe.
@@ -67,7 +70,7 @@ async function AddProject(
         await addTheEntry();
         return;
     }
-    if (env.runtime === "bun") {
+    if (env.runtime === "bun" || force !== true) {
         const addAnyway = await LogStuff(
             `This project uses the Bun runtime. It's not *fully* supported *yet*. Add anyway?`,
             "what",

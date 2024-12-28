@@ -315,7 +315,7 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
 export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
     try {
         const workingPath = await ParsePath(path);
-        if (!(await CheckForPath(workingPath))) throw new Error("(PROJECT-ENV) Path doesn't exist.");
+        if (!(await CheckForPath(workingPath))) throw new Error(`(PROJECT-ENV) Path ${path} doesn't exist.`);
         const trash = await JoinPaths(workingPath, "node_modules");
 
         const isDeno = await CheckForPath(await JoinPaths(workingPath, "deno.json")) ||
