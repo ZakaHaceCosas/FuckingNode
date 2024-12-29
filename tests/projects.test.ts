@@ -26,7 +26,7 @@ const MOCK_ENV = {
         manager: "npm",
         lockfile: { name: "package-lock.json", path: TEST_PROJECTS.ONE.LOCKFILE },
         hall_of_trash: TEST_PROJECTS.ONE.NODE_MODULES,
-        root: TEST_PROJECTS.ONE.ROOT
+        root: TEST_PROJECTS.ONE.ROOT,
     } as ProjectEnv,
 };
 
