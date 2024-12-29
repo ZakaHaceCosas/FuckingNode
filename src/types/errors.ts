@@ -10,4 +10,5 @@ export type ERROR_CODES =
     | "Cleaner__InvalidCleanerIntensity"
     | "Internal__Projects__CantDetermineEnv"
     | "Manager__NonExistingPath"
-    | "Internal__NoEnvForConfigPath";
+    | "Internal__NoEnvForConfigPath"
+    | "Generic__NonFoundProject";

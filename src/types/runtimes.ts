@@ -87,4 +87,10 @@ export interface ProjectEnv {
          */
         content: NodePkgJson | DenoPkgJson;
     };
+    /**
+     * Path to the **root** of the project.
+     *
+     * @type {string}
+     */
+    root: string;
 }

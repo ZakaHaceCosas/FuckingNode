@@ -342,6 +342,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                 runtime: "bun",
                 manager: "bun",
                 hall_of_trash: trash,
+                root: workingPath,
             };
         }
         if (isDeno) {
@@ -357,6 +358,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                 runtime: "deno",
                 manager: "deno",
                 hall_of_trash: trash,
+                root: workingPath,
             };
         }
 
@@ -375,6 +377,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     runtime: "node",
                     manager: manager.name,
                     hall_of_trash: trash,
+                    root: workingPath,
                 };
             }
         }

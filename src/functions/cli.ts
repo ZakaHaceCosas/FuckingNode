@@ -11,7 +11,7 @@ export interface CommanderOutput {
      */
     success: boolean;
     /**
-     * Output of the command. Uses `stdout` or `stderr` depending on whether the command was successful.
+     * Output of the command. Uses both `stdout` and `stderr`, joined by an \n.
      *
      * @type {?string}
      */
@@ -42,7 +42,7 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
 
         const result: CommanderOutput = {
             success: process.success,
-            stdout: process.success ? new TextDecoder().decode(process.stdout) : new TextDecoder().decode(process.stderr),
+            stdout: `${new TextDecoder().decode(process.stdout)}\n${new TextDecoder().decode(process.stderr)}`,
         };
 
         return result;

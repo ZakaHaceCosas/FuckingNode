@@ -63,6 +63,10 @@ export class FknError extends Error {
                     ColorString(Deno.build.os === "windows" ? "APPDATA env variable" : "XDG_CONFIG_HOME and HOME env variables", "bold")
                 } but failed, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong. If these aren't the right environment variables for your system's config path (currently using APPDATA on Windows, /home/user/.config on macOS and Linux), please raise an issue on GitHub.`;
                 break;
+            case "Generic__NonFoundProject":
+                hint =
+                    `Check for typos or a wrong name - what you provided (either a project's name / absolute path / relative path) was not found.`;
+                break;
             default:
                 hint = null;
                 break;
