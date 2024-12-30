@@ -282,7 +282,6 @@ const ProjectCleaningFeatures = {
  *
  * @export
  * @async
- * @param {ALL_SUPPORTED_LOCKFILES} lockfile
  * @param {string} projectInQuestion
  * @param {boolean} shouldUpdate
  * @param {boolean} shouldClean
@@ -293,7 +292,6 @@ const ProjectCleaningFeatures = {
  * @returns {Promise<void>}
  */
 export async function PerformCleaning(
-    lockfile: ALL_SUPPORTED_LOCKFILES,
     projectInQuestion: string,
     shouldUpdate: boolean,
     shouldClean: boolean,
@@ -313,61 +311,22 @@ export async function PerformCleaning(
         const isGitClean = await IsWorkingTreeClean(motherfuckerInQuestion);
         const settings = await GetProjectSettings(motherfuckerInQuestion);
 
-        let baseCommand: tBaseCommand;
-        let execCommand: tExecCommand;
-        let pruneArgs: string[][];
-        let updateArgs: string[];
-        let canClean: boolean;
-        switch (lockfile) {
-            case "package-lock.json":
-                baseCommand = "npm";
-                pruneArgs = [["dedupe"], ["prune"]];
-                updateArgs = ["update"];
-                execCommand = ["npx"];
-                canClean = true;
-                break;
-            case "pnpm-lock.yaml":
-                baseCommand = "pnpm";
-                pruneArgs = [["dedupe"], ["prune"]];
-                updateArgs = ["update"];
-                execCommand = ["pnpm", "dlx"];
-                canClean = true;
-                break;
-            case "yarn.lock":
-                baseCommand = "yarn";
-                pruneArgs = [["autoclean", "--force"]];
-                updateArgs = ["upgrade"];
-                execCommand = ["yarn", "dlx"];
-                canClean = true;
-                break;
-            case "bun.lockb":
-                baseCommand = "bun";
-                updateArgs = ["update"];
-                execCommand = ["bunx"];
-                canClean = false;
-                break;
-            case "deno.lock":
-                baseCommand = "deno";
-                updateArgs = ["outdated", "--update"];
-                execCommand = ["deno", "run"];
-                canClean = false;
-                break;
-        }
+        const { base, exec, update, clean } = workingEnv.commands;
 
         if (shouldUpdate) {
             await ProjectCleaningFeatures.Update(
-                baseCommand,
+                base,
                 motherfuckerInQuestion,
-                updateArgs,
+                update,
             );
         }
-        if (canClean && shouldClean) {
+        if (shouldClean && clean !== "__UNSUPPORTED") {
             await ProjectCleaningFeatures.Clean(
-                baseCommand,
+                base,
                 motherfuckerInQuestion,
                 settings,
-                baseCommand,
-                pruneArgs!,
+                base,
+                clean,
                 intensity,
                 maximPath,
             );
@@ -376,8 +335,8 @@ export async function PerformCleaning(
             await ProjectCleaningFeatures.Lint(
                 settings,
                 motherfuckerInQuestion,
-                baseCommand,
-                execCommand,
+                base,
+                exec,
                 workingEnv,
             );
         }
@@ -385,8 +344,8 @@ export async function PerformCleaning(
             await ProjectCleaningFeatures.Prettify(
                 settings,
                 motherfuckerInQuestion,
-                baseCommand,
-                execCommand,
+                base,
+                exec,
                 workingEnv,
             );
         }

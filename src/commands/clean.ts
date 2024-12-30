@@ -78,13 +78,12 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
                 if (lockfiles.length > 0) {
                     if (lockfiles.length === 1) {
-                        for (const lockfile of lockfiles) {
+                        for (const _lockfile of lockfiles) {
                             await LogStuff(
                                 `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
                                 "working",
                             );
                             await PerformCleaning(
-                                lockfile,
                                 project,
                                 doUpdate,
                                 doClean,

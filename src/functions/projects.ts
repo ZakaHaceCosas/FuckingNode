@@ -385,7 +385,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["bunx"],
                     update: ["update"],
                     clean: "__UNSUPPORTED",
-                    hardClean: ["pm", "cache", "rm"],
                 },
             };
         }
@@ -408,7 +407,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["deno", "run"],
                     update: ["outdated", "--update"],
                     clean: "__UNSUPPORTED",
-                    hardClean: ["clean"],
                 },
             };
         }
@@ -431,7 +429,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["yarn", "dlx"],
                     update: ["upgrade"],
                     clean: [["autoclean", "--force"]],
-                    hardClean: ["cache", "clean"]
                 },
             };
         }
@@ -453,8 +450,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     base: "pnpm",
                     exec: ["pnpm", "dlx"],
                     update: ["update"],
-                    clean:  [["dedupe"], ["prune"]],
-                    hardClean: ["store", "prune"]
+                    clean: [["dedupe"], ["prune"]],
                 },
             };
         }
@@ -477,7 +473,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["npx"],
                     update: ["update"],
                     clean: [["dedupe"], ["prune"]],
-                    hardClean: ["cache", "clean", "--force"]
                 },
             };
         }

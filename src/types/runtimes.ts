@@ -114,9 +114,9 @@ export interface ProjectEnv {
         /**
          * Exec command(s). `string[]` because it can be, e.g., `pnpm dlx`.
          *
-         * @type {string[]}
+         * @type {(["deno", "run"] | ["bunx"] | ["npx"] | ["pnpm", "dlx"] | ["yarn", "dlx"])}
          */
-        exec: string[];
+        exec: ["deno", "run"] | ["bunx"] | ["npx"] | ["pnpm", "dlx"] | ["yarn", "dlx"];
         /**
          * Update commands.
          *
@@ -129,11 +129,5 @@ export interface ProjectEnv {
          * @type {(string[][] | "__UNSUPPORTED")}
          */
         clean: string[][] | "__UNSUPPORTED";
-        /**
-         * Hard clean commands.
-         *
-         * @type {string[]}
-         */
-        hardClean: string[];
     };
 }
