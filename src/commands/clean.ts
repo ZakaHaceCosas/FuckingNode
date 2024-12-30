@@ -78,22 +78,20 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
                 if (lockfiles.length > 0) {
                     if (lockfiles.length === 1) {
-                        for (const _lockfile of lockfiles) {
-                            await LogStuff(
-                                `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
-                                "working",
-                            );
-                            await PerformCleaning(
-                                project,
-                                doUpdate,
-                                doClean,
-                                doLint,
-                                doPrettify,
-                                doDestroy,
-                                commit,
-                                realIntensity,
-                            );
-                        }
+                        await LogStuff(
+                            `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
+                            "working",
+                        );
+                        await PerformCleaning(
+                            project,
+                            doUpdate,
+                            doClean,
+                            doLint,
+                            doPrettify,
+                            doDestroy,
+                            commit,
+                            realIntensity,
+                        );
                     } else {
                         await LogStuff(
                             ColorString(
