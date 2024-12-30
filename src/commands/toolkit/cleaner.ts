@@ -512,11 +512,8 @@ export async function PerformHardCleanup(): Promise<void> {
         }); // free the user's space
     } catch (e) {
         await LogStuff(
-            "[ERROR] Due to an unknown error, a temporal DIR wasn't deleted. DIR path:\n" + tmp + "\nError:\n" + e,
+            `[ERROR] Due to an unknown error, a temporal DIR wasn't deleted. DIR path:\n${tmp}\nError:\n${e}`,
             "error",
-            undefined,
-            undefined,
-            false,
         );
     }
 

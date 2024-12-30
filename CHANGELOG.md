@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Changed
+
+- Now you'll be shown a warning if we couldn't remove a temporary DIR.
+
 ### Fixed
 
 - Fixed the app skipping `deno.jsonc`, meaning projects with a `deno.jsonc` and not a `package.json` wouldn't work properly.
