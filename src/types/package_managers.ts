@@ -44,13 +44,3 @@ export function IsLockfileNodeLockfile(lockfile: string): lockfile is SUPPORTED_
  * @export
  */
 export type PKG_MANAGERS = "pnpm" | "npm" | "yarn" | "deno" | "bun";
-
-/**
- * Name and lockfile of a NodeJS package manager.
- *
- * @interface NodePkgManagerProps
- */
-export interface NodePkgManagerProps {
-    name: "npm" | "pnpm" | "yarn";
-    file: "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock";
-}

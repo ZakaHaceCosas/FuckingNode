@@ -8,7 +8,6 @@ import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.
 import { ColorString, LogStuff, NaturalizeFormattedString } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
-import type { NodePkgManagerProps } from "../types/package_managers.ts";
 import { GetAppPath } from "./config.ts";
 import { GetDateNow } from "./date.ts";
 
@@ -329,8 +328,11 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                 toml: await JoinPaths(workingPath, "bun.lockb"),
                 lock: await JoinPaths(workingPath, "bunfig.toml"),
             },
-            std: {
+            node: {
                 json: await JoinPaths(workingPath, "package.json"),
+                lockNpm: await JoinPaths(workingPath, "package-lock.json"),
+                lockPnpm: await JoinPaths(workingPath, "pnpm-lock.yaml"),
+                lockYarn: await JoinPaths(workingPath, "yarn.lock"),
             },
         };
 
@@ -344,8 +346,11 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                 toml: await CheckForPath(paths.bun.toml),
                 lock: await CheckForPath(paths.bun.lock),
             },
-            std: {
-                json: await CheckForPath(paths.std.json),
+            node: {
+                json: await CheckForPath(paths.node.json),
+                lockNpm: await CheckForPath(paths.node.lockNpm),
+                lockPnpm: await CheckForPath(paths.node.lockPnpm),
+                lockYarn: await CheckForPath(paths.node.lockYarn),
             },
         };
 
@@ -356,13 +361,14 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
             pathChecks.bun.toml;
 
         const mainPath = isDeno
-            ? pathChecks.deno.jsonc ? paths.deno.jsonc : pathChecks.deno.json ? paths.deno.json : paths.std.json
-            : paths.std.json;
+            ? pathChecks.deno.jsonc ? paths.deno.jsonc : pathChecks.deno.json ? paths.deno.json : paths.node.json
+            : paths.node.json;
 
         const mainString: string = await Deno.readTextFile(mainPath);
 
         if (isBun) {
             return {
+                root: workingPath,
                 main: {
                     path: mainPath,
                     content: pathChecks.deno.jsonc ? parseJsonc(mainString) : JSON.parse(mainString),
@@ -374,7 +380,13 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                 runtime: "bun",
                 manager: "bun",
                 hall_of_trash: trash,
-                root: workingPath,
+                commands: {
+                    base: "bun",
+                    exec: ["bunx"],
+                    update: ["update"],
+                    clean: "__UNSUPPORTED",
+                    hardClean: ["pm", "cache", "rm"],
+                },
             };
         }
         if (isDeno) {
@@ -391,27 +403,83 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                 manager: "deno",
                 hall_of_trash: trash,
                 root: workingPath,
+                commands: {
+                    base: "deno",
+                    exec: ["deno", "run"],
+                    update: ["outdated", "--update"],
+                    clean: "__UNSUPPORTED",
+                    hardClean: ["clean"],
+                },
             };
         }
-
-        if (await CheckForPath(paths.std.json)) {
-            const manager = await DetectNodeManager(workingPath);
-            if (manager && manager.name && manager.file) {
-                return {
-                    main: {
-                        path: mainPath,
-                        content: JSON.parse(mainString),
-                    },
-                    lockfile: {
-                        name: manager.file,
-                        path: await JoinPaths(workingPath, manager.file),
-                    },
-                    runtime: "node",
-                    manager: manager.name,
-                    hall_of_trash: trash,
-                    root: workingPath,
-                };
-            }
+        if (pathChecks.node.lockYarn) {
+            return {
+                main: {
+                    path: mainPath,
+                    content: JSON.parse(mainString),
+                },
+                lockfile: {
+                    name: "yarn.lock",
+                    path: paths.node.lockYarn,
+                },
+                runtime: "node",
+                manager: "yarn",
+                hall_of_trash: trash,
+                root: workingPath,
+                commands: {
+                    base: "yarn",
+                    exec: ["yarn", "dlx"],
+                    update: ["upgrade"],
+                    clean: [["autoclean", "--force"]],
+                    hardClean: ["cache", "clean"]
+                },
+            };
+        }
+        if (pathChecks.node.lockPnpm) {
+            return {
+                main: {
+                    path: mainPath,
+                    content: JSON.parse(mainString),
+                },
+                lockfile: {
+                    name: "pnpm-lock.yaml",
+                    path: paths.node.lockPnpm,
+                },
+                runtime: "node",
+                manager: "pnpm",
+                hall_of_trash: trash,
+                root: workingPath,
+                commands: {
+                    base: "pnpm",
+                    exec: ["pnpm", "dlx"],
+                    update: ["update"],
+                    clean:  [["dedupe"], ["prune"]],
+                    hardClean: ["store", "prune"]
+                },
+            };
+        }
+        if (pathChecks.node.lockNpm) {
+            return {
+                main: {
+                    path: mainPath,
+                    content: JSON.parse(mainString),
+                },
+                lockfile: {
+                    name: "package-lock.json",
+                    path: paths.node.lockNpm,
+                },
+                runtime: "node",
+                manager: "npm",
+                hall_of_trash: trash,
+                root: workingPath,
+                commands: {
+                    base: "npm",
+                    exec: ["npx"],
+                    update: ["update"],
+                    clean: [["dedupe"], ["prune"]],
+                    hardClean: ["cache", "clean", "--force"]
+                },
+            };
         }
 
         throw new FknError("Internal__Projects__CantDetermineEnv");
@@ -419,14 +487,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
         await GenericErrorHandler(e);
         Deno.exit(1); // (for TS to shut up)
     }
-}
-
-/** Utility function to differentiate npm from pnpm from yarn. */
-async function DetectNodeManager(workingPath: string): Promise<NodePkgManagerProps | null> {
-    if (await CheckForPath(await JoinPaths(workingPath, "package-lock.json"))) return { name: "npm", file: "package-lock.json" };
-    if (await CheckForPath(await JoinPaths(workingPath, "pnpm-lock.yaml"))) return { name: "pnpm", file: "pnpm-lock.yaml" };
-    if (await CheckForPath(await JoinPaths(workingPath, "yarn.lock"))) return { name: "yarn", file: "yarn.lock" };
-    return null;
 }
 
 /**

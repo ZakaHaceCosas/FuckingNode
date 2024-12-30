@@ -36,40 +36,11 @@ export interface DenoPkgJson {
  */
 export interface ProjectEnv {
     /**
-     * JS runtime.
-     *
-     * @type {("node" | "deno" | "bun")}
-     */
-    runtime: "node" | "deno" | "bun";
-    /**
-     * Package manager. For Deno and Bun it just says "deno" and "bun" instead of JSR or NPM (afaik Bun uses NPM) to avoid confusion.
-     *
-     * @type {("npm" | "pnpm" | "yarn" | "deno" | "bun")}
-     */
-    manager: "npm" | "pnpm" | "yarn" | "deno" | "bun";
-    /**
-     * Project's lockfile
-     */
-    lockfile: {
-        /**
-         * Parsed path to lockfile.
-         *
-         * @type {string}
-         */
-        path: string;
-        /**
-         * Bare name of the lockfile (`package-lock.json`, `deno.lock`)
-         *
-         * @type {ALL_SUPPORTED_LOCKFILES}
-         */
-        name: ALL_SUPPORTED_LOCKFILES;
-    };
-    /**
-     * Path to `node_modules`.
+     * Path to the **root** of the project.
      *
      * @type {string}
      */
-    hall_of_trash: string;
+    root: string;
     /**
      * Main file (`package.json`, `deno.json`...)
      */
@@ -88,9 +59,81 @@ export interface ProjectEnv {
         content: NodePkgJson | DenoPkgJson;
     };
     /**
-     * Path to the **root** of the project.
+     * Project's lockfile
+     */
+    lockfile: {
+        /**
+         * Parsed path to lockfile.
+         *
+         * @type {string}
+         */
+        path: string;
+        /**
+         * Bare name of the lockfile (`package-lock.json`, `deno.lock`)
+         *
+         * @type {ALL_SUPPORTED_LOCKFILES}
+         */
+        name: ALL_SUPPORTED_LOCKFILES;
+    };
+    /**
+     * JS runtime.
+     *
+     * @type {("node" | "deno" | "bun")}
+     */
+    runtime: "node" | "deno" | "bun";
+    /**
+     * Package manager. For Deno and Bun it just says "deno" and "bun" instead of JSR or NPM (afaik Bun uses NPM) to avoid confusion.
+     *
+     * @type {("npm" | "pnpm" | "yarn" | "deno" | "bun")}
+     */
+    manager: "npm" | "pnpm" | "yarn" | "deno" | "bun";
+    /**
+     * Path to `node_modules`.
      *
      * @type {string}
      */
-    root: string;
+    hall_of_trash: string;
+    /**
+     * CLI commands for this project.
+     *
+     * @type {{
+     *         base: "npm" | "pnpm" | "yarn" | "deno" | "bun";
+     *         exec: string[],
+     *         update: string[],
+     *         clean: string[] | "__UNSUPPORTED",
+     *         hardClean: string[]
+     *     }}
+     */
+    commands: {
+        /**
+         * Base command.
+         *
+         * @type {("npm" | "pnpm" | "yarn" | "deno" | "bun")}
+         */
+        base: "npm" | "pnpm" | "yarn" | "deno" | "bun";
+        /**
+         * Exec command(s). `string[]` because it can be, e.g., `pnpm dlx`.
+         *
+         * @type {string[]}
+         */
+        exec: string[];
+        /**
+         * Update commands.
+         *
+         * @type {string[]}
+         */
+        update: string[];
+        /**
+         * Clean commands.
+         *
+         * @type {(string[][] | "__UNSUPPORTED")}
+         */
+        clean: string[][] | "__UNSUPPORTED";
+        /**
+         * Hard clean commands.
+         *
+         * @type {string[]}
+         */
+        hardClean: string[];
+    };
 }
