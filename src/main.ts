@@ -13,6 +13,7 @@ import { VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetSettings } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
+import TheAuditer from "./commands/audit.ts";
 
 async function init(update: boolean, mute?: boolean) {
     await FreshSetup(); // Temporarily hold the result
@@ -107,6 +108,12 @@ async function main(command: string) {
                 break;
             case "stats":
                 await TheStatistics(Deno.args[1] ?? "");
+                break;
+            case "audit":
+                await TheAuditer(
+                    Deno.args[1] ?? null,
+                    ParseFlag("strict", true).includes(Deno.args[2] ?? ""),
+                );
                 break;
             default:
                 await TheHelper({ query: Deno.args[1] });

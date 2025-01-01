@@ -385,6 +385,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["bunx"],
                     update: ["update"],
                     clean: "__UNSUPPORTED",
+                    audit: "__UNSUPPORTED",
                 },
             };
         }
@@ -407,6 +408,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["deno", "run"],
                     update: ["outdated", "--update"],
                     clean: "__UNSUPPORTED",
+                    audit: "__UNSUPPORTED",
                 },
             };
         }
@@ -429,6 +431,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["yarn", "dlx"],
                     update: ["upgrade"],
                     clean: [["autoclean", "--force"]],
+                    audit: "__UNSUPPORTED",
                 },
             };
         }
@@ -451,6 +454,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["pnpm", "dlx"],
                     update: ["update"],
                     clean: [["dedupe"], ["prune"]],
+                    audit: "__UNSUPPORTED", // ["audit", "--ignore-registry-errors"],
                 },
             };
         }
@@ -473,11 +477,15 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["npx"],
                     update: ["update"],
                     clean: [["dedupe"], ["prune"]],
+                    audit: ["audit", "--include-workspace-root"],
                 },
             };
         }
 
-        throw new FknError("Internal__Projects__CantDetermineEnv");
+        throw new FknError(
+            "Internal__Projects__CantDetermineEnv",
+            `Happened with ${ColorString(path, "bold")}`
+        );
     } catch (e) {
         await GenericErrorHandler(e);
         Deno.exit(1); // (for TS to shut up)
