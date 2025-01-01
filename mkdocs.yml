@@ -18,7 +18,7 @@ nav:
 
 theme:
   name: material
-  custom_dir: overrides
+  custom_dir: website/overrides
 
   # logo: /path/to/logo.png
   # favicon: /path/to/logo.png (when we have it)
