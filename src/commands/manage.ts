@@ -298,8 +298,11 @@ async function ListProjects(
             for (const entry of ignoreList) {
                 const protection = (await GetProjectSettings(entry)).divineProtection; // array
                 let protectionString: string;
-                if (!(Array.isArray(protection))) protectionString = "ERROR: CANNOT READ SETTINGS, CHECK YOUR FKNODE.YAML!";
-                else protectionString = protection.join(" and ");
+                if (!(Array.isArray(protection))) {
+                    protectionString = "ERROR: CANNOT READ SETTINGS, CHECK YOUR FKNODE.YAML!";
+                } else {
+                    protectionString = protection.join(" and ");
+                }
 
                 toReturn.push(
                     `${await NameProject(entry, "all")} (${
