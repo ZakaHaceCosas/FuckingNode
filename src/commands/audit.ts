@@ -8,10 +8,6 @@ import type { FkNodeSecurityAudit } from "../types/audit.ts";
 
 export default async function TheAuditer(project: string | null, strict: boolean) {
     try {
-        if (strict) {
-            await LogStuff(ColorString("Strict is not available yet.", "italic"));
-        }
-
         const shouldAuditAll = project === null || project.trim() === "" || ParseFlag("all", true).includes(project) || project.trim() === "--";
 
         type reportType = {
@@ -22,12 +18,12 @@ export default async function TheAuditer(project: string | null, strict: boolean
         if (shouldAuditAll) {
             const projects = await GetAllProjects();
             await LogStuff(
-                `${APP_NAME.CASED} Audit is only supported for NPM projects as of now.`,
+                `${APP_NAME.CASED} Audit is only supported for npm projects as of now.`,
                 "heads-up",
             );
             const report: reportType[] = [];
             for (const project of projects) {
-                const res = await PerformAuditing(project);
+                const res = await PerformAuditing(project, strict);
                 if (typeof res === "number") continue;
                 report.push({
                     project: project,
@@ -48,7 +44,7 @@ export default async function TheAuditer(project: string | null, strict: boolean
                 "chart",
             );
         } else {
-            await PerformAuditing(project);
+            await PerformAuditing(project, strict);
         }
     } catch (e) {
         throw e;

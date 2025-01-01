@@ -373,9 +373,10 @@ export function ParseNpmReport(report: string): ParsedNpmReport {
  * @export
  * @async
  * @param {ParsedNpmReport} bareReport Parsed npm audit.
+ * @param {boolean} strict If true, uses a slightly stricter criteria for the audit.
  * @returns {Promise<FkNodeSecurityAudit>}
  */
-export async function AuditProject(bareReport: ParsedNpmReport): Promise<FkNodeSecurityAudit> {
+export async function AuditProject(bareReport: ParsedNpmReport, strict: boolean): Promise<FkNodeSecurityAudit> {
     const { vulnerablePackages, risk } = bareReport;
 
     const vulnerabilities: SecurityVulnerability[] = [];
@@ -431,14 +432,16 @@ export async function AuditProject(bareReport: ParsedNpmReport): Promise<FkNodeS
 
     const revampedStrictPercentage = (classicPercentage + (riskBump * 100)) / 2;
 
+    const percentage = strict ? revampedStrictPercentage : classicPercentage;
+
     // ATTEMPTS OF IMPROVEMENT THAT NEVER WORKED OUT :(
     // const tweakedPercentage = (neg === 0) ? 0 : Math.abs(((pos + riskBump) / (pos + neg)) * 100);
     // const strictPercentage = Math.abs(pos - neg) !== 0 ? ((pos / (pos + neg)) + (riskBump / (riskBump + neg - pos))) * 100 : 0;
-    await DisplayAudit(revampedStrictPercentage);
+    await DisplayAudit(percentage);
     return {
         negatives,
         positives,
-        percentage: revampedStrictPercentage,
+        percentage,
     };
 }
 
@@ -448,13 +451,14 @@ export async function AuditProject(bareReport: ParsedNpmReport): Promise<FkNodeS
  * @export
  * @async
  * @param {string} project Path to project to be audited.
+ * @param {boolean} strict If true, uses a slightly stricter criteria for the audit.
  * @returns {Promise<
  *     | FkNodeSecurityAudit
  *     | 0
  *     | 1
  * >}
  */
-export async function PerformAuditing(project: string): Promise<
+export async function PerformAuditing(project: string, strict:boolean): Promise<
     | FkNodeSecurityAudit
     | 0
     | 1
@@ -491,7 +495,7 @@ export async function PerformAuditing(project: string): Promise<
 
         const bareReport = ParseNpmReport(res.stdout);
 
-        const ret = await AuditProject(bareReport);
+        const ret = await AuditProject(bareReport, strict);
 
         Deno.chdir(current);
 
