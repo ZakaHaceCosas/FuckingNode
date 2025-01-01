@@ -33,7 +33,7 @@ And that's it for now.
 
 ## Learn to use this beauty
 
-Links coming soon lol
+- [Install it]("manual/index.md")
+- [Set it up]("manual/setup.md")
 
-<!-- - [Install it]("manual/index.md")
-- [Set it up]("manual/setup.md") -->
+This website is work in progress, rest of the pages will be done later on.
