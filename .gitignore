@@ -5,8 +5,6 @@
 dist/**
 # .ps1 and .sh installers
 scripts/new/**
-# website
-website/**
 # NixOS builds
 result/
 result
