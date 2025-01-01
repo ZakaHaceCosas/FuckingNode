@@ -42,7 +42,6 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
         Deno.chdir(clonePath);
 
         const clonedPath = Deno.cwd();
-        console.log("DEBUG", clonedPath);
 
         const env = await GetProjectEnvironment(clonedPath);
         const managerToUse = workingManager === "__DEFAULT" ? env.manager : workingManager;
