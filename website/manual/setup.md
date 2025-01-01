@@ -66,7 +66,7 @@ the above would work as long as you have one added project with this package.jso
 ```json
 {
     "name": "flamethrower",
-    "version": "6.9.0",
+    "version": "6.9.0"
     // etc...
 }
 ```
