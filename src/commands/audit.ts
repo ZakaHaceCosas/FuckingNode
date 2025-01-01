@@ -46,6 +46,9 @@ export default async function TheAuditer(project: string | null, strict: boolean
         } else {
             await PerformAuditing(project, strict);
         }
+
+        await LogStuff("Audit complete!", "tick-clear");
+        await LogStuff(ColorString("PS. Keep in mind our report simply can't be 100% accurate - if you doubt, the best option is always to fix vulnerabilities.", "italic"), "heads-up");
     } catch (e) {
         throw e;
     }
