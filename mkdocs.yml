@@ -32,7 +32,7 @@ theme:
     - content.code.copy
 
   palette:
-    - scheme: default
+    - scheme: slate
       primary: green
       accent: green
 
