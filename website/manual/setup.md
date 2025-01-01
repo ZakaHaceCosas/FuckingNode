@@ -25,21 +25,16 @@ fuckingnode manager add --self
 
 This is our recommended way, as you can run it right after running `init` and you don't have to type a long folder name.
 
-You also can waste your time opening the config file, it's a plain text file that stores absolute paths separated by line breaks:
+You also can waste your time opening the config file. It's a plain text file that stores absolute paths separated by line breaks. On Windows it lives at your local `%APPDATA%`, and on Linux & mac it lives on `HOME` (or `XDG_CONFIG_HOME`). It looks kinda like this:
 
 ```txt
 C:\Users\JohnDoe\projects\Sokora
 C:\Users\JohnDoe\projects\electronJS-clone
 ```
 
-/// caption | <
-Windows: C:\Users\YOUR_USER\AppData\Roaming\FuckingNode\fuckingnode-motherfuckers.txt
-Linux & mac: /home/YOUR_USER/.config/(the same file name lol)
-///
+**Keep in mind paths must always point to the root**. Paths that point to the `package.json` itself, or to anything else that isn't the root of the project (the DIR that holds `package.json`), else you're cooked (the entire CLI won't work).
 
-**Keep in mind you must always point to the root**. Paths that point to the `package.json` itself, or to anything else that isn't the root of the project (DIR that holds `package.json`), you're cooked (it won't work).
-
-Anyway, you're now ready to f*ck the nodes!
+Anyway, your basic setup is done and you're now ready to f*ck the nodes!
 
 <!-- ## Optional setup
 

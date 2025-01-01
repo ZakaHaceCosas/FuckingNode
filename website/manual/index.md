@@ -67,4 +67,4 @@ Since you have Deno installed, you can also just `deno -A src/main.ts [...comman
 
 ---
 
-[Next step: Setup]("setup.md")
+[Next step: Setup](setup.md)
