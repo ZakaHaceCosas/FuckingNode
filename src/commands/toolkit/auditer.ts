@@ -7,6 +7,13 @@ import { GetProjectEnvironment, NameProject, SpotProject } from "../../functions
 import type { FkNodeSecurityAudit, ParsedNpmReport, SecurityVulnerability } from "../../types/audit.ts";
 import { FknError } from "../../utils/error.ts";
 
+/**
+ * Gets a package's security vulnerabilities from OSV.dev.
+ *
+ * @async
+ * @param {string} packageName Name of the package.
+ * @returns {Promise<SecurityVulnerability[]>} Array of vulnerabilities associated to the package.
+ */
 async function FetchVulnerability(packageName: string): Promise<SecurityVulnerability[]> {
     const response = await fetch("https://api.osv.dev/v1/query", {
         method: "POST",
@@ -25,6 +32,11 @@ async function FetchVulnerability(packageName: string): Promise<SecurityVulnerab
     return data.vulns || [];
 }
 
+/**
+ * Analyzes security vulnerabilities searching for keywords, returns an array of starter questions for the interrogatory. While unused, also returns the keywords (`vectors`) found.
+ *
+ * @param {SecurityVulnerability[]} vulnerabilities
+ */
 function AnalyzeVulnerabilities(vulnerabilities: SecurityVulnerability[]): {
     questions: string[];
     vectors: string[];
@@ -71,6 +83,15 @@ function AnalyzeVulnerabilities(vulnerabilities: SecurityVulnerability[]): {
     };
 }
 
+/**
+ * Asks a question for the interrogatory, returns a "stringified boolean" (weird, I know, we had to pivot a little bit), depending on the response. `"true"` means the user response is something to worry about, `"false"` means it's not.
+ *
+ * @async
+ * @param {string} question Question itself.
+ * @param {boolean} isFollowUp If true, question is a follow up to another question.
+ * @param {boolean} isReversed If true, responding "yes" to the question means it's not a vulnerability (opposite logic).
+ * @returns {Promise<"true" | "false">}
+ */
 async function askQuestion(question: string, isFollowUp: boolean, isReversed: boolean): Promise<"true" | "false"> {
     const formattedQuestion = ColorString(ColorString(question, isFollowUp ? "bright-blue" : "bright-yellow"), "italic");
     const response = await LogStuff(formattedQuestion, undefined, false, true);
@@ -82,11 +103,14 @@ async function askQuestion(question: string, isFollowUp: boolean, isReversed: bo
     }
 }
 
-async function InterrogateVulnerability(questions: string[]): Promise<{
-    pos: number;
-    neg: number;
-    percentage: number;
-}> {
+/**
+ * Interrogates a vulnerability, based on base questions (obtained from `AnalyzeVulnerabilities()`) and asking more in-depth questions based on user response.
+ *
+ * @async
+ * @param {string[]} questions Base questions.
+ * @returns {Promise<FkNodeSecurityAudit>}
+ */
+async function InterrogateVulnerability(questions: string[]): Promise<FkNodeSecurityAudit> {
     const responses: ("true" | "false")[] = [];
 
     // I REMADE BOOLEANS AS STRINGS IN PURPOSE
@@ -195,25 +219,36 @@ async function InterrogateVulnerability(questions: string[]): Promise<{
         }
     }
 
-    const { pos, neg } = responses.reduce(
+    const { positives, negatives } = responses.reduce(
         (acc, value) => {
             if (value === "true") {
-                acc.pos += 1;
+                acc.positives += 1;
             } else if (value === "false") {
-                acc.neg += 1;
+                acc.negatives += 1;
             }
             return acc;
         },
-        { pos: 0, neg: 0 },
+        { positives: 0, negatives: 0 },
     );
 
-    const total = pos + neg;
-    const percentage = Math.abs((pos / total) * 100);
+    const total = positives + negatives;
+    const percentage = Math.abs((positives / total) * 100);
 
-    return { pos, neg, percentage };
+    return {
+        positives,
+        negatives,
+        percentage,
+    };
 }
 
-async function DisplayAudit(percentage: number) {
+/**
+ * Formats and displays the audit results.
+ *
+ * @async
+ * @param {number} percentage Percentage result.
+ * @returns {Promise<void>}
+ */
+async function DisplayAudit(percentage: number): Promise<void> {
     let color: "bright-yellow" | "red" | "bright-green";
     let message: string;
     if (percentage < 25) {
@@ -249,6 +284,15 @@ async function DisplayAudit(percentage: number) {
     console.log("");
 }
 
+/**
+ * Takes the output of npm audit command and parses it to get what we care about.
+ *
+ * Don't tell me about npm audit --json, I know that exists, we parse bare output by design, not by mistake.
+ *
+ * @export
+ * @param {string} report
+ * @returns {ParsedNpmReport}
+ */
 export function ParseNpmReport(report: string): ParsedNpmReport {
     const vulnerablePackages: string[] = [];
     const directlyAffectedDependencies: string[] = [];
@@ -323,6 +367,14 @@ export function ParseNpmReport(report: string): ParsedNpmReport {
     };
 }
 
+/**
+ * Handler function for auditing a project.
+ *
+ * @export
+ * @async
+ * @param {ParsedNpmReport} bareReport Parsed npm audit.
+ * @returns {Promise<FkNodeSecurityAudit>}
+ */
 export async function AuditProject(bareReport: ParsedNpmReport): Promise<FkNodeSecurityAudit> {
     const { vulnerablePackages, risk } = bareReport;
 
@@ -347,8 +399,6 @@ export async function AuditProject(bareReport: ParsedNpmReport): Promise<FkNodeS
     console.log("");
     await LogStuff("Please answer these questions. We'll use your responses to evaluate this vulnerability:", "bulb");
     console.log("");
-    let neg: number = 0;
-    let pos: number = 0;
 
     const { questions } = AnalyzeVulnerabilities(vulnerabilities);
 
@@ -371,14 +421,13 @@ export async function AuditProject(bareReport: ParsedNpmReport): Promise<FkNodeS
     // i'll probably need this
 
     const audit = await InterrogateVulnerability(questions);
-    neg += audit.neg;
-    pos += audit.pos;
+    const { negatives, positives } = audit;
 
     const riskBump = risk === "critical" ? 1 : risk === "high" ? 0.75 : risk === "moderate" ? 0.5 : 0.25;
 
     // neg += riskBump;
     // LEGACY IMPLEMENTATION
-    const classicPercentage = (pos + neg) > 0 ? (pos / (pos + neg)) * 100 : 0;
+    const classicPercentage = (positives + negatives) > 0 ? (positives / (positives + negatives)) * 100 : 0;
 
     const revampedStrictPercentage = (classicPercentage + (riskBump * 100)) / 2;
 
@@ -387,12 +436,24 @@ export async function AuditProject(bareReport: ParsedNpmReport): Promise<FkNodeS
     // const strictPercentage = Math.abs(pos - neg) !== 0 ? ((pos / (pos + neg)) + (riskBump / (riskBump + neg - pos))) * 100 : 0;
     await DisplayAudit(revampedStrictPercentage);
     return {
-        negatives: neg,
-        positives: pos,
+        negatives,
+        positives,
         percentage: revampedStrictPercentage,
     };
 }
 
+/**
+ * Audits a project for security vulnerabilities. Returns 0 if no vulnerabilities are found, 1 if the project manager doesn't support auditing, or the audit results.
+ *
+ * @export
+ * @async
+ * @param {string} project Path to project to be audited.
+ * @returns {Promise<
+ *     | FkNodeSecurityAudit
+ *     | 0
+ *     | 1
+ * >}
+ */
 export async function PerformAuditing(project: string): Promise<
     | FkNodeSecurityAudit
     | 0

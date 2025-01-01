@@ -484,7 +484,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
 
         throw new FknError(
             "Internal__Projects__CantDetermineEnv",
-            `Happened with ${ColorString(path, "bold")}`
+            `Happened with ${ColorString(path, "bold")}`,
         );
     } catch (e) {
         await GenericErrorHandler(e);
