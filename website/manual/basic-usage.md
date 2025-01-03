@@ -1,3 +1,3 @@
-# TO-DO
+# Using F\*ckingNode: cleanup
 
-while i document this, just run `fuckingnode clean` and see the magic happen
+The core idea of F\*ckingNode is to automate cleanup of your de
