@@ -1,6 +1,6 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
-import { ColorString, LogStuff } from "../functions/io.ts";
+import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects, GetProjectSettings, NameProject, UnderstandProjectSettings } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
@@ -37,9 +37,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         }
 
         await LogStuff(
-            ColorString(`Cleaning started at ${new Date().toLocaleString()}`, "green"),
+            `Cleaning started at ${new Date().toLocaleString()}`,
             "working",
-            undefined,
+            "bright-green",
             undefined,
             verbose,
         );
@@ -49,8 +49,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         for (const project of projects) {
             if (!(await CheckForPath(project))) {
                 await LogStuff(
-                    ColorString(`Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`, "red"),
+                    `Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`,
                     "error",
+                    "red",
                 );
                 results.push({
                     path: project,
@@ -94,11 +95,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                         );
                     } else {
                         await LogStuff(
-                            ColorString(
-                                `More than one lockfile is a bad practice; we can't handle this ${I_LIKE_JS.MF}.`,
-                                "bright-yellow",
-                            ),
+                            `More than one lockfile is a bad practice; we can't handle this ${I_LIKE_JS.MF}.`,
                             "error",
+                            "bright-yellow",
                         );
                         results.push({
                             path: project,
@@ -109,8 +108,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     }
                 } else if (await CheckForPath("package.json")) {
                     await LogStuff(
-                        ColorString(`${project} has a package.json but not a lockfile. Can't ${I_LIKE_JS.FKN} clean.`, "bright-yellow"),
+                        `${project} has a package.json but not a lockfile. Can't ${I_LIKE_JS.FKN} clean.`,
                         "warn",
+                        "bright-yellow",
                     );
                     results.push({
                         path: project,
@@ -120,8 +120,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     continue;
                 } else {
                     await LogStuff(
-                        ColorString(`No supported lockfile was found at ${project}. Skipping this ${I_LIKE_JS.MF}...`, "bright-yellow"),
+                        `No supported lockfile was found at ${project}. Skipping this ${I_LIKE_JS.MF}...`,
                         "warn",
+                        "bright-yellow",
                     );
                     results.push({
                         path: project,
@@ -138,8 +139,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 });
             } catch (e) {
                 await LogStuff(
-                    ColorString(`Error while working around with ${await NameProject(project, "name")}: ${e}`, "red"),
+                    `Error while working around with ${await NameProject(project, "name")}: ${e}`,
                     "error",
+                    "red",
                 );
                 results.push({
                     path: project,
@@ -155,8 +157,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         // go back home
         Deno.chdir(originalLocation);
         await LogStuff(
-            ColorString(`All your ${I_LIKE_JS.MFN} Node projects have been cleaned! Back to ${originalLocation}.`, "bright-green"),
+            `All your ${I_LIKE_JS.MFN} Node projects have been cleaned! Back to ${originalLocation}.`,
             "tick",
+            "bright-green",
         );
         if (verbose) await ShowReport(results);
         return;

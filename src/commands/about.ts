@@ -43,7 +43,7 @@ export default async function TheAbouter() {
 ╚═╝             ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝     ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝`;
 
     await LogStuff(colorizeText(Math.random() > 0.5 ? ascii2 : ascii));
-    await LogStuff(ColorString(ColorString(getRandomPhrase(phrases), "italic"), "bright-green"));
+    await LogStuff(ColorString(getRandomPhrase(phrases), "italic"), undefined, "bright-green");
     await LogStuff(`Version ${ColorString(VERSION, "bright-yellow")}`, "package");
     await LogStuff("");
     await LogStuff(

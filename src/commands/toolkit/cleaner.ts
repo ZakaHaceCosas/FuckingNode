@@ -404,24 +404,27 @@ export async function PerformHardCleanup(): Promise<void> {
 
     if (await CommandExists("npm")) {
         await LogStuff(
-            ColorString("NPM", "red"),
+            "NPM",
             "package",
+            "red",
         );
         await Commander("npm", npmHardPruneArgs, true);
         await LogStuff("Done", "tick");
     }
     if (await CommandExists("pnpm")) {
         await LogStuff(
-            ColorString("PNPM", "bright-yellow"),
+            "PNPM",
             "package",
+            "bright-yellow",
         );
         await Commander("pnpm", pnpmHardPruneArgs, true);
         await LogStuff("Done", "tick");
     }
     if (await CommandExists("yarn")) {
         await LogStuff(
-            ColorString("YARN", "purple"),
+            "YARN",
             "package",
+            "purple",
         );
         await Commander("yarn", yarnHardPruneArgs, true);
         await LogStuff("Done", "tick");
@@ -429,8 +432,9 @@ export async function PerformHardCleanup(): Promise<void> {
 
     if (await CommandExists("bun")) {
         await LogStuff(
-            ColorString("BUN", "pink"),
+            "BUN",
             "package",
+            "pink",
         );
         await Commander("bun", ["init", "-y"], false); // placebo
         await Commander("bun", bunHardPruneArgs, true);
@@ -451,8 +455,9 @@ export async function PerformHardCleanup(): Promise<void> {
             const denoDir: string | undefined = Deno.env.get("DENO_DIR");
             if (!denoDir) throw "lmao";
             await LogStuff(
-                ColorString("DENO", "bright-blue"),
+                "DENO",
                 "package",
+                "bright-blue",
             );
             await Deno.remove(denoDir);
             await LogStuff("Done", "tick");
@@ -505,11 +510,9 @@ export async function ValidateIntensity(intensity: string): Promise<CleanerInten
 
     if (workingIntensity === "maxim") {
         const confirmMaxim = await LogStuff(
-            ColorString(
-                "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
-                "italic",
-            ),
+            "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
             "warn",
+            "italic",
             undefined,
             true,
         );
@@ -529,7 +532,7 @@ export async function ValidateIntensity(intensity: string): Promise<CleanerInten
  */
 export async function ShowReport(results: tRESULT[]): Promise<void> {
     // shows a report
-    await LogStuff("Report:", "chart", false);
+    await LogStuff("Report:", "chart");
     const report: string[] = [];
     for (const result of results) {
         const name = await NameProject(result.path, "all");
@@ -544,11 +547,11 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
             .toLowerCase()
             .localeCompare(b.toLowerCase());
     }).join("\n");
-    await LogStuff(sortedReport, undefined, false);
+    await LogStuff(sortedReport, undefined);
     await LogStuff(
-        ColorString(`Cleaning completed at ${new Date().toLocaleString()}`, "bright-green"),
+        `Cleaning completed at ${new Date().toLocaleString()}`,
         "tick",
-        false,
+        "bright-green",
     );
 }
 
