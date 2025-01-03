@@ -2,6 +2,16 @@
 
 Here comes the fun part, we'll learn how to _configure_ a F\*ckingNode project with advanced settings and how to automate complex tasks like keeping your codebase linted and formatted.
 
+**Outline**: We'll see everything in the following order:
+
+- Additional cleaner (_main feature as you should know_) features.
+- Config file for your projects (`fknode.yaml`), to tweak behavior of additional features (+ extra settings).
+- CLI-wide `settings` command.
+- Additional CLI features.
+
+!!! note
+    This tutorial assumes basic knowledge of the CLI (what the clean command is, what the project list is, etc...).
+
 ## Using additional features
 
 By default, `fuckingnode clean (intensity)` only performs a cleanup of the desired level. Features we promised (automated updating, linting, prettifying, destroying, and committing) are opt-in features.
@@ -59,11 +69,11 @@ When committing, we will automatically commit our changes (updating, linting, pr
 
 `commit` will be executed directly, without changing branches whatsoever.
 
-For your own safety, we will commit ONLY if ALL of the following conditions are TRUE:
+For your own safety, we will commit ONLY IF ALL of the following conditions are TRUE:
 
 - There were no uncommitted changes _BEFORE_ we touched your projects.
 - There are no changes from upstream that haven't been pulled.
-- You EXPLICITLY allowed committing for that project.
+- You EXPLICITLY allowed committing for that project in the `fknode.yaml` file.
 
 !!! success "Safety first."
     By default (and as outlined [here](#avoiding-features-you-dont-want)), features you opt-in when cleaning are automatically used on **all** projects, however, for your safety, an exception was made for committing.
@@ -103,21 +113,43 @@ destroy:
 commitActions: true
 ```
 
-An exhaustively documented version of this file is available at [the repo's root](https://github.com/ZakaHaceCosas/FuckingNode/blob/master/fknode.example.yaml). This file will help us tweak and enable some stuff. See this table to see what you need (PS. "required" means required _for the specific feature to work_, nothing is really mandatory for F\*ckingNode to function (`fknode.yaml` itself is an optional file)).
+This file will help us tweak and enable some stuff.
+
+See this table for what you need to configure.
 
 | Thing to toggle | What for and why | Required? |
 | --- | --- | --- |
 | `lintCmd` | To specify a script from your `package.json` to be used as the **linting** command. | No. When not provided, ESLint is used as a default. |
 | `prettyCmd` | To specify a script from your `package.json` to be used as the **prettification** command. | No. When not provided, Prettier is used as a default. |
-| `destroy` | To specify files & directories that'll be **destroyed**
+| `destroy` | To specify files & directories that'll be **destroyed** | Yes. If not provided, we'll skip destroying. |
+| `commitActions` | To specify whether to commit your actions or not. | Yes. As explained, we need explicit permission to commit stuff. |
 
-# TODO finish docs
+"Required?" means required _for the specific feature to work_, nothing is really mandatory for F\*ckingNode to function (`fknode.yaml` itself is an optional file).
+
+Besides configuring our additional features, there's **divine protection** (explained [here](#avoiding-features-you-dont-want)). It's an array that takes feature names, and avoids running them on the project, regardless of whether you passed that feature's flag or not. No `--force` flag exists to override this protection, in fact there's no other way than removing it from the file. It's unbreakable, hence the name "_divine_ protection".
+
+It must be an array of one or more strings, to disable one or more features. Supported values are `"updater" | "cleaner" | "linter" | "prettifier" | "destroyer"` for the array.
+
+```yaml
+divineProtection: ["updater"] # disable updates
+divineProtection: ["updater", "linter", "destroyer"] # disable updates, linting, and destroying
+```
+
+For convenience, if you want to temporarily just skip one project but are lazy to remove it from the list then re-add it again, you can conveniently pass an asterisk to avoid everything.
+
+```yaml
+divineProtection: "*" # equivalent to removing your project from the list
+```
+
+Keep in mind additional options exist. An exhaustively documented version of this file is available at [the repo's root](https://github.com/ZakaHaceCosas/FuckingNode/blob/master/fknode.example.yaml), which I recommend for an easily understandable `fknode.yaml` walkthrough.
 
 ## Changing settings
 
+TODO.
+
 ---
 
-This is all you need to know about the clean mode (main feature). You've now mastered NodeJS-project-f\*cking. There are still some more features, like the [kickstart](../manual/kickstart.md) command, you might want to learn about. Everything is documented in the manual tab.
+This is all you need to know about the clean mode (main feature). You've now mastered NodeJS-project-f\*cking. There are still some more features besides the cleaner to help you even more, like the [kickstart](../manual/kickstart.md) command. If you want to learn about them, remember everything is documented in the [manual](../manual/index.md) tab.
 
 Thanks for reading until the end. Hope this helped you suffer less from JavaScript. Farewell, comrade.
 

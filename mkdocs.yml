@@ -13,7 +13,7 @@ nav:
     - Home: "index.md"
 
     - Manual:
-          - Installation: "manual/index.md"
+          - Installation: "manual/install.md"
           - Setup: "manual/setup.md"
           - Basic usage: "manual/basic-usage.md"
           - Cross-runtime support: "manual/cross-runtime.md"
