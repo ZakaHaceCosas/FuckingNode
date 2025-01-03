@@ -46,7 +46,7 @@ if (hasFlag("help", true)) {
 }
 
 if (hasFlag("version", true)) {
-    await LogStuff(ColorString(VERSION, "bright-green"), "bulb");
+    await LogStuff(VERSION, "bulb", "bright-green");
     Deno.exit(0);
 }
 
@@ -96,7 +96,7 @@ async function main(command: string) {
                 break;
             case "self-update":
             case "upgrade":
-                if (command.toLowerCase() === "self-update") await LogStuff(ColorString("Use upgrade instead", "bright-yellow"), "warn");
+                if (command.toLowerCase() === "self-update") await LogStuff("Use upgrade instead", "warn", "bright-yellow");
                 await LogStuff(`Currently on version ${ColorString(VERSION, "green")}`);
                 await LogStuff("Checking for updates...");
                 await init(true);
@@ -107,6 +107,12 @@ async function main(command: string) {
                 break;
             case "stats":
                 await TheStatistics(Deno.args[1] ?? "");
+                break;
+            case "documentation":
+            case "docs":
+            case "web":
+            case "website":
+                await LogStuff("Best documentation website for best CLI, live at https://zakahacecosas.github.io/FuckingNode", "bulb");
                 break;
             default:
                 await TheHelper({ query: Deno.args[1] });

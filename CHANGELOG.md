@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Added
+
+- Added a `documentation` command to show a link to our website, where everything is documented more in-depth.
+
 ### Changed
 
 - Now you'll be shown a warning if we couldn't remove a temporary DIR.
