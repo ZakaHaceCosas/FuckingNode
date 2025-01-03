@@ -15,6 +15,12 @@ nav:
     - Manual:
           - Installation: "manual/index.md"
           - Setup: "manual/setup.md"
+          - Basic usage: "manual/basic-usage.md"
+          - Cross-runtime support: "manual/cross-runtime.md"
+
+    - Tutorial:
+          - Basic tutorial: "tutorial/index.md"
+          - Pro tutorial: "tutorial/pro.md"
 
 theme:
     name: material
