@@ -94,7 +94,7 @@ However, in some cases you might want _that specific project_ not to get it's de
 
 Familiar with config files like `.eslintrc.js` or `.prettierrc`? Well, you now have a new config file in your project! The `fknode.yaml` file.
 
-```yaml
+```yaml title="fknode.yaml" linenums="1"
 divineProtection: ["updater"]
 lintCmd: "lint"
 # if present, this SCRIPT will be used when you clean with the --pretty flag
@@ -130,14 +130,14 @@ Besides configuring our additional features, there's **divine protection** (expl
 
 It must be an array of one or more strings, to disable one or more features. Supported values are `"updater" | "cleaner" | "linter" | "prettifier" | "destroyer"` for the array.
 
-```yaml
+```yaml title="fknode.yaml" linenums="1"
 divineProtection: ["updater"] # disable updates
 divineProtection: ["updater", "linter", "destroyer"] # disable updates, linting, and destroying
 ```
 
 For convenience, if you want to temporarily just skip one project but are lazy to remove it from the list then re-add it again, you can conveniently pass an asterisk to avoid everything.
 
-```yaml
+```yaml title="fknode.yaml" linenums="1"
 divineProtection: "*" # equivalent to removing your project from the list
 ```
 

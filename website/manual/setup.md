@@ -37,7 +37,7 @@ This is our recommended way, as you can run it right after running `init` and yo
 
 **3 /** You also can waste your time opening the config file. It's a plain text file that stores absolute paths separated by line breaks. On Windows it lives at your local `%APPDATA%`, and on Linux & mac it lives on `HOME` (or `XDG_CONFIG_HOME`). It looks kinda like this:
 
-```txt
+```txt title="fuckingnode-motherfuckers.txt" linenums="1"
 C:\Users\JohnDoe\projects\Sokora
 C:\Users\JohnDoe\projects\electronJS-clone
 ```
@@ -63,7 +63,7 @@ fuckingnode manager remove flamethrower
 
 the above would work as long as you have one added project with this package.json:
 
-```json
+```json title="package.json" linenums="1"
 {
     "name": "flamethrower",
     "version": "6.9.0"
@@ -81,7 +81,7 @@ A project is not valid basically if it cannot be found - however other condition
 
 Just run `fuckingnode manager list`. It'll beautifully show you all of your projects in a `name@version path` format, kinda like this:
 
-```bash
+```txt
 @zakahacecosas/fuckingnode@2.0.2 C:\Users\Zaka\FuckingNode
 personaplus@0.0.6-preapp.27 C:\Users\Zaka\personaplus
 personaplus-website@0.1.0 C:\Users\Zaka\personaplus-web

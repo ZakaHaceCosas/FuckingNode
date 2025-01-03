@@ -39,7 +39,7 @@ source ~/.bash_profile    # macOS
 
 Add the repo to your `flake.nix`.
 
-```nix
+```nix title="flake.nix"
 inputs = {
     fuckingnode.url = "github:ZakaHaceCosas/FuckingNode";
 }
