@@ -23,6 +23,10 @@ Available flags are:
 - `--update` - does the obvious (updates)
 - `--verbose` - does the obvious (makes logging more verbose) (in practice, only difference is that begin and end timestamps are shown, and a "Report" is shown at the end of the cleanup process showing elapsed time for each of your projects)
 
+!!! abstract "Cross-runtime support notice"
+
+    Advanced features might not work everywhere. See [cross-runtime support](../manual/cross-runtime.md) for more info.
+
 ### Linting your code: `--lint`
 
 When linting, we will automatically run your linter. By default, we use ESLint - which in most cases should just work out of the box. Still, for convenience, you're able to choose a different linter from the `fknode.yaml` (we'll cover `fknode.yaml` later on).
@@ -31,23 +35,44 @@ More precisely, `--lint` runs `eslint --fix .` on each of your projects, unless 
 
 !!! info "About errors"
 
-    Any error from ESLint _itself_ will fail silently, and no logs will be made.
+    Any error from ESLint _itself_ will fail silently, and no logs will be made. The same applies for the rest of features (however, since the CLI shows command output live, errors will likely be shown in there).
 
 ### Prettifying your code: `--pretty`
 
 When prettying, we will automatically run your prettifier. By default, we use Prettier - which just as ESLint should work, and just as ESLint can be changed anyway.
 
-More precisely, `--pretty` runs `eslint --fix .` on each of your projects, unless overridden.
+More precisely, `--pretty` runs `prettier --w .` on each of your projects, unless overridden.
 
-!!! info "About errors"
+### Destroying your ~~code~~ files: `--destroy`
 
-    Just as ESLint, errors here are silent.
+When destroying, we will automatically remove files and directories you specified.
 
-!!! abstract "Cross-runtime support notice"
+Unless overridden, you already know what command this will run (your operating system's default file removal command). Any error (missing files, permissions, etc...) will show a log on screen but fail silently (without interrupting the flow).
 
-    This is not fully supported everywhere. See [cross-runtime support](../manual/cross-runtime.md) for more info.
+!!! abstract "Pro tip"
 
--- TODO --
+    As later explained, `fknode.yaml` _allows_ you to specify on which intensities you'd like this to run (so for example, one project will always `destroy` upon cleanup, and other one only does it upon a `hard` cleanup). It's not just allowed; it's required. Other commands currently do not support per intensity level usage.
+
+### Committing your code: `--commit`
+
+When committing, we will automatically commit our changes (updating, linting, prettifying) to Git, using a default commit message unless overridden.
+
+`commit` will be executed directly, without changing branches whatsoever.
+
+For your own safety, we will commit ONLY if ALL of the following conditions are TRUE:
+
+- There were no uncommitted changes _BEFORE_ we touched your projects.
+- There are no changes from upstream that haven't been pulled.
+- You EXPLICITLY allowed committing for that project.
+
+!!! success "Safety first."
+    By default (and as outlined [here](#avoiding-features-you-dont-want)), features you opt-in when cleaning are automatically used on **all** projects, however, for your safety, an exception was made for committing.
+
+### Updating your code: `--update`
+
+When updating, we will automatically update your prettifier using your project's package manager. By default, the standard update command is used. Unlike prettifying or linting, where it's worth noting they can be overridden, here it might sound stupid, but you can actually override this command too. I didn't think that was useful until I found out the bad way why `expo` "reinvented the wheel" with `expo install --check` - in some cases you do need to use a specific command for dependencies, and we got you covered.
+
+Unless overridden, you already know what command this will run.
 
 ## Avoiding features you don't want
 
