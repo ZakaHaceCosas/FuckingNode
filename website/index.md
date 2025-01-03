@@ -33,7 +33,8 @@ And that's it for now.
 
 ## Learn to use this beauty
 
-- [Install it](manual/index.md)
-- [Set it up](manual/setup.md)
+[Full usage manual](manual/index.md){ .md-button }
+[Basic tutorial](tutorial/index.md){ .md-button }
+[Advanced professional tutorial](tutorial/pro.md){ .md-button .md-button--primary }
 
 This website is work in progress, rest of the pages will be done later on.
