@@ -1,0 +1,1056 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="y5ZFxqJEyM+7GvuWdCne3g" async></script>
+
+    
+      
+        <title>Pro tutorial - F*ckingNode</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6f8fc17f.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Pro tutorial - F*ckingNode" >
+      
+        <meta  property="og:description"  content="The f*cking chaos of maintaining NodeJS projects ends here." >
+      
+        <meta  property="og:image"  content="https://zakahacecosas.github.io/FuckingNode/assets/images/social/tutorial/pro.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="https://zakahacecosas.github.io/FuckingNode/tutorial/pro/" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Pro tutorial - F*ckingNode" >
+      
+        <meta  name="twitter:description"  content="The f*cking chaos of maintaining NodeJS projects ends here." >
+      
+        <meta  name="twitter:image"  content="https://zakahacecosas.github.io/FuckingNode/assets/images/social/tutorial/pro.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="orange" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#professional-tier-fckingnode-usage-tutorial" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="F*ckingNode" class="md-header__button md-logo" aria-label="F*ckingNode" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            F*ckingNode
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Pro tutorial
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="orange" data-md-color-accent="orange"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ZakaHaceCosas/FuckingNode" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ZakaHaceCosas/FuckingNode
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../manual/" class="md-tabs__link">
+          
+  
+  Manual
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  Tutorial
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="F*ckingNode" class="md-nav__button md-logo" aria-label="F*ckingNode" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    F*ckingNode
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ZakaHaceCosas/FuckingNode" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    ZakaHaceCosas/FuckingNode
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Manual
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Manual
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/basic-usage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../manual/cross-runtime/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cross-runtime support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic tutorial
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Pro tutorial
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Pro tutorial
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-additional-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using additional features
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using additional features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linting-your-code-lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linting your code: --lint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prettifying-your-code-pretty" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prettifying your code: --pretty
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#destroying-your-code-files-destroy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Destroying your ~~code~~ files: --destroy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#committing-your-code-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Committing your code: --commit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updating-your-code-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      Updating your code: --update
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avoiding-features-you-dont-want" class="md-nav__link">
+    <span class="md-ellipsis">
+      Avoiding features you don't want
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pro-configuration-fknodeyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pro configuration: fknode.yaml
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changing-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changing settings
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#using-additional-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using additional features
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Using additional features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linting-your-code-lint" class="md-nav__link">
+    <span class="md-ellipsis">
+      Linting your code: --lint
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prettifying-your-code-pretty" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prettifying your code: --pretty
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#destroying-your-code-files-destroy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Destroying your ~~code~~ files: --destroy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#committing-your-code-commit" class="md-nav__link">
+    <span class="md-ellipsis">
+      Committing your code: --commit
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#updating-your-code-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      Updating your code: --update
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#avoiding-features-you-dont-want" class="md-nav__link">
+    <span class="md-ellipsis">
+      Avoiding features you don't want
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pro-configuration-fknodeyaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pro configuration: fknode.yaml
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changing-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changing settings
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="professional-tier-fckingnode-usage-tutorial">Professional-tier F*ckingNode usage tutorial<a class="headerlink" href="#professional-tier-fckingnode-usage-tutorial" title="Permanent link">&para;</a></h1>
+<p>Here comes the fun part, we'll learn how to <em>configure</em> a F*ckingNode project with advanced settings and how to automate complex tasks like keeping your codebase linted and formatted.</p>
+<p><strong>Outline</strong>: We'll see everything in the following order:</p>
+<ul>
+<li>Additional cleaner (<em>main feature as you should know</em>) features.</li>
+<li>Config file for your projects (<code>fknode.yaml</code>), to tweak behavior of additional features (+ extra settings).</li>
+<li>CLI-wide <code>settings</code> command.</li>
+<li>Additional CLI features.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This tutorial assumes basic knowledge of the CLI (what the clean command is, what the project list is, etc...).</p>
+</div>
+<h2 id="using-additional-features">Using additional features<a class="headerlink" href="#using-additional-features" title="Permanent link">&para;</a></h2>
+<p>By default, <code>fuckingnode clean (intensity)</code> only performs a cleanup of the desired level. Features we promised (automated updating, linting, prettifying, destroying, and committing) are opt-in features.</p>
+<p>Simply pass them as a flag to use them. No args are required for any of them.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>fuckingnode<span class="w"> </span>clean<span class="w"> </span>--<span class="w"> </span>--update<span class="w"> </span>--lint<span class="w"> </span>--pretty<span class="w"> </span>--destroy<span class="w"> </span>--commit
+</span></code></pre></div>
+<p>Notice how I used <code>--</code> instead of an intensity level. It's optional, you can either specify an intensity level or pass <code>--</code> to use the default, which is <code>normal</code> (you can change that from <a href="#changing-settings">settings</a>).</p>
+<p>Available flags are:</p>
+<ul>
+<li><code>--lint</code> - does the obvious (lints)</li>
+<li><code>--pretty</code> - does the obvious (prettifies)</li>
+<li><code>--destroy</code> - does the obvious (destroys). if not obvious enough, removes files and directories you specify, such as <code>.react</code>, <code>out/</code>, <code>dist/</code>, or anything you'd like to do away with.</li>
+<li><code>--commit</code> - does the obvious (commits)</li>
+<li><code>--update</code> - does the obvious (updates)</li>
+<li><code>--verbose</code> - does the obvious (makes logging more verbose) (in practice, only difference is that begin and end timestamps are shown, and a "Report" is shown at the end of the cleanup process showing elapsed time for each of your projects)</li>
+</ul>
+<div class="admonition abstract">
+<p class="admonition-title">Cross-runtime support notice</p>
+<p>Advanced features might not work everywhere. See <a href="../../manual/cross-runtime/">cross-runtime support</a> for more info.</p>
+</div>
+<h3 id="linting-your-code-lint">Linting your code: <code>--lint</code><a class="headerlink" href="#linting-your-code-lint" title="Permanent link">&para;</a></h3>
+<p>When linting, we will automatically run your linter. By default, we use ESLint - which in most cases should just work out of the box. Still, for convenience, you're able to choose a different linter from the <code>fknode.yaml</code> (we'll cover <code>fknode.yaml</code> later on).</p>
+<p>More precisely, <code>--lint</code> runs <code>eslint --fix .</code> on each of your projects, unless overridden.</p>
+<div class="admonition info">
+<p class="admonition-title">About errors</p>
+<p>Any error from ESLint <em>itself</em> will fail silently, and no logs will be made. The same applies for the rest of features (however, since the CLI shows command output live, errors will likely be shown in there).</p>
+</div>
+<h3 id="prettifying-your-code-pretty">Prettifying your code: <code>--pretty</code><a class="headerlink" href="#prettifying-your-code-pretty" title="Permanent link">&para;</a></h3>
+<p>When prettying, we will automatically run your prettifier. By default, we use Prettier - which just as ESLint should work, and just as ESLint can be changed anyway.</p>
+<p>More precisely, <code>--pretty</code> runs <code>prettier --w .</code> on each of your projects, unless overridden.</p>
+<h3 id="destroying-your-code-files-destroy">Destroying your ~~code~~ files: <code>--destroy</code><a class="headerlink" href="#destroying-your-code-files-destroy" title="Permanent link">&para;</a></h3>
+<p>When destroying, we will automatically remove files and directories you specified.</p>
+<p>Unless overridden, you already know what command this will run (your operating system's default file removal command). Any error (missing files, permissions, etc...) will show a log on screen but fail silently (without interrupting the flow).</p>
+<div class="admonition abstract">
+<p class="admonition-title">Pro tip</p>
+<p>As later explained, <code>fknode.yaml</code> <em>allows</em> you to specify on which intensities you'd like this to run (so for example, one project will always <code>destroy</code> upon cleanup, and other one only does it upon a <code>hard</code> cleanup). It's not just allowed; it's required. Other commands currently do not support per intensity level usage.</p>
+</div>
+<h3 id="committing-your-code-commit">Committing your code: <code>--commit</code><a class="headerlink" href="#committing-your-code-commit" title="Permanent link">&para;</a></h3>
+<p>When committing, we will automatically commit our changes (updating, linting, prettifying) to Git, using a default commit message unless overridden.</p>
+<p><code>commit</code> will be executed directly, without changing branches whatsoever.</p>
+<p>For your own safety, we will commit ONLY IF ALL of the following conditions are TRUE:</p>
+<ul>
+<li>There were no uncommitted changes <em>BEFORE</em> we touched your projects.</li>
+<li>There are no changes from upstream that haven't been pulled.</li>
+<li>You EXPLICITLY allowed committing for that project in the <code>fknode.yaml</code> file.</li>
+</ul>
+<div class="admonition success">
+<p class="admonition-title">Safety first.</p>
+<p>By default (and as outlined <a href="#avoiding-features-you-dont-want">here</a>), features you opt-in when cleaning are automatically used on <strong>all</strong> projects, however, for your safety, an exception was made for committing.</p>
+</div>
+<h3 id="updating-your-code-update">Updating your code: <code>--update</code><a class="headerlink" href="#updating-your-code-update" title="Permanent link">&para;</a></h3>
+<p>When updating, we will automatically update your prettifier using your project's package manager. By default, the standard update command is used. Unlike prettifying or linting, where it's worth noting they can be overridden, here it might sound stupid, but you can actually override this command too. I didn't think that was useful until I found out the bad way why <code>expo</code> "reinvented the wheel" with <code>expo install --check</code> - in some cases you do need to use a specific command for dependencies, and we got you covered.</p>
+<p>Unless overridden, you already know what command this will run.</p>
+<h2 id="avoiding-features-you-dont-want">Avoiding features you don't want<a class="headerlink" href="#avoiding-features-you-dont-want" title="Permanent link">&para;</a></h2>
+<p>Ironically, we have a feature for you not to use our features. The next point of this page is <code>fknode.yaml</code>, however we want to outline one thing: F*ckingNode <em>cannot</em> be used on a <em>per project</em> basis. In other words, you might have realized we've been all the time using <code>fuckingnode clean</code> with a bunch of arguments, but no path or project name. This is because <strong>all your projects are cleaned at the same time</strong>. We do that to save you time, and in most cases it should be fine.</p>
+<p>However, in some cases you might want <em>that specific project</em> not to get it's dependencies updated, for whatever reason. That's where <strong>divine protection</strong> comes in: the only way to prevent a specific project from being affected by <code>fuckingnode clean -- --update</code> is to add <code>updater</code> to it's <code>divineProtection</code> list. Again, this is explained on the next point, we simply made an entire section to outline that commands are executed on all projects unless explicitly disabled, as that <em>might</em> be inconvenient.</p>
+<h2 id="pro-configuration-fknodeyaml">Pro configuration: <code>fknode.yaml</code><a class="headerlink" href="#pro-configuration-fknodeyaml" title="Permanent link">&para;</a></h2>
+<p>Familiar with config files like <code>.eslintrc.js</code> or <code>.prettierrc</code>? Well, you now have a new config file in your project! The <code>fknode.yaml</code> file.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">fknode.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-1-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-1-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-1-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-1-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-1-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-1-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-1-10">10</a></span>
+<span class="normal"><a href="#__codelineno-1-11">11</a></span>
+<span class="normal"><a href="#__codelineno-1-12">12</a></span>
+<span class="normal"><a href="#__codelineno-1-13">13</a></span>
+<span class="normal"><a href="#__codelineno-1-14">14</a></span>
+<span class="normal"><a href="#__codelineno-1-15">15</a></span>
+<span class="normal"><a href="#__codelineno-1-16">16</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="nt">divineProtection</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;updater&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="nt">lintCmd</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;lint&quot;</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="c1"># if present, this SCRIPT will be used when you clean with the --pretty flag</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="c1"># again, must be a script. we default to &quot;prettier .&quot; if absent</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="c1"># doesn&#39;t work on Deno (deno fmt will be used always, you can&#39;t override it)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="nt">prettyCmd</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;prettier&quot;</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="c1"># if present, files / DIRs you add to &quot;targets&quot; will be removed</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="c1"># (only when you clean with any of the &quot;intensities&quot;)</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="nt">destroy</span><span class="p">:</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="w">    </span><span class="nt">intensities</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="w">        </span><span class="s">&quot;hard&quot;</span><span class="p p-Indicator">,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="w">        </span><span class="s">&quot;maxim&quot;</span><span class="p p-Indicator">,</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="w">    </span><span class="p p-Indicator">]</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="w">    </span><span class="nt">targets</span><span class="p">:</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;dist&quot;</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="nt">commitActions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div></td></tr></table></div>
+<p>This file will help us tweak and enable some stuff.</p>
+<p>See this table for what you need to configure.</p>
+<table>
+<thead>
+<tr>
+<th>Thing to toggle</th>
+<th>What for and why</th>
+<th>Required?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lintCmd</code></td>
+<td>To specify a script from your <code>package.json</code> to be used as the <strong>linting</strong> command.</td>
+<td>No. When not provided, ESLint is used as a default.</td>
+</tr>
+<tr>
+<td><code>prettyCmd</code></td>
+<td>To specify a script from your <code>package.json</code> to be used as the <strong>prettification</strong> command.</td>
+<td>No. When not provided, Prettier is used as a default.</td>
+</tr>
+<tr>
+<td><code>destroy</code></td>
+<td>To specify files &amp; directories that'll be <strong>destroyed</strong></td>
+<td>Yes. If not provided, we'll skip destroying.</td>
+</tr>
+<tr>
+<td><code>commitActions</code></td>
+<td>To specify whether to commit your actions or not.</td>
+<td>Yes. As explained, we need explicit permission to commit stuff.</td>
+</tr>
+</tbody>
+</table>
+<p>"Required?" means required <em>for the specific feature to work</em>, nothing is really mandatory for F*ckingNode to function (<code>fknode.yaml</code> itself is an optional file).</p>
+<p>Besides configuring our additional features, there's <strong>divine protection</strong> (explained <a href="#avoiding-features-you-dont-want">here</a>). It's an array that takes feature names, and avoids running them on the project, regardless of whether you passed that feature's flag or not. No <code>--force</code> flag exists to override this protection, in fact there's no other way than removing it from the file. It's unbreakable, hence the name "<em>divine</em> protection".</p>
+<p>It must be an array of one or more strings, to disable one or more features. Supported values are <code>"updater" | "cleaner" | "linter" | "prettifier" | "destroyer"</code> for the array.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">fknode.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="nt">divineProtection</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;updater&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># disable updates</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="nt">divineProtection</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;updater&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;linter&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;destroyer&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># disable updates, linting, and destroying</span>
+</span></code></pre></div></td></tr></table></div>
+<p>For convenience, if you want to temporarily just skip one project but are lazy to remove it from the list then re-add it again, you can conveniently pass an asterisk to avoid everything.</p>
+<div class="language-yaml highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">fknode.yaml</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="nt">divineProtection</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"> </span><span class="c1"># equivalent to removing your project from the list</span>
+</span></code></pre></div></td></tr></table></div>
+<p>Keep in mind additional options exist. An exhaustively documented version of this file is available at <a href="https://github.com/ZakaHaceCosas/FuckingNode/blob/master/fknode.example.yaml">the repo's root</a>, which I recommend for an easily understandable <code>fknode.yaml</code> walkthrough.</p>
+<h2 id="changing-settings">Changing settings<a class="headerlink" href="#changing-settings" title="Permanent link">&para;</a></h2>
+<p>You can view the CLI's settings by running <code>fuckingnode settings</code>.</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>PS C:\Users\sigma_male&gt; fuckingnode settings help
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>💡 Your current settings are:
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>---
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Update frequency: Each 9 days.
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Default cleaner intensity: normal
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>Favorite editor: vscode
+</span></code></pre></div>
+<p>You can change them with the <code>settings change &lt;setting&gt; value</code>. These are all settings that can be changed, how, and what they do.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Command</th>
+<th style="text-align: right;">Type</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: right;">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>change default-int &lt;value&gt;</code></td>
+<td style="text-align: right;"><code>normal</code>, <code>hard</code>, <code>hard-only</code>, or <code>maxim</code></td>
+<td style="text-align: center;">Changes the default intensity for the <code>clean</code> command.</td>
+<td style="text-align: right;">/</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>change update-freq &lt;value&gt;</code></td>
+<td style="text-align: right;">A fixed number</td>
+<td style="text-align: center;">Changes how frequently (in DAYS) the CLI sends an HTTP request for updates.</td>
+<td style="text-align: right;">We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>change fav-editor &lt;value&gt;</code></td>
+<td style="text-align: right;"><code>vscode</code>, <code>sublime</code></td>
+<td style="text-align: center;">Your favorite code editor. Used by <code>kickstart</code>.</td>
+<td style="text-align: right;">You can't set it to a different editor as of now, sorry.</td>
+</tr>
+</tbody>
+</table>
+<p>Settings includes an additional <code>flush</code> command, that takes a <code>&lt;file&gt;</code> (<code>logs</code>, <code>updates</code>, <code>projects</code>, or <code>all</code>) as an argument, removing that from F*ckingNode's configuration. Removing <code>logs</code> is particularly recommended. Removals of <code>projects</code> and <code>all</code> are discouraged - by the way, yes, we store all logs in a <code>.log</code> file, it lives in <code>%APPDATA%/FuckingNode</code> on Windows and <code>/home/USER/.config/FuckingNode</code> on Linux &amp; macOS.</p>
+<p>There's another settings command, <code>settings repair</code>. It simply resets settings to defaults.</p>
+<hr />
+<p>This is all you need to know about the clean mode (main feature). You've now mastered NodeJS-project-f*cking. There are still some more features besides the cleaner to help you even more, like the <a href="../manual/kickstart.md">kickstart</a> command. If you want to learn about them, remember everything is documented in the <a href="../../manual/">manual</a> tab.</p>
+<p>Thanks for reading until the end. Hope this helped you suffer less from JavaScript. Farewell, comrade.</p>
+<hr />
+<p><a href="../">Basic tutorial again?</a></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      ZakaHaceCosas
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.path", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "toc.follow", "navigation.expand", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
