@@ -128,4 +128,4 @@ You're now fully setup and ready to put those f*cking NodeJS projects in place!
 
 ---
 
-[Next step: Using the CLI](basic-usage.md)
+[Next step: Using the CLI](usage.md)

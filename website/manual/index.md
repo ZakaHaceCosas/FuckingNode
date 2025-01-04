@@ -6,7 +6,7 @@ Everything, from the basic to the complex, is documented here step by step.
 
 - [Install the CLI](install.md)
 - [Setup configuration](setup.md)
-- [Basic usage](basic-usage.md)
+- [Basic usage](usage.md)
 - [Changing your settings](settings.md)
 
 For further learning:
@@ -45,7 +45,7 @@ If you only wish to clear global caches without waiting for individual cleanup o
 
 ### Step 4
 
-For the best experience, you can pass `--`flags to the clean command for using additional features. Detailed explanations are available at both the [pro tutorial](../tutorial/pro.md) and the [usage manual](../manual/basic-usage.md), here we'll just TL;DR them:
+For the best experience, you can pass `--`flags to the clean command for using additional features. Detailed explanations are available at both the [pro tutorial](../tutorial/pro.md) and the [usage manual](../manual/usage.md), here we'll just TL;DR them:
 
 - `--lint` runs ESLint
 - `--pretty` runs Prettier

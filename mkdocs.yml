@@ -16,7 +16,8 @@ nav:
           - Home: "manual/index.md"
           - Installation: "manual/install.md"
           - Setup: "manual/setup.md"
-          - Basic usage: "manual/basic-usage.md"
+          - Usage: "manual/usage.md"
+          - Changing your settings: "manual/settings.md"
           - Cross-runtime support: "manual/cross-runtime.md"
 
     - Tutorial:
@@ -37,7 +38,6 @@ theme:
         - navigation.top
         - toc.follow
         - navigation.expand
-
         - content.code.copy
 
     palette:
