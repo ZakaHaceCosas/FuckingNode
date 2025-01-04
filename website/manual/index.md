@@ -33,13 +33,25 @@ It's recommended that from now on you run `manager add --self` immediately after
 
 ### Step 2
 
-A basic cleanup is invoked by running `fuckingnode clean` with no arguments. It's simple and doesn't recover gigabytes, but it's fast and gets the job done. Additional flags can be passed for using more advanced features.
+A basic cleanup is invoked by running this command, with no arguments.
+
+```bash
+fuckingnode clean
+```
+
+It's simple, and while it doesn't recover gigabytes, it's fast and it gets the job done. Additional flags can be passed for using more advanced features.
 
 Keep in mind it's a global command; it'll do the same cleanup, with the same flags if passed, across all the projects you've added. A config file `fknode.yaml` can be created at the root of an added project to override this behavior.
 
 ### Step 3
 
-For increased intensity, use `fuckingnode clean hard`. Immediately after cleaning all of your projects, it'll clear global caches of all your installed package managers.
+For increased intensity, use this.
+
+```bash
+fuckingnode clean hard
+```
+
+Immediately after cleaning all of your projects, it'll now clear global caches of all your installed package managers.
 
 If you only wish to clear global caches without waiting for individual cleanup of all projects, use `fuckingnode clean hard-only`, or a shortcut (`fuckingnode global-clean` or `fuckingnode hard-clean`).
 
