@@ -44,7 +44,7 @@ C:\Users\JohnDoe\projects\electronJS-clone
 
 **Keep in mind paths must always point to the root**. Paths that point to the `package.json` itself, or to anything else that isn't the root of the project (the DIR that holds `package.json`), else you're cooked (the entire CLI won't work).
 
-Anyway, your basic setup is done and you're now ready to f*ck the nodes!
+By this stage, you can already get started with [cleaning your projects](#cleaning-up-projects).
 
 ### Removing a project
 
@@ -84,11 +84,8 @@ Just run `fuckingnode manager list`. It'll beautifully show you all of your proj
 ```txt
 @zakahacecosas/fuckingnode@2.0.2 C:\Users\Zaka\FuckingNode
 personaplus@0.0.6-preapp.27 C:\Users\Zaka\personaplus
-personaplus-website@0.1.0 C:\Users\Zaka\personaplus-web
-zakahacecosas-portfolio@0.0.1 C:\Users\Zaka\zakaportfolio
+...
 ```
-
-> (btw that's _part of_ my real F*ckingNode list, heh~)
 
 Later on we'll see how to "ignore" projects, but here we'll tell you that you can pass `--ignored` to only list ignored projects, or `--alive` to only list non-ignored projects. If you try to mix both flags to create a loophole and break the matrix, you won't break anything; the flag you write first will overrule the second one.
 
@@ -131,4 +128,4 @@ You're now fully setup and ready to put those f*cking NodeJS projects in place!
 
 ---
 
-[Next step: Using it!](basic-usage.md)
+[Next step: Using the CLI](basic-usage.md)

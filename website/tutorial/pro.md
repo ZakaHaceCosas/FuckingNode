@@ -1,3 +1,4 @@
+<!-- markdownlint-disable md046 md033 -->
 # Professional-tier F\*ckingNode usage tutorial
 
 Here comes the fun part, we'll learn how to _configure_ a F\*ckingNode project with advanced settings and how to automate complex tasks like keeping your codebase linted and formatted.
@@ -53,7 +54,7 @@ When prettying, we will automatically run your prettifier. By default, we use Pr
 
 More precisely, `--pretty` runs `prettier --w .` on each of your projects, unless overridden.
 
-### Destroying your ~~code~~ files: `--destroy`
+### Destroying your <s>code</s> files: `--destroy`
 
 When destroying, we will automatically remove files and directories you specified.
 
@@ -92,7 +93,7 @@ However, in some cases you might want _that specific project_ not to get it's de
 
 ## Pro configuration: `fknode.yaml`
 
-Familiar with config files like `.eslintrc.js` or `.prettierrc`? Well, you now have a new config file in your project! The `fknode.yaml` file.
+If you're familiar with config files like `.eslintrc.js` or `.prettierrc`, you'll easily get what the **`fknode.yaml`** file is supposed to do.
 
 ```yaml title="fknode.yaml" linenums="1"
 divineProtection: ["updater"]

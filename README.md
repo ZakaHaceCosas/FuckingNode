@@ -57,7 +57,7 @@ F\*ckingNode keeps a list of all paths to the projects it should clean - it's yo
 - `fuckingnode manager remove <path>` - removes a project from list.
 - `fuckingnode manager cleanup` - shows a list of invalid projects (invalid path, duplicate, etc...) and allows to remove them all at once.
 
-`<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the Current Working Directory. Except for `add`, you can also use a project's name defined in it's `package.json` (or equivalent) `name` field, e.g. `manager remove my-fkng-framework`.
+`<path>` refers to a path, either an absolute one (`C:\Users\me\project`), relative one (`../project`), or the `--self` flag which will use the Current Working Directory. Except for `add`, you can also use a project's name defined in it's `package.json` (or equivalent) `name` field, e.g. `manager remove my-totally-useful-framework`.
 
 Best practice is to run `fuckingnode manager add --self` after creating a Node project from your CLI.
 
