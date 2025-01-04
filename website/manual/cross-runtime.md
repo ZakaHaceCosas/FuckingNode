@@ -20,15 +20,15 @@ That said, here's our cross-runtime compatibility, explained:
 
 ### Project-wide cleaning
 
-| Unsupported on **Deno and Bun.** | No caveats. |
-| - | - |
+| Unsupported on | Caveats on |
+| **Deno and Bun.** | None. |
 
 Deno and Bun don't provide the kind of commands (`dedupe`, `clean`, etc...) needed for this task. If you open a PR in their repos adding these and mention F\*ckingNode I'll make sure your name is visible in here (I wholeheartedly believe this CLI can potentially explode in popularity, just give it some time).
 
 ### System-wide cache cleaning
 
-| Unsupported on **Deno.** | No caveats. |
-| - | - |
+| Unsupported on | Caveats on |
+| **Deno.** | None. |
 
 > TLDR: **F\*ckingNode itself was created using DenoJS, hence we can't just clean it.**
 
@@ -42,8 +42,8 @@ None of these ideas is really a "mistake", it's just that these evens aligned _p
 
 ### Linting and prettifying commands
 
-| Supported everywhere. | Caveats on **Deno.** |
-| - | - |
+| Unsupported on | Caveats on |
+| None, works everywhere. | **Deno.** |
 
 These work everywhere, however on Deno you cannot customize them. This is for the simplest of the reasons: Deno has it's own `deno fmt` command, so it'll be automatically used in Deno projects regardless of the `prettyCmd` value.
 

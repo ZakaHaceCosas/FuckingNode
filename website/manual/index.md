@@ -60,7 +60,7 @@ Behavior itself can also be overridden, in case you use a different linter than 
 There are two exceptions to the "global cleaning" rule mentioned earlier:
 
 - `--destroy` requires per-project configuration via `fknode.yaml` (you shall specify what you want to be removed). We don't have "default" directories to auto-remove like `dist/`, to avoid removing something you _might_ need.
-- `--commit` requires per-project configuration via `fknode.yaml`. Making a commit is a sensible action, as we could potentially commit something you did _not_ intend to commit yet. Committing requires explicit allowance from you, and additional safety checks are performed as outlined [here](../tutorial/pro.md#committing-your-code---commit).
+- `--commit` requires per-project configuration via `fknode.yaml`. Making a commit is a sensible action, as we could potentially commit something you did _not_ intend to commit yet. Committing requires explicit allowance from you, and additional safety checks are performed as outlined [here](../tutorial/pro.md#committing-your-code-commit).
 
 ---
 
