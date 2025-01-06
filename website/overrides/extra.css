@@ -8,6 +8,9 @@ ora c: fca737
     --md-primary-fg-color: #fbf0e1 !important;
     --md-primary-fg-color--light: #f0e5d7 !important;
     --md-primary-fg-color--dark: #dad0c2 !important;
+    --md-primary-fg-accent: #fbf0e1 !important;
+    --md-primary-fg-accent: #fbf0e13a !important;
+    --md-primary-bg-color: #000 !important;
 }
 :root,
 [data-md-color-scheme="slate"] {
