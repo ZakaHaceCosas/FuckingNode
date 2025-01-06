@@ -16,7 +16,7 @@ export default async function TheStatistics(target: string) {
     const name = await NameProject(project, "all");
 
     await LogStuff(
-        `${name}\n${ColorString(env.runtime, "bold")} runtime & ${ColorString(env.manager, "bold")} pkg manager\nMain file: ${env.main}`,
+        `${name}\n${ColorString(env.runtime, "bold")} runtime & ${ColorString(env.manager, "bold")} pkg manager\nMain file: ${env.main.path}`,
     );
 
     let deps: Record<string, string> | undefined;
