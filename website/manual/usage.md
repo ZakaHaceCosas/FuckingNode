@@ -11,7 +11,7 @@ The `fuckingnode clean` command is the base utility of the app. It accepts the f
 fuckingnode clean < INTENSITY > [--update] [--lint] [--pretty] [--destroy] [--verbose] [--commit]
 ```
 
-When executed with no arguments, it'll do a cleanup using the default intensity (which is `normal` and can be changed from the [settings](settings.md)).
+When executed with no arguments, it'll do a cleanup using the default intensity (which is `normal` and can be changed from the [settings](setup.md#settings)).
 
 ## Cleaner intensities, explained
 
@@ -68,7 +68,7 @@ fuckingnode clean hard-only
 fuckingnode clean maxim
 ```
 
-Running without an intensity will use the **default intensity**. On a fresh install, it's always `normal`, however [that can be changed to your linking from the settings command](settings.md).
+Running without an intensity will use the **default intensity**. On a fresh install, it's always `normal`, however [that can be changed to your linking from the settings command](setup.md#settings).
 
 ## Configuring a project's behavior
 

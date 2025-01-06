@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed doing so many path-related operations just to get a project's working env, slightly improving performance.
 - Fixed the help command being case sensitive.
 - Fixed some useless debug logs being shown.
+- Fixed `stats` showing `[object Object]` as the "Main file".
 
 ## [2.0.2] 28-12-2024
 

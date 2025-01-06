@@ -122,6 +122,12 @@ fuckingnode settings change default-int "hard"
 fuckingnode settings change update-freq 15
 ```
 
+### Additional settings commands
+
+Settings includes an additional `flush` command, that takes a `<file>` (`logs`, `updates`, `projects`, or `all`) as an argument, removing that from F\*ckingNode's configuration. Removing `logs` is particularly recommended. Removals of `projects` and `all` are discouraged - by the way, yes, we store all logs in a `.log` file, it lives in `%APPDATA%/FuckingNode` on Windows and `/home/USER/.config/FuckingNode` on Linux & macOS.
+
+There's another settings command, `settings repair`. It simply resets settings to defaults.
+
 ---
 
 You're now fully setup and ready to put those f*cking NodeJS projects in place!

@@ -10,9 +10,10 @@ These are links to individual pages. For the full manual, click the first one, t
     The manual will speak about "NodeJS". Unless we specifically say a feature works with NodeJS _only_, the Deno and Bun runtimes are also supported. Some caveats exist to cross-runtime support, click "Cross-runtime support" on this link list to learn more.
 
 - [Install the CLI](install.md)
-- [Setup configuration](setup.md)
-- [Basic usage](usage.md)
-- [Changing your settings](settings.md)
+- [Setup and configuration](setup.md)
+- [Main usage guide](usage.md)
+- [Extra - Kickstart](kickstart.md)
+- [Extra - Stats](stats.md)
 
 For further learning:
 
