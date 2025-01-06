@@ -122,7 +122,7 @@ To override it, create a script in your `package.json` scripts object that runs 
 
 For example:
 
-```jsonc title="package.json linenums="6"
+```jsonc title="package.json" linenums="6"
 scripts: {
     "linter": "someLinter --fix --force ." // or whatever
 }
@@ -142,7 +142,7 @@ To override it, do the same as with the linter but setting the `prettyCmd` key i
 
 For example:
 
-```jsonc title="package.json linenums="6"
+```jsonc title="package.json" linenums="6"
 scripts: {
     "prettifier": "not-prettier --trailing-coma --line-width 120 --force ." // or whatever
 }
