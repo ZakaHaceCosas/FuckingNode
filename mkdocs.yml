@@ -42,10 +42,9 @@ theme:
         - content.code.copy
 
     palette:
-        scheme: bun
-
-extra_css:
-  - website/overrides/extra.css
+        - scheme: slate
+          primary: orange
+          accent: orange
 
 plugins:
     - social

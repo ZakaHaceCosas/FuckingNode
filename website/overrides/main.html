@@ -1,5 +1,25 @@
-{% extends "base.html" %}
-
-{% block site_meta %}
-    <script src="https://analytics.ahrefs.com/analytics.js" data-key="y5ZFxqJEyM+7GvuWdCne3g" async></script>
+{% extends "base.html" %} {% block site_meta %}
+<script
+    src="https://analytics.ahrefs.com/analytics.js"
+    data-key="y5ZFxqJEyM+7GvuWdCne3g"
+    async
+></script>
+<style>
+    /* not the best place for this but otherwise it ain't working
+    bun c: fbf0e1
+    ora c: fca737
+    */
+    * {
+        scroll-behavior: smooth;
+        --md-primary-fg-color: #fbf0e1!important;
+        --md-primary-fg-color--light: #f0e5d7!important;
+        --md-primary-fg-color--dark: #dad0c2!important;
+    }
+    :root {
+        --md-hue: 35deg !important;
+    }
+    span.task-list-indicator::before {
+        background-color: #fbf0e1 !important;
+    }
+</style>
 {% endblock %}
