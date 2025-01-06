@@ -1,15 +1,20 @@
-{% extends "base.html" %} {% block site_meta %}
+{% extends "base.html" %}
+
+{% block site_meta %}
 <script
     src="https://analytics.ahrefs.com/analytics.js"
     data-key="y5ZFxqJEyM+7GvuWdCne3g"
     async
 ></script>
+{% endblock %}
+
+{% block footer %}
 <style>
     /* not the best place for this but otherwise it ain't working
     bun c: fbf0e1
     ora c: fca737
     */
-    * {
+    *, [data-md-color-accent=orange] {
         scroll-behavior: smooth;
         --md-primary-fg-color: #fbf0e1!important;
         --md-primary-fg-color--light: #f0e5d7!important;
