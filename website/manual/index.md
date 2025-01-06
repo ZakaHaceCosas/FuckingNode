@@ -4,6 +4,8 @@ Everything, from the basic to the complex, is documented here step by step.
 
 ## Manual outline
 
+These are links to individual pages. For the full manual, click the first one, then keep reading. For a faster, one page guide to quickly get started, [skip here](#tldr-for-getting-started-as-soon-as-possible).
+
 - [Install the CLI](install.md)
 - [Setup configuration](setup.md)
 - [Basic usage](usage.md)
