@@ -7,24 +7,3 @@
     async
 ></script>
 {% endblock %}
-
-{% block styles %}
-<style>
-    /* not the best place for this but otherwise it ain't working
-    bun c: fbf0e1
-    ora c: fca737
-    */
-    *, [data-md-color-accent=orange] {
-        scroll-behavior: smooth;
-        --md-primary-fg-color: #fbf0e1!important;
-        --md-primary-fg-color--light: #f0e5d7!important;
-        --md-primary-fg-color--dark: #dad0c2!important;
-    }
-    :root {
-        --md-hue: 35deg !important;
-    }
-    .md-typeset [type=checkbox]:checked+.task-list-indicator:before {
-        background-color: #fbf0e1 !important;
-    }
-</style>
-{% endblock %}
