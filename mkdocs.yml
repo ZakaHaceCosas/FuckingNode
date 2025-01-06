@@ -42,7 +42,9 @@ theme:
         - content.code.copy
 
     palette:
-        scheme: bun
+        - scheme: slate
+          primary: custom
+          accent: custom
 
 extra_css:
   - overrides/extra.css

@@ -3,14 +3,14 @@ bun c: fbf0e1
 ora c: fca737
 */
 *,
-[data-md-color-scheme="bun"] {
+[data-md-color-scheme="slate"] {
     scroll-behavior: smooth;
     --md-primary-fg-color: #fbf0e1 !important;
     --md-primary-fg-color--light: #f0e5d7 !important;
     --md-primary-fg-color--dark: #dad0c2 !important;
 }
 :root,
-[data-md-color-scheme="bun"] {
+[data-md-color-scheme="slate"] {
     --md-hue: 35deg !important;
 }
 .md-typeset [type="checkbox"]:checked + .task-list-indicator:before {
