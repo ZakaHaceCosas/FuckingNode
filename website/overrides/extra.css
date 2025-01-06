@@ -1,0 +1,16 @@
+/*
+bun c: fbf0e1
+ora c: fca737
+*/
+* {
+    scroll-behavior: smooth;
+    --md-primary-fg-color: #fbf0e1;
+    --md-primary-fg-color--light: #fbf0e1;
+    --md-primary-fg-color--dark: #fbf0e1;
+}
+:root {
+    --md-hue: 35deg !important;
+}
+span.task-list-indicator::before {
+    background-color: #fca737 !important;
+}

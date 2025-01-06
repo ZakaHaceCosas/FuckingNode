@@ -24,6 +24,8 @@ nav:
           - Basic tutorial: "tutorial/index.md"
           - Pro tutorial: "tutorial/pro.md"
 
+    - Roadmap: "about/roadmap.md"
+
 theme:
     name: material
     custom_dir: website/overrides
@@ -40,9 +42,10 @@ theme:
         - content.code.copy
 
     palette:
-        - scheme: slate
-          primary: orange
-          accent: orange
+        primary: custom
+
+extra_css:
+  - website/overrides/extra.css
 
 plugins:
     - social
