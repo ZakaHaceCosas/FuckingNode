@@ -6,6 +6,9 @@ Everything, from the basic to the complex, is documented here step by step.
 
 These are links to individual pages. For the full manual, click the first one, then keep reading. For a faster, one page guide to quickly get started, [skip here](#tldr-for-getting-started-as-soon-as-possible).
 
+!!! tip "Cross-runtime support"
+    The manual will speak about "NodeJS". Unless we specifically say a feature works with NodeJS _only_, the Deno and Bun runtimes are also supported. Some caveats exist to cross-runtime support, click "Cross-runtime support" on this link list to learn more.
+
 - [Install the CLI](install.md)
 - [Setup configuration](setup.md)
 - [Basic usage](usage.md)

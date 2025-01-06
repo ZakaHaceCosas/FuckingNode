@@ -1,4 +1,4 @@
-# Setup F\*ckingNode
+# Setup F*ckingNode
 
 !!! tip
     If you just want to learn how to quickly add a project so you can use the CLI, skip [here](#adding-a-project).

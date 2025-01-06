@@ -15,16 +15,25 @@ nav:
     - Manual:
           - Home: "manual/index.md"
           - Installation: "manual/install.md"
-          - Setup: "manual/setup.md"
-          - Usage: "manual/usage.md"
+          - Setup the CLI: "manual/setup.md"
+          - Main usage guide: "manual/usage.md"
           - Changing your settings: "manual/settings.md"
+          - Kickstart a project: "manual/kickstart.md"
+          - Stats: "manual/stats.md"
           - Cross-runtime support: "manual/cross-runtime.md"
+
+    - Learn:
+          - Home: "learn/index.md"
+          - How does cleanup work under the hood: "learn/clean.md"
+          - How does kickstart work under the hood: "learn/kickstart.md"
+          - How does FuckingNode audit work under the hood: "learn/audit.md"
 
     - Tutorial:
           - Basic tutorial: "tutorial/index.md"
           - Pro tutorial: "tutorial/pro.md"
 
     - Roadmap: "about/roadmap.md"
+    - Brand guidelines: "about/branding.md"
 
 theme:
     name: material
