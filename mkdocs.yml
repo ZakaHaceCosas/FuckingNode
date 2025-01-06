@@ -42,7 +42,7 @@ theme:
         - content.code.copy
 
     palette:
-        primary: custom
+        scheme: bun
 
 extra_css:
   - website/overrides/extra.css
