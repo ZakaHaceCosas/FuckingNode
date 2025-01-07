@@ -35,7 +35,7 @@ Due to where nowadays society is heading, it _is_ worth noting questions are not
 
 ```mermaid
 graph TD
-    A[npm audit] -->|Command execution| B[Returns REPORT (string)]
+    A[npm audit] -->|Command execution| B[Returns report string]
     B -->|Parsed| C[Stored in ParsedNpmReport]
     C -->|For each dependency| D[Fetch info from OSV.dev and store it]
 ```
