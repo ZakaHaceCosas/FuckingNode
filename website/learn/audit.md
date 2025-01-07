@@ -69,4 +69,42 @@ graph TD
     F -->|NO| H[Audit results are ready by this point.]
 ```
 
--- TODO: finish this
+### Step three: evaluation
+
+Your questions are evaluated using a straightforward positive-negative system: responses indicating 'positive' information add +1 to the positive count, while those indicating 'negative' information add +1 to the negative count.
+
+These counts are used to compute the RF, based on the following formula:
+
+```typescript
+(positives + negatives) > 0 ? (positives / (positives + negatives)) * 100 : 0
+```
+
+There's a `--strict` flag that can be passed to the audit command that adds an additional **risk bump**, based on the severity of the most-severe identified vulnerability, as follows:
+
+```typescript
+(((positives + negatives) > 0 ? (positives / (positives + negatives)) * 100 : 0) + (riskBump * 100)) / 2
+```
+
+RB values are as follows:
+
+| Severity | RB |
+| :---- | ----: |
+| critical | 1 |
+| high | 0.75 |
+| moderate | 0.5 |
+| low | 0.25 |
+
+---
+
+## Summary
+
+F\*ckingNode audit should not be allowed to have the final say over whether breaking-changes-packed security fixes should be applied or not. It is only meant to provide an estimate, in order to help you make a clearer decision. We will still always encourage you to resolve any vulnerability that you're capable of.
+
+---
+
+This feature has not been released yet and is not available.
+
+For trying it out, clone our repository including the `feature-audit` branch, `git checkout feature-audit` and execute `deno -A src/main.ts audit`.
+
+*[RF]: Risk Factor; a percentage computed by us to estimate the joint impact of all vulnerabilities of a NodeJS project.
+*[RB]: Risk Bump; a 0.25-1 number that's used to bump the RF based on the highest severity (as in low/moderate/high/critical) of a found vulnerability within a project.
