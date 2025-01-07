@@ -94,7 +94,7 @@ function AnalyzeVulnerabilities(vulnerabilities: SecurityVulnerability[]): {
  */
 async function askQuestion(question: string, isFollowUp: boolean, isReversed: boolean): Promise<"true" | "false"> {
     const formattedQuestion = ColorString(ColorString(question, isFollowUp ? "bright-blue" : "bright-yellow"), "italic");
-    const response = await LogStuff(formattedQuestion, undefined, false, true);
+    const response = await LogStuff(formattedQuestion, undefined, undefined, true);
     switch (response) {
         case true:
             return isReversed ? "false" : "true";
@@ -458,7 +458,7 @@ export async function AuditProject(bareReport: ParsedNpmReport, strict: boolean)
  *     | 1
  * >}
  */
-export async function PerformAuditing(project: string, strict:boolean): Promise<
+export async function PerformAuditing(project: string, strict: boolean): Promise<
     | FkNodeSecurityAudit
     | 0
     | 1

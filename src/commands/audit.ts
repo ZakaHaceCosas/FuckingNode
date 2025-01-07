@@ -33,14 +33,14 @@ export default async function TheAuditer(project: string | null, strict: boolean
 
             const reportDetails = await Promise.all(report.map(async (item) => {
                 const name = await NameProject(item.project, "name-ver");
-                const string = `${name} # ${ColorString(`${item.audit.percentage}%`, "bold")} risk factor`;
+                const string = `${name} # ${ColorString(`${item.audit.percentage.toFixed(2)}%`, "bold")} risk factor`;
                 return string;
             }));
             console.log("");
             await LogStuff(
-                `Report (${ColorString(strict ? "strict" : "standard", "bold")})${
-                    strict ? "" : ColorString(" Unsure about the results? Run with --strict (or -s) for stricter criteria", "italic")
-                }:\n` + reportDetails.join("\n"),
+                `Report (${ColorString(strict ? "strict" : "standard", "bold")})\n${reportDetails.join("\n")}${
+                    strict ? "" : "\n"+ColorString("Unsure about the results? Run with --strict (or -s) for stricter criteria", "italic")
+                }`,
                 "chart",
             );
         } else {
@@ -48,7 +48,13 @@ export default async function TheAuditer(project: string | null, strict: boolean
         }
 
         await LogStuff("Audit complete!", "tick-clear");
-        await LogStuff(ColorString("PS. Keep in mind our report simply can't be 100% accurate - if you doubt, the best option is always to fix vulnerabilities.", "italic"), "heads-up");
+        await LogStuff(
+            ColorString(
+                "Keep in mind our report simply can't be 100% accurate - the best option is always to fix vulnerabilities.",
+                "italic",
+            ),
+            "heads-up",
+        );
     } catch (e) {
         throw e;
     }
