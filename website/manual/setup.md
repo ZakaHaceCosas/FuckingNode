@@ -1,4 +1,4 @@
-# Setup F\*ckingNode
+# Setup F*ckingNode
 
 !!! tip
     If you just want to learn how to quickly add a project so you can use the CLI, skip [here](#adding-a-project).
@@ -37,14 +37,14 @@ This is our recommended way, as you can run it right after running `init` and yo
 
 **3 /** You also can waste your time opening the config file. It's a plain text file that stores absolute paths separated by line breaks. On Windows it lives at your local `%APPDATA%`, and on Linux & mac it lives on `HOME` (or `XDG_CONFIG_HOME`). It looks kinda like this:
 
-```txt
+```txt title="fuckingnode-motherfuckers.txt" linenums="1"
 C:\Users\JohnDoe\projects\Sokora
 C:\Users\JohnDoe\projects\electronJS-clone
 ```
 
 **Keep in mind paths must always point to the root**. Paths that point to the `package.json` itself, or to anything else that isn't the root of the project (the DIR that holds `package.json`), else you're cooked (the entire CLI won't work).
 
-Anyway, your basic setup is done and you're now ready to f*ck the nodes!
+By this stage, you can already get started with [cleaning your projects](#cleaning-up-projects).
 
 ### Removing a project
 
@@ -63,7 +63,7 @@ fuckingnode manager remove flamethrower
 
 the above would work as long as you have one added project with this package.json:
 
-```json
+```json title="package.json" linenums="1"
 {
     "name": "flamethrower",
     "version": "6.9.0"
@@ -81,14 +81,11 @@ A project is not valid basically if it cannot be found - however other condition
 
 Just run `fuckingnode manager list`. It'll beautifully show you all of your projects in a `name@version path` format, kinda like this:
 
-```bash
+```txt
 @zakahacecosas/fuckingnode@2.0.2 C:\Users\Zaka\FuckingNode
 personaplus@0.0.6-preapp.27 C:\Users\Zaka\personaplus
-personaplus-website@0.1.0 C:\Users\Zaka\personaplus-web
-zakahacecosas-portfolio@0.0.1 C:\Users\Zaka\zakaportfolio
+...
 ```
-
-> (btw that's _part of_ my real F*ckingNode list, heh~)
 
 Later on we'll see how to "ignore" projects, but here we'll tell you that you can pass `--ignored` to only list ignored projects, or `--alive` to only list non-ignored projects. If you try to mix both flags to create a loophole and break the matrix, you won't break anything; the flag you write first will overrule the second one.
 
@@ -125,10 +122,16 @@ fuckingnode settings change default-int "hard"
 fuckingnode settings change update-freq 15
 ```
 
+### Additional settings commands
+
+Settings includes an additional `flush` command, that takes a `<file>` (`logs`, `updates`, `projects`, or `all`) as an argument, removing that from F\*ckingNode's configuration. Removing `logs` is particularly recommended. Removals of `projects` and `all` are discouraged - by the way, yes, we store all logs in a `.log` file, it lives in `%APPDATA%/FuckingNode` on Windows and `/home/USER/.config/FuckingNode` on Linux & macOS.
+
+There's another settings command, `settings repair`. It simply resets settings to defaults.
+
 ---
 
 You're now fully setup and ready to put those f*cking NodeJS projects in place!
 
 ---
 
-[Next step: Using it!](basic-usage.md)
+[Next step: Using the CLI](usage.md)

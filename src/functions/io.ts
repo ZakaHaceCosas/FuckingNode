@@ -55,7 +55,7 @@ export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
  * @async
  * @param {string} message The message to be logged.
  * @param {?SUPPORTED_EMOJIS} [emoji] Additionally, add an emoji before the log.
- * @param {?boolean} [silent=true] Optional. If true, log will be made without saving to the `.log` file.
+ * @param {tValidColors} color Optionally, a color for the output.
  * @param {?boolean} [question=false] If true, the log will act as a y/N confirm. Will return true if the user confirms, false otherwise.
  * @param {?boolean} verbose If false, stuff will be saved to `.log` file but not written to the `stdout`. Pass here the variable you use to handle verbose logs.
  * @returns {Promise<boolean>} Boolean value if it's a question depending on user input. If it's not a question, to avoid a type error for being `void`, it always returns false.
@@ -63,30 +63,33 @@ export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
 export async function LogStuff(
     message: string,
     emoji?: SUPPORTED_EMOJIS,
-    silent?: boolean,
+    color?: tValidColors,
     question?: boolean,
     verbose?: boolean,
 ): Promise<boolean> {
     try {
         const finalMessage = emoji ? Emojify(message, emoji) : message;
-        const timestampedMessage = `${new Date().toLocaleString()} / ${finalMessage}\n`;
+
+        // deno-lint-ignore no-control-regex
+        const regex = /\x1b\[[0-9;]*[a-zA-Z]/g;
+
+        const formattedMessage = `${new Date().toLocaleString()} / ${finalMessage}\n`
+            .replace(regex, "")
+            .replace("\n\n", "\n"); // (fix for adding \n to messages that already have an \n for whatever reason)
 
         if (verbose === undefined || verbose === true) {
-            console.log(finalMessage);
+            if (color) {
+                console.log(ColorString(finalMessage, color));
+            } else {
+                console.log(finalMessage);
+            }
         }
 
-        if (!silent) {
-            // deno-lint-ignore no-control-regex
-            const regex = /\x1b\[[0-9;]*[a-zA-Z]/g;
-
-            await Deno.writeTextFile(
-                await GetAppPath("LOGS"),
-                timestampedMessage
-                    .replace(regex, "")
-                    .replace("\n\n", "\n"), // (fix for adding \n to messages that already have an \n for whatever reason)
-                { append: true },
-            );
-        }
+        await Deno.writeTextFile(
+            await GetAppPath("LOGS"),
+            formattedMessage,
+            { append: true },
+        );
 
         if (question) {
             return confirm("Confirm?");

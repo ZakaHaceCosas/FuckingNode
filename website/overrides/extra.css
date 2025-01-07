@@ -1,0 +1,23 @@
+/* not the best place for this but otherwise it ain't working
+bun c: fbf0e1
+ora c: fca737
+*/
+*,
+[data-md-color-scheme="slate"] {
+    scroll-behavior: smooth;
+    --md-primary-fg-color: #fbf0e1 !important;
+    --md-primary-fg-color--light: #f0e5d7 !important;
+    --md-primary-fg-color--dark: #dad0c2 !important;
+    --md-accent-fg-color: #fbf0e1 !important;
+    --md-accent-fg-color--transparent: #fbf0e13a !important;
+    --md-primary-bg-color: #000 !important;
+    --md-accent-bg-color: #000 !important;
+    --md-accent-bg-color--light: #000000b3 !important;
+}
+:root,
+[data-md-color-scheme="slate"] {
+    --md-hue: 35deg !important;
+}
+.md-typeset [type="checkbox"]:checked + .task-list-indicator:before {
+    background-color: #fbf0e1 !important;
+}

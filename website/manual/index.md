@@ -1,70 +1,89 @@
-# Getting started
+# F\*ckingNode full manual
 
-First thing first, install the CLI:
+Everything, from the basic to the complex, is documented here step by step.
 
-## Standard installation
+## Manual outline
 
-### Microsoft Windows
+These are links to individual pages. For the full manual, click the first one, then keep reading. For a faster, one page guide to quickly get started, [skip here](#tldr-for-getting-started-as-soon-as-possible).
 
-1. Download the installer from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). You'll see "INSTALLER" on the filename, there's just one.
-2. Run it.
-3. You're done! It should have automatically installed. The `fuckingnode` CLI command should now work out of the box.
+!!! tip "Cross-runtime support"
+    The manual will speak about "NodeJS". Unless we specifically say a feature works with NodeJS _only_, the Deno and Bun runtimes are also supported. Some caveats exist to cross-runtime support, click "Cross-runtime support" on this link list to learn more.
 
-### Linux and macOS
+- [Install the CLI](install.md)
+- [Setup and configuration](setup.md)
+- [Main usage guide](usage.md)
+- [Extra - Kickstart](kickstart.md)
+- [Extra - Stats](stats.md)
 
-1. Download the program from the [GitHub releases page](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest). macOS and Linux have support for both x84_64 and ARM.
-2. Place your downloaded file anywhere, like `/scripts` or `/home/USER/my-scripts`.
-3. Add the path to the binary to your system's path environment variable.
-4. You're done! The `fuckingnode` command will now work from your terminal.
+For further learning:
 
-Here's how to add the path to your path env variable, in case you didn't know:
+- [Cross-runtime support](cross-runtime.md)
+
+## TL;DR for getting started as soon as possible
+
+### Step 1
+
+Add all of your projects. This is done manually with the `fuckingnode manager add <path>` command. Path can be relative, absolute, or the `--self` flag to use the CWD.
 
 ```bash
-# open your Bash config file with nano (or your preferred editor)
-nano ~/.bashrc         # Linux
-nano ~/.bash_profile   # macOS
-
-# paste this
-export PATH="$PATH:/home/USER/my-scripts/fuckingnode" # keep '$PATH' and replace the rest (/home...) with the actual path to wherever you saved fuckingnode. It's recommended that you keep the name like that, "fuckingnode" with lowercase.
-
-# save with CTRL + O, ENTER, and CTRL + X
-# then, reload your config
-source ~/.bashrc          # Linux
-source ~/.bash_profile    # macOS
+# relative
+fuckingnode manager add "../projects/project1"
+# absolute
+fuckingnode manager add "/home/engin/projects/project2"
+# self path
+cd project3
+fuckingnode manager add --self
 ```
 
-> PS. I never touched BASH, but I'll try to make a decent install script for you guys too.
+It's recommended that from now on you run `manager add --self` immediately after running `npm init` (or `pnpm init` or whatever) each time you create a project.
 
-### NixOS
+### Step 2
 
-Add the repo to your `flake.nix`.
+A basic cleanup is invoked by running this command, with no arguments.
 
-```nix
-inputs = {
-    fuckingnode.url = "github:ZakaHaceCosas/FuckingNode";
-}
+```bash
+fuckingnode clean
 ```
 
-Then, add this to your system packages:
+It's simple, and while it doesn't recover gigabytes, it's fast and it gets the job done. Additional flags can be passed for using more advanced features.
 
-```nix
-inputs.fuckingnode.packages."${system}".default
+Keep in mind it's a global command; it'll do the same cleanup, with the same flags if passed, across all the projects you've added. A config file `fknode.yaml` can be created at the root of an added project to override this behavior.
+
+### Step 3
+
+For increased intensity, use this.
+
+```bash
+fuckingnode clean hard
 ```
 
-Thanks to [@dimkauzh](https://github.com/dimkauzh) for maintaining the NixOS install.
+Immediately after cleaning all of your projects, it'll now clear global caches of all your installed package managers.
 
-## Compiling from source
+If you only wish to clear global caches without waiting for individual cleanup of all projects, use `fuckingnode clean hard-only`, or a shortcut (`fuckingnode global-clean` or `fuckingnode hard-clean`).
 
-For contributors and nerds who clone the entire source just to change one line they don't like, compiling is extremely easy:
+### Step 4
 
-1. Install [Deno 2](https://docs.deno.com/runtime/).
-2. Open this project from the root.
-3. Run `deno task compile`.
-4. Wait.
-5. An executable for each platform will be created at `dist/`. Run the executable for your platform (file names are specific to each platform).
+For the best experience, you can pass `--`flags to the clean command for using additional features. Detailed explanations are available at both the [pro tutorial](../tutorial/pro.md) and the [usage manual](../manual/usage.md), here we'll just TL;DR them:
 
-Since you have Deno installed, you can also just `deno -A src/main.ts [...commands]` from the root of the project and it'll work out of the box.
+- `--lint` runs ESLint
+- `--pretty` runs Prettier
+- `--destroy` removes unneeded files (e.g. `dist/`)
+- `--update` updates dependencies
+- `--commit` commits changes made by us (e.g. changes to your lockfile because of updating)
+
+As outlined [before](#step-2) cleaning is global. When running with `--lint` all your projects will be automatically linted (unless overridden, as said), greatly increasing your productivity.
+
+Behavior itself can also be overridden, in case you use a different linter than ESLint, or a different prettifier than Prettier. All flags support their custom configuration.
+
+There are two exceptions to the "global cleaning" rule mentioned earlier:
+
+- `--destroy` requires per-project configuration via `fknode.yaml` (you shall specify what you want to be removed). We don't have "default" directories to auto-remove like `dist/`, to avoid removing something you _might_ need.
+- `--commit` requires per-project configuration via `fknode.yaml`. Making a commit is a sensible action, as we could potentially commit something you did _not_ intend to commit yet. Committing requires explicit allowance from you, and additional safety checks are performed as outlined [here](../tutorial/pro.md#committing-your-code-commit).
 
 ---
 
-[Next step: Setup](setup.md)
+That's the basic manual. For further learning about `fknode.yaml` or advanced features, [refer to the desired manual section](#manual-outline).
+
+---
+
+*[CWD]: Current Working Directory

@@ -21,7 +21,7 @@ export const mocks = {
             const resolvedPath = typeof path === "string" ? path : path.toString();
             switch (resolvedPath) {
                 case await GetAppPath("MOTHERFKRS"):
-                    return `${CONSTANTS.ENV_PATH}/uwu`;
+                    return `${CONSTANTS.ENV_PATH}/test-one`;
                 default:
                     return await Deno.readTextFile(path); // (path: string | URL): Promise<string>
             }
@@ -42,7 +42,7 @@ Deno.test("cool test!!", async () => {
 
     // do your stuff
     const projects = await GetAllProjects();
-    assertEquals(projects, [TEST_PROJECTS.UWU.ROOT]);
+    assertEquals(projects, [TEST_PROJECTS.ONE.ROOT]);
 
     // restore the original implementation at the end
     Deno.readTextFile = originalReadTextFile;

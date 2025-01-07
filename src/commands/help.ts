@@ -183,7 +183,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
     ]);
 
-    switch ((query ?? "").trim()) {
+    switch ((query ?? "").trim().toLowerCase()) {
         case "clean":
             await LogStuff(
                 `'clean' will clean your added projects. Options and flags:\n${CLEAN_OPTIONS}`,
@@ -207,7 +207,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         case "migrate":
             await LogStuff(MIGRATE_OPTIONS);
             break;
-        case "UPGRADE":
+        case "upgrade":
             await LogStuff(UPGRADE_OPTIONS);
             break;
         case "about":
