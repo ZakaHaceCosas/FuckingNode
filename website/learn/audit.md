@@ -104,6 +104,8 @@ F\*ckingNode audit should not be allowed to have the final say over whether brea
 
 ---
 
+### Availability
+
 This feature has not been released yet and is not available.
 
 For trying it out, clone our repository including the `feature-audit` branch, `git checkout feature-audit` and execute `deno -A src/main.ts audit`.
