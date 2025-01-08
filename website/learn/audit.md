@@ -2,9 +2,9 @@
 
 An attempt to make security reports easier.
 
-!!! danger
-    This is an unreleased feature (scheduled for `v2.1.0` as outlined in our ROADMAP). It's subject to changes, full rewrites, or even cancellations.
-    [See the GitHub `feature-audit` branch for the source code of this feature.](https://github.com/ZakaHaceCosas/FuckingNode/compare/master...feature-audit).
+!!! danger "Unreleased feature"
+    This is an unreleased feature (scheduled for `v2.1.0` as outlined in our [ROADMAP](../about/roadmap.md)). It's subject to changes, full rewrites, or even cancellations.
+    [See the GitHub `feature-audit` branch for the source code of this feature.](https://github.com/ZakaHaceCosas/FuckingNode/compare/master...feature-audit)
 
 ## Abstract
 
