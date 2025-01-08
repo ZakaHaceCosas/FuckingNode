@@ -129,12 +129,12 @@ This process is executed recursively across all of your projects, until we're do
 
 ---
 
-### Summary
+## Summary
 
 We basically run the CLI commands you'd run by yourself recursively across all of your projects, saving you a lot of time.
 
 ---
 
-### Availability
+## Availability
 
 This feature has been released and is available since `v1.0.0`. It's fully available on NodeJS projects and partially available on Deno and Bun projects. To learn more about cross-runtime compatibility, [refer to this page](../manual/cross-runtime.md).

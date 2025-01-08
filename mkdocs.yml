@@ -29,7 +29,7 @@ nav:
           - Home: "learn/index.md"
           - How does cleanup work under the hood: "learn/clean.md"
           - How does kickstart work under the hood: "learn/kickstart.md"
-          - How does FuckingNode audit work under the hood: "learn/audit.md"
+          - How does audit work under the hood: "learn/audit.md"
 
     - Roadmap: "about/roadmap.md"
     - Brand guidelines: "about/branding.md"
@@ -61,6 +61,7 @@ plugins:
     - social
     - redirects:
           redirect_maps:
+              "about.md": "about/roadmap.md"
               "repo.md": "https://github.com/ZakaHaceCosas/FuckingNode"
 
 markdown_extensions:

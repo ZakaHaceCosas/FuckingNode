@@ -104,7 +104,7 @@ F\*ckingNode audit should not be allowed to have the final say over whether brea
 
 ---
 
-### Availability
+## Availability
 
 This feature has not been released yet and is not available.
 
