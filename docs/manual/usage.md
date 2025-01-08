@@ -207,7 +207,7 @@ For your own safety, we will commit ONLY IF ALL of the following conditions are 
 
 When updating, we will automatically update your dependencies using your project's package manager (we'll know that based on your lockfile). By default, the standard update command is used, though you can actually override this command too.
 
-> Personally, I didn't think that was useful until I found out (the bad way) why `expo` "reinvented the wheel" with `expo install --check` and encouraged users to use that instead of `npm update` - I had to reinstall everything like four times to get the project to compile again. So yeah, in some cases you do need to use a specific command for dependencies, and we got you covered.
+> Personally, I didn't think that was useful until I found out (the bad way) why `expo` "reinvented the wheel" with `expo install --check` and encouraged users to use that instead of `npm update` - I had to reinstall everything several times to get the project to compile again. So yes, in some cases you do need a specific command for dependencies. We got you covered for those cases.
 
 Unless overridden, you already know what command this will run (`npm update` or `pnpm update` or whatever you use).
 
