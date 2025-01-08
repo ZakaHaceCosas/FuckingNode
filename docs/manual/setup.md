@@ -82,7 +82,7 @@ A project is not valid basically if it cannot be found - however other condition
 Just run `fuckingnode manager list`. It'll beautifully show you all of your projects in a `name@version path` format, kinda like this:
 
 ```txt
-@zakahacecosas/fuckingnode@2.0.2 C:\Users\Zaka\FuckingNode
+@zakahacecosas/fuckingnode@2.0.3 C:\Users\Zaka\FuckingNode
 personaplus@0.0.6-preapp.27 C:\Users\Zaka\personaplus
 ...
 ```
