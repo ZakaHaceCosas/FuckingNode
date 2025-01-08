@@ -27,6 +27,6 @@
     },
     "homepage": "https://github.com/ZakaHaceCosas/uwu.js#readme",
     "workspaces": [
-        "../hi"
+        "../test-two"
     ]
 }
