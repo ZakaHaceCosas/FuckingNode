@@ -217,6 +217,12 @@ To override it, do the same as with the linter and prettifier, but setting the `
 updateCmdOverride: "update"
 ```
 
+## Additional info
+
+### Show additional info during cleanup
+
+There's a `--verbose` flag that can be passed to `fuckingnode clean`. For now it'll show begin and end timestamps for the cleanup process, plus a report showing how much time did it take us to clean each individual project.
+
 ---
 
-TODO
+[Next: Extra - Kickstart a project](kickstart.md)

@@ -21,9 +21,9 @@ nav:
           - Stats: "manual/stats.md"
           - Cross-runtime support: "manual/cross-runtime.md"
 
-    - Tutorial:
+    - Tutorials:
           - Basic tutorial: "tutorial/index.md"
-          - Pro tutorial: "tutorial/pro.md"
+          - Professional tutorial: "tutorial/pro.md"
 
     - Learn:
           - Home: "learn/index.md"
