@@ -76,13 +76,15 @@ Your questions are evaluated using a straightforward positive-negative system: r
 These counts are used to compute the RF, based on the following formula:
 
 ```typescript
-(positives + negatives) > 0 ? (positives / (positives + negatives)) * 100 : 0
+(positives / (positives + negatives)) * 100
 ```
 
 There's a `--strict` flag that can be passed to the audit command that adds an additional **risk bump**, based on the severity of the most-severe identified vulnerability, as follows:
 
 ```typescript
-(((positives + negatives) > 0 ? (positives / (positives + negatives)) * 100 : 0) + (riskBump * 100)) / 2
+(RF + (RB * 100)) / 2
+// RF = Risk Factor
+// RB = Risk Bump
 ```
 
 RB values are as follows:
