@@ -5,7 +5,7 @@
         ".": "./src/main.ts"
     },
     "fmt": {
-        "exclude": ["README.md", "website/**"],
+        "exclude": ["README.md", "docs/**"],
         "indentWidth": 4,
         "lineWidth": 144,
         "proseWrap": "never",

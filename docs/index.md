@@ -42,4 +42,4 @@ And that's it for now.
 [Basic tutorial](tutorial/index.md){ .md-button }
 [Advanced professional tutorial](tutorial/pro.md){ .md-button .md-button--primary }
 
-This website is work in progress, rest of the pages will be done later on.
+This website is work in progress, some pages are missing and will be done later on.

@@ -112,7 +112,7 @@ async function main(command: string) {
             case "docs":
             case "web":
             case "website":
-                await LogStuff("Best documentation website for best CLI, live at https://zakahacecosas.github.io/FuckingNode", "bulb");
+                await LogStuff("Best documentation website for best CLI, live at https://zakahacecosas.github.io/FuckingNode/", "bulb");
                 break;
             default:
                 await TheHelper({ query: Deno.args[1] });
