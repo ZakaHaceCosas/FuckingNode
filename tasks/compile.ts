@@ -72,3 +72,6 @@ Deno.mkdir("./dist/");
 
 CompileApp();
 CompileInstaller();
+
+// for nix, get into WSL and run:
+// nix-prefetch-url https://github.com/ZakaHaceCosas/FuckingNode/releases/download/LATEST_TAG_HERE_BRO/FuckingNode-linux_x86_64
