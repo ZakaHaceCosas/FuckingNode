@@ -200,7 +200,7 @@ export const UnderstandProjectSettings = {
 /**
  * Possible errors.
  */
-type ProjectError = "IsDuplicate" | "NoPkgJson" | "NoRootDir";
+export type ProjectError =  "IsDuplicate" | "NoPkgJson" | "NotFound";
 
 /**
  * Given a path to a project, returns `true` if the project is valid, or a message indicating if it's not a valid Node/Deno/Bun project.
@@ -211,7 +211,7 @@ type ProjectError = "IsDuplicate" | "NoPkgJson" | "NoRootDir";
  */
 export async function ValidateProject(entry: string): Promise<true | ProjectError> {
     const workingEntry = await ParsePath(entry);
-    if (!(await CheckForPath(workingEntry))) return "NoRootDir";
+    if (!(await CheckForPath(workingEntry))) return "NotFound";
     const list = await GetAllProjects();
     const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
 

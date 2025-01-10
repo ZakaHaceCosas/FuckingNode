@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Changed `stats` so it displays just the first 5 dependencies and then an "and x more" string. Also removed "Main file:" string.
 
+### Fixed
+
+- Fixed handling of duplicates with `manager cleanup` sometimes misbehaving (either not detecting duplicates or removing duplicates AND the original entry).
+
 ## [2.0.3] 08-01-2025
 
 Happy new year btw

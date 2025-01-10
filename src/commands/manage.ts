@@ -1,7 +1,15 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
+import {
+    GetAllProjects,
+    GetProjectSettings,
+    GetWorkspaces,
+    NameProject,
+    type ProjectError,
+    SpotProject,
+    ValidateProject,
+} from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
@@ -186,40 +194,22 @@ async function RemoveProject(
  * @async
  * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, 2 if the user doesn't remove them.
  */
-async function CleanProjects(): Promise<0 | 1 | 2> {
-    async function GetProjectsToRemove() {
-        const list = await GetAllProjects();
-        const listOfRemovals: string[] = [];
+async function CleanupProjects(): Promise<0 | 1 | 2> {
+    const listOfRemovals: { project: string; issue: ProjectError }[] = [];
 
-        for (const project of list) {
-            const validation = await ValidateProject(project);
-            if (validation !== true) listOfRemovals.push(project);
-        }
-
-        // this should handle duplicates, so all duplicates EXCEPT ONE are removed
-        // otherwise, if you have a project duplicate, all entries get removed and you loose it
-
-        // it creates an object where key is the project and the value is (i think) the number of times the project has been found
-        const countMap: { [key: string]: number } = {};
-        // iterates over the full list of to-be-removed projects to add them with the count of times they've been found
-        listOfRemovals.forEach((project: string) => {
-            countMap[project] = (countMap[project] || 0) + 1;
-        });
-
-        // the array we will return to the user
-        const result: string[] = [];
-        // for each project of the object, if it exists, we push it, and this somehow returns only one entry per project
-        for (const project of Object.keys(countMap)) {
-            if (countMap[project] && countMap[project] >= 1) {
-                result.push(project);
-            }
-        }
-        // (no i didn't write that)
-
-        return result;
+    for (const project of (await GetAllProjects())) {
+        const validation = await ValidateProject(project);
+        if (validation !== true) listOfRemovals.push({ project: project, issue: validation });
     }
-    const list = await GetProjectsToRemove();
-    if (list.length === 0) {
+
+    // remove duplicates
+    const result = Array.from(
+        new Map(
+            listOfRemovals.map((item) => [JSON.stringify(item), item]), // make it a string so we can actually compare it's values
+        ).values(),
+    );
+
+    if (result.length === 0) {
         await LogStuff(
             `You're on the clear! Your list doesn't have any wrong ${I_LIKE_JS.MF}`,
             "tick",
@@ -231,9 +221,9 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         "bulb",
     );
     // doesn't use NameProject as it's likely to point to an invalid path
-    for (const idiot of list) {
+    for (const idiot of result) {
         await LogStuff(
-            `${idiot} ${ColorString("Code: " + (await ValidateProject(idiot)), "half-opaque")}`,
+            `${idiot.project} ${ColorString(`Code: ${idiot.issue}`, "half-opaque")}`,
             "trash",
         );
     }
@@ -251,8 +241,8 @@ async function CleanProjects(): Promise<0 | 1 | 2> {
         );
         return 2;
     }
-    for (const target of list) {
-        await RemoveProject(target, true);
+    for (const target of result) {
+        await RemoveProject(target.project, true);
     }
     await LogStuff(`That worked out!`, "tick");
     return 0;
@@ -395,7 +385,7 @@ export default async function TheManager(args: string[]) {
             }
             break;
         case "cleanup":
-            await CleanProjects();
+            await CleanupProjects();
             break;
         default:
             throw new FknError(
