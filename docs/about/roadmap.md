@@ -7,11 +7,11 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 ## Version 2.1
 
 - [ ] Release the `audit` feature as an `npm` only experiment. Learn more [here](../learn/audit.md).
-- [ ] Support more editors for the `kickstart` command (PS. doing this is as simple as ensuring we know the command to launch that editor in all platforms).
-    - [ ] Emacs
-    - [ ] Notepad ++
-    - [ ] VSCodium
-    - [ ] Atom (_it's unmaintained, but anyways..._)
+- [X] Support more editors for the `kickstart` command (PS. doing this is as simple as ensuring we know the command to launch that editor in all platforms).
+  - [X] Emacs
+  - [X] Notepad ++
+  - [X] VSCodium
+  - [X] Atom (_it's unmaintained, but anyways..._)
 - [X] Get this documentation finished.
 
 ## Version 2.2
@@ -24,8 +24,8 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 - [ ] Make a proper logo for the project.
 - [ ] Better installer
-    - [ ] Revamped `.ps1` based installer for Windows.
-    - [ ] New `.sh` based installed for mac and Linux.
+  - [ ] Revamped `.ps1` based installer for Windows.
+  - [ ] New `.sh` based installed for mac and Linux.
 - [ ] Cross-runtime migration.
 - [ ] Shorter commands. For example, `fknode clean -- -l -p` instead of `fuckingnode clean -- --lint --pretty`.
 - [ ] Better error handling.

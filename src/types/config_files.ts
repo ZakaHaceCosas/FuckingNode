@@ -1,6 +1,8 @@
 import type { CleanerIntensity } from "./config_params.ts";
 import type { RIGHT_NOW_DATE } from "./misc.ts";
 
+export type SUPPORTED_EDITORS = "vscode" | "sublime" | "emacs" | "notepad++" | "atom" | "vscodium"
+
 /**
  * User config
  *
@@ -23,7 +25,7 @@ export interface CF_FKNODE_SETTINGS {
     /**
      * User's favorite code editor.
      */
-    favoriteEditor: "vscode" | "sublime";
+    favoriteEditor: SUPPORTED_EDITORS;
 }
 
 /**

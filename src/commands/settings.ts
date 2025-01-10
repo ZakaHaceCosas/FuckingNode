@@ -2,7 +2,7 @@ import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { BulkRemoveFiles, ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 import { FreshSetup, GetAppPath, GetSettings } from "../functions/config.ts";
-import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
+import type { CF_FKNODE_SETTINGS, SUPPORTED_EDITORS } from "../types/config_files.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { stringify as stringifyYaml } from "@std/yaml";
 
@@ -126,13 +126,13 @@ async function ChangeSetting(setting: "default-int" | "update-freq" | "fav-edito
                 break;
             }
             case "fav-editor": {
-                if (!["vscode", "sublime"].includes(value)) {
-                    await LogStuff(`${value} is not valid. Enter either 'vscode' or 'sublime'. (More editors soon).`);
+                if (!["vscode", "sublime", "emacs", "atom", "notepad++", "vscodium"].includes(value)) {
+                    await LogStuff(`${value} is not valid. Enter either:\n'vscode', 'sublime', 'emacs', 'atom', 'notepad++', or 'vscodium'.`);
                     return;
                 }
                 const newSettings: CF_FKNODE_SETTINGS = {
                     ...currentSettings,
-                    favoriteEditor: (value as "vscode" | "sublime"),
+                    favoriteEditor: (value as SUPPORTED_EDITORS),
                 };
                 await Deno.writeTextFile(
                     await GetAppPath("SETTINGS"),
