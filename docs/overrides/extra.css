@@ -1,6 +1,6 @@
-/* not the best place for this but otherwise it ain't working
-bun c: fbf0e1
-ora c: fca737
+/*
+Bun color: #FBF0E1
+Orange cl: #FCA737
 */
 *,
 [data-md-color-scheme="slate"] {
@@ -20,4 +20,9 @@ ora c: fca737
 }
 .md-typeset [type="checkbox"]:checked + .task-list-indicator:before {
     background-color: #fbf0e1 !important;
+}
+.md-typeset .md-button:focus,
+.md-typeset .md-button:hover {
+    background-color: var(--md-primary-fg-color--dark) !important;
+    border-color: var(--md-primary-fg-color--dark) !important;
 }

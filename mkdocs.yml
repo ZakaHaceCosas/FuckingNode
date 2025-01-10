@@ -7,7 +7,7 @@ copyright: ZakaHaceCosas
 repo_name: ZakaHaceCosas/FuckingNode
 repo_url: https://github.com/ZakaHaceCosas/FuckingNode
 
-docs_dir: "website"
+docs_dir: "docs"
 
 nav:
     - Home: "index.md"
@@ -21,22 +21,22 @@ nav:
           - Stats: "manual/stats.md"
           - Cross-runtime support: "manual/cross-runtime.md"
 
+    - Tutorials:
+          - Basic tutorial: "tutorial/index.md"
+          - Professional tutorial: "tutorial/pro.md"
+
     - Learn:
           - Home: "learn/index.md"
           - How does cleanup work under the hood: "learn/clean.md"
           - How does kickstart work under the hood: "learn/kickstart.md"
-          - How does FuckingNode audit work under the hood: "learn/audit.md"
-
-    - Tutorial:
-          - Basic tutorial: "tutorial/index.md"
-          - Pro tutorial: "tutorial/pro.md"
+          - How does audit work under the hood: "learn/audit.md"
 
     - Roadmap: "about/roadmap.md"
     - Brand guidelines: "about/branding.md"
 
 theme:
     name: material
-    custom_dir: website/overrides
+    custom_dir: docs/overrides
 
     # logo: /path/to/logo.png
     # favicon: /path/to/logo.png (when we have it)
@@ -55,12 +55,13 @@ theme:
           accent: custom
 
 extra_css:
-  - overrides/extra.css
+    - overrides/extra.css
 
 plugins:
     - social
     - redirects:
           redirect_maps:
+              "about.md": "about/roadmap.md"
               "repo.md": "https://github.com/ZakaHaceCosas/FuckingNode"
 
 markdown_extensions:

@@ -1,5 +1,5 @@
 import { CommandExists } from "../src/functions/cli.ts";
-import { assertEquals } from "@std/assert";
+import { assertEquals } from "@std/testing";
 
 // ACTUAL TESTS
 // this test requires you to have the 3 titans (node deno and bun) and the 3 node sub-titans (npm pnpm and yarn)

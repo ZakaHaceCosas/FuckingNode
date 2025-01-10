@@ -6,6 +6,44 @@ import { GetProjectEnvironment, NameProject } from "../functions/projects.ts";
 import type { PKG_MANAGERS } from "../types/package_managers.ts";
 import type { TheKickstartConstructedParams } from "./constructors/command.ts";
 import { AddProject } from "./manage.ts";
+import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
+
+async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favoriteEditor"]) {
+    let executionCommand: "subl" | "code" | "emacs" | "notepad++" | "codium" | "atom";
+
+    switch (IDE) {
+        case "sublime":
+            executionCommand = "subl";
+            break;
+        case "vscode":
+            executionCommand = "code";
+            break;
+        case "vscodium":
+            executionCommand = "codium";
+            break;
+        case "notepad++":
+            executionCommand = "notepad++";
+            break;
+        case "emacs":
+            executionCommand = "emacs";
+            break;
+        case "atom":
+            executionCommand = "atom";
+            break;
+    }
+
+    try {
+        await Commander(executionCommand, ["."], false)
+            .then((res) => {
+                if (res.success === false) throw new Error(res.stdout);
+            })
+            .catch((e) => {
+                throw e;
+            });
+    } catch (e) {
+        throw new Error(`Error launching ${IDE}: ${e}`);
+    }
+}
 
 export default async function TheKickstart(params: TheKickstartConstructedParams) {
     try {
@@ -61,22 +99,12 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
         }
 
         const favEditor = (await GetSettings()).favoriteEditor;
-        let command: "code" | "subl";
-        switch (favEditor) {
-            case "sublime":
-                command = "subl";
-                break;
-            case "vscode":
-                command = "code";
-                break;
-        }
 
-        if (["subl", "code"].includes(command)) {
-            const editorOutput = await Commander(command, [clonedPath]);
-            if (!editorOutput.success) throw new Error(`Error launching ${favEditor}: ${editorOutput.stdout}`);
-        } else {
+        if (!(["vscode", "sublime", "emacs", "notepad++", "atom", "vscodium"].includes(favEditor))) {
             await LogStuff(`Error: ${favEditor} is not a supported editor!`, "error");
         }
+
+        await LaunchIDE(favEditor);
 
         await LogStuff(`Great! ${await NameProject(clonedPath, "name-ver")} is now setup. Enjoy!`, "tick-clear");
     } catch (e) {

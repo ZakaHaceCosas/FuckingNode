@@ -317,6 +317,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
         const workingPath = await ParsePath(path);
         if (!(await CheckForPath(workingPath))) throw new Error(`(PROJECT-ENV) Path ${path} doesn't exist.`);
         const trash = await JoinPaths(workingPath, "node_modules");
+        const workspaces = await GetWorkspaces(workingPath) ?? "no";
 
         const paths = {
             deno: {
@@ -387,6 +388,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: "__UNSUPPORTED",
                     audit: "__UNSUPPORTED",
                 },
+                workspaces,
             };
         }
         if (isDeno) {
@@ -410,6 +412,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: "__UNSUPPORTED",
                     audit: "__UNSUPPORTED",
                 },
+                workspaces,
             };
         }
         if (pathChecks.node.lockYarn) {
@@ -433,6 +436,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: [["autoclean", "--force"]],
                     audit: "__UNSUPPORTED",
                 },
+                workspaces,
             };
         }
         if (pathChecks.node.lockPnpm) {
@@ -456,6 +460,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: [["dedupe"], ["prune"]],
                     audit: "__UNSUPPORTED", // ["audit", "--ignore-registry-errors"],
                 },
+                workspaces,
             };
         }
         if (pathChecks.node.lockNpm) {
@@ -479,6 +484,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: [["dedupe"], ["prune"]],
                     audit: ["audit", "--include-workspace-root"],
                 },
+                workspaces,
             };
         }
 

@@ -11,7 +11,7 @@ import type { CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
 const _SV_VER: SemVer = {
     major: 2,
     minor: 0,
-    patch: 2,
+    patch: 3,
 };
 
 /**

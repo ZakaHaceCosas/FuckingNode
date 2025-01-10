@@ -136,4 +136,10 @@ export interface ProjectEnv {
          */
         audit: string[] | "__UNSUPPORTED";
     };
+    /**
+     * File paths to valid workspaces.
+     *
+     * @type {(string[] | "no")}
+     */
+    workspaces: string[] | "no";
 }
