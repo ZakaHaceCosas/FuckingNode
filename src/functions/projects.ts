@@ -5,7 +5,7 @@ import { expandGlob } from "@std/fs";
 import { DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
-import { ColorString, LogStuff, NaturalizeFormattedString } from "./io.ts";
+import { ColorString, LogStuff, MultiColorString, NaturalizeFormattedString } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import { GetAppPath } from "./config.ts";
@@ -61,7 +61,7 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
  */
 export async function NameProject(path: string, wanted?: "name" | "path" | "name-ver" | "all"): Promise<string> {
     const workingPath = await ParsePath(path);
-    const formattedPath = ColorString(ColorString(workingPath, "italic"), "half-opaque");
+    const formattedPath = MultiColorString(workingPath, "italic", "half-opaque");
 
     try {
         const exists = await CheckForPath(workingPath);

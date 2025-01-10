@@ -2,7 +2,7 @@
 
 import { APP_NAME, I_LIKE_JS } from "../../constants.ts";
 import { Commander } from "../../functions/cli.ts";
-import { ColorString, LogStuff } from "../../functions/io.ts";
+import { ColorString, LogStuff, MultiColorString } from "../../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../../functions/projects.ts";
 import type { FkNodeSecurityAudit, ParsedNpmReport, SecurityVulnerability } from "../../types/audit.ts";
 import { FknError } from "../../utils/error.ts";
@@ -29,6 +29,11 @@ async function FetchVulnerability(packageName: string): Promise<SecurityVulnerab
     if (!response.ok) throw new Error(`Error checking with OSV.dev: ${response.statusText}`);
 
     const data = await response.json();
+
+    if (!data.vulns) {
+        throw new Error("Unexpected response format from OSV.dev");
+    }
+
     return data.vulns || [];
 }
 
@@ -41,8 +46,8 @@ function AnalyzeVulnerabilities(vulnerabilities: SecurityVulnerability[]): {
     questions: string[];
     vectors: string[];
 } {
-    const questions = new Set<string>();
-    const vectors = new Set<string>();
+    const questions: Set<string> = new Set<string>();
+    const vectors: Set<string> = new Set<string>();
 
     function has(vuln: SecurityVulnerability, keywords: string[]): boolean {
         const details = typeof vuln.details === "string" ? vuln.details.toLowerCase() : "";
@@ -93,7 +98,7 @@ function AnalyzeVulnerabilities(vulnerabilities: SecurityVulnerability[]): {
  * @returns {Promise<"true" | "false">}
  */
 async function askQuestion(question: string, isFollowUp: boolean, isReversed: boolean): Promise<"true" | "false"> {
-    const formattedQuestion = ColorString(ColorString(question, isFollowUp ? "bright-blue" : "bright-yellow"), "italic");
+    const formattedQuestion = MultiColorString(question, isFollowUp ? "bright-blue" : "bright-yellow", "italic");
     const response = await LogStuff(formattedQuestion, undefined, undefined, true);
     switch (response) {
         case true:
@@ -170,10 +175,9 @@ async function InterrogateVulnerability(questions: string[]): Promise<FkNodeSecu
             );
             if (followUpThree === "true") {
                 await LogStuff(
-                    ColorString(
-                        "We'll use the word 'WebSockets', however these questions apply for any other kind of persistent connection, like WebRTC.",
-                        "italic",
-                    ),
+                    "We'll use the word 'WebSockets', however these questions apply for any other kind of persistent connection, like WebRTC.",
+                    undefined,
+                    "italic",
                 );
                 await handleAskQuestion(
                     "Do you use Secure WebSockets (WSS) for some or all connections?",
@@ -251,11 +255,11 @@ async function InterrogateVulnerability(questions: string[]): Promise<FkNodeSecu
 async function DisplayAudit(percentage: number): Promise<void> {
     let color: "bright-yellow" | "red" | "bright-green";
     let message: string;
-    if (percentage < 25) {
+    if (percentage < 20) {
         color = "bright-green";
         message =
             `Seems like we're okay, one ${I_LIKE_JS.MFN} project less to take care of!\nNever forget the best risk is no risk - we still encourage you to fix the vulnerabilities if you can.`;
-    } else if (percentage >= 25 && percentage < 50) {
+    } else if (percentage >= 20 && percentage < 50) {
         color = "bright-yellow";
         message = `${ColorString("There is a potential risk", "bold")} of these vulnerabilities causing you a headache.\nWhile you ${
             ColorString("might", "italic")
@@ -269,16 +273,13 @@ async function DisplayAudit(percentage: number): Promise<void> {
         }`;
     }
     console.log("");
+    const percentageString = MultiColorString(
+        `${percentage.toFixed(2)}%`,
+        color,
+        "bold",
+    );
     await LogStuff(
-        `We've evaluated your responses and concluded a risk factor of ${
-            ColorString(
-                ColorString(
-                    `${percentage.toFixed(2)}%`,
-                    color,
-                ),
-                "bold",
-            )
-        }.`,
+        `We've evaluated your responses and concluded a risk factor of ${percentageString}.`,
     );
     await LogStuff(message);
     console.log("");

@@ -63,7 +63,7 @@ export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
 export async function LogStuff(
     message: string,
     emoji?: SUPPORTED_EMOJIS,
-    color?: tValidColors,
+    color?: tValidColors | tValidColors[],
     question?: boolean,
     verbose?: boolean,
 ): Promise<boolean> {
@@ -79,7 +79,11 @@ export async function LogStuff(
 
         if (verbose === undefined || verbose === true) {
             if (color) {
-                console.log(ColorString(finalMessage, color));
+                if (Array.isArray(color)) {
+                    console.log(MultiColorString(finalMessage, ...color));
+                } else {
+                    console.log(MultiColorString(finalMessage, color));
+                }
             } else {
                 console.log(finalMessage);
             }
@@ -190,6 +194,33 @@ export function ColorString(string: string | number, color: tValidColors): strin
     }
 
     return `${colorCode}${finalString}${RESET}`;
+}
+
+/**
+ * Recursively colors a string.
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @param {(string | number)} string String to color.
+ * @param {...tValidColors[]} colors All the colors you wanna add in.
+ * @returns {string} A colorful string.
+ */
+export function MultiColorString(string: string | number, ...colors: tValidColors[]): string {
+    const finalString = typeof string === "string" ? string : String(string);
+
+    if (colors === undefined || colors.length === 0 || !colors[0]) return finalString;
+
+    // initial color
+    let result = ColorString(finalString, colors[0]);
+
+    // recursively apply ColorFunc with the rest of the arguments
+    for (let i = 1; i < colors.length; i++) {
+        const color = colors[i];
+        if (color === undefined || !color) return finalString;
+        result = ColorString(result, color);
+    }
+
+    return result;
 }
 
 /**

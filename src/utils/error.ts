@@ -122,8 +122,7 @@ export default async function GenericErrorHandler(e: unknown): Promise<never> {
     if (e instanceof FknError) {
         await e.exit(e.message);
     } else {
-        const errorMessage = `${ColorString(`${I_LIKE_JS.FK}! An unknown error happened:`, "red")} ${e}`;
-        await LogStuff(errorMessage, "error");
+        await LogStuff(`${I_LIKE_JS.FK}! An unknown error happened: ${e}`, "error", "red");
     }
     Deno.exit(1); // <- doesn't do anything if the error is a FknError because e.exit() already exits, but without this VSCode rises an error (it doesn't know e.exit() is a <never>)
 }
