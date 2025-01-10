@@ -42,8 +42,27 @@ function hasFlag(flag: string, allowShort: boolean): boolean {
 
 if (hasFlag("help", true)) {
     await init(false);
-    await TheHelper({ query: Deno.args[1] });
-    Deno.exit(0);
+    try {
+        await TheHelper({ query: Deno.args[1] });
+        Deno.exit(0);
+    } catch (e) {
+        console.error("Critical error", e);
+        Deno.exit(1);
+    }
+}
+
+if (hasFlag("experimental-audit", false)) {
+    await init(false);
+    try {
+        await TheAuditer(
+            Deno.args[1] ?? null,
+            ParseFlag("strict", true).includes(Deno.args[2] ?? ""),
+        );
+        Deno.exit(0);
+    } catch (e) {
+        console.error("Critical error", e);
+        Deno.exit(1);
+    }
 }
 
 if (hasFlag("version", true)) {
@@ -114,12 +133,6 @@ async function main(command: string) {
             case "web":
             case "website":
                 await LogStuff("Best documentation website for best CLI, live at https://zakahacecosas.github.io/FuckingNode/", "bulb");
-                break;
-            case "audit":
-                await TheAuditer(
-                    Deno.args[1] ?? null,
-                    ParseFlag("strict", true).includes(Deno.args[2] ?? ""),
-                );
                 break;
             default:
                 await TheHelper({ query: Deno.args[1] });

@@ -39,7 +39,7 @@ export default async function TheAuditer(project: string | null, strict: boolean
             console.log("");
             await LogStuff(
                 `Report (${ColorString(strict ? "strict" : "standard", "bold")})\n${reportDetails.join("\n")}${
-                    strict ? "" : "\n"+ColorString("Unsure about the results? Run with --strict (or -s) for stricter criteria", "italic")
+                    strict ? "" : "\n" + ColorString("Unsure about the results? Run with --strict (or -s) for stricter criteria", "italic")
                 }`,
                 "chart",
             );
