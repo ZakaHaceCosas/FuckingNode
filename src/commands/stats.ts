@@ -16,7 +16,7 @@ export default async function TheStatistics(target: string) {
     const name = await NameProject(project, "all");
 
     await LogStuff(
-        `${name}\n${ColorString(env.runtime, "bold")} runtime & ${ColorString(env.manager, "bold")} pkg manager\nMain file: ${env.main.path}`,
+        `${name}\n${ColorString(env.runtime, "bold")} runtime & ${ColorString(env.manager, "bold")} pkg manager`,
     );
 
     let deps: Record<string, string> | undefined;
@@ -33,15 +33,18 @@ export default async function TheStatistics(target: string) {
     if (!deps) {
         await LogStuff("No dependencies found (impressive).");
     } else {
-        await LogStuff(`\nDepends on ${ColorString(Object.keys(deps).length, "bold")} ${I_LIKE_JS.MFS}:\n${
-            ColorString(
-                `${
-                    Object.entries(deps)
-                        .map(([dep, version]) => `${dep}@${version}`)
-                        .join("\n")
-                }`,
-                "bold",
-            )
-        }`);
+        await LogStuff(`\nDepends on ${ColorString(Object.keys(deps).length, "bold")} ${I_LIKE_JS.MFS}:`);
+        await LogStuff(
+            Object.entries(deps)
+                .toSorted()
+                .slice(0, 5)
+                .map(([dep, version]) => `${dep}@${version}`)
+                .join("\n"),
+            undefined,
+            "bold",
+        );
+        await LogStuff(
+            Object.entries(deps).length >= 5 ? `and ${Object.entries(deps).length - 5} more.` : "",
+        );
     }
 }

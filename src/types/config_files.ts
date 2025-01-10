@@ -1,7 +1,7 @@
 import type { CleanerIntensity } from "./config_params.ts";
 import type { RIGHT_NOW_DATE } from "./misc.ts";
 
-export type SUPPORTED_EDITORS = "vscode" | "sublime" | "emacs" | "notepad++" | "atom" | "vscodium"
+export type SUPPORTED_EDITORS = "vscode" | "sublime" | "emacs" | "notepad++" | "atom" | "vscodium";
 
 /**
  * User config

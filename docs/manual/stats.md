@@ -5,14 +5,13 @@ This is the simplest thing ever. Just run `fuckingnode stats *`, replacing `*` w
 ```txt
 personaplus@0.0.6-preapp.27 C:\Users\Zaka\personaplus
 node runtime & npm pkg manager
-Main file: [object Object]
 
 Depends on 37 m*therf*ckers:
 @expo/vector-icons@^14.0.3
 @react-native-picker/picker@2.9.0
 @react-navigation/native@^7.0.0
 expo@~52.0.20
-... (when really using the command, all dependencies are shown)
+and 32 more.
 ```
 
 We are thinking of a valid use case that we can give to this command. Until now, it's honestly useless.

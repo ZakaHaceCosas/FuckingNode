@@ -6,6 +6,16 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased <!-- 2.1.0 -->
+
+### Added
+
+- Added support for more IDEs / code editors as favorite editors (VSCodium, Emacs, Notepad++, Atom,)
+
+### Changed
+
+- Changed `stats` so it displays just the first 5 dependencies and then an "and x more" string. Also removed "Main file:" string.
+
 ## [2.0.3] 08-01-2025
 
 Happy new year btw
