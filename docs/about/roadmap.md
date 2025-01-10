@@ -7,7 +7,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 ## Version 2.1
 
-- [ ] Release the `audit` feature as an `npm` only experiment. Learn more [here](../learn/audit.md).
+- [X] Release the `audit` feature as an `npm` only experiment. Learn more [here](../learn/audit.md).
 - [X] Support more editors for the `kickstart` command (PS. doing this is as simple as ensuring we know the command to launch that editor in all platforms).
     - [X] Emacs
     - [X] Notepad ++
