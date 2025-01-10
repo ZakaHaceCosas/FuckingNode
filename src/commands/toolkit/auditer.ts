@@ -28,11 +28,7 @@ async function FetchVulnerability(packageName: string): Promise<SecurityVulnerab
 
     if (!response.ok) throw new Error(`Error checking with OSV.dev: ${response.statusText}`);
 
-    const data = await response.json();
-
-    if (!data.vulns) {
-        throw new Error("Unexpected response format from OSV.dev");
-    }
+    const data: { vulns: SecurityVulnerability[] | undefined } = await response.json();
 
     return data.vulns || [];
 }
@@ -456,7 +452,7 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
         const current = Deno.cwd();
         if (env.commands.audit === "__UNSUPPORTED") {
             await LogStuff(
-                `Audit is not supported for ${env.manager.toUpperCase()}`,
+                `Audit is not supported for ${env.manager.toUpperCase()} (${project})`,
                 "prohibited",
             );
             return 1;
