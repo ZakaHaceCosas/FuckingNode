@@ -139,6 +139,15 @@ async function main(command: string) {
             case "website":
                 await LogStuff("Best documentation website for best CLI, live at https://zakahacecosas.github.io/FuckingNode/", "bulb");
                 break;
+            case "github":
+            case "repo":
+            case "repository":
+            case "oss":
+                await LogStuff(
+                    "Free and open source, and free as in freedom, live at https://zakahacecosas.github.io/FuckingNode/repo\n(The above URL is a redirect to GitHub.)",
+                    "bulb",
+                );
+                break;
             case "audit":
                 await LogStuff(
                     "The Audit feature is experimental. It's only available for NodeJS projects using npm, and hidden behind '--experimental-audit'.",
