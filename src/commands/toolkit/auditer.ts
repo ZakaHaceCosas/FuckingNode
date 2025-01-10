@@ -403,24 +403,6 @@ export async function AuditProject(bareReport: ParsedNpmReport, strict: boolean)
 
     const { questions } = AnalyzeVulnerabilities(vulnerabilities);
 
-    // ! - fix this f*ck
-    // TODO - what we know:
-    // - percentage low because percentages.length high because
-    // for loop asks once but runs for every vulnerability
-    // the idea would be to get questions (and vectors?) outside a loop
-    // which makes no sense because many vulns so loop needed
-    // so maybe we could for (vuln) -> questions.push(questions)
-    // then with that arr do loop-less vulnerability interrogation
-    // BUT we need to figure out how to push an array to another array :skull:
-    // OR refactor AnalyzeVulnerability(vuln) to return item instead of array
-
-    // NOTE - the above comment was left for me to remember one of the
-    // sources of problems, this SHOULD be fixed now that all vulnerabilities
-    // are passed to the analyzer, which does the for-loop and uses a Set
-
-    // also because i have other 2 iterations of this uncommitted, so
-    // i'll probably need this
-
     const audit = await InterrogateVulnerability(questions);
     const { negatives, positives } = audit;
 

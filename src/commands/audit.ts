@@ -1,5 +1,3 @@
-// todo - review code QL and all of this stuff before release, jsdoc and comments, var names, etc...
-// ! this entire module has been uncommitted for a while, under active development and many iterations. it's still WIP, expect bugs and frequent changes.
 import { APP_NAME } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
@@ -10,18 +8,16 @@ export default async function TheAuditer(project: string | null, strict: boolean
     try {
         const shouldAuditAll = project === null || project.trim() === "" || ParseFlag("all", true).includes(project) || project.trim() === "--";
 
-        type reportType = {
-            project: string;
-            audit: FkNodeSecurityAudit;
-        };
-
         if (shouldAuditAll) {
             const projects = await GetAllProjects();
             await LogStuff(
                 `${APP_NAME.CASED} Audit is only supported for npm projects as of now.`,
                 "heads-up",
             );
-            const report: reportType[] = [];
+            const report: {
+                project: string;
+                audit: FkNodeSecurityAudit;
+            }[] = [];
             for (const project of projects) {
                 const res = await PerformAuditing(project, strict);
                 if (typeof res === "number") continue;
