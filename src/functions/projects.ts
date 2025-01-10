@@ -5,7 +5,7 @@ import { expandGlob } from "@std/fs";
 import { DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
-import { ColorString, LogStuff, NaturalizeFormattedString } from "./io.ts";
+import { ColorString, LogStuff, MultiColorString, NaturalizeFormattedString } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import { GetAppPath } from "./config.ts";
@@ -61,7 +61,7 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
  */
 export async function NameProject(path: string, wanted?: "name" | "path" | "name-ver" | "all"): Promise<string> {
     const workingPath = await ParsePath(path);
-    const formattedPath = ColorString(ColorString(workingPath, "italic"), "half-opaque");
+    const formattedPath = MultiColorString(workingPath, "italic", "half-opaque");
 
     try {
         const exists = await CheckForPath(workingPath);
@@ -386,6 +386,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["bunx"],
                     update: ["update"],
                     clean: "__UNSUPPORTED",
+                    audit: "__UNSUPPORTED",
                 },
                 workspaces,
             };
@@ -409,6 +410,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["deno", "run"],
                     update: ["outdated", "--update"],
                     clean: "__UNSUPPORTED",
+                    audit: "__UNSUPPORTED",
                 },
                 workspaces,
             };
@@ -432,6 +434,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["yarn", "dlx"],
                     update: ["upgrade"],
                     clean: [["autoclean", "--force"]],
+                    audit: "__UNSUPPORTED",
                 },
                 workspaces,
             };
@@ -455,6 +458,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["pnpm", "dlx"],
                     update: ["update"],
                     clean: [["dedupe"], ["prune"]],
+                    audit: "__UNSUPPORTED", // ["audit", "--ignore-registry-errors"],
                 },
                 workspaces,
             };
@@ -478,12 +482,16 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     exec: ["npx"],
                     update: ["update"],
                     clean: [["dedupe"], ["prune"]],
+                    audit: ["audit", "--include-workspace-root"],
                 },
                 workspaces,
             };
         }
 
-        throw new FknError("Internal__Projects__CantDetermineEnv");
+        throw new FknError(
+            "Internal__Projects__CantDetermineEnv",
+            `Happened with ${ColorString(path, "bold")}`,
+        );
     } catch (e) {
         await GenericErrorHandler(e);
         Deno.exit(1); // (for TS to shut up)

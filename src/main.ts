@@ -8,6 +8,7 @@ import TheUpdater from "./commands/updater.ts";
 import TheSettings from "./commands/settings.ts";
 import TheAbouter from "./commands/about.ts";
 import TheKickstart from "./commands/kickstart.ts";
+import TheAuditer from "./commands/audit.ts";
 // other things
 import { VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
@@ -41,8 +42,32 @@ function hasFlag(flag: string, allowShort: boolean): boolean {
 
 if (hasFlag("help", true)) {
     await init(false);
-    await TheHelper({ query: Deno.args[1] });
-    Deno.exit(0);
+    try {
+        await TheHelper({ query: Deno.args[1] });
+        Deno.exit(0);
+    } catch (e) {
+        console.error("Critical error", e);
+        Deno.exit(1);
+    }
+}
+
+if (hasFlag("experimental-audit", false)) {
+    await init(false);
+    try {
+        await LogStuff(
+            "Beware that, as an experimental features, errors are likely to happen. Report any issue, suggestion, or feedback on GitHub.",
+            "warn",
+            "bright-yellow",
+        );
+        await TheAuditer(
+            Deno.args[1] ?? null,
+            ParseFlag("strict", true).includes(Deno.args[2] ?? ""),
+        );
+        Deno.exit(0);
+    } catch (e) {
+        console.error("Critical error", e);
+        Deno.exit(1);
+    }
 }
 
 if (hasFlag("version", true)) {
@@ -113,6 +138,22 @@ async function main(command: string) {
             case "web":
             case "website":
                 await LogStuff("Best documentation website for best CLI, live at https://zakahacecosas.github.io/FuckingNode/", "bulb");
+                break;
+            case "github":
+            case "repo":
+            case "repository":
+            case "oss":
+                await LogStuff(
+                    "Free and open source, and free as in freedom, live at https://zakahacecosas.github.io/FuckingNode/repo\n(The above URL is a redirect to GitHub.)",
+                    "bulb",
+                );
+                break;
+            case "audit":
+                await LogStuff(
+                    "The Audit feature is experimental. It's only available for NodeJS projects using npm, and hidden behind '--experimental-audit'.",
+                    "warn",
+                    "bright-yellow",
+                );
                 break;
             default:
                 await TheHelper({ query: Deno.args[1] });

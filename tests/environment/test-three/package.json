@@ -1,0 +1,16 @@
+{
+    "name": "vulnerable-dependencies-in-purpose-just-to-test-fuckingnode",
+    "version": "13.69.420",
+    "description": "app with known safety issues (for audit testing)",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "author": "Zaka",
+    "license": "MIT",
+    "dependencies": {
+        "lodash": "4.17.20",
+        "jquery": "3.4.0",
+        "express": "4.17.1"
+    }
+}

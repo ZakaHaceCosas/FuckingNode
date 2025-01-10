@@ -63,11 +63,9 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             `Usage: ${ColorString(APP_NAME.CLI, "bright-green")} <command> [params...]\n\n${USAGE}\n`,
         );
         await LogStuff(
-            ColorString(
-                "Pro tip: Run --help <command-name> to get help with a specific command.",
-                "bright-yellow",
-            ),
+            "Pro tip: Run --help <command-name> to get help with a specific command.",
             "bulb",
+            "bright-yellow",
         );
     }
 

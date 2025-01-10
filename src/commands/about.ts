@@ -43,15 +43,13 @@ export default async function TheAbouter() {
 ╚═╝             ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝     ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝`;
 
     await LogStuff(colorizeText(Math.random() > 0.5 ? ascii2 : ascii));
-    await LogStuff(ColorString(getRandomPhrase(phrases), "italic"), undefined, "bright-green");
-    await LogStuff(`Version ${ColorString(VERSION, "bright-yellow")}`, "package");
-    await LogStuff("");
+    await LogStuff(getRandomPhrase(phrases), undefined, ["bright-green", "italic"]);
+    await LogStuff(`Version ${ColorString(VERSION, "bright-yellow")}\n`, "package");
     await LogStuff(
         `Written in ${ColorString("TypeScript", "bright-blue")}.\n` +
             `Running in ${ColorString("Deno", "bright-yellow")}.\n` +
-            `Developed in ${ColorString("Spain", "red")} by ${ColorString("ZakaHaceCosas", "bright-green")}.`,
+            `Developed in ${ColorString("Spain", "red")} by ${ColorString("ZakaHaceCosas", "bright-green")}.\n`,
     );
-    await LogStuff("");
     await LogStuff(
         `${I_LIKE_JS.FK} communism, love freedom. this one's open-source: ${
             ColorString(`https://github.com/ZakaHaceCosas/${APP_NAME.CASED}`, "pink")

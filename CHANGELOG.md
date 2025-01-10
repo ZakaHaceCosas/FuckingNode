@@ -10,7 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Added support for more IDEs / code editors as favorite editors (VSCodium, Emacs, Notepad++, Atom,)
+- (!) Added a new experimental command: **audit**. Currently it's only available for `npm` users and behind the `--experimental-audit` flag. TL;DR it helps you better understand security audits by asking questions, read more in [here](https://zakahacecosas.github.io/FuckingNode/learn/audit/).
+- Added support for more IDEs / code editors as favorite editors (VSCodium, Emacs, Notepad++, Atom).
+- Added a `repo` command that shows the URL to GitHub.
 
 ### Changed
 
