@@ -8,7 +8,7 @@ Deno.test({
     fn: async () => {
         const p = await ParsePath(await JoinPaths(CONSTANTS.ENV_PATH, "test-three/"));
         console.log(p);
-        const res = await PerformAuditing(p);
+        const res = await PerformAuditing(p, true);
         // you are supposed to do
         // Y, Y, N, N, N, N
         if (res === 0) return;

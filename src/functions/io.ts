@@ -8,44 +8,49 @@ import { GetAppPath } from "./config.ts";
  * @param {string} message Your message, e.g. `"hi chat"`.
  * @param {SUPPORTED_EMOJIS} emoji What emoji you'd like to append, e.g. `"bruh"`.
  * @returns {string} The message with your emoji, e.g. `"😐 hi chat"`.
- */
-export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
-    switch (emoji) {
-        case "danger":
-            return `🛑 ${message}`;
-        case "prohibited":
-            return `⛔ ${message}`;
-        case "wip":
-            return `🚧 ${message}`;
-        case "what":
-            return `❓ ${message}`;
-        case "bulb":
-            return `💡 ${message}`;
-        case "tick":
-            return `✅ ${message}`;
-        case "tick-clear":
-            return `✔ ${message}`;
-        case "error":
-            return `❌ ${message}`;
-        case "warn":
-            return `⚠️ ${message}`;
-        case "heads-up":
-            return `🚨 ${message}`;
-        case "working":
-            return `🔄 ${message}`;
-        case "moon-face":
-            return `🌚 ${message}`;
-        case "bruh":
-            return `😐 ${message}`;
-        case "package":
-            return `📦 ${message}`;
-        case "trash":
-            return `🗑 ${message}`;
-        case "chart":
-            return `📊 ${message}`;
-        default:
-            return message;
-    }
+ */ export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
+    const GetEmoji = (emoji: SUPPORTED_EMOJIS) => {
+        switch (emoji) {
+            case "danger":
+                return `🛑`;
+            case "prohibited":
+                return `⛔`;
+            case "wip":
+                return `🚧`;
+            case "what":
+                return `❓`;
+            case "bulb":
+                return `💡`;
+            case "tick":
+                return `✅`;
+            case "tick-clear":
+                return `✔`;
+            case "error":
+                return `❌`;
+            case "warn":
+                // return String.fromCodePoint(0x26A0, 0xFE0F); // attempt to fix text rendering
+                return `⚠️`;
+            case "heads-up":
+                return `🚨`;
+            case "working":
+                return `🔄`;
+            case "moon-face":
+                return `🌚`;
+            case "bruh":
+                return `😐`;
+            case "package":
+                return `📦`;
+            case "trash":
+                return `🗑`;
+            case "chart":
+                return `📊`;
+            default:
+                return "";
+        }
+    };
+
+    const emojiString = GetEmoji(emoji).normalize("NFC");
+    return emojiString === "" ? message : `${emojiString} ${message}`;
 }
 
 /**

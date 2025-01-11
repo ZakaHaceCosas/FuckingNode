@@ -1,9 +1,9 @@
 /**
- * All possible error codes.
+ * All possible CLI error codes.
  *
  * @export
  */
-export type ERROR_CODES =
+export type GLOBAL_ERROR_CODES =
     | "Manager__ProjectInteractionInvalidCauseNoPathProvided"
     | "Manager__InvalidArgumentPassed"
     | "Manager__IgnoreFile__InvalidLevel"
@@ -12,3 +12,8 @@ export type ERROR_CODES =
     | "Manager__NonExistingPath"
     | "Internal__NoEnvForConfigPath"
     | "Generic__NonFoundProject";
+
+/**
+ * All possible project validation error codes.
+ */
+export type PROJECT_ERROR_CODES = "IsDuplicate" | "NoPkgJson" | "NotFound";

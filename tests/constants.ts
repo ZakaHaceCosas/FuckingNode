@@ -31,6 +31,10 @@ const TEST_PROJECTS: Record<string, ProjectEnv> = {
             update: [
                 "update",
             ],
+            audit: [
+                "audit",
+                "--include-workspace-root",
+            ],
         },
         runtime: "node",
         manager: "npm",
