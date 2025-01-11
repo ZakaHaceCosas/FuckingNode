@@ -1,3 +1,4 @@
+<!-- markdownlint-disable md033 -->
 # Cross-runtime support
 
 **F\*ckingNode works outside NodeJS**, because JS has more than one way to mess around with you. DenoJS and BunJS are also supported, **albeit partially.** There are some caveats that disallow us from making the experience 100% seamless that don't depend on us.
@@ -6,7 +7,7 @@ That said, here's our cross-runtime compatibility, explained:
 
 ## Compatibility table
 
-| Feature | Support | Notes |
+<!-- | Feature | Support | Notes |
 | :--- | ---: | ---: |
 | Automated project-wide cleaning | NodeJS-only | See below. |
 | Automated system-wide cache cleaning | NodeJS, Bun | See below. |
@@ -14,7 +15,33 @@ That said, here's our cross-runtime compatibility, explained:
 | Automated lint task | NodeJS, Bun | See below. |
 | Automated updating task | NodeJS, Bun, Deno | / |
 | Automated destroying task | Everywhere | It's OS and not runtime dependant. |
-| Parsing of project file | NodeJS and Bun (`package.json`), Deno (`deno.json`) | Only looks for specific files (e.g. it won't look for `package.json` in a Deno project, even though Deno allows `package.json`). |
+| Parsing of project file | NodeJS and Bun (`package.json`), Deno (`deno.json`) | Only looks for specific files (e.g. it won't look for `package.json` in a Deno project, even though Deno allows `package.json`). | -->
+
+### Platform
+
+<div style="overflow-x:auto;">
+
+| Feature       | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
+|---------------| - | - | - | - | - |
+| Recognition | `package-lock.json` | `pnpm-lock.yaml` | `yarn.lock` | `deno.lock / deno.json / deno.jsonc` | `bun.lockb / bunfig.toml` |
+| Workspaces | YES | YES | YES | YES | YES |
+
+</div>
+
+### Cleanup
+
+<div style="overflow-x:auto;">
+
+| Feature       | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
+|---------------| - | - | - | - | - |
+| Project-wide | YES | YES | YES | YES | YES |
+| Cache-wide | YES | YES | YES | NO | YES |
+| Update | YES | YES | YES | YES | YES |
+| Pretty | YES | YES | YES | CAVEAT | YES |
+| Lint | YES | YES | YES | NO | YES |
+| Destroy | YES | YES | YES | YES | YES |
+
+</div>
 
 ## Reasons why something doesn't work somewhere at all, or works with caveats
 
