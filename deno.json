@@ -21,7 +21,7 @@
         "compile": {
             "description": "Compiles the CLI",
             "command": "deno -A tasks/compile.ts",
-            "dependencies": ["good", "test"]
+            "dependencies": ["good"]
         },
         "test": {
             "description": "Runs all tests",
@@ -54,7 +54,7 @@
         "./src/commands/help.ignore.ts"
     ],
     "imports": {
-        "@std/fs": "jsr:@std/fs@^1.0.8",
+        "@std/fs": "jsr:@std/fs@^1.0.9",
         "@std/jsonc": "jsr:@std/jsonc@^1.0.1",
         "@std/path": "jsr:@std/path@^1.0.8",
         "@std/yaml": "jsr:@std/yaml",

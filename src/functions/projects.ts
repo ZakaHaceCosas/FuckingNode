@@ -10,6 +10,7 @@ import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import { GetAppPath } from "./config.ts";
 import { GetDateNow } from "./date.ts";
+import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
 
 /**
  * Gets all the users projects and returns their paths as a `string[]`.
@@ -198,18 +199,13 @@ export const UnderstandProjectSettings = {
 };
 
 /**
- * Possible errors.
- */
-export type ProjectError =  "IsDuplicate" | "NoPkgJson" | "NotFound";
-
-/**
  * Given a path to a project, returns `true` if the project is valid, or a message indicating if it's not a valid Node/Deno/Bun project.
  *
  * @async
  * @param {string} entry Path to the project.
- * @returns {Promise<true | ProjectError>} True if it's valid, a `ProjectError` otherwise.
+ * @returns {Promise<true | PROJECT_ERROR_CODES>} True if it's valid, a `PROJECT_ERROR_CODES` otherwise.
  */
-export async function ValidateProject(entry: string): Promise<true | ProjectError> {
+export async function ValidateProject(entry: string): Promise<true | PROJECT_ERROR_CODES> {
     const workingEntry = await ParsePath(entry);
     if (!(await CheckForPath(workingEntry))) return "NotFound";
     const list = await GetAllProjects();

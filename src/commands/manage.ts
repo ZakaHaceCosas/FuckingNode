@@ -1,19 +1,12 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
-import {
-    GetAllProjects,
-    GetProjectSettings,
-    GetWorkspaces,
-    NameProject,
-    type ProjectError,
-    SpotProject,
-    ValidateProject,
-} from "../functions/projects.ts";
+import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
+import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
 
 /**
  * Adds a new project.
@@ -195,7 +188,7 @@ async function RemoveProject(
  * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, 2 if the user doesn't remove them.
  */
 async function CleanupProjects(): Promise<0 | 1 | 2> {
-    const listOfRemovals: { project: string; issue: ProjectError }[] = [];
+    const listOfRemovals: { project: string; issue: PROJECT_ERROR_CODES }[] = [];
 
     for (const project of (await GetAllProjects())) {
         const validation = await ValidateProject(project);

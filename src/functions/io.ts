@@ -10,54 +10,61 @@ import { GetAppPath } from "./config.ts";
  * @returns {string} The message with your emoji, e.g. `"😐 hi chat"`.
  */
 export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
-    switch (emoji) {
-        case "danger":
-            return `🛑 ${message}`;
-        case "prohibited":
-            return `⛔ ${message}`;
-        case "wip":
-            return `🚧 ${message}`;
-        case "what":
-            return `❓ ${message}`;
-        case "bulb":
-            return `💡 ${message}`;
-        case "tick":
-            return `✅ ${message}`;
-        case "tick-clear":
-            return `✔ ${message}`;
-        case "error":
-            return `❌ ${message}`;
-        case "warn":
-            return `⚠️ ${message}`;
-        case "heads-up":
-            return `🚨 ${message}`;
-        case "working":
-            return `🔄 ${message}`;
-        case "moon-face":
-            return `🌚 ${message}`;
-        case "bruh":
-            return `😐 ${message}`;
-        case "package":
-            return `📦 ${message}`;
-        case "trash":
-            return `🗑 ${message}`;
-        case "chart":
-            return `📊 ${message}`;
-        default:
-            return message;
-    }
+    const GetEmoji = (emoji: SUPPORTED_EMOJIS) => {
+        switch (emoji) {
+            case "danger":
+                return `🛑`;
+            case "prohibited":
+                return `⛔`;
+            case "wip":
+                return `🚧`;
+            case "what":
+                return `❓`;
+            case "bulb":
+                return `💡`;
+            case "tick":
+                return `✅`;
+            case "tick-clear":
+                return `✔`;
+            case "error":
+                return `❌`;
+            case "warn":
+                // return String.fromCodePoint(0x26A0, 0xFE0F); // attempt to fix text rendering
+                return `⚠️`;
+            case "heads-up":
+                return `🚨`;
+            case "working":
+                return `🔄`;
+            case "moon-face":
+                return `🌚`;
+            case "bruh":
+                return `😐`;
+            case "package":
+                return `📦`;
+            case "trash":
+                return `🗑`;
+            case "chart":
+                return `📊`;
+            default:
+                return "";
+        }
+    };
+
+    const emojiString = GetEmoji(emoji).normalize("NFC");
+    return emojiString === "" ? message : `${emojiString} ${message}`;
 }
 
 /**
  * Logs a message to the standard output and saves it to a `.log` file.
+ * @author ZakaHaceCosas
  *
  * @export
  * @async
  * @param {string} message The message to be logged.
  * @param {?SUPPORTED_EMOJIS} [emoji] Additionally, add an emoji before the log.
- * @param {tValidColors} color Optionally, a color for the output.
- * @param {?boolean} [question=false] If true, the log will act as a y/N confirm. Will return true if the user confirms, false otherwise.
- * @param {?boolean} verbose If false, stuff will be saved to `.log` file but not written to the `stdout`. Pass here the variable you use to handle verbose logs.
+ * @param {?(tValidColors | tValidColors[])} [color] Optionally, a color (or more) for the output.
+ * @param {?boolean} [question] If true, the log will act as a y/N confirm. Will return true if the user confirms, false otherwise.
+ * @param {?boolean} [verbose] If false, stuff will be saved to `.log` file but not written to the `stdout`. Pass here the variable you use to handle verbose logs.
  * @returns {Promise<boolean>} Boolean value if it's a question depending on user input. If it's not a question, to avoid a type error for being `void`, it always returns false.
  */
 export async function LogStuff(

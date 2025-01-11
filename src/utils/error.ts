@@ -1,7 +1,7 @@
 import TheHelper from "../commands/help.ts";
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
-import type { ERROR_CODES } from "../types/errors.ts";
+import type { GLOBAL_ERROR_CODES } from "../types/errors.ts";
 
 /**
  * Errors that we know about, or that are caused by the user.
@@ -11,16 +11,16 @@ import type { ERROR_CODES } from "../types/errors.ts";
  * @extends {Error}
  */
 export class FknError extends Error {
-    code: ERROR_CODES;
+    code: GLOBAL_ERROR_CODES;
 
     /**
      * Creates an instance of FknError.
      *
      * @constructor
-     * @param {ERROR_CODES} code
+     * @param {GLOBAL_ERROR_CODES} code
      * @param {?string} [message]
      */
-    constructor(code: ERROR_CODES, message?: string) {
+    constructor(code: GLOBAL_ERROR_CODES, message?: string) {
         super(message);
         this.name = "FknError";
         this.code = code;
