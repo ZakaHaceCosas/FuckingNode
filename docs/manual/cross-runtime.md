@@ -21,10 +21,10 @@ That said, here's our cross-runtime compatibility, explained:
 
 <div style="overflow-x:auto;">
 
-| Feature       | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
-|---------------| - | - | - | - | - |
-| Recognition | `package-lock.json` | `pnpm-lock.yaml` | `yarn.lock` | `deno.lock / deno.json / deno.jsonc` | `bun.lockb / bunfig.toml` |
-| Workspaces | YES | YES | YES | YES | YES |
+| Feature       | NodeJS npm       | NodeJS pnpm       | NodeJS yarn   | Deno                          | Bun                      |
+|---------------|------------------|-------------------|---------------|-------------------------------|--------------------------|
+| Recognition   | `package-lock.json` | `pnpm-lock.yaml` | `yarn.lock`   | `deno.lock / deno.json / deno.jsonc` | `bun.lockb / bunfig.toml` |
+| Workspaces    | YES              | YES               | YES           | YES                           | YES                      |
 
 </div>
 
@@ -32,14 +32,14 @@ That said, here's our cross-runtime compatibility, explained:
 
 <div style="overflow-x:auto;">
 
-| Feature       | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
-|---------------| - | - | - | - | - |
-| Project-wide | YES | YES | YES | YES | YES |
-| Cache-wide | YES | YES | YES | NO | YES |
-| Update | YES | YES | YES | YES | YES |
-| Pretty | YES | YES | YES | CAVEAT | YES |
-| Lint | YES | YES | YES | NO | YES |
-| Destroy | YES | YES | YES | YES | YES |
+| Feature       | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno    | Bun |
+|---------------|------------|-------------|-------------|---------|-----|
+| Project-wide  | YES        | YES         | YES         | YES     | YES |
+| Cache-wide    | YES        | YES         | YES         | NO      | YES |
+| Update        | YES        | YES         | YES         | YES     | YES |
+| Pretty        | YES        | YES         | YES         | CAVEAT  | YES |
+| Lint          | YES        | YES         | YES         | NO      | YES |
+| Destroy       | YES        | YES         | YES         | YES     | YES |
 
 </div>
 
