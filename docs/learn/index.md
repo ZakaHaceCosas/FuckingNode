@@ -4,4 +4,6 @@ For wannabe contributors or people curious / bored enough, this section explains
 
 ## Table of Contents
 
+- [Clean](clean.md)
+- [Kickstart](kickstart.md)
 - [(UPCOMING) Audit](audit.md)
