@@ -1,4 +1,3 @@
-<!-- markdownlint-disable md033 -->
 # Cross-runtime support
 
 **F\*ckingNode works outside NodeJS**, because JS has more than one way to mess around with you. DenoJS and BunJS are also supported, **albeit partially.** There are some caveats that disallow us from making the experience 100% seamless that don't depend on us.
@@ -19,29 +18,21 @@ That said, here's our cross-runtime compatibility, explained:
 
 ### Platform
 
-<div style="overflow-x:auto;">
-
-| Feature       | NodeJS npm       | NodeJS pnpm       | NodeJS yarn   | Deno                          | Bun                      |
-|---------------|------------------|-------------------|---------------|-------------------------------|--------------------------|
+| Feature | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
+| :-- | --- | --- | --- | --- | --- |
 | Recognition   | `package-lock.json` | `pnpm-lock.yaml` | `yarn.lock`   | `deno.lock / deno.json / deno.jsonc` | `bun.lockb / bunfig.toml` |
-| Workspaces    | YES              | YES               | YES           | YES                           | YES                      |
-
-</div>
+| Workspaces | YES | YES | YES           | YES                           | YES |
 
 ### Cleanup
 
-<div style="overflow-x:auto;">
-
 | Feature       | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno    | Bun |
-|---------------|------------|-------------|-------------|---------|-----|
+| :-- | --- | --- | --- | --- | --- |
 | Project-wide  | YES        | YES         | YES         | YES     | YES |
 | Cache-wide    | YES        | YES         | YES         | NO      | YES |
 | Update        | YES        | YES         | YES         | YES     | YES |
 | Pretty        | YES        | YES         | YES         | CAVEAT  | YES |
 | Lint          | YES        | YES         | YES         | NO      | YES |
 | Destroy       | YES        | YES         | YES         | YES     | YES |
-
-</div>
 
 ## Reasons why something doesn't work somewhere at all, or works with caveats
 
