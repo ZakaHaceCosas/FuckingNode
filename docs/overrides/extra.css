@@ -26,3 +26,9 @@ Orange cl: #FCA737
     background-color: var(--md-primary-fg-color--dark) !important;
     border-color: var(--md-primary-fg-color--dark) !important;
 }
+
+.md-button--primary:focus,
+.md-button--primary:hover {
+    background-color: var(--md-primary-fg-color) !important;
+    border-color: var(--md-primary-fg-color) !important;
+}
