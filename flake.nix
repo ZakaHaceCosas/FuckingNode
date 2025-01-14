@@ -8,7 +8,7 @@
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      version = "2.0.3";
+      version = "2.1.0";
       downloadUrl = "https://github.com/ZakaHaceCosas/FuckingNode/releases/download/${version}/FuckingNode-linux_x86_64";
       sha256 = "1mg245lqnl6n96dwkcwc3x35sjhvihhcsklc99sg316g25xnhx2r";
 

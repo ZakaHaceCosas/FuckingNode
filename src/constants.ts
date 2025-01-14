@@ -1,18 +1,15 @@
 import type { tURL } from "./types/misc.ts";
 import type { SemVer } from "@std/semver/types";
-import { format } from "@std/semver";
+import { format, parse } from "@std/semver";
 import type { CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
+import * as DenoJson from "../deno.json" with { type: "json" };
 
 /**
- * Current app version as a SemVer object.
+ * Current app version as a SemVer object. **Change it from `deno.json`.**
  *
  * @type {SemVer}
  */
-const _SV_VER: SemVer = {
-    major: 2,
-    minor: 0,
-    patch: 3,
-};
+const _SV_VER: SemVer = parse(DenoJson.default.version);
 
 /**
  * Current version of the app. Uses the SemVer format.

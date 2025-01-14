@@ -2,9 +2,8 @@
 
 An attempt to make security reports easier.
 
-!!! danger "Unreleased feature"
-    This is an unreleased feature (scheduled for `v2.1.0` as outlined in our [ROADMAP](../about/roadmap.md)). It's subject to changes, full rewrites, or even cancellations.
-    [See the GitHub `feature-audit` branch for the source code of this feature.](https://github.com/ZakaHaceCosas/FuckingNode/compare/master...feature-audit)
+!!! danger "Work in Progress feature"
+    This is an **experimental** feature. It's subject to changes, full rewrites, or even removals.
 
 ## Abstract
 
@@ -106,9 +105,7 @@ F\*ckingNode audit should not be allowed to have the final say over whether brea
 
 ## Availability
 
-This feature has not been released yet and is not available.
-
-For trying it out, clone our repository including the `feature-audit` branch, `git checkout feature-audit` and execute `deno -A src/main.ts audit`.
+This feature has been experimentally released and is partially available since `v2.1.0` on NodeJS npm projects.
 
 *[RF]: Risk Factor; a percentage computed by us to estimate the joint impact of all vulnerabilities of a NodeJS project.
 *[RB]: Risk Bump; a 0.25-1 number that's used to bump the RF based on the highest severity (as in low/moderate/high/critical) of a found vulnerability within a project.
