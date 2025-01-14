@@ -12,64 +12,79 @@ import { IsWorkingTreeClean } from "../../utils/git.ts";
 import type { tRESULT } from "../clean.ts";
 import type { FkNodeYaml } from "../../types/config_files.ts";
 
-type tBaseCommand = "npm" | "pnpm" | "yarn" | "deno" | "bun";
-type tExecCommand = ["npx"] | ["pnpm", "dlx"] | ["yarn", "dlx"] | ["bunx"] | ["deno", "run"];
-
 /**
  * All project cleaning features.
  */
 const ProjectCleaningFeatures = {
     Update: async (
-        command: string,
-        project: string,
-        args: string[],
-    ) => {
-        await LogStuff(
-            `Updating using ${command} for ${project}.`,
-            "package",
-        );
-        await LogStuff(`${command} ${args}\n`, "package");
-        await Commander(command, args);
-        return;
-    },
-    Clean: async (
-        command: string,
-        project: string,
+        projectPath: string,
+        projectName: string,
+        env: ProjectEnv,
         settings: FkNodeYaml,
-        baseCommand: tBaseCommand,
-        args: string[][],
-        intensity: CleanerIntensity,
-        maximPath: string,
     ) => {
-        const projectName = await NameProject(project, "name");
+        const { commands } = env;
         await LogStuff(
-            `Cleaning using ${command} for ${projectName}.`,
+            `Updating using ${commands.base} for ${projectPath}.`,
             "package",
         );
-        if (settings.updateCmdOverride && settings.updateCmdOverride.trim() !== "" && settings.updateCmdOverride !== "__USE_DEFAULT") {
-            const out = await Commander(
-                baseCommand,
-                ["run", settings.updateCmdOverride],
+        if (
+            settings.updateCmdOverride && settings.updateCmdOverride.trim() !== "" &&
+            settings.updateCmdOverride !== "__USE_DEFAULT"
+        ) {
+            await LogStuff(`${commands.exec} ${settings.updateCmdOverride}\n`, "package");
+            const output = await Commander(
+                commands.exec[0],
+                commands.exec.length === 1 ? [settings.updateCmdOverride] : [commands.exec[1], settings.updateCmdOverride],
             );
-            if (out.success) await LogStuff(`Cleaned ${projectName}!`, "tick");
+            if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
+            return;
+        } else {
+            await LogStuff(`${commands.base} ${commands.update}\n`, "package");
+            const output = await Commander(
+                commands.base,
+                commands.update,
+            );
+            if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
             return;
         }
-        for (const arg of args) {
-            await LogStuff(`${command} ${arg.join(" ")}\n`, "package");
-            await Commander(command, arg);
+    },
+    Clean: async (
+        // projectPath: string,
+        projectName: string,
+        env: ProjectEnv,
+        // settings: FkNodeYaml,
+        intensity: CleanerIntensity,
+    ) => {
+        const { commands } = env;
+        if (commands.clean === "__UNSUPPORTED") {
+            await LogStuff(
+                `Cannot clean ${projectName}: cleanup is unsupported for ${env.manager}.`,
+                "warn",
+                "bright-yellow",
+            );
+            return;
+        }
+        await LogStuff(
+            `Cleaning using ${commands.base} for ${projectName}.`,
+            "package",
+        );
+        for (const args of commands.clean) {
+            await LogStuff(`${commands.base} ${args.join(" ")}\n`, "package");
+            await Commander(commands.base, args);
         }
         if (intensity === "maxim") {
             await LogStuff(
                 `Maxim pruning for ${projectName}`,
                 "trash",
             );
-            if (!(await CheckForPath(maximPath))) {
+            if (!(await CheckForPath(env.hall_of_trash))) {
                 await LogStuff(
-                    `An error happened with maxim pruning at ${projectName}. Skipping this ${I_LIKE_JS.MF}...`,
+                    `Maxim pruning didn't find the node_modules DIR at ${projectName}. Skipping this ${I_LIKE_JS.MF}...`,
                     "bruh",
                 );
+                return;
             }
-            await Deno.remove(maximPath, {
+            await Deno.remove(env.hall_of_trash, {
                 recursive: true,
             });
             await LogStuff(
@@ -80,15 +95,14 @@ const ProjectCleaningFeatures = {
         return;
     },
     Lint: async (
-        settings: FkNodeYaml,
-        project: string,
-        baseCommand: tBaseCommand,
-        execCommand: tExecCommand,
+        // projectPath: string,
+        projectName: string,
         env: ProjectEnv,
+        settings: FkNodeYaml,
     ) => {
-        if (baseCommand === "deno") return; // unsupported
+        const { commands } = env;
+        if (env.manager === "deno") return; // unsupported
         if (!settings.lintCmd || settings.lintCmd.trim() === "") return;
-        const projectName = await NameProject(project, "name");
         if (settings.lintCmd === "__ESLINT") {
             const dependencies = (env.main.content as NodePkgJson).dependencies;
             if (!dependencies || !dependencies["eslint"]) {
@@ -97,52 +111,47 @@ const ProjectCleaningFeatures = {
                 );
                 return;
             }
-            if (execCommand.length === 1) {
-                const out = await Commander(
-                    execCommand[0],
-                    [
+            const output = await Commander(
+                commands.exec[0],
+                commands.exec.length === 1
+                    ? [
+                        "eslint",
+                        "--fix",
+                        ".",
+                    ]
+                    : [
+                        commands.exec[1],
                         "eslint",
                         "--fix",
                         ".",
                     ],
-                );
-                if (out.success) await LogStuff(`Linted ${projectName}!`, "tick");
-                return;
-            } else {
-                const out = await Commander(execCommand[0], [
-                    execCommand[1],
-                    "eslint",
-                    "--fix",
-                    ".",
-                ]);
-                if (out.success) await LogStuff(`Linted ${projectName}!`, "tick");
-                return;
-            }
+            );
+            if (output.success) await LogStuff(`Linted ${projectName}!`, "tick");
+            return;
         } else {
-            const out = await Commander(
-                baseCommand,
+            const output = await Commander(
+                commands.base,
                 ["run", settings.lintCmd],
             );
-            if (out.success) await LogStuff(`Linted ${projectName}!`, "tick");
+            if (output.success) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
         }
     },
     Prettify: async (
-        settings: FkNodeYaml,
-        project: string,
-        baseCommand: tBaseCommand,
-        execCommand: tExecCommand,
+        // projectPath: string,
+        projectName: string,
         env: ProjectEnv,
+        settings: FkNodeYaml,
     ) => {
-        const projectName = await NameProject(project, "name");
-        if (baseCommand === "deno") {
-            const out = await Commander(
+        const { commands } = env;
+        if (commands.base === "deno") {
+            const output = await Commander(
                 "deno",
                 [
                     "fmt",
                 ],
-            ); // customization unsupported
-            if (out.success) await LogStuff(`Prettified ${projectName}!`, "tick");
+            ); // customization unsupported - it should work from deno.json, tho
+            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
         }
         if (!settings.prettyCmd || settings.prettyCmd.trim() === "") return;
@@ -154,33 +163,29 @@ const ProjectCleaningFeatures = {
                 );
                 return;
             }
-            if (execCommand.length === 1) {
-                const out = await Commander(
-                    execCommand[0],
-                    [
+            const output = await Commander(
+                commands.exec[0],
+                commands.exec.length === 1
+                    ? [
                         "prettier",
                         "--w",
                         ".",
+                    ]
+                    : [
+                        commands.exec[1],
+                        "eslint",
+                        "--w",
+                        ".",
                     ],
-                );
-                if (out.success) await LogStuff(`Prettified ${projectName}!`, "tick");
-                return;
-            } else {
-                const out = await Commander(execCommand[0], [
-                    execCommand[1],
-                    "prettier",
-                    "--w",
-                    ".",
-                ]);
-                if (out.success) await LogStuff(`Prettified ${projectName}!`, "tick");
-                return;
-            }
+            );
+            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
+            return;
         } else {
-            const out = await Commander(
-                baseCommand,
+            const output = await Commander(
+                commands.base,
                 ["run", settings.prettyCmd],
             );
-            if (out.success) await LogStuff(`Prettified ${projectName}!`, "tick");
+            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
         }
     },
@@ -206,10 +211,10 @@ const ProjectCleaningFeatures = {
                 continue;
             } catch (e) {
                 if (String(e).includes("os error 2")) {
-                    await LogStuff(`Error destroying ${ColorString(path, "bold")}: it does not exist!`, "error");
+                    await LogStuff(`Didn't destroy ${ColorString(path, "bold")}: it does not exist!`, "warn", "bright-yellow");
                     continue;
                 }
-                await LogStuff(`Error destroying ${path}: ${e}`, "error");
+                await LogStuff(`Error destroying ${path}: ${e}`, "error", "red");
                 continue;
             }
         }
@@ -262,7 +267,7 @@ const ProjectCleaningFeatures = {
                 "-A",
             ],
         );
-        const out = await Commander(
+        const output = await Commander(
             "git",
             [
                 "-C",
@@ -272,7 +277,7 @@ const ProjectCleaningFeatures = {
                 commitMessage,
             ],
         );
-        if (out.success) await LogStuff(`Committed your changes to ${await NameProject(project, "name")}!`, "tick");
+        if (output.success) await LogStuff(`Committed your changes to ${await NameProject(project, "name")}!`, "tick");
         return;
     },
 };
@@ -303,50 +308,38 @@ export async function PerformCleaning(
 ): Promise<void> {
     try {
         const motherfuckerInQuestion = await ParsePath(projectInQuestion);
-        const maximPath = await JoinPaths(
-            motherfuckerInQuestion,
-            "node_modules",
-        );
+        const projectName = await NameProject(motherfuckerInQuestion, "name");
         const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
         const isGitClean = await IsWorkingTreeClean(motherfuckerInQuestion);
         const settings = await GetProjectSettings(motherfuckerInQuestion);
 
-        const { base, exec, update, clean } = workingEnv.commands;
-
         if (shouldUpdate) {
             await ProjectCleaningFeatures.Update(
-                base,
                 motherfuckerInQuestion,
-                update,
+                projectName,
+                workingEnv,
+                settings,
             );
         }
-        if (shouldClean && clean !== "__UNSUPPORTED") {
+        if (shouldClean) {
             await ProjectCleaningFeatures.Clean(
-                base,
-                motherfuckerInQuestion,
-                settings,
-                base,
-                clean,
+                projectName,
+                workingEnv,
                 intensity,
-                maximPath,
             );
         }
         if (shouldLint) {
             await ProjectCleaningFeatures.Lint(
-                settings,
-                motherfuckerInQuestion,
-                base,
-                exec,
+                projectName,
                 workingEnv,
+                settings,
             );
         }
         if (shouldPrettify) {
             await ProjectCleaningFeatures.Prettify(
-                settings,
-                motherfuckerInQuestion,
-                base,
-                exec,
+                projectName,
                 workingEnv,
+                settings,
             );
         }
         if (shouldDestroy) {

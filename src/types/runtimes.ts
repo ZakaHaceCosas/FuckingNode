@@ -120,9 +120,9 @@ export interface ProjectEnv {
         /**
          * Update commands.
          *
-         * @type {string[]}
+         * @type {(["update"] | ["outdated", "--update"] | ["upgrade"])}
          */
-        update: string[];
+        update: ["update"] | ["outdated", "--update"] | ["upgrade"];
         /**
          * Clean commands.
          *

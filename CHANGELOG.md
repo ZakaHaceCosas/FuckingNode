@@ -6,7 +6,14 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.1.0] 14-01-2024 <!-- 2.1.0 -->
+## Unreleased
+
+### Fixed
+
+- Fixed `clean --update` updating twice, once ignoring `updateCmdOverride` if present.
+- Fixed cleaner and updater messages being messed up (showing "Cleaned ...!" after updating, e.g.).
+
+## [2.1.0] 14-01-2024
 
 ### Added
 
