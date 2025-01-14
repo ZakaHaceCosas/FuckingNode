@@ -214,6 +214,9 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         case "help":
             await LogStuff(HELP_OPTIONS);
             break;
+        case "audit":
+            await LogStuff("Audit is an experimental command subject to changes; thus it's not yet documented.");
+            break;
         case undefined:
         case "":
         default:
