@@ -33,6 +33,56 @@ async function FetchVulnerability(packageName: string): Promise<SecurityVulnerab
     return data.vulns || [];
 }
 
+const VULNERABILITY_VECTORS = {
+    NETWORK: [
+        "http",
+        "https",
+        "proxy",
+        "redirect",
+        "fetch",
+        "request",
+        "xhr",
+        "XMLHttpRequest",
+        "ws",
+        "WebSocket",
+        "api",
+        "origin",
+        "csrf",
+        "Cross-Site Request Forgery",
+        "samesite",
+        "referer",
+        "url",
+        "headers",
+        "get",
+        "post",
+        "put",
+        "delete",
+        "content-type",
+        "cors",
+        "Cross-Origin Resource Sharing",
+        "exfiltration",
+    ],
+    COOKIE: [
+        "cookie",
+        "session",
+        "set-cookie",
+        "secure",
+        "httponly",
+        "samesite",
+        "storage",
+        "cache",
+        "persistence",
+        "expiration",
+        "csrf",
+        "auth-cookie",
+        "token-cookie",
+    ],
+    CONSOLE: [
+        "console",
+        "terminal",
+    ],
+};
+
 /**
  * Analyzes security vulnerabilities searching for keywords, returns an array of starter questions for the interrogatory. While unused, also returns the keywords (`vectors`) found.
  *
@@ -45,34 +95,41 @@ function AnalyzeVulnerabilities(vulnerabilities: SecurityVulnerability[]): {
     const questions: Set<string> = new Set<string>();
     const vectors: Set<string> = new Set<string>();
 
-    function has(vuln: SecurityVulnerability, keywords: string[]): boolean {
-        const details = typeof vuln.details === "string" ? vuln.details.toLowerCase() : "";
-        const summary = typeof vuln.summary === "string" ? vuln.summary.toLowerCase() : "";
+    function includes(target: string, substrings: string[]): boolean {
+        return substrings.some((substring) => target.includes(substring));
+    }
 
-        const hasInSum = keywords.some((keyword) => summary.includes(keyword.toLowerCase()));
-        const hasInDet = keywords.some((keyword) => details.includes(keyword.toLowerCase()));
+    function has(vuln: SecurityVulnerability, keywords: string[]): boolean {
+        const details = vuln.details
+            ? (typeof vuln.details === "string" ? vuln.details.toLowerCase().trim() : vuln.details.toString().toLowerCase().trim())
+            : "";
+
+        const summary = vuln.summary ? vuln.summary.toLowerCase().trim() : "";
+
+        const hasInSum = includes(summary, keywords.map((keyword) => keyword.toLowerCase()));
+        const hasInDet = includes(details, keywords.map((keyword) => keyword.toLowerCase()));
 
         return hasInSum || hasInDet;
     }
 
     for (const vulnerability of vulnerabilities) {
-        if (has(vulnerability, ["network"])) {
+        if (has(vulnerability, VULNERABILITY_VECTORS.NETWORK)) {
             questions.add(
-                "Does your app make HTTP requests and/or depend on networking in any way?",
+                "Does your app make HTTP requests and/or depend on networking in any way? [V:NW]",
             );
             vectors.add("network");
         }
 
-        if (has(vulnerability, ["cookie"])) {
+        if (has(vulnerability, VULNERABILITY_VECTORS.COOKIE)) {
             questions.add(
-                "Does your app make use of browser cookies?",
+                "Does your app make use of browser cookies? [V:CK]",
             );
             vectors.add("cookie");
         }
 
-        if (has(vulnerability, ["console"])) {
+        if (has(vulnerability, VULNERABILITY_VECTORS.CONSOLE)) {
             questions.add(
-                "Does your app allow access to the browser or JavaScript console?\n(Web apps obviously do; we ask for cases like Electron or ReactNative apps).",
+                "Does your app allow access to the browser or JavaScript console?\n(Web apps obviously do; we ask for cases like Electron or ReactNative apps). [V:JSC]",
             );
             vectors.add("console");
         }
@@ -128,7 +185,7 @@ async function InterrogateVulnerability(questions: string[]): Promise<FkNodeSecu
         // specific follow-up questions based on user responses
         // to further interrogate da vulnerability
         // im the king of naming functions fr fr
-        if (response === "true" && question.includes("cookies")) {
+        if (response === "true" && question.includes("V:CK")) {
             await handleAskQuestion(
                 "Are cookies being set with the 'Secure' and 'HttpOnly' flags?",
                 true,
@@ -153,7 +210,7 @@ async function InterrogateVulnerability(questions: string[]): Promise<FkNodeSecu
             }
         }
 
-        if (response === "true" && question.includes("network")) {
+        if (response === "true" && question.includes("V:NW")) {
             await handleAskQuestion(
                 "Does any of that HTTP requests include any sensitive data? Such as login credentials, user data, etc...",
                 true,
@@ -188,7 +245,7 @@ async function InterrogateVulnerability(questions: string[]): Promise<FkNodeSecu
             }
         }
 
-        if (question.includes("console")) {
+        if (question.includes("V:JSC")) {
             if (response === "true") {
                 const followUpOne = await handleAskQuestion(
                     "Do you have any method and/or API exposed that can be used from the console?",
