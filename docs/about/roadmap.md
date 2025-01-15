@@ -7,14 +7,6 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 ## 2.X
 
-### Version 2.2
-
-- [X] Per-project cleanup.
-- [X] Flagless features via `fknode.yaml`.
-- [ ] Auto-flush for log files.
-
-----
-
 ### Version 2.1 (Released)
 
 - [X] Release the `audit` feature as an `npm` only experiment. Learn more [here](../learn/audit.md).
@@ -24,6 +16,14 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [X] VSCodium
     - [X] Atom (_it's unmaintained, but anyways..._)
 - [X] Get this documentation finished.
+
+### Version 2.2
+
+- [X] Per-project cleanup.
+- [X] Flagless features via `fknode.yaml`.
+- [X] Auto-flush for log files.
+
+----
 
 ## 3.X
 

@@ -1,6 +1,11 @@
 import type { CleanerIntensity } from "./config_params.ts";
 import type { RIGHT_NOW_DATE } from "./misc.ts";
 
+/**
+ * Supported code editors.
+ *
+ * @export
+ */
 export type SUPPORTED_EDITORS = "vscode" | "sublime" | "emacs" | "notepad++" | "atom" | "vscodium";
 
 /**
@@ -17,6 +22,12 @@ export interface CF_FKNODE_SETTINGS {
      */
     updateFreq: number;
     /**
+     * How often should the CLI clear log files.
+     *
+     * @type {number}
+     */
+    logFlushFreq: number;
+    /**
      * Default cleaner intensity, for running `clean` with no args.
      *
      * @type {CleanerIntensity}
@@ -26,6 +37,37 @@ export interface CF_FKNODE_SETTINGS {
      * User's favorite code editor.
      */
     favoriteEditor: SUPPORTED_EDITORS;
+}
+
+/**
+ * A config file for scheduled tasks.
+ *
+ * @export
+ * @interface CF_FKNODE_SCHEDULE
+ */
+export interface CF_FKNODE_SCHEDULE {
+    /**
+     * Updates.
+     *
+     * @type {{
+     *         latestVer: string;
+     *         lastCheck: RIGHT_NOW_DATE;
+     *     }}
+     */
+    updater: {
+        latestVer: string;
+        lastCheck: RIGHT_NOW_DATE;
+    };
+    /**
+     * Log flushes.
+     *
+     * @type {{
+     *         lastFlush: RIGHT_NOW_DATE;
+     *     }}
+     */
+    flusher: {
+        lastFlush: RIGHT_NOW_DATE;
+    };
 }
 
 /**
@@ -212,31 +254,4 @@ export function ValidateFkNodeYaml(
     }
 
     return true;
-}
-
-/**
- * File where info for the updater is stored in YAML format.
- *
- * @export
- * @interface CF_FKNODE_UPDATES
- */
-export interface CF_FKNODE_UPDATES {
-    /**
-     * Last time the app has checked for updates.
-     *
-     * @type {RIGHT_NOW_DATE}
-     */
-    lastCheck: RIGHT_NOW_DATE;
-    /**
-     * Whether the current version is up to date.
-     *
-     * @type {boolean}
-     */
-    isUpToDate: boolean;
-    /**
-     * Latest version of the app. Uses the SemVer format.
-     *
-     * @type {string}
-     */
-    lastVer: string;
 }

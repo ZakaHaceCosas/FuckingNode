@@ -15,22 +15,19 @@ import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetSettings } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
 import type { TheCleanerConstructedParams } from "./commands/constructors/command.ts";
+import { RunScheduledTasks } from "./functions/schedules.ts";
 
-async function init(update: boolean, mute?: boolean) {
-    await FreshSetup(); // Temporarily hold the result
-    await TheUpdater({
-        force: update,
-        silent: !update,
-        mute: mute ? mute : false,
-    });
+async function init() {
+    await FreshSetup();
+    await RunScheduledTasks();
 }
 
-await init(false, true);
+await init();
 
 const [firstCommand] = Deno.args;
 
 if (!firstCommand) {
-    await init(false);
+    await init();
     await TheHelper({});
     Deno.exit(0);
 }
@@ -42,7 +39,7 @@ function hasFlag(flag: string, allowShort: boolean): boolean {
 }
 
 if (hasFlag("help", true)) {
-    await init(false);
+    await init();
     try {
         await TheHelper({ query: Deno.args[1] });
         Deno.exit(0);
@@ -53,7 +50,7 @@ if (hasFlag("help", true)) {
 }
 
 if (hasFlag("experimental-audit", false)) {
-    await init(false);
+    await init();
     try {
         await LogStuff(
             "Beware that, as an experimental features, errors are likely to happen. Report any issue, suggestion, or feedback on GitHub.",
@@ -77,7 +74,7 @@ if (hasFlag("version", true)) {
 }
 
 async function main(command: string) {
-    await init(false);
+    await init();
 
     const cleanerArgs: TheCleanerConstructedParams = {
         flags: {
@@ -134,8 +131,7 @@ async function main(command: string) {
                 if (command.toLowerCase() === "self-update") await LogStuff("Use upgrade instead", "warn", "bright-yellow");
                 await LogStuff(`Currently on version ${ColorString(VERSION, "green")}`);
                 await LogStuff("Checking for updates...");
-                await init(true);
-                await LogStuff("Done", "tick-clear");
+                await TheUpdater({ silent: false });
                 break;
             case "about":
                 await TheAbouter();

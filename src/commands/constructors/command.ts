@@ -27,9 +27,7 @@ export interface TheSettingsConstructedParams {
 }
 
 export interface TheUpdaterConstructedParams {
-    force: boolean;
     silent: boolean;
-    mute: boolean;
 }
 
 export interface TheKickstartConstructedParams {

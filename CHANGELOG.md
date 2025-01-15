@@ -8,16 +8,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Breaking
+
+- Update config file has been "reset" (renamed from `*-updates.yaml` to `*-schedule.yaml`). Last update check will be overwritten.
+
 ### Added
 
 - Added per-project cleanup.
 - Added flagless features, allowing to enable features (e.g. the auto linter) in a per-project basis and without depending on a `--lint` flag.
+- Added auto flush for log files, so they're auto cleaned every once in a while. Frequency can be changed.
+
+### Changed
+
+- Renamed `flush updates` to `flush schedule`.
 
 ### Fixed
 
 - Fixed `clean --update` updating twice, once ignoring `updateCmdOverride` if present.
 - Fixed cleaner and updater messages being messed up (showing "Cleaned ...!" after updating, e.g.).
 - Fixed `updateCmdOverride` not being used, because the CLI mixed up "npm run" with "npx" (and the same on all package managers).
+- Fixed the app not properly handling changes to what settings are available from one update to another.
 
 ## [2.1.0] 14-01-2024
 

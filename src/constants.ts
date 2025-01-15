@@ -1,8 +1,9 @@
 import type { tURL } from "./types/misc.ts";
 import type { SemVer } from "@std/semver/types";
 import { format, parse } from "@std/semver";
-import type { CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
+import type { CF_FKNODE_SCHEDULE, CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
 import * as DenoJson from "../deno.json" with { type: "json" };
+import { GetDateNow } from "./functions/date.ts";
 
 /**
  * Current app version as a SemVer object. **Change it from `deno.json`.**
@@ -108,8 +109,24 @@ export const RELEASE_URL: tURL = `https://api.github.com/repos/ZakaHaceCosas/${A
  */
 export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
     updateFreq: 5,
+    logFlushFreq: 14,
     defaultCleanerIntensity: "normal",
     favoriteEditor: "vscode",
+};
+
+/**
+ * Scheduled tasks config file.
+ *
+ * @type {CF_FKNODE_SCHEDULE}
+ */
+export const DEFAULT_SCHEDULE_FILE: CF_FKNODE_SCHEDULE = {
+    updater: {
+        latestVer: VERSION,
+        lastCheck: GetDateNow(),
+    },
+    flusher: {
+        lastFlush: GetDateNow(),
+    },
 };
 
 /**

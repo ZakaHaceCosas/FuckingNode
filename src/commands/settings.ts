@@ -6,37 +6,38 @@ import type { CF_FKNODE_SETTINGS, SUPPORTED_EDITORS } from "../types/config_file
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { stringify as stringifyYaml } from "@std/yaml";
 
-async function Flush(what: string, force: boolean) {
-    const validTargets = ["logs", "projects", "updates", "all"];
+export async function Flush(what: string, force: boolean) {
+    const validTargets = ["logs", "projects", "schedules", "all"];
     if (!validTargets.includes(what)) {
         await LogStuff(
-            "Specify what to flush. Either 'logs', 'projects', 'updates', or 'all'.",
+            "Specify what to flush. Either 'logs', 'projects', 'schedules', or 'all'.",
             "warn",
         );
         return;
     }
 
-    let file: string | string[];
+    // type fix
+    const target: "logs" | "projects" | "schedules" | "all" = what as "logs" | "projects" | "schedules" | "all";
 
-    switch (what) {
+    let file: string[];
+
+    switch (target) {
         case "logs":
             file = [await GetAppPath("LOGS")];
             break;
         case "projects":
             file = [await GetAppPath("MOTHERFKRS")];
             break;
-        case "updates":
-            file = [await GetAppPath("UPDATES")];
+        case "schedules":
+            file = [await GetAppPath("SCHEDULE")];
             break;
         case "all":
             file = [
                 await GetAppPath("LOGS"),
                 await GetAppPath("MOTHERFKRS"),
-                await GetAppPath("UPDATES"),
+                await GetAppPath("SCHEDULE"),
             ];
             break;
-        default:
-            throw new Error("No valid target provided.");
     }
 
     const fileSize = typeof file === "string"
@@ -84,7 +85,10 @@ async function ResetSettings() {
     }
 }
 
-async function ChangeSetting(setting: "default-int" | "update-freq" | "fav-editor", value: string) {
+async function ChangeSetting(
+    setting: "default-int" | "update-freq" | "fav-editor" | "flush-freq",
+    value: string,
+) {
     try {
         const currentSettings = await GetSettings();
 
@@ -140,6 +144,22 @@ async function ChangeSetting(setting: "default-int" | "update-freq" | "fav-edito
                 );
                 break;
             }
+            case "flush-freq": {
+                const workingValue = Number(value);
+                if (typeof workingValue !== "number" || isNaN(workingValue)) {
+                    await LogStuff(`${workingValue} is not a valid number.`);
+                    return;
+                }
+                const newSettings: CF_FKNODE_SETTINGS = {
+                    ...currentSettings,
+                    logFlushFreq: Math.trunc(workingValue),
+                };
+                await Deno.writeTextFile(
+                    await GetAppPath("SETTINGS"),
+                    stringifyYaml(newSettings),
+                );
+                break;
+            }
         }
 
         await LogStuff(`Settings successfully updated! ${setting} is now ${value}`, "tick-clear");
@@ -152,9 +172,13 @@ async function ChangeSetting(setting: "default-int" | "update-freq" | "fav-edito
 
 async function DisplaySettings() {
     const settings = await GetSettings();
+
     const formattedSettings = `Update frequency: Each ${ColorString(settings.updateFreq, "bright-green")} days.\nDefault cleaner intensity: ${
         ColorString(settings.defaultCleanerIntensity, "bright-green")
-    }\nFavorite editor: ${ColorString(settings.favoriteEditor, "bright-green")}`;
+    }.\nFavorite editor: ${ColorString(settings.favoriteEditor, "bright-green")}.\nAuto-log file-flush frequency: Each ${
+        ColorString(settings.logFlushFreq, "bright-green")
+    } days.`;
+
     await LogStuff(`${ColorString("Your current settings are:", "bright-yellow")}\n---\n${formattedSettings}`, "bulb");
 }
 
@@ -183,8 +207,10 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
             await ResetSettings();
             break;
         case "change":
-            if (!secondArg || !(["default-int", "update-freq", "fav-editor"].includes(secondArg))) {
-                await LogStuff("Invalid option, use 'change default-int', 'change update-freq', or 'change fav-editor' to tweak settings.");
+            if (!secondArg || !(["default-int", "update-freq", "fav-editor", "flush-freq"].includes(secondArg))) {
+                await LogStuff(
+                    "Invalid option, use 'change default-int', 'change update-freq', 'change fav-editor', or 'change flush-freq' to tweak settings.",
+                );
                 return;
             }
             if (!thirdArg || thirdArg.trim().length === 0) {
@@ -192,7 +218,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
                 return;
             }
             await ChangeSetting(
-                secondArg as "default-int" | "update-freq" | "fav-editor",
+                secondArg as "default-int" | "update-freq" | "fav-editor" | "flush-freq",
                 thirdArg,
             );
             break;
