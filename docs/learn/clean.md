@@ -42,32 +42,18 @@ This workflow can be simplified into the following:
 
 ```mermaid
 graph TD
-    CLI["fuckingnode clean -- --update --lint --pretty --destroy"]
+    A["fuckingnode manager add ../project1"]
+    B["fuckingnode manager add ../project2"]
+    C["fuckingnode manager add /home/me/work/some-app"]
 
-    subgraph Projects
-        A["my-electron-app"]
-        B["school-project"]
-        C["another-app"]
-    end
+    D["fuckingnode clean --
+    --update --lint --destroy --commit"]
 
-    CLI --> A
-    CLI --> B
-    CLI --> C
+    A --> D
+    B --> D
+    C --> D
 
-    A --> updateA["Update dependencies"]
-    updateA --> lintA["Lint code (ESLint)"]
-    lintA --> prettyA["Format code (Prettier)"]
-    prettyA --> destroyA["Clean build artifacts"]
-
-    B --> updateB["Update dependencies"]
-    updateB --> lintB["Lint code (ESLint)"]
-    lintB --> prettyB["Format code (Prettier)"]
-    prettyB --> destroyB["Clean build artifacts"]
-
-    C --> updateC["Update dependencies"]
-    updateC --> lintC["Lint code (Deno)"]
-    lintC --> prettyC["Format code (Deno fmt)"]
-    prettyC --> destroyC["Clean build artifacts"]
+    D -->|Does everything in terminal| E["Done!"]
 ```
 
 We reduce your workflow to a one-time bunch of commands for initial setup, and then a single CLI command for each time you need to take care of any of these tasks, **recursively running each CLI command required per-project.**
@@ -137,4 +123,11 @@ We basically run the CLI commands you'd run by yourself recursively across all o
 
 ## Availability
 
-This feature has been released and is available since `v1.0.0`. It's fully available on NodeJS projects and partially available on Deno and Bun projects. To learn more about cross-runtime compatibility, [refer to this page](../manual/cross-runtime.md).
+Where `EXP` indicates experimental, `CAVEAT` indicates partial support / support with known flaws, and `YES` and `NO` indicate the obvious.
+
+| Support | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
+| :-- | -- | -- | -- | -- | -- |
+| **v2.0.0** | YES | YES | YES | CAVEAT | CAVEAT |
+| v1.0.0 | YES | YES | YES | NO | NO |
+
+To learn more about cross-runtime compatibility, [refer to this page](../manual/cross-runtime.md).

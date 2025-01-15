@@ -48,4 +48,4 @@ We basically run the CLI commands you'd run by yourself in order to clone and ge
 
 ## Availability
 
-This feature has been released and is available since `v2.0.0`. It's fully available everywhere.
+This feature has been released and is available since `v2.0.0`. It's fully available everywhere. _No table as it's not runtime dependant._

@@ -1,9 +1,9 @@
 # How does F*ckingNode work?
 
-For wannabe contributors or people curious / bored enough, this section explains briefly how does each feature work from an insider perspective.
+For wannabe contributors or people curious / bored enough, pages here explains in detail how does each feature work from an insider perspective.
 
 ## Table of Contents
 
 - [Clean](clean.md)
 - [Kickstart](kickstart.md)
-- [(UPCOMING) Audit](audit.md)
+- [(Experimental) Audit](audit.md)

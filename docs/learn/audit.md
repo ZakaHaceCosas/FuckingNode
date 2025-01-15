@@ -105,7 +105,11 @@ F\*ckingNode audit should not be allowed to have the final say over whether brea
 
 ## Availability
 
-This feature has been experimentally released and is partially available since `v2.1.0` on NodeJS npm projects.
+Where `EXP` indicates experimental, `CAVEAT` indicates partial support / support with known flaws, and `YES` and `NO` indicate the obvious.
+
+| Support | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
+| :-- | -- | -- | -- | -- | -- |
+| **v2.1.0** | EXP | NO | NO | NO | NO |
 
 *[RF]: Risk Factor; a percentage computed by us to estimate the joint impact of all vulnerabilities of a NodeJS project.
 *[RB]: Risk Bump; a 0.25-1 number that's used to bump the RF based on the highest severity (as in low/moderate/high/critical) of a found vulnerability within a project.
