@@ -8,10 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Added
+
+- Added per-project cleanup.
+
 ### Fixed
 
 - Fixed `clean --update` updating twice, once ignoring `updateCmdOverride` if present.
 - Fixed cleaner and updater messages being messed up (showing "Cleaned ...!" after updating, e.g.).
+- Fixed `updateCmdOverride` not being used, because the CLI mixed up "npm run" with "npx" (and the same on all package managers).
 
 ## [2.1.0] 14-01-2024
 

@@ -1,11 +1,16 @@
 export interface TheCleanerConstructedParams {
-    verbose: boolean;
-    update: boolean;
-    lint: boolean;
-    prettify: boolean;
-    commit: boolean;
-    destroy: boolean;
-    intensity: string;
+    flags: {
+        verbose: boolean;
+        update: boolean;
+        lint: boolean;
+        prettify: boolean;
+        commit: boolean;
+        destroy: boolean;
+    };
+    parameters: {
+        intensity: string;
+        project: string | 0;
+    };
 }
 
 export interface TheHelperConstructedParams {

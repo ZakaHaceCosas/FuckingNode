@@ -17,7 +17,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 ## Version 2.2
 
-- [ ] Per-project cleanup.
+- [X] Per-project cleanup.
 - [ ] Flagless features via `fknode.yaml`.
 - [ ] Auto-flush for log files.
 

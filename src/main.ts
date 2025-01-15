@@ -14,6 +14,7 @@ import { VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetSettings } from "./functions/config.ts";
 import GenericErrorHandler from "./utils/error.ts";
+import type { TheCleanerConstructedParams } from "./commands/constructors/command.ts";
 
 async function init(update: boolean, mute?: boolean) {
     await FreshSetup(); // Temporarily hold the result
@@ -78,29 +79,38 @@ if (hasFlag("version", true)) {
 async function main(command: string) {
     await init(false);
 
+    const cleanerArgs: TheCleanerConstructedParams = {
+        flags: {
+            verbose: flags.includes("--verbose"),
+            update: flags.includes("--update"),
+            lint: flags.includes("--lint"),
+            prettify: flags.includes("--pretty"),
+            commit: flags.includes("--commit"),
+            destroy: flags.includes("--destroy"),
+        },
+        parameters: {
+            intensity: (Deno.args[1] && Deno.args[1].trim() !== "" && !Deno.args[1].trim().startsWith("--"))
+                ? Deno.args[1]
+                : (await GetSettings()).defaultCleanerIntensity,
+            project: (Deno.args[2] && Deno.args[2].trim() !== "" && !Deno.args[2].trim().startsWith("--")) ? Deno.args[2] : 0 as const,
+        },
+    };
+
     try {
         switch (command.toLowerCase()) {
             case "clean":
-                await TheCleaner({
-                    verbose: flags.includes("--verbose"),
-                    update: flags.includes("--update"),
-                    lint: flags.includes("--lint"),
-                    prettify: flags.includes("--pretty"),
-                    commit: flags.includes("--commit"),
-                    destroy: flags.includes("--destroy"),
-                    intensity: Deno.args[1] ?? (await GetSettings()).defaultCleanerIntensity,
-                });
+                await TheCleaner(cleanerArgs);
                 break;
             case "global-clean":
             case "hard-clean":
                 await TheCleaner({
-                    verbose: flags.includes("--verbose"),
-                    update: flags.includes("--update"),
-                    lint: flags.includes("--lint"),
-                    prettify: flags.includes("--pretty"),
-                    commit: flags.includes("--commit"),
-                    destroy: flags.includes("--destroy"),
-                    intensity: "hard-only",
+                    flags: { ...cleanerArgs["flags"] },
+                    parameters: {
+                        intensity: "hard-only",
+                        project: (Deno.args[2] && Deno.args[2].trim() !== "" && !Deno.args[2].trim().startsWith("--"))
+                            ? Deno.args[2]
+                            : 0 as const,
+                    },
                 });
                 break;
             case "manager":

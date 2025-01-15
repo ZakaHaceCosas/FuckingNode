@@ -31,10 +31,10 @@ const ProjectCleaningFeatures = {
             settings.updateCmdOverride && settings.updateCmdOverride.trim() !== "" &&
             settings.updateCmdOverride !== "__USE_DEFAULT"
         ) {
-            await LogStuff(`${commands.exec} ${settings.updateCmdOverride}\n`, "package");
+            await LogStuff(`${commands.run.join(" ")} ${settings.updateCmdOverride}\n`, "package");
             const output = await Commander(
-                commands.exec[0],
-                commands.exec.length === 1 ? [settings.updateCmdOverride] : [commands.exec[1], settings.updateCmdOverride],
+                commands.run[0],
+                [commands.run[1], settings.updateCmdOverride],
             );
             if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
             return;

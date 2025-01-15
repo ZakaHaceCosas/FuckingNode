@@ -118,6 +118,12 @@ export interface ProjectEnv {
          */
         exec: ["deno", "run"] | ["bunx"] | ["npx"] | ["pnpm", "dlx"] | ["yarn", "dlx"];
         /**
+         * Run commands. `string[]` as it's always made of two parts.
+         *
+         * @type {(["deno", "task"] | ["npm", "run"] | ["bun", "run"] | ["pnpm", "run"] | ["yarn", "run"])}
+         */
+        run: ["deno", "task"] | ["npm", "run"] | ["bun", "run"] | ["pnpm", "run"] | ["yarn", "run"];
+        /**
          * Update commands.
          *
          * @type {(["update"] | ["outdated", "--update"] | ["upgrade"])}
