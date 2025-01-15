@@ -130,4 +130,11 @@ export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
     commitActions: false,
     commitMessage: "__USE_DEFAULT",
     updateCmdOverride: "__USE_DEFAULT",
+    flagless: {
+        flaglessUpdate: false,
+        flaglessLint: false,
+        flaglessPretty: false,
+        flaglessDestroy: false,
+        flaglessCommit: false,
+    },
 };

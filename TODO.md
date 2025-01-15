@@ -87,3 +87,9 @@
 ## Known issues
 
 - [ ] Scheduled tasks don't work for whatever reason. ~~It's Deno.cron() and not us, so there isn't a "fix" for this.~~ Found a ["fix"](https://docs.deno.com/deploy/kv/manual/cron/), but it's gonna be hard: we need to manage to use Deno.cron() from the damn top module.
+
+## Docs
+
+self-reminders:
+
+1. flagless features require _by design_ specifying a command - e.g., `clean -- --lint` will default to ESLint, but in projects that have `flaglessLint: true` it won't, it'll directly check for `lintCmd` or skip. same applies for other settings. this is because of how `FkNodeYaml` is internally designed.

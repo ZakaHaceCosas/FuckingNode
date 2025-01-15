@@ -313,14 +313,6 @@ export async function PerformCleaning(
         const isGitClean = await IsWorkingTreeClean(motherfuckerInQuestion);
         const settings = await GetProjectSettings(motherfuckerInQuestion);
 
-        if (shouldUpdate) {
-            await ProjectCleaningFeatures.Update(
-                motherfuckerInQuestion,
-                projectName,
-                workingEnv,
-                settings,
-            );
-        }
         if (shouldClean) {
             await ProjectCleaningFeatures.Clean(
                 projectName,
@@ -328,28 +320,36 @@ export async function PerformCleaning(
                 intensity,
             );
         }
-        if (shouldLint) {
+        if (shouldUpdate || (settings.flagless && settings.flagless.flaglessUpdate === true)) {
+            await ProjectCleaningFeatures.Update(
+                motherfuckerInQuestion,
+                projectName,
+                workingEnv,
+                settings,
+            );
+        }
+        if (shouldLint || (settings.flagless && settings.flagless.flaglessLint === true)) {
             await ProjectCleaningFeatures.Lint(
                 projectName,
                 workingEnv,
                 settings,
             );
         }
-        if (shouldPrettify) {
+        if (shouldPrettify || (settings.flagless && settings.flagless.flaglessPretty === true)) {
             await ProjectCleaningFeatures.Prettify(
                 projectName,
                 workingEnv,
                 settings,
             );
         }
-        if (shouldDestroy) {
+        if (shouldDestroy || (settings.flagless && settings.flagless.flaglessDestroy === true)) {
             await ProjectCleaningFeatures.Destroy(
                 settings,
                 motherfuckerInQuestion,
                 intensity,
             );
         }
-        if (shouldCommit) {
+        if (shouldCommit || (settings.flagless && settings.flagless.flaglessCommit === true)) {
             await ProjectCleaningFeatures.Commit(
                 settings,
                 motherfuckerInQuestion,

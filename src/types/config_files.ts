@@ -38,51 +38,79 @@ export interface FkNodeYaml {
     /**
      * Divine protection, basically to ignore stuff. Must always be an array.
      *
-     * @type {("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled"}
+     * @type {?(("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled")}
      */
     divineProtection?: ("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled";
     /**
      * If `--lint` is passed to `clean`, this script will be used to lint the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__ESLINT` overrides these rules (it's the default).
      *
-     * @type {string}
+     * @type {?(string | "__ESLINT")}
      */
     lintCmd?: string | "__ESLINT";
     /**
      * If `--pretty` is passed to `clean`, this script will be used to prettify the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__PRETTIER` overrides these rules (it's the default).
      *
-     * @type {string}
+     * @type {?(string | "__PRETTIER")}
      */
     prettyCmd?: string | "__PRETTIER";
     /**
      * If provided, file paths in `targets` will be removed when `clean` is called with any of the `intensities`. If not provided defaults to `maxim` intensity and `node_modules` path. Specifying `targets` _without_ `node_modules` does not override it, meaning it'll always be cleaned.
      *
-     * @type {{
+     * @type {?{
      *         intensities: (CleanerIntensity | "*")[],
      *         targets: string[]
      *     }}
      */
     destroy?: {
+        /**
+         * Intensities the destroyer should run at.
+         *
+         * @type {(CleanerIntensity | "*")[]}
+         */
         intensities: (CleanerIntensity | "*")[];
+        /**
+         * Targets to be destroyed. Must be paths either relative to the **root** of the project or absolute.
+         *
+         * @type {string[]}
+         */
         targets: string[];
     };
     /**
      * If true, if an action that changes the code is performed (update, prettify, or destroy) and the Git workspace is clean (no uncommitted stuff), a commit will be made.
      *
-     * @type {boolean}
+     * @type {?boolean}
      */
     commitActions?: boolean;
     /**
      * If provided, if a commit is made (`commitActions`) this will be the commit message. If not provided a default message is used. `__USE_DEFAULT` indicates to use the default.
      *
-     * @type {(string | "__USE_DEFAULT")}
+     * @type {?(string | "__USE_DEFAULT")}
      */
     commitMessage?: string | "__USE_DEFAULT";
     /**
      * If provided, uses the provided runtime script command for the updating stage, overriding the default command. Like `lintCmd` or `prettyCmd`, it must be a runtime script.
      *
-     * @type {(string | "__USE_DEFAULT")}
+     * @type {?(string | "__USE_DEFAULT")}
      */
     updateCmdOverride?: string | "__USE_DEFAULT";
+    /**
+     * Flagless features.
+     *
+     * @type {?{
+     *         flaglessUpdate?: boolean;
+     *         flaglessDestroy?: boolean;
+     *         flaglessLint?: boolean;
+     *         flaglessPretty?: boolean;
+     *         flaglessCommit?: boolean;
+     *     }}
+     */
+    flagless?: {
+        flaglessUpdate?: boolean;
+        flaglessDestroy?: boolean;
+        flaglessLint?: boolean;
+        flaglessPretty?: boolean;
+        flaglessCommit?: boolean;
+    };
 }
 
 /**
@@ -168,6 +196,19 @@ export function ValidateFkNodeYaml(
         typeof obj.updateCmdOverride !== "string"
     ) {
         return false;
+    }
+
+    if (obj.flagless !== undefined) {
+        if (typeof obj.flagless !== "object" || obj.flagless === null) {
+            return false;
+        }
+
+        const validKeys = ["flaglessUpdate", "flaglessDestroy", "flaglessLint", "flaglessPretty", "flaglessCommit"];
+        for (const [key, value] of Object.entries(obj.flagless)) {
+            if (!validKeys.includes(key) || typeof value !== "boolean") {
+                return false;
+            }
+        }
     }
 
     return true;

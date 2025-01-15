@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added per-project cleanup.
+- Added flagless features, allowing to enable features (e.g. the auto linter) in a per-project basis and without depending on a `--lint` flag.
 
 ### Fixed
 
