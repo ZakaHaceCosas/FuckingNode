@@ -17,7 +17,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [X] Atom (_it's unmaintained, but anyways..._)
 - [X] Get this documentation finished.
 
-### Version 2.2
+### Version 2.2 (Released)
 
 - [X] Per-project cleanup.
 - [X] Flagless features via `fknode.yaml`.

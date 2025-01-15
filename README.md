@@ -69,6 +69,7 @@ Run `fuckingnode settings` with no args to see your current settings. Use `setti
 | :--- | ---: | :--: | ---: |
 | `change default-int <value>` | `normal`, `hard`, `hard-only`, or `maxim` | Changes the default intensity for the `clean` command. | / |
 | `change update-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests. |
+| `change flush-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI removes the `.log` file to save up space. | Cannot be disabled, setting it to `0` will make it auto-flush each time. |
 | `change fav-editor <value>` | `vscode`, `sublime` | Your favorite code editor. Used by `kickstart`. | You can't set it to a different editor as of now, sorry. |
 | `flush <file>` | `logs`, `updates`, `projects`, or `all` | Flushes (removes) config files. | `logs` is particularly recommended. `projects` and `all` are discouraged. |
 
