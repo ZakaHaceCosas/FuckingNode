@@ -96,11 +96,16 @@ graph TD
     A -->|Validates| B["Is it valid?"]
     B -->|No| Skip
     B -->|Yes| C["Does it have an fknode.yaml file?"]
-    C -->|No| D["Execute all commands"]
+    C -->|No| D["Execute all required commands"]
     C -->|Yes| E["Parse and validate"]
     E -->|Parsed YAML| F["Is it valid?"]
-    F -->|No| G["Execute all commands"]
-    F -->|Yes| H["Execute commands taking settings into account"]
+    F -->|No| D
+    F -->|Yes| H["Execute all required commands taking settings into account"]
+    D --> G
+    H --> G
+    G["Repeat"]
+    G -->|chdir into| I["C:\Users\JohnDoe\AnotherProject"]
+    I -->|Validates| B
 ```
 
 Inside the terminal you're running `fuckingnode` from, we'll change directories to each added project's path. From the inside, we proceed as follows:
