@@ -5,7 +5,17 @@ What we're planning to do. Only includes minor and major releases, patch release
 
 We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make progress and/or change our plans.
 
-## Version 2.1
+## 2.X
+
+### Version 2.2
+
+- [X] Per-project cleanup.
+- [X] Flagless features via `fknode.yaml`.
+- [ ] Auto-flush for log files.
+
+----
+
+### Version 2.1 (Released)
 
 - [X] Release the `audit` feature as an `npm` only experiment. Learn more [here](../learn/audit.md).
 - [X] Support more editors for the `kickstart` command (PS. doing this is as simple as ensuring we know the command to launch that editor in all platforms).
@@ -15,13 +25,9 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [X] Atom (_it's unmaintained, but anyways..._)
 - [X] Get this documentation finished.
 
-## Version 2.2
+## 3.X
 
-- [X] Per-project cleanup.
-- [ ] Flagless features via `fknode.yaml`.
-- [ ] Auto-flush for log files.
-
-## Version 3.0
+### Version 3.0
 
 - [ ] Make a proper logo for the project.
 - [ ] Better installer
