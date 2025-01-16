@@ -313,6 +313,15 @@ export async function PerformCleaning(
         const isGitClean = await IsWorkingTreeClean(motherfuckerInQuestion);
         const settings = await GetProjectSettings(motherfuckerInQuestion);
 
+        /* "what should we do with the drunken sailor..." */
+        const whatShouldWeDo: Record<"update" | "lint" | "pretty" | "destroy" | "commit", boolean> = {
+            update: shouldUpdate || (settings.flagless?.flaglessUpdate === true),
+            lint: shouldLint || (settings.flagless?.flaglessLint === true),
+            pretty: shouldPrettify || (settings.flagless?.flaglessPretty === true),
+            destroy: shouldDestroy || (settings.flagless?.flaglessDestroy === true),
+            commit: shouldCommit || (settings.flagless?.flaglessCommit === true),
+        };
+
         if (shouldClean) {
             await ProjectCleaningFeatures.Clean(
                 projectName,
@@ -320,7 +329,7 @@ export async function PerformCleaning(
                 intensity,
             );
         }
-        if (shouldUpdate || (settings.flagless && settings.flagless.flaglessUpdate === true)) {
+        if (whatShouldWeDo["update"]) {
             await ProjectCleaningFeatures.Update(
                 motherfuckerInQuestion,
                 projectName,
@@ -328,35 +337,35 @@ export async function PerformCleaning(
                 settings,
             );
         }
-        if (shouldLint || (settings.flagless && settings.flagless.flaglessLint === true)) {
+        if (whatShouldWeDo["lint"]) {
             await ProjectCleaningFeatures.Lint(
                 projectName,
                 workingEnv,
                 settings,
             );
         }
-        if (shouldPrettify || (settings.flagless && settings.flagless.flaglessPretty === true)) {
+        if (whatShouldWeDo["pretty"]) {
             await ProjectCleaningFeatures.Prettify(
                 projectName,
                 workingEnv,
                 settings,
             );
         }
-        if (shouldDestroy || (settings.flagless && settings.flagless.flaglessDestroy === true)) {
+        if (whatShouldWeDo["destroy"]) {
             await ProjectCleaningFeatures.Destroy(
                 settings,
                 motherfuckerInQuestion,
                 intensity,
             );
         }
-        if (shouldCommit || (settings.flagless && settings.flagless.flaglessCommit === true)) {
+        if (whatShouldWeDo["commit"]) {
             await ProjectCleaningFeatures.Commit(
                 settings,
                 motherfuckerInQuestion,
                 isGitClean,
-                shouldUpdate,
-                shouldLint,
-                shouldPrettify,
+                whatShouldWeDo["update"],
+                whatShouldWeDo["lint"],
+                whatShouldWeDo["pretty"],
             );
         }
     } catch (e) {

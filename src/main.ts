@@ -76,6 +76,16 @@ if (hasFlag("version", true)) {
 async function main(command: string) {
     await init();
 
+    /* this is a bit unreadable, i admit */
+    const projectArg = (
+            Deno.args[2] &&
+            Deno.args[2].trim() !== "" &&
+            ((!Deno.args[2].trim().startsWith("--") &&
+                !ParseFlag("self", false).includes(Deno.args[2])) || ParseFlag("self", false).includes(Deno.args[2]))
+        )
+        ? Deno.args[2]
+        : 0 as const;
+
     const cleanerArgs: TheCleanerConstructedParams = {
         flags: {
             verbose: flags.includes("--verbose"),
@@ -89,7 +99,7 @@ async function main(command: string) {
             intensity: (Deno.args[1] && Deno.args[1].trim() !== "" && !Deno.args[1].trim().startsWith("--"))
                 ? Deno.args[1]
                 : (await GetSettings()).defaultCleanerIntensity,
-            project: (Deno.args[2] && Deno.args[2].trim() !== "" && !Deno.args[2].trim().startsWith("--")) ? Deno.args[2] : 0 as const,
+            project: projectArg,
         },
     };
 
@@ -104,9 +114,7 @@ async function main(command: string) {
                     flags: { ...cleanerArgs["flags"] },
                     parameters: {
                         intensity: "hard-only",
-                        project: (Deno.args[2] && Deno.args[2].trim() !== "" && !Deno.args[2].trim().startsWith("--"))
-                            ? Deno.args[2]
-                            : 0 as const,
+                        project: projectArg,
                     },
                 });
                 break;

@@ -6,6 +6,13 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `--self` not being recognized for per-project cleanup.
+- Fixed autocommit not running if committable actions were made through a flagless feature instead of a flagged feature.
+
 ## [2.2.0] 15-01-2025
 
 ### Breaking
