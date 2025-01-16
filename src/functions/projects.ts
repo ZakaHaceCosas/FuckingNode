@@ -13,7 +13,7 @@ import { GetDateNow } from "./date.ts";
 import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
 
 /**
- * Gets all the users projects and returns their paths as a `string[]`.
+ * Gets all the users projects and returns their absolute root paths as a `string[]`.
  *
  * @export
  * @async
@@ -144,7 +144,7 @@ export async function GetProjectSettings(
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
         await Deno.writeTextFile(
             pathToDivineFile,
-            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()}]`,
+            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to https://github.com/ZakaHaceCosas/FuckingNode to learn about how fknode.yaml works.]`,
             {
                 append: true,
             },
@@ -208,13 +208,21 @@ export const UnderstandProjectSettings = {
 export async function ValidateProject(entry: string): Promise<true | PROJECT_ERROR_CODES> {
     const workingEntry = await ParsePath(entry);
     if (!(await CheckForPath(workingEntry))) return "NotFound";
-    const list = await GetAllProjects();
-    const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
+
+    try {
+        await GetProjectEnvironment(workingEntry);
+    } catch {
+        return "CantDetermineEnv";
+    }
 
     const env = await GetProjectEnvironment(workingEntry);
 
+    if (!(await CheckForPath(env.main.path))) return "NoPkgJson";
+    const list = await GetAllProjects();
+    const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
+
     if (isDuplicate) return "IsDuplicate";
-    if (!(await CheckForPath(env.lockfile.path))) return "NoPkgJson";
+    if (!(await CheckForPath(env.lockfile.path))) return "NoLockfile";
     return true;
 }
 
@@ -247,14 +255,14 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
         const pnpmWorkspacePath = await JoinPaths(workingPath, "pnpm-workspace.yaml");
         if (await CheckForPath(pnpmWorkspacePath)) {
             const pnpmConfig = parseYaml(await Deno.readTextFile(pnpmWorkspacePath)) as { packages: string[] };
-            if (pnpmConfig.packages && Array.isArray(pnpmConfig)) workspacePaths.push(...pnpmConfig.packages);
+            if (pnpmConfig.packages && Array.isArray(pnpmConfig.packages)) workspacePaths.push(...pnpmConfig.packages);
         }
 
         // Check .yarnrc.yml for Yarn workspaces
         const yarnRcPath = await JoinPaths(workingPath, ".yarnrc.yml");
         if (await CheckForPath(yarnRcPath)) {
             const yarnConfig = parseYaml(await Deno.readTextFile(yarnRcPath)) as { workspaces?: string[] };
-            if (yarnConfig.workspaces && Array.isArray(yarnConfig)) workspacePaths.push(...yarnConfig.workspaces);
+            if (yarnConfig.workspaces && Array.isArray(yarnConfig.workspaces)) workspacePaths.push(...yarnConfig.workspaces);
         }
 
         // Check bunfig.toml for Bun workspaces
@@ -268,9 +276,9 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
         const denoJsonPath = await JoinPaths(workingPath, "deno.json");
         const denoJsoncPath = await JoinPaths(workingPath, "deno.jsonc");
         if ((await CheckForPath(denoJsonPath)) || (await CheckForPath(denoJsoncPath))) {
-            const denoConfig = JSON.parse(
+            const denoConfig = (await CheckForPath(denoJsoncPath)) ? parseJsonc(await Deno.readTextFile(denoJsoncPath)) : JSON.parse(
                 await Deno.readTextFile(
-                    (await CheckForPath(denoJsonPath)) ? denoJsonPath : denoJsoncPath,
+                    denoJsonPath,
                 ),
             );
             if (denoConfig.workspace && Array.isArray(denoConfig.workspace)) {

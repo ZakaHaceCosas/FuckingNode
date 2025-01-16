@@ -16,4 +16,4 @@ export type GLOBAL_ERROR_CODES =
 /**
  * All possible project validation error codes.
  */
-export type PROJECT_ERROR_CODES = "IsDuplicate" | "NoPkgJson" | "NotFound";
+export type PROJECT_ERROR_CODES = "IsDuplicate" | "NoPkgJson" | "NotFound" | "NoLockfile" | "CantDetermineEnv";

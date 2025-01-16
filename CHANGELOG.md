@@ -11,11 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Now sync output of command is hidden behind `--verbose`.
+- Now project validation can return more error codes (`"CantDetermineEnv"`, `"NoLockfile"`).
 
 ### Fixed
 
 - Fixed `--self` not being recognized for per-project cleanup.
 - Fixed autocommit not running if committable actions were made through a flagless feature instead of a flagged feature.
+- Fixed the CLI not properly looking for workspaces (not validating workspace arrays & not parsing `deno.jsonc` properly).
 
 ## [2.2.0] 15-01-2025
 
