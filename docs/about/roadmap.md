@@ -35,7 +35,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
     - [ ] `fuckingnode give-up <project>` to automatically add a generic "unmaintained" message to the README.md file from the root (if any), give the project a last maintenance (running `fuckingnode clean` with all features enabled), commit all of that, push it, and then removing the entire project's folder from the filesystem (and removing the project from the project list).
 - [ ] Better installer
-    - [ ] Revamped `.ps1` based installer for Windows.
+    - [X] Revamped `.ps1` based installer for Windows.
     - [ ] New `.sh` based installed for mac and Linux.
 - [ ] Better migration feature.
     - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)

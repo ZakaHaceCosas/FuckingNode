@@ -1,7 +1,10 @@
 import { APP_NAME } from "../src/constants.ts";
 
 function CompileApp(): void {
-    const TARGETS = {
+    const TARGETS: Record<
+        "win64" | "darwinArm" | "linuxArm" | "darwin64" | "linux64",
+        [string, string]
+    > = {
         win64: ["x86_64-pc-windows-msvc", "win64"],
         darwinArm: ["aarch64-apple-darwin", "macOs_arm"],
         linuxArm: ["aarch64-unknown-linux-gnu", "linux_arm"],
@@ -20,9 +23,8 @@ function CompileApp(): void {
             "--allow-env", // see ENV variables, to access .../AppData/...
             "--allow-run", // run cleanup commands
             "--allow-sys", // used for an easter egg that requires `os.Uptime`
-            "--unstable-cron",
             "--target",
-            target!,
+            target,
             "--output",
             `dist/${compiledName}`,
             "src/main.ts",
@@ -32,31 +34,11 @@ function CompileApp(): void {
     });
 
     for (const CMD of ALL_COMMANDS) {
-        const p = CMD.spawn();
-        p.status.then((_status) => {});
+        const process = CMD.spawn();
+        process.status.then((status) => {
+            console.log(status.success ? `Something went right` : `Something went wrong: ${status.code} / ${status.signal?.toString()}`);
+        });
     }
-}
-
-function CompileInstaller(): void {
-    const compiledName = `${APP_NAME.CASED}-INSTALLER-win64.exe`;
-
-    const compilerArguments = [
-        "compile",
-        "--allow-write", // write files, like project list
-        "--allow-read", // read files, like a project's package.json
-        "--allow-net", // fetch the network, to update the app
-        "--allow-env", // see ENV variables, to access .../AppData/...
-        "--allow-run", // run cleanup commands
-        "--allow-sys", // used for an easter egg that requires `os.Uptime`
-        "--unstable-cron",
-        "--target",
-        "x86_64-pc-windows-msvc",
-        "--output",
-        `dist/${compiledName}`,
-        "src/main.ts",
-    ];
-
-    new Deno.Command("deno", { args: compilerArguments }).spawn().status.then((_status) => {});
 }
 
 try {
@@ -71,7 +53,6 @@ try {
 Deno.mkdir("./dist/");
 
 CompileApp();
-CompileInstaller();
 
 // for nix, get into WSL and run:
 // nix-prefetch-url https://github.com/ZakaHaceCosas/FuckingNode/releases/download/LATEST_TAG_HERE_BRO/FuckingNode-linux_x86_64
