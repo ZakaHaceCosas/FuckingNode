@@ -93,7 +93,7 @@ export default async function TheKickstart(params: TheKickstartConstructedParams
 
         // lol
         try {
-            await AddProject(clonedPath, true);
+            await AddProject(clonedPath);
         } catch (e) {
             throw new Error(`Error setting up your favorite CLI tool (fuckingnode) in this project! ${e}`);
         }
