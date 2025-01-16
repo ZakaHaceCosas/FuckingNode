@@ -203,7 +203,7 @@ const ProjectCleaningFeatures = {
                         "--w",
                         ".",
                     ],
-                    verbose
+                verbose,
             );
             if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
@@ -211,7 +211,7 @@ const ProjectCleaningFeatures = {
             const output = await Commander(
                 commands.base,
                 ["run", settings.prettyCmd],
-                verbose
+                verbose,
             );
             if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;

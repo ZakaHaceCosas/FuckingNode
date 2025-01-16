@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Now you don't need to confirm if you want to add Deno or Bun projects.
 - Now sync output of command is hidden behind `--verbose`.
 - Now project validation can return more error codes (`"CantDetermineEnv"`, `"NoLockfile"`).
 
@@ -17,7 +18,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Fixed `--self` not being recognized for per-project cleanup.
 - Fixed autocommit not running if committable actions were made through a flagless feature instead of a flagged feature.
-- Fixed the CLI not properly looking for workspaces (not validating workspace arrays & not parsing `deno.jsonc` properly).
+- Fixed issues with workspaces:
+  - Not validating that workspace arrays exist
+  - Not parsing `deno.jsonc` properly.
+  - When adding a project, always seeking for `package.json` instead of the runtime's specific main file.
 
 ## [2.2.0] 15-01-2025
 

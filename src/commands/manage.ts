@@ -1,6 +1,6 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
-import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
+import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
@@ -14,17 +14,24 @@ import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
  * @export
  * @async
  * @param {string} entry Path to the project.
- * @param {boolean} force If true, it'll skip Deno & Bun warnings.
  * @returns {Promise<void>}
  */
 export async function AddProject(
-    entry: string,
-    force?: boolean,
+    entry: string | null,
 ): Promise<void> {
+    if (!entry || entry === null) {
+        throw new FknError(
+            "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+            "You didn't provide a path.",
+        );
+    }
+
     const workingEntry = await ParsePath(entry);
+
     if (!(await CheckForPath(workingEntry))) {
         throw new FknError("Manager__NonExistingPath", `Path "${workingEntry}" doesn't exist.`);
     }
+
     const projectName = await NameProject(workingEntry, "name-ver");
 
     async function addTheEntry() {
@@ -58,36 +65,28 @@ export async function AddProject(
         await addTheEntry();
         return;
     }
-    if (env.runtime === "deno" && force !== true) {
-        const addAnyway = await LogStuff(
+    if (env.runtime === "deno") {
+        await LogStuff(
             // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao
             // idk whats better, deno or bun. i have both installed, i could try. one day, maybe.
-            `This project uses the Deno runtime (good choice btw). It's not *fully* supported *yet*. Add anyway?`,
-            "what",
-            undefined,
-            true,
+            `This project uses the Deno runtime (good choice btw). Keep in mind it's not *fully* supported *yet*.`,
+            "bruh",
+            "italic",
         );
-        if (!addAnyway) return;
-        await addTheEntry();
-        return;
     }
-    if (env.runtime === "bun" && force !== true) {
-        const addAnyway = await LogStuff(
-            `This project uses the Bun runtime. It's not *fully* supported *yet*. Add anyway?`,
+    if (env.runtime === "bun") {
+        await LogStuff(
+            `This project uses the Bun runtime. Keep in mind it's not *fully* supported *yet*.`,
             "what",
-            undefined,
-            true,
+            "italic",
         );
-        if (!addAnyway) return;
-        await addTheEntry();
-        return;
     }
 
     const workspaces = await GetWorkspaces(
-        await JoinPaths(workingEntry, "package.json"),
+        env.root,
     );
 
-    if (!workspaces) {
+    if (!workspaces || workspaces.length === 0) {
         await addTheEntry();
         return;
     }
@@ -113,6 +112,7 @@ export async function AddProject(
     await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
         append: true,
     });
+
     for (const workspace of workspaces) {
         await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workspace}\n`, {
             append: true,
@@ -131,14 +131,19 @@ export async function AddProject(
  *
  * @async
  * @param {string} entry Path to the project.
- * @param {boolean} isBareRemoval If true, it'll remove the project without spotting, assuming it's a valid path.
  * @returns {Promise<void>}
  */
 export async function RemoveProject(
-    entry: string,
-    isBareRemoval: boolean,
+    entry: string | null,
 ): Promise<void> {
-    const workingEntry = isBareRemoval ? await ParsePath(entry) : await SpotProject(entry.trim());
+    if (!entry) {
+        throw new FknError(
+            "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+            "You didn't provide a path.",
+        );
+    }
+
+    const workingEntry = await SpotProject(entry.trim());
 
     if (!workingEntry) {
         await LogStuff(
@@ -235,7 +240,7 @@ async function CleanupProjects(): Promise<0 | 1 | 2> {
         return 2;
     }
     for (const target of result) {
-        await RemoveProject(target.project, true);
+        await RemoveProject(target.project);
     }
     await LogStuff(`That worked out!`, "tick");
     return 0;
@@ -343,22 +348,10 @@ export default async function TheManager(args: string[]) {
 
     switch (command.toLowerCase()) {
         case "add":
-            if (!secondArg || secondArg === null) {
-                throw new FknError(
-                    "Manager__ProjectInteractionInvalidCauseNoPathProvided",
-                    "You didn't provide a path.",
-                );
-            }
             await AddProject(secondArg);
             break;
         case "remove":
-            if (!secondArg || secondArg === null) {
-                throw new FknError(
-                    "Manager__ProjectInteractionInvalidCauseNoPathProvided",
-                    "You didn't provide a path.",
-                );
-            }
-            await RemoveProject(secondArg, false);
+            await RemoveProject(secondArg);
             break;
         case "list":
             if (secondArg) {
