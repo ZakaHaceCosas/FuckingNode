@@ -134,7 +134,7 @@ export async function AddProject(
  * @param {boolean} isBareRemoval If true, it'll remove the project without spotting, assuming it's a valid path.
  * @returns {Promise<void>}
  */
-async function RemoveProject(
+export async function RemoveProject(
     entry: string,
     isBareRemoval: boolean,
 ): Promise<void> {
