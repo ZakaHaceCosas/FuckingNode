@@ -1,6 +1,6 @@
 {
     "name": "@zakahacecosas/fuckingnode",
-    "version": "2.2.0",
+    "version": "2.2.1",
     "exports": {
         ".": "./src/main.ts"
     },
