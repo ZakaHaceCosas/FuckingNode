@@ -53,6 +53,11 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 throw new Error(`Project not found at ${project}... what's up?`);
             }
             Deno.chdir(workingProject);
+            console.log("");
+            await LogStuff(
+                `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
+                "package",
+            );
             const { doClean, doUpdate, doPrettify, doLint, doDestroy } = UnderstandProjectSettings.protection(
                 await GetProjectSettings(project),
                 {
@@ -71,6 +76,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 doDestroy,
                 commit,
                 realIntensity,
+                verbose,
             );
             Deno.chdir(originalLocation);
             return;
@@ -111,9 +117,10 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
                 if (lockfiles.length > 0) {
                     if (lockfiles.length === 1) {
+                        console.log("");
                         await LogStuff(
                             `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
-                            "working",
+                            "package",
                         );
                         await PerformCleaning(
                             project,
@@ -124,6 +131,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                             doDestroy,
                             commit,
                             realIntensity,
+                            verbose,
                         );
                     } else {
                         await LogStuff(

@@ -221,7 +221,7 @@ updateCmdOverride: "update"
 
 ### Show additional info during cleanup
 
-There's a `--verbose` flag that can be passed to `fuckingnode clean`. For now it'll show begin and end timestamps for the cleanup process, plus a report showing how much time did it take us to clean each individual project.
+There's a `--verbose` flag that can be passed to `fuckingnode clean`. It'll show the real output of all commands that are being executed, begin and end timestamps for the cleanup process, plus a report showing how much time did it take us to clean each individual project.
 
 ---
 

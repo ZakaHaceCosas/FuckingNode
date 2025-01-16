@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Changed
+
+- Now sync output of command is hidden behind `--verbose`.
+
 ### Fixed
 
 - Fixed `--self` not being recognized for per-project cleanup.

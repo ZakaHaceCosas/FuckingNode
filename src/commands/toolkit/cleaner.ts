@@ -17,32 +17,35 @@ import type { FkNodeYaml } from "../../types/config_files.ts";
  */
 const ProjectCleaningFeatures = {
     Update: async (
-        projectPath: string,
+        // projectPath: string,
         projectName: string,
         env: ProjectEnv,
         settings: FkNodeYaml,
+        verbose: boolean,
     ) => {
         const { commands } = env;
         await LogStuff(
-            `Updating using ${commands.base} for ${projectPath}.`,
-            "package",
+            `Updating ${projectName}.`,
+            "working",
         );
         if (
             settings.updateCmdOverride && settings.updateCmdOverride.trim() !== "" &&
             settings.updateCmdOverride !== "__USE_DEFAULT"
         ) {
-            await LogStuff(`${commands.run.join(" ")} ${settings.updateCmdOverride}\n`, "package");
+            await LogStuff(`${commands.run.join(" ")} ${settings.updateCmdOverride}`, "wip");
             const output = await Commander(
                 commands.run[0],
                 [commands.run[1], settings.updateCmdOverride],
+                verbose,
             );
             if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
             return;
         } else {
-            await LogStuff(`${commands.base} ${commands.update}\n`, "package");
+            await LogStuff(`${commands.base} ${commands.update}`, "wip");
             const output = await Commander(
                 commands.base,
                 commands.update,
+                verbose,
             );
             if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
             return;
@@ -54,6 +57,7 @@ const ProjectCleaningFeatures = {
         env: ProjectEnv,
         // settings: FkNodeYaml,
         intensity: CleanerIntensity,
+        verbose: boolean,
     ) => {
         const { commands } = env;
         if (commands.clean === "__UNSUPPORTED") {
@@ -65,13 +69,14 @@ const ProjectCleaningFeatures = {
             return;
         }
         await LogStuff(
-            `Cleaning using ${commands.base} for ${projectName}.`,
-            "package",
+            `Cleaning ${projectName}.`,
+            "working",
         );
         for (const args of commands.clean) {
-            await LogStuff(`${commands.base} ${args.join(" ")}\n`, "package");
-            await Commander(commands.base, args);
+            await LogStuff(`${commands.base} ${args.join(" ")}`, "wip");
+            await Commander(commands.base, args, verbose);
         }
+        await LogStuff(`Cleaned ${projectName}!`, "tick");
         if (intensity === "maxim") {
             await LogStuff(
                 `Maxim pruning for ${projectName}`,
@@ -99,15 +104,21 @@ const ProjectCleaningFeatures = {
         projectName: string,
         env: ProjectEnv,
         settings: FkNodeYaml,
+        verbose: boolean,
     ) => {
         const { commands } = env;
         if (env.manager === "deno") return; // unsupported
         if (!settings.lintCmd || settings.lintCmd.trim() === "") return;
+        await LogStuff(
+            `Linting ${projectName}.`,
+            "working",
+        );
         if (settings.lintCmd === "__ESLINT") {
             const dependencies = (env.main.content as NodePkgJson).dependencies;
             if (!dependencies || !dependencies["eslint"]) {
                 await LogStuff(
                     `Can't lint ${projectName}. No lint command was specified and ESLint is not installed.`,
+                    "bruh",
                 );
                 return;
             }
@@ -125,6 +136,7 @@ const ProjectCleaningFeatures = {
                         "--fix",
                         ".",
                     ],
+                verbose,
             );
             if (output.success) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
@@ -132,6 +144,7 @@ const ProjectCleaningFeatures = {
             const output = await Commander(
                 commands.base,
                 ["run", settings.lintCmd],
+                verbose,
             );
             if (output.success) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
@@ -142,24 +155,37 @@ const ProjectCleaningFeatures = {
         projectName: string,
         env: ProjectEnv,
         settings: FkNodeYaml,
+        verbose: boolean,
     ) => {
         const { commands } = env;
+        await LogStuff(
+            `Prettifying ${projectName}.`,
+            "working",
+        );
         if (commands.base === "deno") {
             const output = await Commander(
                 "deno",
                 [
                     "fmt",
                 ],
+                verbose,
             ); // customization unsupported - it should work from deno.json, tho
             if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
         }
-        if (!settings.prettyCmd || settings.prettyCmd.trim() === "") return;
+        if (!settings.prettyCmd || settings.prettyCmd.trim() === "") {
+            await LogStuff(
+                `Can't prettify ${projectName}. No prettify command was specified.`,
+                "bruh",
+            );
+            return;
+        }
         if (settings.prettyCmd === "__PRETTIER") {
             const dependencies = (env.main.content as NodePkgJson).dependencies;
             if (!dependencies || !dependencies["prettier"]) {
                 await LogStuff(
                     `Can't prettify ${projectName}. No prettify command was specified and Prettier is not installed.`,
+                    "bruh",
                 );
                 return;
             }
@@ -177,6 +203,7 @@ const ProjectCleaningFeatures = {
                         "--w",
                         ".",
                     ],
+                    verbose
             );
             if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
@@ -184,6 +211,7 @@ const ProjectCleaningFeatures = {
             const output = await Commander(
                 commands.base,
                 ["run", settings.prettyCmd],
+                verbose
             );
             if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
@@ -193,6 +221,7 @@ const ProjectCleaningFeatures = {
         settings: FkNodeYaml,
         project: string,
         intensity: CleanerIntensity,
+        verbose: boolean,
     ) => {
         if (!settings.destroy) return;
         if (
@@ -211,10 +240,16 @@ const ProjectCleaningFeatures = {
                 continue;
             } catch (e) {
                 if (String(e).includes("os error 2")) {
-                    await LogStuff(`Didn't destroy ${ColorString(path, "bold")}: it does not exist!`, "warn", "bright-yellow");
+                    await LogStuff(
+                        `Didn't destroy ${ColorString(path, "bold")}: it does not exist!`,
+                        "warn",
+                        "bright-yellow",
+                        undefined,
+                        verbose,
+                    );
                     continue;
                 }
-                await LogStuff(`Error destroying ${path}: ${e}`, "error", "red");
+                await LogStuff(`Error destroying ${path}: ${e}`, "error", "red", undefined, verbose);
                 continue;
             }
         }
@@ -226,6 +261,7 @@ const ProjectCleaningFeatures = {
         shouldUpdate: boolean,
         shouldLint: boolean,
         shouldPrettify: boolean,
+        verbose: boolean,
     ) => {
         if (!shouldUpdate && !shouldLint && !shouldPrettify) {
             await LogStuff("No actions to be committed.", "bruh");
@@ -266,6 +302,7 @@ const ProjectCleaningFeatures = {
                 "add",
                 "-A",
             ],
+            verbose,
         );
         const output = await Commander(
             "git",
@@ -276,6 +313,7 @@ const ProjectCleaningFeatures = {
                 "-m",
                 commitMessage,
             ],
+            verbose,
         );
         if (output.success) await LogStuff(`Committed your changes to ${await NameProject(project, "name")}!`, "tick");
         return;
@@ -290,10 +328,12 @@ const ProjectCleaningFeatures = {
  * @param {string} projectInQuestion
  * @param {boolean} shouldUpdate
  * @param {boolean} shouldClean
+ * @param {boolean} shouldLint
  * @param {boolean} shouldPrettify
  * @param {boolean} shouldDestroy
  * @param {boolean} shouldCommit
  * @param {("normal" | "hard" | "maxim")} intensity
+ * @param {boolean} verboseLogging
  * @returns {Promise<void>}
  */
 export async function PerformCleaning(
@@ -305,6 +345,7 @@ export async function PerformCleaning(
     shouldDestroy: boolean,
     shouldCommit: boolean,
     intensity: "normal" | "hard" | "maxim",
+    verboseLogging: boolean,
 ): Promise<void> {
     try {
         const motherfuckerInQuestion = await ParsePath(projectInQuestion);
@@ -327,14 +368,15 @@ export async function PerformCleaning(
                 projectName,
                 workingEnv,
                 intensity,
+                verboseLogging,
             );
         }
         if (whatShouldWeDo["update"]) {
             await ProjectCleaningFeatures.Update(
-                motherfuckerInQuestion,
                 projectName,
                 workingEnv,
                 settings,
+                verboseLogging,
             );
         }
         if (whatShouldWeDo["lint"]) {
@@ -342,6 +384,7 @@ export async function PerformCleaning(
                 projectName,
                 workingEnv,
                 settings,
+                verboseLogging,
             );
         }
         if (whatShouldWeDo["pretty"]) {
@@ -349,6 +392,7 @@ export async function PerformCleaning(
                 projectName,
                 workingEnv,
                 settings,
+                verboseLogging,
             );
         }
         if (whatShouldWeDo["destroy"]) {
@@ -356,6 +400,7 @@ export async function PerformCleaning(
                 settings,
                 motherfuckerInQuestion,
                 intensity,
+                verboseLogging,
             );
         }
         if (whatShouldWeDo["commit"]) {
@@ -366,6 +411,7 @@ export async function PerformCleaning(
                 whatShouldWeDo["update"],
                 whatShouldWeDo["lint"],
                 whatShouldWeDo["pretty"],
+                verboseLogging,
             );
         }
     } catch (e) {
@@ -385,7 +431,7 @@ export async function PerformCleaning(
 export async function PerformHardCleanup(): Promise<void> {
     await LogStuff(
         `Time for hard-pruning! ${ColorString("Wait patiently, please (caches will take a while to clean).", "italic")}`,
-        "package",
+        "working",
     );
 
     const tmp = await Deno.makeTempDir({

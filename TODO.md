@@ -62,7 +62,7 @@
   - [ ] Follow my own f\*cking guidelines, there are different ways of coding mixed up in the same project :skull:.
 - [ ] Add more `ColorString()` options and use them in more places.
 - [x] Add an about command.
-- [ ] More verbose logging maybe?
+- [x] More verbose logging maybe?
 - [x] Allow to use a project's name instead of it's path, and have the app to recognize it.
 
 ## Random ideas

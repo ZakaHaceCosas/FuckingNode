@@ -32,7 +32,7 @@ Available flags are:
 - `--destroy` - does the obvious (destroys). if not obvious enough, removes files and directories you specify, such as `.react`, `out/`, `dist/`, or anything you'd like to do away with.
 - `--commit` - does the obvious (commits)
 - `--update` - does the obvious (updates)
-- `--verbose` - does the obvious (makes logging more verbose) (in practice, only difference is that begin and end timestamps are shown, and a "Report" is shown at the end of the cleanup process showing elapsed time for each of your projects)
+- `--verbose` - does the obvious (makes logging more verbose)
 
 !!! abstract "Cross-runtime support notice"
 
