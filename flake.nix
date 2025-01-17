@@ -10,7 +10,7 @@
       system = "x86_64-linux";
       version = "2.2.1";
       downloadUrl = "https://github.com/ZakaHaceCosas/FuckingNode/releases/download/${version}/FuckingNode-linux_x86_64";
-      sha256 = "1mg245lqnl6n96dwkcwc3x35sjhvihhcsklc99sg316g25xnhx2r";
+      sha256 = "16k9q2wq3j5qwk3dpbs1059wrd017wcbxbh7p7a6yzlg50apxc5v";
 
       pkgs = import nixpkgs {
         inherit system;
