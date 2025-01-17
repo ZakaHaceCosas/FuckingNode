@@ -7,7 +7,7 @@ import TheHelper from "./commands/help.ts";
 import TheUpdater from "./commands/updater.ts";
 import TheSettings from "./commands/settings.ts";
 import TheAbouter from "./commands/about.ts";
-import TheKickstart from "./commands/kickstart.ts";
+import TheKickstarter from "./commands/kickstart.ts";
 import TheAuditer from "./commands/audit.ts";
 // other things
 import { VERSION } from "./constants.ts";
@@ -122,7 +122,7 @@ async function main(command: string) {
                 await TheManager(Deno.args);
                 break;
             case "kickstart":
-                await TheKickstart({
+                await TheKickstarter({
                     gitUrl: Deno.args[1] ?? "",
                     path: Deno.args[2] ?? "",
                     manager: Deno.args[3] ?? "",

@@ -4,7 +4,7 @@ import { CheckForDir, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject } from "../functions/projects.ts";
 import type { PKG_MANAGERS } from "../types/package_managers.ts";
-import type { TheKickstartConstructedParams } from "./constructors/command.ts";
+import type { TheKickstarterConstructedParams } from "./constructors/command.ts";
 import { AddProject } from "./manage.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 
@@ -45,7 +45,7 @@ async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favoriteEditor"]) {
     }
 }
 
-export default async function TheKickstart(params: TheKickstartConstructedParams) {
+export default async function TheKickstarter(params: TheKickstarterConstructedParams) {
     try {
         const { gitUrl, path, manager } = params;
 

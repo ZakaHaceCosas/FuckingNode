@@ -67,9 +67,8 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
     const { latestVer } = needsToUpdate.updater;
 
     if (IsUpToDate(latestVer)) {
-        if (!params.silent) {
-            await LogStuff(`You're up to date! ${ColorString(VERSION, "bright-green")} is the latest.`, "tick");
-        }
+        if (params.silent) return;
+        await LogStuff(`You're up to date! ${ColorString(VERSION, "bright-green")} is the latest.`, "tick");
         return;
     } else {
         await TellAboutUpdate(latestVer);
