@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `manager add` allowing to add _one_ duplicate of each entry.
 - Fixed `manager add` project-env errors being ambiguous. Now they're more specific (missing lockfile, missing path, etc...).
 - Fixed project paths not being correctly handled in some cases.
+- Fixed the CLI running init task (check for updates & config files) twice.
 
 ## [2.2.1] 16-01-2025
 

@@ -22,11 +22,7 @@ async function init() {
     await RunScheduledTasks();
 }
 
-await init();
-
-const [firstCommand] = Deno.args;
-
-if (!firstCommand) {
+if (!Deno.args[0]) {
     await init();
     await TheHelper({});
     Deno.exit(0);
@@ -180,4 +176,4 @@ async function main(command: string) {
     }
 }
 
-await main(firstCommand);
+await main(Deno.args[0]);
