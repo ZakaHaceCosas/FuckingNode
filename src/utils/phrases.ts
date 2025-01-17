@@ -4,12 +4,12 @@
 /**
  * This file contains random phrases for the about page. You're not supposed to edit it, however funny additions are always welcome :).
  */
+
 import { APP_NAME, I_LIKE_JS } from "../constants.ts";
 
 // some of these are jokes only me and some people (mostly friends) will get
 // others are just really random (but real) phrases
 const internalJokes = [
-    "Dima approves",
     "Dima definitely approves", // indeed he does
     "Sokora Seal of Approval", // and i'm proud of it
     "verified, just as sokora", // indeed
@@ -38,7 +38,6 @@ const internalQuotes = [
 
 const coolJokes = [
     "that's what she said",
-    "runs faster than a Roblox server on a saturday",
     "stay safe",
     "i don't get paid for writing phrases... here's another one",
     `This PC has been running for ${Math.ceil(Deno.osUptime() / 60)} minutes.`,
@@ -60,11 +59,12 @@ const devJokes = [
     "REACT_DO_NOT_USE_THIS_OR_YOU_WILL_BE_FIRED",
     "Proudly running from a CLI capable of running Doom",
     "rm -rf .git/",
-    "CTRL+C & CTRL+V, winners of the Most Used Key award",
+    "rm -rf node_modules/",
+    "runs faster than a Roblox server on a saturday",
 ];
 
 const appRelatedJokes = [
-    "funnily enough, it could be an(other) npm package",
+    "funnily enough, this could be an(other) npm package",
     "using javascript to fix javascript (again)",
     "made in Deno, made for Node, made eating a Bun",
     "don't tell mommy i said the f-word",
@@ -75,10 +75,10 @@ const appRelatedJokes = [
 ];
 
 const brandingJokes = [
-    "Make JS light again!",
-    `${I_LIKE_JS.FKN} awesome`,
+    "Make JS great again!",
     `${APP_NAME.CASED}/Deno/Bun, actually`,
     `${I_LIKE_JS.FKN}JSRuntimesInGeneral, actually`,
+    `${APP_NAME.CASED}? More like ${I_LIKE_JS.FKN}Cool!`
 ];
 
 const quotes = [
