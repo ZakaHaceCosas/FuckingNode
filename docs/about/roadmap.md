@@ -31,9 +31,9 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 - [ ] Make a proper logo for the project.
 - [ ] New features
-    - [ ] `fuckingnode commit "message"` to automatically run commands before committing and only committing if they all succeed (return `0`). With the "Shorted commands" goal, it could be something like `fkcommit "message"`.
-    - [ ] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
-    - [ ] `fuckingnode give-up <project>` to automatically add a generic "unmaintained" message to the README.md file from the root (if any), give the project a last maintenance (running `fuckingnode clean` with all features enabled), commit all of that, push it, and then removing the entire project's folder from the filesystem (and removing the project from the project list).
+    - [ ] `fuckingnode commit "message"` to `REDACTED`.
+    - [ ] `fuckingnode release "version"` to `REDACTED`.
+    - [ ] `fuckingnode give-up <project>` to `REDACTED`.
 - [ ] Better installer
     - [X] Revamped `.ps1` based installer for Windows.
     - [ ] New `.sh` based installed for mac and Linux.
@@ -50,5 +50,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [ ] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [ ] Better error handling.
-- [ ] G`REDACTED`
-- [ ] C`REDACTED`
+- [ ] Cr`REDACTED`
+    - [ ] G`REDACTED`
+    - [ ] C`REDACTED`
+    - [ ] P`REDACTED`
