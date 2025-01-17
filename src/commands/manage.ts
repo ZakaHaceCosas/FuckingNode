@@ -145,14 +145,6 @@ export async function RemoveProject(
 
     const workingEntry = await SpotProject(entry.trim());
 
-    if (!workingEntry) {
-        await LogStuff(
-            `Bruh, that mf wasn't found.\nAnother typo? We took: ${entry.trim()}`,
-            "error",
-        );
-        return;
-    }
-
     const list = await GetAllProjects(false);
     const index = list.indexOf(workingEntry);
 

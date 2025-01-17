@@ -5,7 +5,6 @@ import { Commander } from "../../functions/cli.ts";
 import { ColorString, LogStuff, MultiColorString } from "../../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../../functions/projects.ts";
 import type { FkNodeSecurityAudit, ParsedNpmReport, SecurityVulnerability } from "../../types/audit.ts";
-import { FknError } from "../../utils/error.ts";
 
 /**
  * Gets a package's security vulnerabilities from OSV.dev.
@@ -501,9 +500,6 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
 > {
     try {
         const workingPath = await SpotProject(project);
-        if (!workingPath) {
-            throw new FknError("Generic__NonFoundProject");
-        }
         const env = await GetProjectEnvironment(workingPath);
         const name = await NameProject(env.root, "name-ver");
         const current = Deno.cwd();

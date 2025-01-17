@@ -65,7 +65,7 @@ export class FknError extends Error {
                 break;
             case "Generic__NonFoundProject":
                 hint =
-                    `Check for typos or a wrong name - what you provided (either a project's name / absolute path / relative path) was not found.`;
+                    `Check for typos or a wrong name. Given input (either a project's name / absolute path / relative path) wasn't found. Keep in mind a project must be added to your list (add it via 'manager add <path>') so we can work with it.`;
                 break;
             default:
                 hint = null;
@@ -90,7 +90,7 @@ export class FknError extends Error {
         if (hint !== null) {
             messageParts.push(
                 "----------",
-                ColorString("Hint: ", "bright-blue") + ColorString(hint, "italic"),
+                `${ColorString("Hint:", "bright-blue")} ${ColorString(hint, "italic")}`,
                 "----------",
             );
         }

@@ -8,10 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Changed
+
+- Now error messages for not found / not added projects are consistent.
+
 ### Fixed
 
 - Fixed `manager add` allowing to add _one_ duplicate of each entry.
 - Fixed `manager add` project-env errors being ambiguous. Now they're more specific (missing lockfile, missing path, etc...).
+- Fixed project paths not being correctly handled in some cases.
 
 ## [2.2.1] 16-01-2025
 

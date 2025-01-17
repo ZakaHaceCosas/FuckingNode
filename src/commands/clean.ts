@@ -49,9 +49,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
         if (project !== 0) {
             const workingProject = await SpotProject(project);
-            if (!workingProject) {
-                throw new Error(`Project not found at ${project}... what's up?`);
-            }
             Deno.chdir(workingProject);
             console.log("");
             await LogStuff(

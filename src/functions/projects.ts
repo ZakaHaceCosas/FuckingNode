@@ -545,24 +545,36 @@ export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
 }
 
 /**
- * Tries to spot the given project name inside of the project list. If not found, returns null. It also works when you pass a path, parsing it to handle `--self` and relative paths.
+ * Tries to spot the given project name inside of the project list, returning its root path. If not found, throws an error. It also works when you pass a path, parsing it to handle `--self` and relative paths.
  *
  * @export
  * @async
- * @param {string} name
- * @returns {Promise<string | null>}
+ * @param {string} name Project's name, path, or `--self`.
+ * @returns {Promise<string>}
  */
-export async function SpotProject(name: string): Promise<string | null> {
-    const allProjects = await GetAllProjects();
+export async function SpotProject(name: string): Promise<string> {
     const workingProject = await ParsePath(name);
+    const allProjects = await GetAllProjects();
     if (allProjects.includes(workingProject)) {
         return workingProject;
     }
+
+    const normalizedInputName = name.toLowerCase().trim();
+
     for (const project of allProjects) {
         const projectName = await NameProject(project, "name");
-        if (name.toLowerCase() === NaturalizeFormattedString(projectName).toLowerCase()) {
+        const normalizedProjectName = NaturalizeFormattedString(projectName).toLowerCase();
+        if (normalizedInputName === normalizedProjectName) {
             return project; // (assume it's already ParsePath-ed())
         }
     }
-    return null;
+
+    if (await CheckForPath(workingProject)) {
+        throw new FknError(
+            "Generic__NonFoundProject",
+            `'${name.trim()}' (=> '${workingProject}') exists but is not an added project.`,
+        );
+    } else {
+        throw new FknError("Generic__NonFoundProject", `'${name.trim}' (=> '${workingProject}') does not exist.`);
+    }
 }

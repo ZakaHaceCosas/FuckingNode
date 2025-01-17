@@ -41,9 +41,6 @@ export default async function TheMigrator(params: TheMigratorConstructedParams) 
 
     try {
         const workingProject = await SpotProject(project);
-        if (!workingProject) {
-            throw new Error(`${project} wasn't found. Is the project name right?`);
-        }
         const workingEnv = await GetProjectEnvironment(workingProject);
         const workingTarget = desiredManager.toLowerCase().trim();
 
