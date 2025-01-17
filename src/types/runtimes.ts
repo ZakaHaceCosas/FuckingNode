@@ -138,9 +138,15 @@ export interface ProjectEnv {
         /**
          * Audit commands.
          *
-         * @type {(string[] | "__UNSUPPORTED")}
+         * @type {(["audit", "--ignore-registry-errors"] | ["audit", "--include-workspace-root"] | "__UNSUPPORTED")}
          */
-        audit: string[] | "__UNSUPPORTED";
+        audit: ["audit", "--ignore-registry-errors"] | ["audit", "--include-workspace-root"] | "__UNSUPPORTED";
+        /**
+         * Package publish commands.
+         *
+         * @type {(["publish"] | ["publish", "--non-interactive"] | ["publish", "--check=all"])}
+         */
+        publish: ["publish"] | ["publish", "--non-interactive"] | ["publish", "--check=all"];
     };
     /**
      * File paths to valid workspaces.

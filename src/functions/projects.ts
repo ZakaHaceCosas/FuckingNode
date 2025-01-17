@@ -219,7 +219,7 @@ export async function ValidateProject(entry: string): Promise<true | PROJECT_ERR
 
     if (!(await CheckForPath(env.main.path))) return "NoPkgJson";
     const list = await GetAllProjects();
-    const isDuplicate = (list.filter((item) => item === workingEntry).length) > 1;
+    const isDuplicate = (list.filter((item) => item === workingEntry).length) >= 1;
 
     if (isDuplicate) return "IsDuplicate";
     if (!(await CheckForPath(env.lockfile.path))) return "NoLockfile";
@@ -319,7 +319,14 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
 export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
     try {
         const workingPath = await ParsePath(path);
-        if (!(await CheckForPath(workingPath))) throw new Error(`(PROJECT-ENV) Path ${path} doesn't exist.`);
+
+        if (!(await CheckForPath(workingPath))) {
+            throw new FknError(
+                "Internal__Projects__CantDetermineEnv",
+                `Path ${workingPath} doesn't exist.`,
+            );
+        }
+
         const trash = await JoinPaths(workingPath, "node_modules");
         const workspaces = await GetWorkspaces(workingPath) ?? "no";
 
@@ -364,6 +371,14 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
             pathChecks.deno.jsonc;
         const isBun = pathChecks.bun.lock ||
             pathChecks.bun.toml;
+        const isNode = pathChecks.node.lockNpm || pathChecks.node.lockPnpm || pathChecks.node.lockYarn;
+
+        if (!isNode && !isBun && !isDeno) {
+            throw new FknError(
+                "Internal__Projects__CantDetermineEnv",
+                `No lockfile present (required for the project to work) at ${ColorString(path, "bold")}.`,
+            );
+        }
 
         const mainPath = isDeno
             ? pathChecks.deno.jsonc ? paths.deno.jsonc : pathChecks.deno.json ? paths.deno.json : paths.node.json
@@ -392,6 +407,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: "__UNSUPPORTED",
                     run: ["bun", "run"],
                     audit: "__UNSUPPORTED",
+                    publish: ["publish"],
                 },
                 workspaces,
             };
@@ -417,6 +433,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: "__UNSUPPORTED",
                     run: ["deno", "task"],
                     audit: "__UNSUPPORTED",
+                    publish: ["publish", "--check=all"],
                 },
                 workspaces,
             };
@@ -442,6 +459,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: [["autoclean", "--force"]],
                     run: ["yarn", "run"],
                     audit: "__UNSUPPORTED",
+                    publish: ["publish", "--non-interactive"],
                 },
                 workspaces,
             };
@@ -466,7 +484,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     update: ["update"],
                     clean: [["dedupe"], ["prune"]],
                     run: ["pnpm", "run"],
-                    audit: "__UNSUPPORTED", // ["audit", "--ignore-registry-errors"],
+                    audit: ["audit", "--ignore-registry-errors"],
+                    publish: ["publish"],
                 },
                 workspaces,
             };
@@ -492,6 +511,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                     clean: [["dedupe"], ["prune"]],
                     run: ["npm", "run"],
                     audit: ["audit", "--include-workspace-root"],
+                    publish: ["publish"],
                 },
                 workspaces,
             };
@@ -499,7 +519,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
 
         throw new FknError(
             "Internal__Projects__CantDetermineEnv",
-            `Happened with ${ColorString(path, "bold")}`,
+            `Unknown reason. Happened with ${ColorString(path, "bold")}.`,
         );
     } catch (e) {
         await GenericErrorHandler(e);

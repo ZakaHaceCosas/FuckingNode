@@ -153,6 +153,12 @@ export interface FkNodeYaml {
         flaglessPretty?: boolean;
         flaglessCommit?: boolean;
     };
+    /**
+     * A task (run) to be executed upon running the release command.
+     *
+     * @type {?string}
+     */
+    releaseCmd?: string;
 }
 
 /**
@@ -251,6 +257,10 @@ export function ValidateFkNodeYaml(
                 return false;
             }
         }
+    }
+
+    if (obj.releaseCmd !== undefined && typeof obj.releaseCmd !== "string") {
+        return false;
     }
 
     return true;
