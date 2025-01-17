@@ -49,22 +49,12 @@ export async function AddProject(
 
     if (validation === "IsDuplicate") {
         await LogStuff(
-            `Bruh, you already added this ${I_LIKE_JS.MF}! (${projectName})`,
+            `Bruh, you already added the ${projectName} ${I_LIKE_JS.MF}!`,
             "error",
         );
         return;
     }
-    if (validation === "NoPkgJson") {
-        const addAnyway = await LogStuff(
-            `This path doesn't have a package.json. Are you sure it's a Node project?\nConfirm you want to add it\nPS. You typed: ${workingEntry}`,
-            "what",
-            undefined,
-            true,
-        );
-        if (!addAnyway) return;
-        await addTheEntry();
-        return;
-    }
+
     if (env.runtime === "deno") {
         await LogStuff(
             // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao

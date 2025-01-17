@@ -219,7 +219,7 @@ export async function ValidateProject(entry: string): Promise<true | PROJECT_ERR
 
     if (!(await CheckForPath(env.main.path))) return "NoPkgJson";
     const list = await GetAllProjects();
-    const isDuplicate = (list.filter((item) => item === workingEntry).length) >= 1;
+    const isDuplicate = (list.filter((item) => item.trim() === workingEntry.trim()).length) > 1; // ! TODO - fix this, it works with manager cleanup but doesn't with add (using >= fixes that but breaks cleanup)
 
     if (isDuplicate) return "IsDuplicate";
     if (!(await CheckForPath(env.lockfile.path))) return "NoLockfile";
@@ -372,6 +372,13 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
         const isBun = pathChecks.bun.lock ||
             pathChecks.bun.toml;
         const isNode = pathChecks.node.lockNpm || pathChecks.node.lockPnpm || pathChecks.node.lockYarn;
+
+        if (!pathChecks.node.json && !pathChecks.deno.json && !pathChecks.bun.toml) {
+            throw new FknError(
+                "Internal__Projects__CantDetermineEnv",
+                `No main file present (package.json, deno.json...) at ${ColorString(path, "bold")}.`,
+            );
+        }
 
         if (!isNode && !isBun && !isDeno) {
             throw new FknError(
