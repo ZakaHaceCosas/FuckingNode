@@ -78,7 +78,7 @@ const brandingJokes = [
     "Make JS great again!",
     `${APP_NAME.CASED}/Deno/Bun, actually`,
     `${I_LIKE_JS.FKN}JSRuntimesInGeneral, actually`,
-    `${APP_NAME.CASED}? More like ${I_LIKE_JS.FKN}Cool!`
+    `${APP_NAME.CASED}? More like ${I_LIKE_JS.FKN}Cool!`,
 ];
 
 const quotes = [

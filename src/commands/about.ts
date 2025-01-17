@@ -58,6 +58,6 @@ export default async function TheAbouter() {
     await LogStuff(
         `${ColorString("Another side project", "italic")}, this one born ${
             ColorString("September 28, 2024", "cyan")
-        } (a bit earlier, but 'Initial commit' in the 1st repo was then)`,
+        } (a bit earlier but 'Initial commit' in the 1st repo was then)`,
     );
 }
