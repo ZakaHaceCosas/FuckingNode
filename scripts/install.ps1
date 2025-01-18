@@ -41,6 +41,28 @@ Function Get-LatestReleaseUrl {
     }
 }
 
+# creates a .bat shortcut to allow for fknode to exist alongside fuckingnode in the CLI
+Function New-Shortcut {
+    param (
+        [string]$installDir,
+        [string]$appName
+    )
+    try {
+        Write-Host "Creating shortcut for CLI..."
+
+        $batContent = "@echo off`n%~dp0$($appName).exe %*"
+        $batPath = Join-Path -Path $installDir -ChildPath "fknode.bat"
+
+        Set-Content -Path $batPath -Value $batContent -Encoding ASCII
+
+        Write-Host "Shortcut created successfully at $batPath"
+    }
+    catch {
+        Write-Error "Failed to create a .bat shortcut for the CLI: $_"
+        Throw $_
+    }
+}
+
 # download the app
 Function Install-App {
     param (
@@ -152,6 +174,7 @@ Function Installer {
         $url = Get-LatestReleaseUrl
         Install-App -url $url
         Add-AppToPath
+        New-Shortcut -installDir $installDir -appName $APP_NAME.CLI
         Write-Host "Installed successfully! Restart your terminal for it to work."
     }
     catch {

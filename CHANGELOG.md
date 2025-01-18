@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Added
+
+- (WIP; Windows only) Added new shell-based installers (`.ps1` for Windows, and soon `.sh` for macOS and Linux).
+- (WIP; Windows only) Added an `fknode` CLI shortcut. Equivalent to `fuckingnode`.
+- Added support for quick flags (or however you call those) for the `clean` command, so `-l` instead of `--lint` for example will work.
+
 ### Changed
 
 - Now error messages for not found / not added projects are consistent.

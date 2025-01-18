@@ -64,7 +64,7 @@ if (hasFlag("experimental-audit", false)) {
     }
 }
 
-if (hasFlag("version", true)) {
+if (hasFlag("version", true) && !Deno.args[1]) {
     await LogStuff(VERSION, "bulb", "bright-green");
     Deno.exit(0);
 }
@@ -76,7 +76,7 @@ async function main(command: string) {
     const projectArg = (
             Deno.args[2] &&
             Deno.args[2].trim() !== "" &&
-            ((!Deno.args[2].trim().startsWith("--") &&
+            (((!Deno.args[2].trim().startsWith("--") && !Deno.args[2].trim().startsWith("-")) &&
                 !ParseFlag("self", false).includes(Deno.args[2])) || ParseFlag("self", false).includes(Deno.args[2]))
         )
         ? Deno.args[2]
@@ -84,15 +84,15 @@ async function main(command: string) {
 
     const cleanerArgs: TheCleanerConstructedParams = {
         flags: {
-            verbose: flags.includes("--verbose"),
-            update: flags.includes("--update"),
-            lint: flags.includes("--lint"),
-            prettify: flags.includes("--pretty"),
-            commit: flags.includes("--commit"),
-            destroy: flags.includes("--destroy"),
+            verbose: hasFlag("verbose", true),
+            update: hasFlag("update", true),
+            lint: hasFlag("lint", true),
+            prettify: hasFlag("pretty", true),
+            commit: hasFlag("commit", true),
+            destroy: hasFlag("destroy", true),
         },
         parameters: {
-            intensity: (Deno.args[1] && Deno.args[1].trim() !== "" && !Deno.args[1].trim().startsWith("--"))
+            intensity: (Deno.args[1] && Deno.args[1].trim() !== "" && !Deno.args[1].trim().includes("--"))
                 ? Deno.args[1]
                 : (await GetSettings()).defaultCleanerIntensity,
             project: projectArg,
