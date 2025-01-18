@@ -50,7 +50,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] Shorthands, for example, `fkclean` instead of `fuckingnode clean`, which together with `defaultCleanerIntensity` setting and flagless features should handle everything.
 - [ ] Make `fuckingnode stats` actually useful
     - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
-- [ ] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
+- [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [ ] Better error handling.
 - [ ] Cr`REDACTED`
     - [ ] G`REDACTED`

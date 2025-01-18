@@ -74,13 +74,17 @@ async function main(command: string) {
 
     /* this is a bit unreadable, i admit */
     const projectArg = (
-            Deno.args[2] &&
-            Deno.args[2].trim() !== "" &&
-            (((!Deno.args[2].trim().startsWith("--") && !Deno.args[2].trim().startsWith("-")) &&
-                !ParseFlag("self", false).includes(Deno.args[2])) || ParseFlag("self", false).includes(Deno.args[2]))
+            Deno.args[1] &&
+            Deno.args[1].trim() !== "" &&
+            (((!Deno.args[1].trim().startsWith("--") && !Deno.args[1].trim().startsWith("-")) &&
+                !ParseFlag("self", false).includes(Deno.args[1])) || ParseFlag("self", false).includes(Deno.args[1]))
         )
-        ? Deno.args[2]
+        ? Deno.args[1]
         : 0 as const;
+
+    const intensityArg = (Deno.args[2] && Deno.args[2].trim() !== "" && !Deno.args[2].trim().includes("--"))
+        ? Deno.args[2]
+        : (await GetSettings()).defaultCleanerIntensity;
 
     const cleanerArgs: TheCleanerConstructedParams = {
         flags: {
@@ -92,9 +96,7 @@ async function main(command: string) {
             destroy: hasFlag("destroy", true),
         },
         parameters: {
-            intensity: (Deno.args[1] && Deno.args[1].trim() !== "" && !Deno.args[1].trim().includes("--"))
-                ? Deno.args[1]
-                : (await GetSettings()).defaultCleanerIntensity,
+            intensity: intensityArg,
             project: projectArg,
         },
     };

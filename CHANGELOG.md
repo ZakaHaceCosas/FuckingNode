@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Breaking changes
+
+- **Order of `clean` arguments swapped:** It's now `clean <project | "--"> <intensity | "--"> [...flags]` instead of `clean <intensity | "--"> <project | "--"> [...flags]`. This was made so the command makes more sense. E.g., `clean my-project hard`.
+
 ### Added
 
 - Added a new `maxim-only` intensity level. Plus, now `maxim` cleanup should work on per-project cleanup as well.
@@ -26,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed project paths not being correctly handled in some cases.
 - Fixed the CLI running init task (check for updates & config files) twice.
 - Fixed cleaner intensity being hypothetically case sensitive.
+- Fixed the confirmation for using maxim cleanup.
 
 ## [2.2.1] 16-01-2025
 
@@ -46,7 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [2.2.0] 15-01-2025
 
-### Breaking
+### Breaking changes
 
 - Update config file has been "reset" (renamed from `*-updates.yaml` to `*-schedule.yaml`). Last update check will be overwritten.
 

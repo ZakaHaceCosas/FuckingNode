@@ -564,10 +564,9 @@ export async function ValidateIntensity(intensity: string): Promise<CleanerInten
 
     if (workingIntensity === "maxim" || workingIntensity === "maxim-only") {
         const confirmMaxim = await LogStuff(
-            "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
+            "Are you sure you want to use maxim cleanup? It'll entirely remove the node_modules DIR for ALL of your projects.",
             "warn",
             ["bold", "italic"],
-            undefined,
             true,
         );
         return confirmMaxim === true ? workingIntensity : defaultIntensity;
