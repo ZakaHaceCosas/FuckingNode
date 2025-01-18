@@ -3,7 +3,7 @@ import { Commander, CommandExists } from "../../functions/cli.ts";
 import { GetSettings } from "../../functions/config.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
-import { GetProjectEnvironment, GetProjectSettings, NameProject } from "../../functions/projects.ts";
+import { GetProjectEnvironment, GetProjectSettings, NameProject, SpotProject } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
 import type { ALL_SUPPORTED_LOCKFILES } from "../../types/package_managers.ts";
 import type { NodePkgJson, ProjectEnv } from "../../types/runtimes.ts";
@@ -17,7 +17,6 @@ import type { FkNodeYaml } from "../../types/config_files.ts";
  */
 const ProjectCleaningFeatures = {
     Update: async (
-        // projectPath: string,
         projectName: string,
         env: ProjectEnv,
         settings: FkNodeYaml,
@@ -52,11 +51,8 @@ const ProjectCleaningFeatures = {
         }
     },
     Clean: async (
-        // projectPath: string,
         projectName: string,
         env: ProjectEnv,
-        // settings: FkNodeYaml,
-        intensity: CleanerIntensity,
         verbose: boolean,
     ) => {
         const { commands } = env;
@@ -77,30 +73,10 @@ const ProjectCleaningFeatures = {
             await Commander(commands.base, args, verbose);
         }
         await LogStuff(`Cleaned ${projectName}!`, "tick");
-        if (intensity === "maxim") {
-            await LogStuff(
-                `Maxim pruning for ${projectName}`,
-                "trash",
-            );
-            if (!(await CheckForPath(env.hall_of_trash))) {
-                await LogStuff(
-                    `Maxim pruning didn't find the node_modules DIR at ${projectName}. Skipping this ${I_LIKE_JS.MF}...`,
-                    "bruh",
-                );
-                return;
-            }
-            await Deno.remove(env.hall_of_trash, {
-                recursive: true,
-            });
-            await LogStuff(
-                `Maxim pruned ${projectName}.`,
-                "tick",
-            );
-        }
+
         return;
     },
     Lint: async (
-        // projectPath: string,
         projectName: string,
         env: ProjectEnv,
         settings: FkNodeYaml,
@@ -151,7 +127,6 @@ const ProjectCleaningFeatures = {
         }
     },
     Prettify: async (
-        // projectPath: string,
         projectName: string,
         env: ProjectEnv,
         settings: FkNodeYaml,
@@ -334,7 +309,10 @@ export async function PerformCleaning(
         const settings = await GetProjectSettings(motherfuckerInQuestion);
 
         /* "what should we do with the drunken sailor..." */
-        const whatShouldWeDo: Record<"update" | "lint" | "pretty" | "destroy" | "commit", boolean> = {
+        const whatShouldWeDo: Record<
+            "update" | "lint" | "pretty" | "destroy" | "commit",
+            boolean
+        > = {
             update: shouldUpdate || (settings.flagless?.flaglessUpdate === true),
             lint: shouldLint || (settings.flagless?.flaglessLint === true),
             pretty: shouldPrettify || (settings.flagless?.flaglessPretty === true),
@@ -346,7 +324,6 @@ export async function PerformCleaning(
             await ProjectCleaningFeatures.Clean(
                 projectName,
                 workingEnv,
-                intensity,
                 verboseLogging,
             );
         }
@@ -511,6 +488,47 @@ export async function PerformHardCleanup(): Promise<void> {
 }
 
 /**
+ * Performs a maxim cleanup, AKA removes node_modules.
+ *
+ * @export
+ * @async
+ * @param {string[]} projects Projects to be cleaned.
+ * @returns {Promise<void>}
+ */
+export async function PerformMaximCleanup(projects: string[]): Promise<void> {
+    await LogStuff(
+        `Time for maxim-pruning! ${ColorString("Wait patiently, please (node_modules takes a while to remove).", "italic")}`,
+        "working",
+    );
+
+    for (const project of projects) {
+        const workingProject = await SpotProject(project);
+        const name = await NameProject(workingProject, "name");
+        const env = await GetProjectEnvironment(workingProject);
+
+        await LogStuff(
+            `Maxim pruning for ${name}`,
+            "trash",
+        );
+        if (!(await CheckForPath(env.hall_of_trash))) {
+            await LogStuff(
+                `Maxim pruning didn't find the node_modules DIR at ${name}. Skipping this ${I_LIKE_JS.MF}...`,
+                "bruh",
+            );
+            return;
+        }
+        // hall_of_trash path should be absolute
+        await Deno.remove(env.hall_of_trash, {
+            recursive: true,
+        });
+        await LogStuff(
+            `Maxim pruned ${name}.`,
+            "tick",
+        );
+    }
+}
+
+/**
  * Validates the provided intensity and handles stuff like `--`.
  *
  * @export
@@ -519,30 +537,40 @@ export async function PerformHardCleanup(): Promise<void> {
  * @returns {Promise<CleanerIntensity>}
  */
 export async function ValidateIntensity(intensity: string): Promise<CleanerIntensity> {
-    if (!["hard", "hard-only", "normal", "maxim", "--"].includes(intensity)) {
+    const cleanedIntensity = intensity.trim().toLowerCase();
+
+    if (!["hard", "hard-only", "normal", "maxim", "maxim-only", "--"].includes(cleanedIntensity)) {
         throw new FknError("Cleaner__InvalidCleanerIntensity", `Provided intensity '${intensity}' is not valid.`);
     }
 
-    const workingIntensity = intensity as CleanerIntensity | "--";
+    const workingIntensity = cleanedIntensity as CleanerIntensity | "--";
     const defaultIntensity = (await GetSettings()).defaultCleanerIntensity;
 
     if (workingIntensity === "--") {
         return defaultIntensity;
     }
 
+    if (workingIntensity === "normal") {
+        return "normal";
+    }
+
+    if (workingIntensity === "hard") {
+        return "hard";
+    }
+
     if (workingIntensity === "hard-only") {
         return "hard-only";
     }
 
-    if (workingIntensity === "maxim") {
+    if (workingIntensity === "maxim" || workingIntensity === "maxim-only") {
         const confirmMaxim = await LogStuff(
             "Are you sure you want to use maxim cleaning? It will entirely remove the node_modules DIR for ALL of your projects.",
             "warn",
-            "italic",
+            ["bold", "italic"],
             undefined,
             true,
         );
-        return confirmMaxim === true ? "maxim" : defaultIntensity;
+        return confirmMaxim === true ? workingIntensity : defaultIntensity;
     } else {
         return defaultIntensity;
     }

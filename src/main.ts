@@ -114,6 +114,17 @@ async function main(command: string) {
                     },
                 });
                 break;
+            case "storage-emergency":
+            case "maxim-clean":
+            case "get-rid-of-node_modules":
+                await TheCleaner({
+                    flags: { ...cleanerArgs["flags"] },
+                    parameters: {
+                        intensity: "maxim-only",
+                        project: projectArg,
+                    },
+                });
+                break;
             case "manager":
                 await TheManager(Deno.args);
                 break;

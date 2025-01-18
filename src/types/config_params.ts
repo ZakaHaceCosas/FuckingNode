@@ -3,4 +3,4 @@
  *
  * @export
  */
-export type CleanerIntensity = "normal" | "hard" | "hard-only" | "maxim";
+export type CleanerIntensity = "normal" | "hard" | "hard-only" | "maxim" | "maxim-only";

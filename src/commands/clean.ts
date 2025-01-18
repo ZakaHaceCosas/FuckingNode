@@ -4,7 +4,14 @@ import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects, GetProjectSettings, NameProject, SpotProject, UnderstandProjectSettings } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import GenericErrorHandler from "../utils/error.ts";
-import { PerformCleaning, PerformHardCleanup, ResolveLockfiles, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
+import {
+    PerformCleaning,
+    PerformHardCleanup,
+    PerformMaximCleanup,
+    ResolveLockfiles,
+    ShowReport,
+    ValidateIntensity,
+} from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { GetElapsedTime } from "../functions/date.ts";
 
@@ -30,6 +37,11 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
         // read all projects
         const projects: string[] = await GetAllProjects();
+
+        if (realIntensity === "maxim-only") {
+            await PerformMaximCleanup(projects);
+            return;
+        }
 
         if (projects.length === 0) {
             await LogStuff(
@@ -75,6 +87,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                 realIntensity,
                 verbose,
             );
+            if (realIntensity === "maxim") await PerformMaximCleanup([project]);
             Deno.chdir(originalLocation);
             return;
         }
@@ -189,7 +202,8 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             }
         }
 
-        if (intensity === "hard") await PerformHardCleanup();
+        if (realIntensity === "hard") await PerformHardCleanup();
+        if (realIntensity === "maxim") await PerformMaximCleanup(projects);
 
         // go back home
         Deno.chdir(originalLocation);

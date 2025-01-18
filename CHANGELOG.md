@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- Added a new `maxim-only` intensity level. Plus, now `maxim` cleanup should work on per-project cleanup as well.
 - (WIP; Windows only) Added new shell-based installers (`.ps1` for Windows, and soon `.sh` for macOS and Linux).
 - (WIP; Windows only) Added an `fknode` CLI shortcut. Equivalent to `fuckingnode`.
 - Added support for quick flags (or however you call those) for the `clean` command, so `-l` instead of `--lint` for example will work.
@@ -24,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `manager add` project-env errors being ambiguous. Now they're more specific (missing lockfile, missing path, etc...).
 - Fixed project paths not being correctly handled in some cases.
 - Fixed the CLI running init task (check for updates & config files) twice.
+- Fixed cleaner intensity being hypothetically case sensitive.
 
 ## [2.2.1] 16-01-2025
 
