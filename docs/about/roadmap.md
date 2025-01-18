@@ -44,8 +44,10 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
         - [ ] Deno.
 - [ ] Shorter commands.
     - [ ] Shorter core, for example `fknode`.
-    - [ ] Shorter flags, for example, `fknode clean -- -l -p` instead of `fuckingnode clean -- --lint --pretty`.
-    - [ ] Shorthands, for example, `fkclean` instead of `fuckingnode clean`, which together with `defaultCleanerIntensity` setting and flagless features can handle everything.
+        - [X] :fontawesome-brands-windows: Windows support
+        - [ ] :simple-apple: macOS and :simple-linux: Linux support
+    - [X] Shorter flags, for example, `fknode clean -- -l -p` instead of `fuckingnode clean -- --lint --pretty`.
+    - [ ] Shorthands, for example, `fkclean` instead of `fuckingnode clean`, which together with `defaultCleanerIntensity` setting and flagless features should handle everything.
 - [ ] Make `fuckingnode stats` actually useful
     - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [ ] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
