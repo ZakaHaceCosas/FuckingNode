@@ -9,6 +9,7 @@ import TheSettings from "./commands/settings.ts";
 import TheAbouter from "./commands/about.ts";
 import TheKickstarter from "./commands/kickstart.ts";
 import TheAuditer from "./commands/audit.ts";
+import TheReleaser from "./commands/release.ts";
 // other things
 import { VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
@@ -152,6 +153,15 @@ async function main(command: string) {
                 break;
             case "about":
                 await TheAbouter();
+                break;
+            case "release":
+            case "publish":
+                await TheReleaser({
+                    project: Deno.args[1],
+                    version: Deno.args[2],
+                    push: hasFlag("push", true),
+                    dry: hasFlag("dry-run", true),
+                });
                 break;
             case "stats":
                 await TheStatistics(Deno.args[1] ?? "");

@@ -1,3 +1,5 @@
+import type { UnknownString } from "@zakahacecosas/string-utils";
+
 /**
  * The Cleaner.
  * @author ZakaHaceCosas
@@ -145,15 +147,15 @@ export interface TheReleaserConstructedParams {
     /**
      * Project to be released.
      *
-     * @type {string}
+     * @type {UnknownString}
      */
-    project: string;
+    project: UnknownString;
     /**
      * SemVer version to be released.
      *
-     * @type {string}
+     * @type {UnknownString}
      */
-    version: string;
+    version: UnknownString;
     /**
      * If true, changes are pushed to remote `origin`.
      *

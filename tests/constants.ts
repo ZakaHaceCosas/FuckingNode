@@ -37,7 +37,7 @@ const TEST_PROJECTS: Record<string, ProjectEnv> = {
                 "--include-workspace-root",
             ],
             run: ["npm", "run"],
-            publish: ["publish"]
+            publish: ["publish"],
         },
         runtime: "node",
         manager: "npm",

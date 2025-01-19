@@ -159,6 +159,12 @@ export interface FkNodeYaml {
      * @type {?string}
      */
     releaseCmd?: string;
+    /**
+     * If true, releases will always use `dry-run`.
+     *
+     * @type {?boolean}
+     */
+    releaseAlwaysDry?: boolean;
 }
 
 /**
