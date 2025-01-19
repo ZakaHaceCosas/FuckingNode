@@ -1,6 +1,6 @@
 import { format, parse } from "@std/semver";
 import { ColorString, LogStuff } from "../functions/io.ts";
-import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
+import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheReleaserConstructedParams } from "./constructors/command.ts";
 import type { DenoPkgJson, NodePkgJson } from "../types/runtimes.ts";
 import { Commander } from "../functions/cli.ts";
@@ -47,7 +47,8 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         };
 
         const actions: string[] = [
-            `Commit ${ColorString(params.version, "bold")} to Git`,
+            `${ColorString(`Commit ${ColorString(params.version, "bold")} to Git`, "white")}`,
+            `Create a Git tag ${ColorString(params.version, "bold")}`,
             `Update your ${env.main.name}'s "version" field`,
             `Create a ${ColorString(`${env.main.name}.bak`, "bold")} file, and add it to .gitignore`,
         ];
@@ -63,7 +64,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         }
         if (params.push) {
             actions.push(
-                `Push one commit to GitHub ${ColorString("adding ALL of your uncommitted content alongside our changes", "bold")}`,
+                `Push one commit to GitHub ${ColorString("adding ALL of your uncommitted content alongside our changes", "bold")}, and push the created tag too`,
             );
         }
         if (!(params.dry === true || settings.releaseAlwaysDry === true)) {
@@ -71,7 +72,12 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
                 ColorString(`Publish your changes to ${ColorString(env.runtime === "deno" ? "JSR" : "npm", "bold")}`, "red"),
             );
         }
-        const confirmation = await LogStuff(`We're about to do the following actions:\n${actions.join("\n")}`, "what", "bright-yellow", true);
+        const confirmation = await LogStuff(
+            `We're about to do the following actions:\n${actions.join("\n")}\n- all of this at ${await NameProject(project, "all")}`,
+            "what",
+            "bright-yellow",
+            true,
+        );
 
         if (!confirmation) return;
 
@@ -122,6 +128,13 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             `Release v${format(parsedVersion)} (automated by F*ckingNode)`,
             // [`${env.main.name}.bak`],
             [],
+            true,
+        );
+
+        await Git.Tag(
+            project,
+            format(parsedVersion),
+            params.push,
             true,
         );
 

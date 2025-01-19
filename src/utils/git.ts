@@ -192,4 +192,47 @@ export const Git = {
             return 1;
         }
     },
+    Tag: async (project: string, tag: string, push: boolean, showOutput: boolean): Promise<0 | 1> => {
+        try {
+            const path = await SpotProject(project);
+            const tagOutput = await Commander(
+                "git",
+                [
+                    "-C",
+                    path,
+                    "tag",
+                    tag.trim(),
+                ],
+                showOutput,
+            );
+            if (!tagOutput.success) {
+                throw new Error(tagOutput.stdout);
+            }
+            if (push) {
+                const pushOutput = await Commander(
+                    "git",
+                    [
+                        "-C",
+                        path,
+                        "push",
+                        "origin",
+                        "--tags",
+                    ],
+                    showOutput,
+                );
+                if (!pushOutput.success) {
+                    throw new Error(pushOutput.stdout);
+                }
+            }
+            return 0;
+        } catch (e) {
+            if (showOutput) {
+                await LogStuff(
+                    `Error - could not create tag ${tag} at ${ColorString(project, "bold")} because of error: ${e}`,
+                    "error",
+                );
+            }
+            return 1;
+        }
+    },
 };
