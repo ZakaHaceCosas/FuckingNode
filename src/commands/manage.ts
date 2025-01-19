@@ -44,7 +44,7 @@ export async function AddProject(
         );
     }
 
-    const validation = await ValidateProject(workingEntry);
+    const validation = await ValidateProject(workingEntry, false);
     const env = await GetProjectEnvironment(workingEntry);
 
     if (validation === "IsDuplicate") {
@@ -133,38 +133,50 @@ export async function RemoveProject(
         );
     }
 
-    const workingEntry = await SpotProject(entry.trim());
+    try {
+        const workingEntry = await SpotProject(entry.trim());
 
-    const list = await GetAllProjects(false);
-    const index = list.indexOf(workingEntry);
+        const list = await GetAllProjects(false);
+        const index = list.indexOf(workingEntry);
 
-    if (!list.includes(workingEntry)) {
-        await LogStuff(
-            `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry}`,
-            "error",
-        );
-        return;
-    }
+        if (!list.includes(workingEntry)) {
+            await LogStuff(
+                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry}`,
+                "error",
+            );
+            return;
+        }
 
-    if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
-    await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
+        if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
+        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
 
-    if (list.length > 0) {
-        await LogStuff(
-            `Let me guess: ${await NameProject(
-                workingEntry,
-                "name",
-            )} was another "revolutionary cutting edge project" that's now gone, right?`,
-            "tick-clear",
-        );
-    } else {
-        await LogStuff(
-            `Removed ${await NameProject(
-                workingEntry,
-                "name",
-            )}. That was your last project, the list is now empty.`,
-            "moon-face",
-        );
+        if (list.length > 0) {
+            await LogStuff(
+                `Let me guess: ${await NameProject(
+                    workingEntry,
+                    "name",
+                )} was another "revolutionary cutting edge project" that's now gone, right?`,
+                "tick-clear",
+            );
+        } else {
+            await LogStuff(
+                `Removed ${await NameProject(
+                    workingEntry,
+                    "name",
+                )}. That was your last project, the list is now empty.`,
+                "moon-face",
+            );
+        }
+    } catch (e) {
+        if (e instanceof FknError && e.code === "Generic__NonFoundProject") {
+            await LogStuff(
+                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${await ParsePath(entry)}`,
+                "error",
+            );
+            return;
+        } else {
+            throw e
+        }
     }
 }
 
@@ -178,7 +190,7 @@ async function CleanupProjects(): Promise<0 | 1 | 2> {
     const listOfRemovals: { project: string; issue: PROJECT_ERROR_CODES }[] = [];
 
     for (const project of (await GetAllProjects())) {
-        const validation = await ValidateProject(project);
+        const validation = await ValidateProject(project, true);
         if (validation !== true) listOfRemovals.push({ project: project, issue: validation });
     }
 

@@ -203,9 +203,10 @@ export const UnderstandProjectSettings = {
  *
  * @async
  * @param {string} entry Path to the project.
+ * @param {boolean} existing True if you're validating an existing project, false if it's a new one to be added.
  * @returns {Promise<true | PROJECT_ERROR_CODES>} True if it's valid, a `PROJECT_ERROR_CODES` otherwise.
  */
-export async function ValidateProject(entry: string): Promise<true | PROJECT_ERROR_CODES> {
+export async function ValidateProject(entry: string, existing: boolean): Promise<true | PROJECT_ERROR_CODES> {
     const workingEntry = await ParsePath(entry);
     if (!(await CheckForPath(workingEntry))) return "NotFound";
 
@@ -219,7 +220,7 @@ export async function ValidateProject(entry: string): Promise<true | PROJECT_ERR
 
     if (!(await CheckForPath(env.main.path))) return "NoPkgJson";
     const list = await GetAllProjects();
-    const isDuplicate = (list.filter((item) => item.trim() === workingEntry.trim()).length) > 1; // ! TODO - fix this, it works with manager cleanup but doesn't with add (using >= fixes that but breaks cleanup)
+    const isDuplicate = (list.filter((item) => item.trim() === workingEntry.trim()).length) > (existing === true ? 1 : 0);
 
     if (isDuplicate) return "IsDuplicate";
     if (!(await CheckForPath(env.lockfile.path))) return "NoLockfile";
