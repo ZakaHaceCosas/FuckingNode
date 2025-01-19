@@ -399,6 +399,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
                 root: workingPath,
                 main: {
                     path: mainPath,
+                    name: "package.json",
                     content: pathChecks.deno.jsonc ? parseJsonc(mainString) : JSON.parse(mainString),
                 },
                 lockfile: {
@@ -424,6 +425,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
             return {
                 main: {
                     path: mainPath,
+                    name: pathChecks.deno.jsonc ? "deno.jsonc" : "deno.json",
                     content: JSON.parse(mainString),
                 },
                 lockfile: {
@@ -450,6 +452,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
             return {
                 main: {
                     path: mainPath,
+                    name: "package.json",
                     content: JSON.parse(mainString),
                 },
                 lockfile: {
@@ -476,6 +479,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
             return {
                 main: {
                     path: mainPath,
+                    name: "package.json",
                     content: JSON.parse(mainString),
                 },
                 lockfile: {
@@ -502,6 +506,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
             return {
                 main: {
                     path: mainPath,
+                    name: "package.json",
                     content: JSON.parse(mainString),
                 },
                 lockfile: {

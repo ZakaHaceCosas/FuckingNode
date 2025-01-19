@@ -52,6 +52,12 @@ export interface ProjectEnv {
          */
         path: string;
         /**
+         * Name of the main file.
+         *
+         * @type {("package.json" | "deno.json" | "deno.jsonc")}
+         */
+        name: "package.json" | "deno.json" | "deno.jsonc";
+        /**
          * Contents of the main file
          *
          * @type {(NodePkgJson | DenoPkgJson)}

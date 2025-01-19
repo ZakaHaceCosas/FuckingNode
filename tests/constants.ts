@@ -13,6 +13,7 @@ const TEST_PROJECTS: Record<string, ProjectEnv> = {
         root: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one`),
         main: {
             path: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`),
+            name: "package.json",
             content: JSON.parse(await Deno.readTextFile(await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`))),
         },
         commands: {
@@ -36,6 +37,7 @@ const TEST_PROJECTS: Record<string, ProjectEnv> = {
                 "--include-workspace-root",
             ],
             run: ["npm", "run"],
+            publish: ["publish"]
         },
         runtime: "node",
         manager: "npm",
