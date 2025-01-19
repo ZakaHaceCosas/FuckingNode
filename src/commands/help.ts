@@ -1,5 +1,6 @@
+import { StringUtils } from "@zakahacecosas/string-utils";
 import { APP_NAME } from "../constants.ts";
-import { ColorString, LogStuff, SpaceString } from "../functions/io.ts";
+import { ColorString, LogStuff } from "../functions/io.ts";
 import type { TheHelperConstructedParams } from "./constructors/command.ts";
 
 type helpItem = [string, string | null, string];
@@ -10,10 +11,10 @@ function formatCmd(obj: helpThing): string {
 
     for (const thingy of obj) {
         const cmd: string = ColorString(thingy[0], "bright-blue");
-        const params: string | null = thingy[1] ? ColorString(thingy[1], "italic") : null;
+        const params: string = thingy[1] ? ColorString(thingy[1], "italic") : "";
         const desc: string = thingy[2];
 
-        strings.push(`${cmd} ${ColorString(params ?? "", "bold")}\n${SpaceString(desc, 2)}`);
+        strings.push(`${cmd} ${ColorString(params, "bold")}\n${StringUtils.spaceString(desc, 2, 0)}`);
     }
 
     return strings.join("\n----\n");
@@ -122,9 +123,9 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "--commit",
             null,
             `Commit any action that changes the code (e.g. --pretty or --update) when all of these are true:\n${
-                SpaceString(`- "commitActions" is set to true in your fknode.yaml.`, 4)
-            }\n${SpaceString(`- Local working tree was clean before ${APP_NAME.CASED} touched it.`, 4)}\n${
-                SpaceString(`- Local repo is not behind upstream.`, 4)
+                StringUtils.spaceString(`- "commitActions" is set to true in your fknode.yaml.`, 4, 0)
+            }\n${StringUtils.spaceString(`- Local working tree was clean before ${APP_NAME.CASED} touched it.`, 4, 0)}\n${
+                StringUtils.spaceString(`- Local repo is not behind upstream.`, 4, 0)
             }\n  Uses a default commit message; override it by setting "commitMessage" in your fknode.yaml.`,
         ],
     ]);

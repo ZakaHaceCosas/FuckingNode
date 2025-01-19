@@ -114,18 +114,6 @@ export async function LogStuff(
 }
 
 /**
- * Adds whitespace before a string.
- *
- * @export
- * @param {string} prev String itself.
- * @param {number} nl Amount of whitespace to add before.
- * @returns {string} The spaced string.
- */
-export function SpaceString(prev: string, nl: number): string {
-    return `${" ".repeat(nl)}${prev}`;
-}
-
-/**
  * Given a string, e.g. "help", returns an array of all strings that could be considered a `--flag`, so you can test a string against that flag.
  *
  * @export

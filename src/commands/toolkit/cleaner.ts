@@ -11,6 +11,7 @@ import { FknError } from "../../utils/error.ts";
 import { Git } from "../../utils/git.ts";
 import type { tRESULT } from "../clean.ts";
 import type { FkNodeYaml } from "../../types/config_files.ts";
+import { StringUtils } from "@zakahacecosas/string-utils";
 
 /**
  * All project cleaning features.
@@ -595,11 +596,7 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
         const theResult = `${name} -> ${status}, taking us ${elapsedTime}`;
         report.push(theResult);
     }
-    const sortedReport = report.sort((a, b) => {
-        return a
-            .toLowerCase()
-            .localeCompare(b.toLowerCase());
-    }).join("\n");
+    const sortedReport = StringUtils.sortAlphabetically(report).join("\n");
     await LogStuff(sortedReport, undefined);
     await LogStuff(
         `Cleaning completed at ${new Date().toLocaleString()}`,

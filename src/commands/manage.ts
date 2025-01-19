@@ -7,6 +7,7 @@ import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
 import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
+import { StringUtils } from "@zakahacecosas/string-utils";
 
 /**
  * Adds a new project.
@@ -251,33 +252,30 @@ async function ListProjects(
     ignore: "limit" | "exclude" | false,
 ): Promise<void> {
     try {
-        const list = await GetAllProjects();
+        const list = await GetAllProjects(ignore);
 
         if (list.length === 0) {
-            await LogStuff(
-                "Bruh, your mfs list is empty! Ain't nobody here!",
-                "moon-face",
-            );
-            return;
-        }
-
-        if (ignore === "limit") {
-            const ignoreList = await GetAllProjects("limit");
-
-            if (ignoreList.length === 0) {
+            if (ignore === "limit") {
                 await LogStuff(
                     "Huh, you didn't ignore anything! Good to see you care about all your projects (not for long, I can bet).",
                     "moon-face",
                 );
                 return;
+            } else {
+                await LogStuff(
+                    "Bruh, your mfs list is empty! Ain't nobody here!",
+                    "moon-face",
+                );
+                return;
             }
+        }
 
-            await LogStuff(
-                `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`,
-                "bulb",
-            );
-            const toReturn: string[] = [];
-            for (const entry of ignoreList) {
+        const toPrint: string[] = [];
+        let message: string;
+
+        if (ignore === "limit") {
+            message = `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`;
+            for (const entry of list) {
                 const protection = (await GetProjectSettings(entry)).divineProtection; // array
                 let protectionString: string;
                 if (!(Array.isArray(protection))) {
@@ -286,7 +284,7 @@ async function ListProjects(
                     protectionString = protection.join(" and ");
                 }
 
-                toReturn.push(
+                toPrint.push(
                     `${await NameProject(entry, "all")} (${
                         ColorString(
                             protectionString,
@@ -295,30 +293,24 @@ async function ListProjects(
                     })\n`,
                 );
             }
-            await LogStuff(toReturn.join("\n"));
-            return;
-        }
-
-        if (ignore === "exclude") {
-            const notIgnoreList = await GetAllProjects("exclude");
-
-            await LogStuff(
-                `Here are the ${I_LIKE_JS.MFS} you added (and haven't ignored) so far:\n`,
-                "bulb",
-            );
-            const toReturn: string[] = [];
-            for (const entry of notIgnoreList) {
-                toReturn.push(await NameProject(entry, "all"));
+        } else if (ignore === "exclude") {
+            message = `Here are the ${I_LIKE_JS.MFS} you added (and haven't ignored) so far:\n`;
+            for (const entry of list) {
+                toPrint.push(await NameProject(entry, "all"));
             }
-            await LogStuff(toReturn.join("\n"));
-            return;
+        } else {
+            message = `Here are the ${I_LIKE_JS.MFS} you added so far:\n`;
+            for (const entry of list) {
+                toPrint.push(await NameProject(entry, "all"));
+            }
         }
+
         await LogStuff(
-            `Here are the ${I_LIKE_JS.MFS} you added so far:\n`,
+            message,
             "bulb",
         );
-        for (const entry of list) {
-            await LogStuff(await NameProject(entry, "all"));
+        for (const entry of StringUtils.sortAlphabetically(toPrint)) {
+            await LogStuff(entry);
         }
         return;
     } catch (e) {

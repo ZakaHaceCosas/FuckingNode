@@ -1,4 +1,5 @@
 import { join } from "@std/path";
+import { StringUtils } from "@zakahacecosas/string-utils";
 import { normalize } from "node:path";
 
 /**
@@ -93,14 +94,14 @@ export function ParsePathList(target: string): string[] {
         throw new Error("Target must be (obviously) a string.");
     }
 
-    const workingTarget = target.trim();
-    const allTargets = workingTarget
+    const workingTarget: string = target.trim();
+    const allTargets: string[] = workingTarget
         .split("\n")
         .map((line) => line.trim().replace(/,$/, ""))
-        .filter((line) => line.length > 0)
-        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        .filter((line) => line.length > 0);
+    const normalizedTargets: string[] = allTargets.map(normalize);
 
-    return allTargets.map(normalize);
+    return StringUtils.sortAlphabetically(normalizedTargets);
 }
 
 /**

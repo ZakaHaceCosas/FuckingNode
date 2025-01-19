@@ -31,8 +31,8 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 - [ ] Make a proper logo for the project.
 - [ ] New features
-    - [ ] `fuckingnode commit "message"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
-    - [X] `fuckingnode release "version"` to `REDACTED`.
+    - [ ] `fuckingnode commit "message"` to `REDACTED`.
+    - [X] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
     - [ ] `fuckingnode give-up <project>` to `REDACTED`.
 - [ ] Better installer
     - [X] Revamped `.ps1` based installer for Windows.

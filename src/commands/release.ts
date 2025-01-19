@@ -64,7 +64,9 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         }
         if (params.push) {
             actions.push(
-                `Push one commit to GitHub ${ColorString("adding ALL of your uncommitted content alongside our changes", "bold")}, and push the created tag too`,
+                `Push one commit to GitHub ${
+                    ColorString("adding ALL of your uncommitted content alongside our changes", "bold")
+                }, and push the created tag too`,
             );
         }
         if (!(params.dry === true || settings.releaseAlwaysDry === true)) {
