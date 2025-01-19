@@ -1,6 +1,8 @@
 import { Commander } from "../functions/cli.ts";
+import { JoinPaths } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
-import { SpotProject } from "../functions/projects.ts";
+import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
+import { VERSION } from "../constants.ts";
 
 export const Git = {
     /**
@@ -154,6 +156,39 @@ export const Git = {
                 `Error - could not push at ${ColorString(project, "bold")} because of error: ${e}`,
                 "error",
             );
+            return 1;
+        }
+    },
+    /**
+     * Make sure to `Git.Commit()` changes to `.gitignore`.
+     */
+    Ignore: async (project: string, toBeIgnored: string, showOutput: boolean): Promise<0 | 1> => {
+        try {
+            const path = await SpotProject(project);
+            const env = await GetProjectEnvironment(path);
+            const gitIgnoreFile = await JoinPaths(env.root, ".gitignore");
+            const gitIgnoreContent = await Deno.readTextFile(gitIgnoreFile);
+
+            if (gitIgnoreContent.includes(toBeIgnored)) return 0;
+
+            await Deno.writeTextFile(gitIgnoreFile, `\n# auto-added by FuckingNode release command (CLI version ${VERSION})\n${toBeIgnored}`, {
+                append: true,
+            });
+
+            if (showOutput) {
+                await LogStuff(
+                    `Ignored ${toBeIgnored} successfully`,
+                    "tick",
+                );
+            }
+            return 0;
+        } catch (e) {
+            if (showOutput) {
+                await LogStuff(
+                    `Error - could not ignore file ${toBeIgnored} at ${ColorString(project, "bold")} because of error: ${e}`,
+                    "error",
+                );
+            }
             return 1;
         }
     },
