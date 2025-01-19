@@ -9,9 +9,9 @@ function getRandomPhrase(phrases: string[]): string {
     return phrases[randomIndex] ?? "Make JS light again!";
 }
 
-function getRandomColor(colors: string[]): tValidColors {
+function getRandomColor(colors: tValidColors[]): tValidColors {
     const randomIndex = Math.floor(Math.random() * colors.length);
-    return (colors[randomIndex] as tValidColors) ?? "white";
+    return (colors[randomIndex]) ?? "white";
 }
 
 const colors: tValidColors[] = [
