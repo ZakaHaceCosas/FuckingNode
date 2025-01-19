@@ -175,7 +175,7 @@ export async function RemoveProject(
             );
             return;
         } else {
-            throw e
+            throw e;
         }
     }
 }

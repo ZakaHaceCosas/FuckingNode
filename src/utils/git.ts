@@ -76,7 +76,7 @@ export const Git = {
             return false;
         }
     },
-    Commit: async (project: string, message: string, showOutput: boolean): Promise<0 | 1> => {
+    Commit: async (project: string, message: string, avoid: string[], showOutput: boolean): Promise<0 | 1> => {
         try {
             const path = await SpotProject(project);
 
@@ -92,6 +92,22 @@ export const Git = {
             );
             if (!addOutput.success) {
                 throw new Error(addOutput.stdout);
+            }
+            if (avoid.length > 0) {
+                const restoreOutput = await Commander(
+                    "git",
+                    [
+                        "-C",
+                        path,
+                        "restore",
+                        "--staged",
+                        ...avoid,
+                    ],
+                    showOutput,
+                );
+                if (!restoreOutput.success) {
+                    throw new Error(addOutput.stdout);
+                }
             }
             const commitOutput = await Commander(
                 "git",
