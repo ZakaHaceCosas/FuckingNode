@@ -2,7 +2,7 @@ import { Commander } from "../functions/cli.ts";
 import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
-import type { PKG_MANAGERS, SUPPORTED_NODE_LOCKFILES } from "../types/package_managers.ts";
+import type { SUPPORTED_JAVASCRIPT_MANAGER, SUPPORTED_JS_NODE_LOCKFILE } from "../types/platform.ts";
 import type { TheMigratorConstructedParams } from "./constructors/command.ts";
 
 export default async function TheMigrator(params: TheMigratorConstructedParams) {
@@ -15,7 +15,7 @@ export default async function TheMigrator(params: TheMigratorConstructedParams) 
     const cwd = Deno.cwd();
     let code: 0 | 1 = 0;
 
-    async function handler(remove: SUPPORTED_NODE_LOCKFILES, cmd: PKG_MANAGERS, target: string) {
+    async function handler(remove: SUPPORTED_JS_NODE_LOCKFILE, cmd: SUPPORTED_JAVASCRIPT_MANAGER, target: string) {
         try {
             await LogStuff("Please wait (this will take a while)...", "working");
 
@@ -65,8 +65,8 @@ export default async function TheMigrator(params: TheMigratorConstructedParams) 
         if (!c) return;
 
         await handler(
-            workingEnv.lockfile.name as SUPPORTED_NODE_LOCKFILES,
-            desiredManager as PKG_MANAGERS,
+            workingEnv.lockfile.name as SUPPORTED_JS_NODE_LOCKFILE,
+            desiredManager as SUPPORTED_JAVASCRIPT_MANAGER,
             workingProject,
         );
         code = 0;

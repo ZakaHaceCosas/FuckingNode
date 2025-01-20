@@ -2,7 +2,7 @@ import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import { NameProject } from "../functions/projects.ts";
-import type { DenoPkgJson, NodePkgJson } from "../types/runtimes.ts";
+import type { DenoPkgJson, NodePkgJson } from "../types/platform.ts";
 
 export default async function TheStatistics(target: string) {
     const project = await SpotProject(target);

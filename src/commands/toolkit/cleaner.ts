@@ -5,8 +5,7 @@ import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.t
 import { ColorString, LogStuff } from "../../functions/io.ts";
 import { GetProjectEnvironment, GetProjectSettings, NameProject, SpotProject } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
-import type { ALL_SUPPORTED_LOCKFILES } from "../../types/package_managers.ts";
-import type { NodePkgJson, ProjectEnv } from "../../types/runtimes.ts";
+import type { JsProjectEnvironment, NodePkgJson, SUPPORTED_JAVASCRIPT_LOCKFILE } from "../../types/platform.ts";
 import { FknError } from "../../utils/error.ts";
 import { Git } from "../../utils/git.ts";
 import type { tRESULT } from "../clean.ts";
@@ -19,7 +18,7 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 const ProjectCleaningFeatures = {
     Update: async (
         projectName: string,
-        env: ProjectEnv,
+        env: JsProjectEnvironment,
         settings: FkNodeYaml,
         verbose: boolean,
     ) => {
@@ -53,7 +52,7 @@ const ProjectCleaningFeatures = {
     },
     Clean: async (
         projectName: string,
-        env: ProjectEnv,
+        env: JsProjectEnvironment,
         verbose: boolean,
     ) => {
         const { commands } = env;
@@ -79,7 +78,7 @@ const ProjectCleaningFeatures = {
     },
     Lint: async (
         projectName: string,
-        env: ProjectEnv,
+        env: JsProjectEnvironment,
         settings: FkNodeYaml,
         verbose: boolean,
     ) => {
@@ -129,7 +128,7 @@ const ProjectCleaningFeatures = {
     },
     Prettify: async (
         projectName: string,
-        env: ProjectEnv,
+        env: JsProjectEnvironment,
         settings: FkNodeYaml,
         verbose: boolean,
     ) => {
@@ -611,11 +610,11 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
  * @export
  * @async
  * @param {string} path
- * @returns {Promise<ALL_SUPPORTED_LOCKFILES[]>} All lockfiles
+ * @returns {Promise<SUPPORTED_JAVASCRIPT_LOCKFILE[]>} All lockfiles
  */
-export async function ResolveLockfiles(path: string): Promise<ALL_SUPPORTED_LOCKFILES[]> {
-    const lockfiles: ALL_SUPPORTED_LOCKFILES[] = [];
-    const possibleLockfiles: ALL_SUPPORTED_LOCKFILES[] = [
+export async function ResolveLockfiles(path: string): Promise<SUPPORTED_JAVASCRIPT_LOCKFILE[]> {
+    const lockfiles: SUPPORTED_JAVASCRIPT_LOCKFILE[] = [];
+    const possibleLockfiles: SUPPORTED_JAVASCRIPT_LOCKFILE[] = [
         "pnpm-lock.yaml",
         "package-lock.json",
         "yarn.lock",

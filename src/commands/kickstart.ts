@@ -3,10 +3,10 @@ import { GetSettings } from "../functions/config.ts";
 import { CheckForDir, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject } from "../functions/projects.ts";
-import type { PKG_MANAGERS } from "../types/package_managers.ts";
 import type { TheKickstarterConstructedParams } from "./constructors/command.ts";
 import { AddProject } from "./manage.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
+import type { SUPPORTED_JAVASCRIPT_MANAGER } from "../types/platform.ts";
 
 async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favoriteEditor"]) {
     let executionCommand: "subl" | "code" | "emacs" | "notepad++" | "codium" | "atom";
@@ -68,8 +68,8 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
             throw new Error(`${path} is not a directory...`);
         }
 
-        const workingManager: PKG_MANAGERS | "__DEFAULT" = manager
-            ? (["npm", "pnpm", "yarn", "deno", "bun"].includes(manager)) ? (manager as PKG_MANAGERS) : "pnpm"
+        const workingManager: SUPPORTED_JAVASCRIPT_MANAGER | "__DEFAULT" = manager
+            ? (["npm", "pnpm", "yarn", "deno", "bun"].includes(manager)) ? (manager as SUPPORTED_JAVASCRIPT_MANAGER) : "pnpm"
             : "__DEFAULT";
 
         await LogStuff("Let's begin! Wait a moment please...", "tick-clear");

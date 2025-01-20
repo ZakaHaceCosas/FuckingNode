@@ -1,5 +1,5 @@
 import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
-import type { ProjectEnv } from "../src/types/runtimes.ts";
+import type { JsProjectEnvironment } from "../src/types/platform.ts";
 
 // CONSTANTS
 export const CONSTANTS = {
@@ -8,7 +8,7 @@ export const CONSTANTS = {
 };
 
 // (naming things is fr the hardest)
-const TEST_PROJECTS: Record<string, ProjectEnv> = {
+const TEST_PROJECTS: Record<string, JsProjectEnvironment> = {
     ONE: {
         root: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one`),
         main: {

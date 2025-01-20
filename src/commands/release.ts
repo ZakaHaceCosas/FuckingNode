@@ -2,7 +2,7 @@ import { format, parse } from "@std/semver";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheReleaserConstructedParams } from "./constructors/command.ts";
-import type { DenoPkgJson, NodePkgJson } from "../types/runtimes.ts";
+import type { DenoPkgJson, NodePkgJson } from "../types/platform.ts";
 import { Commander } from "../functions/cli.ts";
 import { GetProjectSettings } from "../functions/projects.ts";
 import { PerformCleaning } from "./toolkit/cleaner.ts";

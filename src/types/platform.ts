@@ -1,5 +1,3 @@
-import type { ALL_SUPPORTED_LOCKFILES } from "./package_managers.ts";
-
 /**
  * NodeJS and BunJS `package.json` props, only the ones we need.
  *
@@ -30,11 +28,11 @@ export interface DenoPkgJson {
 }
 
 /**
- * Info about a project to know its environment (runtime and package manager).
+ * Info about a JavaScript project's environment (runtime and package manager).
  *
- * @interface ProjectEnv
+ * @interface JsProjectEnvironment
  */
-export interface ProjectEnv {
+export interface JsProjectEnvironment {
     /**
      * Path to the **root** of the project.
      *
@@ -77,9 +75,9 @@ export interface ProjectEnv {
         /**
          * Bare name of the lockfile (`package-lock.json`, `deno.lock`)
          *
-         * @type {ALL_SUPPORTED_LOCKFILES}
+         * @type {SUPPORTED_JAVASCRIPT_LOCKFILE}
          */
-        name: ALL_SUPPORTED_LOCKFILES;
+        name: SUPPORTED_JAVASCRIPT_LOCKFILE;
     };
     /**
      * JS runtime.
@@ -161,3 +159,54 @@ export interface ProjectEnv {
      */
     workspaces: string[] | "no";
 }
+
+/**
+ * Supported lockfile type that the app recognizes as fully cleanable (NodeJS).
+ *
+ * @export
+ */
+export type SUPPORTED_JS_NODE_LOCKFILE =
+    | "package-lock.json"
+    | "pnpm-lock.yaml"
+    | "yarn.lock";
+
+/**
+ * Supported lockfile type that the app recognizes as partially cleanable (Deno and Bun)
+ *
+ * @export
+ */
+export type SUPPORTED_JS_ANTINODE_LOCKFILE =
+    | "deno.lock"
+    | "bun.lockb";
+
+/**
+ * All supported lockfiles.
+ *
+ * @export
+ */
+export type SUPPORTED_JAVASCRIPT_LOCKFILE = SUPPORTED_JS_NODE_LOCKFILE | SUPPORTED_JS_ANTINODE_LOCKFILE;
+
+/**
+ * Type guard to check if the lockfile is a SUPPORTED_NODE_LOCKFILE.
+ *
+ * @param lockfile The lockfile to check.
+ * @returns True if lockfile is a SUPPORTED_NODE_LOCKFILE, false otherwise.
+ */
+export function IsLockfileNodeLockfile(lockfile: string): lockfile is SUPPORTED_JS_NODE_LOCKFILE {
+    return (
+        lockfile === "package-lock.json" ||
+        lockfile === "pnpm-lock.yaml" ||
+        lockfile === "yarn.lock"
+    );
+}
+
+/**
+ * Package manager commands for supported managers.
+ *
+ * @export
+ */
+export type NODE_PKG_MANAGERS = "pnpm" | "npm" | "yarn";
+
+export type ANTINODE_PKG_MANAGERS = "deno" | "bun";
+
+export type SUPPORTED_JAVASCRIPT_MANAGER = ANTINODE_PKG_MANAGERS | NODE_PKG_MANAGERS;

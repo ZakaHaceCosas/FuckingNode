@@ -3,7 +3,7 @@ import { parse as parseToml } from "@std/toml";
 import { parse as parseJsonc } from "@std/jsonc";
 import { expandGlob } from "@std/fs";
 import { DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import type { DenoPkgJson, NodePkgJson, ProjectEnv } from "../types/runtimes.ts";
+import type { DenoPkgJson, JsProjectEnvironment, NodePkgJson } from "../types/platform.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff, MultiColorString, NaturalizeFormattedString } from "./io.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
@@ -315,9 +315,9 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
  * @export
  * @async
  * @param {string} path Path to the project's root.
- * @returns {Promise<ProjectEnv>}
+ * @returns {Promise<JsProjectEnvironment>}
  */
-export async function GetProjectEnvironment(path: string): Promise<ProjectEnv> {
+export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvironment> {
     try {
         const workingPath = await ParsePath(path);
 
