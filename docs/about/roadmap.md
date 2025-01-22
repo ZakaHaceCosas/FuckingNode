@@ -52,7 +52,13 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [ ] Better error handling.
-- [ ] Cr`REDACTED`
-    - [ ] G`REDACTED`
-    - [ ] C`REDACTED`
-    - [ ] P`REDACTED`
+
+i'm not a fan of people who gives buzzword-ish names to projects, but regardless:
+
+- [ ] Project `REDACTED` (Cr`REDACTED`)
+    - [ ] Cr-P S
+        - [ ] G`REDACTED`
+        - [ ] C`REDACTED`
+        - [ ] P`REDACTED`
+    - [ ] FIL
+        - [ ] Audit
