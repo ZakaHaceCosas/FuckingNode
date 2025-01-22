@@ -101,3 +101,8 @@ markdown_extensions:
     - pymdownx.tasklist:
           custom_checkbox: true
     - pymdownx.blocks.caption
+
+extra:
+  version:
+    provider: mike
+    alias: true
