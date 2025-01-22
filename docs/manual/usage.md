@@ -177,7 +177,6 @@ destroy:
         - "cache"
         - ".react"
         - ".whateverFramework"
-        - "node_modules" # please don't do that
 ```
 
 You can use an asterisk (`*`) if you want to destroy with all intensities without typing all of that. _Due to how the CLI is designed, it must still be an array, so `["*"]` works and `"*"` doesn't._

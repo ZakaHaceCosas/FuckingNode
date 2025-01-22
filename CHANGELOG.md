@@ -15,9 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Added a **new command** `release`. Automatically runs our typical cleanup & maintenance automation, but also bumps SemVer version from your package file, commits your changes, creates a Git tag, pushes to mainstream, and **automatically publishes to `npm` or `jsr`**, from a single command.
-- `dry-run` and other options are available to prevent Git commit and npm/jsr publish tasks from running, if desired.
-- When publishing to JSR, the process isn't _fully_ automated as you're required to click once in their web UI to authorize the publishing. (We still save you some time with this addition, :wink:).
-- `publish` is allowed as an alias to the command.
+  - `dry-run` and other options are available to prevent Git commit and npm/jsr publish tasks from running, if desired.
+  - The process is 90-100% automated, however you'll have to move your hands in some cases (we still save you some time with this addition :wink:):
+    - Always when publishing to JSR, as you're required to click once in their web UI to authorize the publishing.
+    - When publishing to npm and have 2FA enabled and required for publishing.
+  - `publish` is allowed as an alias to the command.
 - Added a new `maxim-only` intensity level. Plus, now `maxim` cleanup should work on per-project cleanup as well.
 - (WIP; Windows only) Added new shell-based installers (`.ps1` for Windows, and soon `.sh` for macOS and Linux).
 - (WIP; Windows only) Added an `fknode` CLI shortcut. Equivalent to `fuckingnode`.

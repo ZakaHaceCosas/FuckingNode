@@ -63,10 +63,10 @@ If you only wish to clear global caches without waiting for individual cleanup o
 
 ### Step 4
 
-For the best experience, you can pass `--`flags to the clean command for using additional features. Detailed explanations are available at both the [pro tutorial](../tutorial/pro.md) and the [usage manual](../manual/usage.md), here we'll just TL;DR them:
+For the best experience, you can pass `--`flags to the clean command for using additional features. Detailed explanations are available at the [usage manual](../manual/usage.md), here we'll just TL;DR them:
 
-- `--lint` runs ESLint
-- `--pretty` runs Prettier
+- `--lint` runs ESLint (or desired linter)
+- `--pretty` runs Prettier (or desired prettifier)
 - `--destroy` removes unneeded files (e.g. `dist/`)
 - `--update` updates dependencies
 - `--commit` commits changes made by us (e.g. changes to your lockfile because of updating)
@@ -78,7 +78,7 @@ Behavior itself can also be overridden, in case you use a different linter than 
 There are two exceptions to the "global cleaning" rule mentioned earlier:
 
 - `--destroy` requires per-project configuration via `fknode.yaml` (you shall specify what you want to be removed). We don't have "default" directories to auto-remove like `dist/`, to avoid removing something you _might_ need.
-- `--commit` requires per-project configuration via `fknode.yaml`. Making a commit is a sensible action, as we could potentially commit something you did _not_ intend to commit yet. Committing requires explicit allowance from you, and additional safety checks are performed as outlined [here](../tutorial/pro.md#committing-your-code-commit).
+- `--commit` requires per-project configuration via `fknode.yaml`. Making a commit is a sensible action, as we could potentially commit something you did _not_ intend to commit yet. Committing requires explicit allowance from you, and additional safety checks are performed as outlined [here](../manual/usage.md#committing-your-code-commit).
 
 ---
 

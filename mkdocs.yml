@@ -21,10 +21,6 @@ nav:
           - Stats: "manual/stats.md"
           - Cross-runtime support: "manual/cross-runtime.md"
 
-    - Tutorials:
-          - Basic tutorial: "tutorial/index.md"
-          - Professional tutorial: "tutorial/pro.md"
-
     - Learn:
           - Home: "learn/index.md"
           - How does cleanup work under the hood: "learn/clean.md"
@@ -63,6 +59,7 @@ plugins:
           redirect_maps:
               "about.md": "about/roadmap.md"
               "repo.md": "https://github.com/ZakaHaceCosas/FuckingNode"
+              "roadmap.md": "about/roadmap.md"
 
 markdown_extensions:
     - abbr

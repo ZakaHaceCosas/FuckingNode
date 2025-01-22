@@ -38,8 +38,6 @@ And that's it for now.
 
 ## Learn to use this beauty
 
-[Full usage manual](manual/index.md){ .md-button }
-[Basic tutorial](tutorial/index.md){ .md-button }
-[Advanced professional tutorial](tutorial/pro.md){ .md-button .md-button--primary }
+[Usage manual](manual/index.md){ .md-button .md-button--primary }
 
 This website is work in progress, some pages are missing and will be done later on.
