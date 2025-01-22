@@ -619,6 +619,7 @@ export async function ResolveLockfiles(path: string): Promise<SUPPORTED_JAVASCRI
         "package-lock.json",
         "yarn.lock",
         "bun.lockb",
+        "bun.lock",
         "deno.lock",
     ];
     for (const lockfile of possibleLockfiles) {

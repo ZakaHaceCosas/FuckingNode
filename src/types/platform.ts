@@ -177,7 +177,8 @@ export type SUPPORTED_JS_NODE_LOCKFILE =
  */
 export type SUPPORTED_JS_ANTINODE_LOCKFILE =
     | "deno.lock"
-    | "bun.lockb";
+    | "bun.lockb"
+    | "bun.lock";
 
 /**
  * All supported lockfiles.

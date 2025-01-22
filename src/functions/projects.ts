@@ -338,8 +338,9 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 lock: await JoinPaths(workingPath, "deno.lock"),
             },
             bun: {
-                toml: await JoinPaths(workingPath, "bun.lockb"),
-                lock: await JoinPaths(workingPath, "bunfig.toml"),
+                toml: await JoinPaths(workingPath, "bunfig.toml"),
+                lock: await JoinPaths(workingPath, "bun.lock"),
+                lockb: await JoinPaths(workingPath, "bun.lockb"),
             },
             node: {
                 json: await JoinPaths(workingPath, "package.json"),
@@ -358,6 +359,7 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
             bun: {
                 toml: await CheckForPath(paths.bun.toml),
                 lock: await CheckForPath(paths.bun.lock),
+                lockb: await CheckForPath(paths.bun.lockb),
             },
             node: {
                 json: await CheckForPath(paths.node.json),
@@ -371,6 +373,7 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
             pathChecks.deno.json ||
             pathChecks.deno.jsonc;
         const isBun = pathChecks.bun.lock ||
+            pathChecks.bun.lockb ||
             pathChecks.bun.toml;
         const isNode = pathChecks.node.lockNpm || pathChecks.node.lockPnpm || pathChecks.node.lockYarn;
 
@@ -400,10 +403,10 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 main: {
                     path: mainPath,
                     name: "package.json",
-                    content: pathChecks.deno.jsonc ? parseJsonc(mainString) : JSON.parse(mainString),
+                    content: JSON.parse(mainString),
                 },
                 lockfile: {
-                    name: "bun.lockb",
+                    name: pathChecks.bun.lockb ? "bun.lockb" : "bun.lock",
                     path: paths.bun.lock,
                 },
                 runtime: "bun",
