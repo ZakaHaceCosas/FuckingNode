@@ -21,10 +21,6 @@ nav:
           - Stats: "manual/stats.md"
           - Cross-runtime support: "manual/cross-runtime.md"
 
-    - Tutorials:
-          - Basic tutorial: "tutorial/index.md"
-          - Professional tutorial: "tutorial/pro.md"
-
     - Learn:
           - Home: "learn/index.md"
           - How does cleanup work under the hood: "learn/clean.md"
@@ -105,8 +101,3 @@ markdown_extensions:
     - pymdownx.tasklist:
           custom_checkbox: true
     - pymdownx.blocks.caption
-
-extra:
-  version:
-    provider: mike
-    alias: true
