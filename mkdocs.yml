@@ -1,11 +1,11 @@
 site_name: F*ckingNode
-site_description: The f*cking chaos of maintaining NodeJS projects ends here.
-site_url: https://zakahacecosas.github.io/FuckingNode
+site_description: The fucking chaos of maintaining NodeJS projects ends here.
+site_url: https://zakahacecosas.github.io/FuckingNode/
 site_author: ZakaHaceCosas
 copyright: ZakaHaceCosas
 
 repo_name: ZakaHaceCosas/FuckingNode
-repo_url: https://github.com/ZakaHaceCosas/FuckingNode
+repo_url: https://github.com/ZakaHaceCosas/FuckingNode/
 
 docs_dir: "docs"
 
