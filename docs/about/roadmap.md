@@ -59,6 +59,5 @@ i'm not a fan of people who gives buzzword-ish names to projects, but regardless
     - [ ] Cr-P S
         - [ ] G`REDACTED`
         - [ ] C`REDACTED`
-        - [ ] P`REDACTED`
     - [ ] FIL
         - [ ] Audit
