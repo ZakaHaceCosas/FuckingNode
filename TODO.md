@@ -76,3 +76,8 @@
 self-reminders:
 
 1. flagless features require _by design_ specifying a command - e.g., `clean -- --lint` will default to ESLint, but in projects that have `flaglessLint: true` it won't, it'll directly check for `lintCmd` or skip. same applies for other settings. this is because of how `FkNodeYaml` is internally designed.
+
+## Known issues
+
+- Hard cleanup output not hidden behind verbose
+- TMP dir not removed never because it's being used (we gotta schedule it somehow)

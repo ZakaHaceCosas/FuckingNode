@@ -42,6 +42,9 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] Cross-runtime migration.
         - [ ] Bun. Implies `yarn.lock` support and somehow turning that into a binary (`bun.lockb` is a binary version of `yarn.lock` for those who don't know - it follows the same format).
         - [ ] Deno.
+- [ ] Stabilize `audit` feature and support it everywhere.
+    - [ ] pnpm
+    - [ ] yarn
 - [ ] Shorter commands.
     - [ ] Shorter core, for example `fknode`.
         - [X] :fontawesome-brands-windows: Windows support
@@ -53,11 +56,21 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 - [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [ ] Better error handling.
 
-i'm not a fan of people who gives buzzword-ish names to projects, but regardless:
+I'm not a fan of people who gives buzzword-ish names to projects, but regardless; I don't want to early-disclose what our next major release is about, so here you got. **Progress in here is not in the repo - it IS made, just uncommitted.**
 
-- [ ] Project `REDACTED` (Cr`REDACTED`)
-    - [ ] Cr-P S
-        - [ ] G`REDACTED`
-        - [ ] C`REDACTED`
-    - [ ] FIL
+- [ ] Project `REDACTED`
+    - [ ] Cr-P S.
+        - [ ] FnCPF
+            - [x] Internal generation
+            - [ ] Ability to export it
+        - [ ] Ps.
+            - [ ] G`REDACTED`
+                - [x] Base
+                - [ ] Operations
+                - [ ] Extras
+            - [ ] C`REDACTED`
+                - [ ] Base
+                - [ ] Operations
+                - [ ] Extras
+    - [ ] FnIL
         - [ ] Audit
