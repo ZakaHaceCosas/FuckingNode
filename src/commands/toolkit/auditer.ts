@@ -505,7 +505,7 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
         const current = Deno.cwd();
         if (env.commands.audit === "__UNSUPPORTED") {
             await LogStuff(
-                `Audit is not supported for ${env.manager.toUpperCase()} (${project})`,
+                `Audit is not supported for ${env.manager.toUpperCase()} (${project}).`,
                 "prohibited",
             );
             return 1;

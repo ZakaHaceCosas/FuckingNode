@@ -360,9 +360,6 @@ export default async function TheManager(args: string[]) {
             await CleanupProjects();
             break;
         default:
-            throw new FknError(
-                "Manager__InvalidArgumentPassed",
-                `${command} is not a valid argument.`,
-            );
+            await TheHelper({ query: "manager" });
     }
 }

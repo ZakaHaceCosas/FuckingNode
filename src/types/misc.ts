@@ -94,4 +94,5 @@ export type tValidColors =
     | "bright-green"
     | "italic"
     | "bright-blue"
-    | "bright-yellow";
+    | "bright-yellow"
+    | "orange";

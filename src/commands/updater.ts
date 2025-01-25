@@ -4,8 +4,8 @@ import { RELEASE_URL, VERSION } from "../constants.ts";
 import type { GITHUB_RELEASE } from "../types/misc.ts";
 import { GetDateNow } from "../functions/date.ts";
 import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
-import { ColorString, LogStuff } from "../functions/io.ts";
-import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
+import { ColorString, LogStuff, StringifyYaml } from "../functions/io.ts";
+import { parse as parseYaml } from "@std/yaml";
 import { GetAppPath } from "../functions/config.ts";
 import type { CF_FKNODE_SCHEDULE } from "../types/config_files.ts";
 
@@ -47,7 +47,7 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
                 },
             };
 
-            await Deno.writeTextFile(scheduleFilePath, stringifyYaml(dataToWrite));
+            await Deno.writeTextFile(scheduleFilePath, StringifyYaml(dataToWrite));
             return dataToWrite;
         } catch (e) {
             throw new Error("Error checking for updates: " + e);

@@ -1,12 +1,11 @@
-import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
+import { ColorString, LogStuff, ParseFlag, StringifyYaml } from "../functions/io.ts";
 import { BulkRemoveFiles, ConvertBytesToMegaBytes } from "../functions/filesystem.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 import { FreshSetup, GetAppPath, GetSettings } from "../functions/config.ts";
 import type { CF_FKNODE_SETTINGS, SUPPORTED_EDITORS } from "../types/config_files.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
-import { stringify as stringifyYaml } from "@std/yaml";
 
-export async function Flush(what: string, force: boolean) {
+export async function Flush(what: string, force: boolean, silent: boolean = false) {
     const validTargets = ["logs", "projects", "schedules", "all"];
     if (!validTargets.includes(what)) {
         await LogStuff(
@@ -60,9 +59,12 @@ export async function Flush(what: string, force: boolean) {
 
     try {
         await BulkRemoveFiles(file);
+        if (silent === true) return;
         await LogStuff("That worked out!", "tick-clear");
+        return;
     } catch (e) {
-        await LogStuff(`Error removing files: ${e}`, "error");
+        await LogStuff(`Error flushing files: ${e}`, "error");
+        return;
     }
 }
 
@@ -105,7 +107,7 @@ async function ChangeSetting(
                 };
                 await Deno.writeTextFile(
                     await GetAppPath("SETTINGS"),
-                    stringifyYaml(newSettings),
+                    StringifyYaml(newSettings),
                 );
                 break;
             }
@@ -125,7 +127,7 @@ async function ChangeSetting(
                 };
                 await Deno.writeTextFile(
                     await GetAppPath("SETTINGS"),
-                    stringifyYaml(newSettings),
+                    StringifyYaml(newSettings),
                 );
                 break;
             }
@@ -140,7 +142,7 @@ async function ChangeSetting(
                 };
                 await Deno.writeTextFile(
                     await GetAppPath("SETTINGS"),
-                    stringifyYaml(newSettings),
+                    StringifyYaml(newSettings),
                 );
                 break;
             }
@@ -156,7 +158,7 @@ async function ChangeSetting(
                 };
                 await Deno.writeTextFile(
                     await GetAppPath("SETTINGS"),
-                    stringifyYaml(newSettings),
+                    StringifyYaml(newSettings),
                 );
                 break;
             }

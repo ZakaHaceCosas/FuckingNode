@@ -2,17 +2,18 @@ import { APP_NAME, DEFAULT_SCHEDULE_FILE, DEFAULT_SETTINGS, I_LIKE_JS } from "..
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import GenericErrorHandler, { FknError } from "../utils/error.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
-import { parse as parseYaml, stringify as stringifyYaml } from "@std/yaml";
+import { parse as parseYaml } from "@std/yaml";
+import { StringifyYaml } from "./io.ts";
 
 /**
  * Returns file paths for all config files the app uses.
  *
  * @export
- * @param {("BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS")} path What path you want.
+ * @param {("BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS")} path What path you want.
  * @returns {string} The path as a string.
  */
 export async function GetAppPath(
-    path: "BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS",
+    path: "BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS",
 ): Promise<string> {
     try {
         const envPaths = {
@@ -41,6 +42,7 @@ export async function GetAppPath(
         const LOGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-logs.log`);
         const SCHEDULE = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-schedule.yaml`);
         const SETTINGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-settings.yaml`);
+        const ERRORS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-errors.log`);
 
         switch (path) {
             case "BASE":
@@ -53,6 +55,8 @@ export async function GetAppPath(
                 return SCHEDULE;
             case "SETTINGS":
                 return SETTINGS;
+            case "ERRORS":
+                return ERRORS;
             default:
                 throw new Error(`Invalid config path ${path} requested.`);
         }
@@ -90,16 +94,23 @@ export async function FreshSetup(repairSetts?: boolean): Promise<void> {
             });
         }
 
+        const errorLogsPath = await GetAppPath("ERRORS");
+        if (!(await CheckForPath(errorLogsPath))) {
+            await Deno.writeTextFile(errorLogsPath, "", {
+                create: true,
+            });
+        }
+
         const settingsPath = await GetAppPath("SETTINGS");
         if ((!(await CheckForPath(settingsPath))) || repairSetts === true) {
-            await Deno.writeTextFile(settingsPath, stringifyYaml(DEFAULT_SETTINGS), {
+            await Deno.writeTextFile(settingsPath, StringifyYaml(DEFAULT_SETTINGS), {
                 create: true,
             });
         }
 
         const schedulePath = await GetAppPath("SCHEDULE");
         if (!(await CheckForPath(schedulePath))) {
-            await Deno.writeTextFile(schedulePath, stringifyYaml(DEFAULT_SCHEDULE_FILE), {
+            await Deno.writeTextFile(schedulePath, StringifyYaml(DEFAULT_SCHEDULE_FILE), {
                 create: true,
             });
         }
@@ -128,7 +139,7 @@ export async function GetSettings(): Promise<CF_FKNODE_SETTINGS> {
             favoriteEditor: stuff.favoriteEditor ?? DEFAULT_SETTINGS.favoriteEditor,
             defaultCleanerIntensity: stuff.defaultCleanerIntensity ?? DEFAULT_SETTINGS.defaultCleanerIntensity,
         };
-        await Deno.writeTextFile(path, stringifyYaml(newStuff));
+        await Deno.writeTextFile(path, StringifyYaml(newStuff));
         return newStuff;
     }
     return stuff;

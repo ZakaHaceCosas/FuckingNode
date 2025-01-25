@@ -25,10 +25,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - (WIP; Windows only) Added an `fknode` CLI shortcut. Equivalent to `fuckingnode`.
 - Added support for quick flags (or however you call those) for the `clean` command, so `-l` instead of `--lint` for example will work.
 - Added recognition of new `bun.lock` file to identify Bun projects.
+- Added a new `errors.log` file, stored with all of our config files. Some errors will now dump more detailed info in there.
 
 ### Changed
 
 - Now error messages for not found / not added projects are consistent.
+- Now any generated YAML files by the CLI follow common formatting.
 
 ### Fixed
 
@@ -40,6 +42,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed the confirmation for using maxim cleanup.
 - Fixed projects not being alphabetically sorted when listing them.
 - Fixed Bun projects' config files not being properly read.
+- Fixed the app randomly showing "That worked out!" before any other CLI output.
+- Fixed schedules running each time you run the CLI after they reach their scheduled run time once (they didn't reset the timer).
 
 ## [2.2.1] 16-01-2025
 

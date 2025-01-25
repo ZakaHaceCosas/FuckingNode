@@ -1,5 +1,6 @@
 import type { SUPPORTED_EMOJIS, tValidColors } from "../types/misc.ts";
 import { GetAppPath } from "./config.ts";
+import { stringify as stringifyYaml } from "@std/yaml";
 
 /**
  * Appends an emoji at the beginning of a message.
@@ -136,7 +137,7 @@ export function ParseFlag(flag: string, min: boolean): string[] {
  *
  * @export
  * @param {string | number} string The string.
- * @param {validColors} color The color you wish to give it. Some styles that aren't "colors" are also allowed, e.g. `bold` or `half-opaque`.
+ * @param {tValidColors} color The color you wish to give it. Some styles that aren't "colors" are also allowed, e.g. `bold` or `half-opaque`.
  * @returns {string} The colored string.
  */
 export function ColorString(string: string | number, color: tValidColors): string {
@@ -184,6 +185,9 @@ export function ColorString(string: string | number, color: tValidColors): strin
         case "italic":
             colorCode = "\x1b[3m";
             break;
+        case "orange":
+            colorCode = "\x1b[38;5;202m"; // (custom color)
+            break;
         default:
             break;
     }
@@ -228,4 +232,24 @@ export function MultiColorString(string: string | number, ...colors: tValidColor
 export function NaturalizeFormattedString(string: string): string {
     // deno-lint-ignore no-control-regex
     return string.replace(/\x1b\[[0-9;]*m/g, "");
+}
+
+/**
+ * Stringify an object or whatever to YAML, using reusable config.
+ *
+ * @export
+ * @param {unknown} content Whatever to stringify.
+ * @returns {string} Stringified YAML.
+ */
+export function StringifyYaml(content: unknown): string {
+    return stringifyYaml(content, {
+        indent: 4,
+        lineWidth: 120,
+        arrayIndent: true,
+        skipInvalid: false,
+        sortKeys: true,
+        useAnchors: true,
+        compatMode: true,
+        condenseFlow: true,
+    });
 }

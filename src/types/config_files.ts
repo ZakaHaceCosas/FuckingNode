@@ -269,5 +269,9 @@ export function ValidateFkNodeYaml(
         return false;
     }
 
+    if (obj.releaseAlwaysDry !== undefined && typeof obj.releaseAlwaysDry !== "boolean") {
+        return false;
+    }
+
     return true;
 }
