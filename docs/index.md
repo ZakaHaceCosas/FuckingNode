@@ -16,10 +16,10 @@ hide:
 :material-speedometer: **Work faster** by updating deps & cleaning projects from a single command.
 { .card }
 
-:material-transit-connection-variant: **Move faster** with advanced automations like linting, prettifying, and more.
+:material-transit-connection-variant: **Move faster** with automated linting, prettifying, and more.
 { .card }
 
-> :simple-npm: Enjoy all of that from NOT another CLI-ish npm package.
+> :simple-npm: Enjoy all of that from what's satisfyingly NOT a CLI-ish npm package.
 
 </div>
 
