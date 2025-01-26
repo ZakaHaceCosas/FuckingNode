@@ -243,13 +243,13 @@ export function NaturalizeFormattedString(string: string): string {
  */
 export function StringifyYaml(content: unknown): string {
     return stringifyYaml(content, {
-        indent: 4,
+        indent: 2,
         lineWidth: 120,
         arrayIndent: true,
         skipInvalid: false,
-        sortKeys: true,
-        useAnchors: true,
+        sortKeys: false,
+        useAnchors: false,
         compatMode: true,
-        condenseFlow: true,
+        condenseFlow: false,
     });
 }
