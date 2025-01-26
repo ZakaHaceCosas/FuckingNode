@@ -10,16 +10,16 @@ hide:
 <!-- markdownlint-disable md033 -->
 <div class="grid" markdown>
 
-:simple-nodedotjs: **Automate maintaining** NodeJS projects
+:simple-nodedotjs: **Automate maintaining** NodeJS, Deno, and Bun projects.
 { .card }
 
-:material-speedometer: **Work faster** by linting, prettifying, and updating from a single command
+:material-speedometer: **Work faster** by updating deps & cleaning projects from a single command.
 { .card }
 
-:material-transit-connection-variant: **It just works** with npm, pnpm, and yarn, plus Deno and Bun too
+:material-transit-connection-variant: **Move faster** with advanced automations like linting, prettifying, and more.
 { .card }
 
-> :simple-npm: It's NOT another CLI-ish npm package
+> :simple-npm: Enjoy all of that from NOT another CLI-ish npm package.
 
 </div>
 
