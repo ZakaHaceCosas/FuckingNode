@@ -1,11 +1,29 @@
----
+<!-- ---
 hide:
   - navigation
----
+--- -->
 
 # The f*cking chaos ends here
 
-Because dev life is messy enough. We can't fix your bugs, but we can:
+**Because dev life is messy enough.**
+
+<!-- markdownlint-disable md033 -->
+<div class="grid" markdown>
+
+:simple-nodedotjs: **Automate maintaining** NodeJS projects
+{ .card }
+
+:material-speedometer: **Work faster** by linting, prettifying, and updating from a single command
+{ .card }
+
+:material-transit-connection-variant: **It just works** with npm, pnpm, and yarn, plus Deno and Bun too
+{ .card }
+
+> :simple-npm: It's NOT another CLI-ish npm package
+
+</div>
+
+We can't fix your bugs, but we can:
 
 - help you recover disk space
 - help you keep your 69 side-projects and their 420 dependencies up-to-date
