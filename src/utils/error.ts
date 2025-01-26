@@ -1,6 +1,6 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { GetAppPath } from "../functions/config.ts";
-import { ColorString, LogStuff } from "../functions/io.ts";
+import { ColorString, MultiColorString } from "../functions/io.ts";
 import type { GLOBAL_ERROR_CODES } from "../types/errors.ts";
 
 /**
@@ -40,7 +40,7 @@ export class FknError extends Error {
                 break;
             case "Internal__Projects__CantDetermineEnv":
                 this.hint =
-                    "This is an internal error regarding determination of a project's environment, there's not much that you can do. You might want to try again, or open an issue on GitHub.";
+                    "This is an internal error regarding determination of a project's environment, there's not much that you can do. 'Thrown message' might help out, otherwise you might want to simply try again, or open up an issue on GitHub if it doesn't work.";
                 break;
             case "Manager__NonExistingPath":
                 this.hint =
@@ -74,9 +74,10 @@ export class FknError extends Error {
         ];
         if (this.message) {
             messageParts.push(
-                `Thrown message:               ${ColorString(this.message, "bright-yellow")}`,
+                `Thrown message:            ${ColorString(this.message, "bright-yellow")}`,
             );
         }
+        // i completely forgot what currentErr is for, but keep it in there i guess...
         if (currentErr !== undefined && currentErr !== this.message) {
             messageParts.push(
                 "----------",
@@ -115,7 +116,7 @@ export class FknError extends Error {
                 " below goes the debugged content dump. this could be, for example, an entire project main file, dumped here for reviewal. it could be a sh*t ton of stuff to read ---",
             "debugged content": debuggableContent,
         };
-        console.warn(ColorString(`For details about what happened, see last entry @ ${debugPath}.`, "orange"))
+        console.warn(ColorString(`For details about what happened, see last entry @ ${debugPath}.`, "orange"));
         await Deno.writeTextFile(
             debugPath,
             JSON.stringify(debuggableError, undefined, 4),
@@ -128,8 +129,8 @@ export class FknError extends Error {
     /**
      * handles and exits the CLI. you should always call this immediately after throwing.
      */
-    public async exit(currentErr?: string): Promise<never> {
-        await this.handleMessage(currentErr);
+    public exit(currentErr?: string): Promise<never> {
+        this.handleMessage(currentErr);
         Deno.exit(1);
     }
 }
@@ -138,15 +139,14 @@ export class FknError extends Error {
  * Handles an error and quits. Save up a few lines of code by using this in the `catch` block.
  *
  * @export
- * @async (async because it uses `await LogStuff()`)
  * @param {unknown} e The error.
  * @returns {Promise<never>} _Below any call to this function nothing can happen. It exits the CLI with code 1._
  */
-export default async function GenericErrorHandler(e: unknown): Promise<never> {
+export function GenericErrorHandler(e: unknown): Promise<never> {
     if (e instanceof FknError) {
-        await e.exit(e.message);
+        e.exit(e.message);
     } else {
-        await LogStuff(`${I_LIKE_JS.FK}! An unknown error happened: ${e}`, "error", "red");
+        console.error(`${MultiColorString(I_LIKE_JS.FK, "red", "bold")}! An unknown error happened: ${e}`);
     }
     Deno.exit(1); // <- doesn't do anything if the error is a FknError because e.exit() already exits, but without this VSCode rises an error (it doesn't know e.exit() is a <never>)
 }
