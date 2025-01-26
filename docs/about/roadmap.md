@@ -34,15 +34,18 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] `fuckingnode commit "message"` to `REDACTED`.
     - [X] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
     - [ ] `fuckingnode give-up <project>` to `REDACTED`.
+    - [ ] `fuckingnode setup <project>` to `REDACTED`.
+    - [x] `fuckingnode compat` to show cross-runtime compatibility without the need to open the browser.
+    - [x] `fuckingnode export <project>` to `REDACTED`.
 - [ ] Better installer
     - [X] Revamped `.ps1` based installer for Windows.
     - [ ] New `.sh` based installed for mac and Linux.
 - [ ] Better migration feature.
     - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
     - [ ] Cross-runtime migration.
-        - [ ] Bun. Implies `yarn.lock` support and somehow turning that into a binary (`bun.lockb` is a binary version of `yarn.lock` for those who don't know - it follows the same format).
+        - [ ] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
         - [ ] Deno.
-- [ ] Stabilize `audit` feature and support it everywhere.
+- [ ] Stabilize `audit` feature and support it everywhere NodeJS.
     - [ ] pnpm
     - [ ] yarn
 - [ ] Shorter commands.
@@ -54,23 +57,31 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 - [ ] Make `fuckingnode stats` actually useful
     - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
-- [ ] Better error handling.
+- [x] Better error handling.
 
 I'm not a fan of people who gives buzzword-ish names to projects, but regardless; I don't want to early-disclose what our next major release is about, so here you got. **Progress in here is not in the repo - it IS made, just uncommitted.**
 
 - [ ] Project `REDACTED`
     - [ ] Cr-P S.
-        - [ ] FnCPF
+        - [x] FnCPF
             - [x] Internal generation
-            - [ ] Ability to export it
+            - [x] Ability to export it
         - [ ] Ps.
             - [ ] G`REDACTED`
                 - [x] Base
+                    - [x] Recon
+                    - [x] Interaction
                 - [ ] Operations
+                    - [x] Base op
+                    - [ ] Advanced op
                 - [ ] Extras
             - [ ] C`REDACTED`
                 - [ ] Base
+                    - [ ] Recon
+                    - [x] Interaction
                 - [ ] Operations
+                    - [ ] Base op
+                    - [ ] Advanced op
                 - [ ] Extras
     - [ ] FnIL
         - [ ] Audit
