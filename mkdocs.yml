@@ -2,7 +2,7 @@ site_name: F*ckingNode
 site_description: The fucking chaos of maintaining NodeJS projects ends here.
 site_url: https://zakahacecosas.github.io/FuckingNode/
 site_author: ZakaHaceCosas
-copyright: ZakaHaceCosas
+copyright: Copyright &copy; 2024 - 2025 ZakaHaceCosas
 
 repo_name: ZakaHaceCosas/FuckingNode
 repo_url: https://github.com/ZakaHaceCosas/FuckingNode/
@@ -58,7 +58,6 @@ extra_css:
     - overrides/extra.css
 
 extra:
-  copyright: Copyright &copy; 2024 - 2025 ZakaHaceCosas
   social:
     - icon: fontawesome/brands/youtube 
       link: https://youtube.com/watch?v=_lppvGYUXNk
