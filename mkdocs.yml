@@ -38,14 +38,14 @@ theme:
     # favicon: /path/to/logo.png (when we have it)
 
     features:
-        # - navigation.path
-        # - navigation.tabs
-        # - navigation.sections
-        # - navigation.top
-        # - navigation.tracking
-        # - toc.follow
-        # - toc.integrate
-        # - navigation.expand
+        - navigation.path
+        - navigation.tabs
+        - navigation.sections
+        - navigation.top
+        - navigation.tracking
+        - toc.follow
+        - toc.integrate
+        - navigation.expand
         - content.code.copy
         - navigation.footer
 
