@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Breaking changes
 
+- **Schedule and update files will reset:** We now use a different date format, forcing them to be reset.
 - **Order of `clean` arguments swapped:** It's now `clean <project | "--"> <intensity | "--"> [...flags]` instead of `clean <intensity | "--"> <project | "--"> [...flags]`. This was made so the command makes more sense. E.g., `clean my-project hard`.
 
 ### Added

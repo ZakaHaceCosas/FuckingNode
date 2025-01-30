@@ -1,6 +1,6 @@
 {
     "name": "@zakahacecosas/fuckingnode",
-    "version": "3.0.0-work-in-progress-lol",
+    "version": "3.0.0-alpha.1-interop.1",
     "exports": {
         ".": "./src/main.ts"
     },
@@ -54,6 +54,7 @@
         "./src/commands/help.ignore.ts"
     ],
     "imports": {
+        "@std/datetime": "jsr:@std/datetime@^0.225.3",
         "@std/fs": "jsr:@std/fs@^1.0.10",
         "@std/jsonc": "jsr:@std/jsonc@^1.0.1",
         "@std/path": "jsr:@std/path@^1.0.8",
