@@ -4,7 +4,7 @@
     "jsr:@std/assert@^1.0.11": "1.0.11",
     "jsr:@std/collections@^1.0.9": "1.0.9",
     "jsr:@std/datetime@~0.225.3": "0.225.3",
-    "jsr:@std/fs@^1.0.10": "1.0.10",
+    "jsr:@std/fs@^1.0.11": "1.0.11",
     "jsr:@std/internal@^1.0.5": "1.0.5",
     "jsr:@std/json@1": "1.0.1",
     "jsr:@std/jsonc@^1.0.1": "1.0.1",
@@ -28,8 +28,8 @@
     "@std/datetime@0.225.3": {
       "integrity": "fda0b7791b43d9a46764986fec39922a8ceb70ffca642651fa7d0683501a171a"
     },
-    "@std/fs@1.0.10": {
-      "integrity": "bf041f9d7a0a460817f0421be8946d0e06011b3433e6c83a215628de5e3c7c2c",
+    "@std/fs@1.0.11": {
+      "integrity": "ba674672693340c5ebdd018b4fe1af46cb08741f42b4c538154e97d217b55bdd",
       "dependencies": [
         "jsr:@std/path"
       ]
@@ -122,7 +122,7 @@
     "dependencies": [
       "jsr:@std/assert@^1.0.11",
       "jsr:@std/datetime@~0.225.3",
-      "jsr:@std/fs@^1.0.10",
+      "jsr:@std/fs@^1.0.11",
       "jsr:@std/jsonc@^1.0.1",
       "jsr:@std/path@^1.0.8",
       "jsr:@std/semver@*",

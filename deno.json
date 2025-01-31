@@ -16,7 +16,8 @@
     "tasks": {
         "good": {
             "description": "Makes the code good by formatting and type-checking it.",
-            "command": "deno -A tasks/good.ts"
+            "command": "deno -A tasks/good.ts",
+            "dependencies": ["test"]
         },
         "compile": {
             "description": "Compiles the CLI",
@@ -55,7 +56,7 @@
     ],
     "imports": {
         "@std/datetime": "jsr:@std/datetime@^0.225.3",
-        "@std/fs": "jsr:@std/fs@^1.0.10",
+        "@std/fs": "jsr:@std/fs@^1.0.11",
         "@std/jsonc": "jsr:@std/jsonc@^1.0.1",
         "@std/path": "jsr:@std/path@^1.0.8",
         "@std/yaml": "jsr:@std/yaml",
