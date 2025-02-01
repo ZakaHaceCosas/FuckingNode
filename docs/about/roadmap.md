@@ -5,29 +5,9 @@ What we're planning to do. Only includes minor and major releases, patch release
 
 We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make progress and/or change our plans.
 
-## 2.X
-
-### Version 2.1 (Released)
-
-- [X] Release the `audit` feature as an `npm` only experiment. Learn more [here](../learn/audit.md).
-- [X] Support more editors for the `kickstart` command (PS. doing this is as simple as ensuring we know the command to launch that editor in all platforms).
-    - [X] Emacs
-    - [X] Notepad ++
-    - [X] VSCodium
-    - [X] Atom (_it's unmaintained, but anyways..._)
-- [X] Get this documentation finished.
-
-### Version 2.2 (Released)
-
-- [X] Per-project cleanup.
-- [X] Flagless features via `fknode.yaml`.
-- [X] Auto-flush for log files.
-
-----
-
 ## 3.X
 
-### Version 3.0
+### Upcoming Version 3.0
 
 - [ ] Make a proper logo for the project.
 - [ ] New features
@@ -36,7 +16,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] `fuckingnode give-up <project>` to `REDACTED`.
     - [ ] `fuckingnode setup <project>` to `REDACTED`.
     - [x] `fuckingnode compat` to show cross-runtime compatibility without the need to open the browser.
-    - [x] `fuckingnode export <project>` to export a project's CPF.
+    - [x] `fuckingnode export <project>` to export a project's FnCPF.
 - [ ] Better installer
     - [X] Revamped `.ps1` based installer for Windows.
     - [X] New `.sh` based installed for mac and Linux.
@@ -49,11 +29,13 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] pnpm
     - [ ] yarn
 - [ ] Shorter commands.
-    - [ ] Shorter core, for example `fknode`.
+    - [X] Shorter core command, `fknode (args)`.
         - [X] :fontawesome-brands-windows: Windows support
-        - [ ] :simple-apple: macOS and :simple-linux: Linux support
+        - [X] :simple-apple: macOS and :simple-linux: Linux support
     - [X] Shorter flags, for example, `fknode clean -- -l -p` instead of `fuckingnode clean -- --lint --pretty`.
-    - [ ] Shorthands, for example, `fkclean` instead of `fuckingnode clean`, which together with `defaultCleanerIntensity` setting and flagless features should handle everything.
+    - [X] Shorthands, for example, `fkclean` instead of `fuckingnode clean`, which together with `defaultCleanerIntensity` setting and flagless features should handle everything.
+        - [X] :fontawesome-brands-windows: Windows support
+        - [X] :simple-apple: macOS and :simple-linux: Linux support
 - [ ] Make `fuckingnode stats` actually useful
     - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
@@ -87,3 +69,23 @@ I'm not a fan of people who gives buzzword-ish names to projects, but regardless
         - [x] Linter
         - [x] Prettifier
         - [ ] Auditer
+
+----
+
+## 2.X
+
+### Version 2.1 (Released)
+
+- [X] Release the `audit` feature as an `npm` only experiment. Learn more [here](../learn/audit.md).
+- [X] Support more editors for the `kickstart` command (PS. doing this is as simple as ensuring we know the command to launch that editor in all platforms).
+    - [X] Emacs
+    - [X] Notepad ++
+    - [X] VSCodium
+    - [X] Atom (_it's unmaintained, but anyways..._)
+- [X] Get this documentation finished.
+
+### Version 2.2 (Released)
+
+- [X] Per-project cleanup.
+- [X] Flagless features via `fknode.yaml`.
+- [X] Auto-flush for log files.
