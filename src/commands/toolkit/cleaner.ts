@@ -5,12 +5,15 @@ import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.t
 import { ColorString, LogStuff } from "../../functions/io.ts";
 import { GetProjectEnvironment, GetProjectSettings, NameProject, SpotProject } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
-import type { JsProjectEnvironment, NodePkgJson, SUPPORTED_JAVASCRIPT_LOCKFILE } from "../../types/platform.ts";
+import type { ProjectEnvironment, SUPPORTED_GLOBAL_LOCKFILE } from "../../types/platform.ts";
 import { FknError } from "../../utils/error.ts";
 import { Git } from "../../utils/git.ts";
 import type { tRESULT } from "../clean.ts";
 import type { FkNodeYaml } from "../../types/config_files.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
+import { FkNodeInterop } from "../interop/interop.ts";
+
+const { validate, normalize } = StringUtils;
 
 /**
  * All project cleaning features.
@@ -18,19 +21,26 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 const ProjectCleaningFeatures = {
     Update: async (
         projectName: string,
-        env: JsProjectEnvironment,
+        env: ProjectEnvironment,
         settings: FkNodeYaml,
         verbose: boolean,
     ) => {
+        // TODO - interop this
         const { commands } = env;
         await LogStuff(
             `Updating ${projectName}.`,
             "working",
         );
         if (
-            settings.updateCmdOverride && settings.updateCmdOverride.trim() !== "" &&
+            validate(settings.updateCmdOverride) &&
             settings.updateCmdOverride !== "__USE_DEFAULT"
         ) {
+            if (commands.run === "__UNSUPPORTED") {
+                throw new FknError(
+                    "Interop__CannotRunJsLike",
+                    `${env.manager} does not support JavaScript-like "run" commands, however you've set updateCmdOverride in your fknode.yaml to ${settings.updateCmdOverride}. Update task cannot proceed.`,
+                );
+            }
             await LogStuff(`${commands.run.join(" ")} ${settings.updateCmdOverride}`, "wip");
             const output = await Commander(
                 commands.run[0],
@@ -52,7 +62,7 @@ const ProjectCleaningFeatures = {
     },
     Clean: async (
         projectName: string,
-        env: JsProjectEnvironment,
+        env: ProjectEnvironment,
         verbose: boolean,
     ) => {
         const { commands } = env;
@@ -78,120 +88,53 @@ const ProjectCleaningFeatures = {
     },
     Lint: async (
         projectName: string,
-        env: JsProjectEnvironment,
+        env: ProjectEnvironment,
         settings: FkNodeYaml,
         verbose: boolean,
     ) => {
-        const { commands } = env;
-        if (env.manager === "deno") return; // unsupported
-        if (!settings.lintCmd || settings.lintCmd.trim() === "") return;
         await LogStuff(
             `Linting ${projectName}.`,
             "working",
         );
-        if (settings.lintCmd === "__ESLINT") {
-            const dependencies = (env.main.content as NodePkgJson).dependencies;
-            if (!dependencies || !dependencies["eslint"]) {
-                await LogStuff(
-                    `Can't lint ${projectName}. No lint command was specified and ESLint is not installed.`,
-                    "bruh",
-                );
-                return;
-            }
-            const output = await Commander(
-                commands.exec[0],
-                commands.exec.length === 1
-                    ? [
-                        "eslint",
-                        "--fix",
-                        ".",
-                    ]
-                    : [
-                        commands.exec[1],
-                        "eslint",
-                        "--fix",
-                        ".",
-                    ],
+        try {
+            const output = await FkNodeInterop.Features.Lint(
+                env,
                 verbose,
+                (!validate(settings.lintCmd) || normalize(settings.lintCmd) === "__eslint") ? "__USE_DEFAULT" : { script: settings.lintCmd },
             );
-            if (output.success) await LogStuff(`Linted ${projectName}!`, "tick");
+            if (output === true) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
-        } else {
-            const output = await Commander(
-                commands.base,
-                ["run", settings.lintCmd],
-                verbose,
-            );
-            if (output.success) await LogStuff(`Linted ${projectName}!`, "tick");
+        } catch (e) {
+            await LogStuff(`Failed to lint ${projectName}, "bold")}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },
     Prettify: async (
         projectName: string,
-        env: JsProjectEnvironment,
+        env: ProjectEnvironment,
         settings: FkNodeYaml,
         verbose: boolean,
     ) => {
-        const { commands } = env;
         await LogStuff(
             `Prettifying ${projectName}.`,
             "working",
         );
-        if (commands.base === "deno") {
-            const output = await Commander(
-                "deno",
-                [
-                    "fmt",
-                ],
+        try {
+            const output = await FkNodeInterop.Features.Pretty(
+                env,
                 verbose,
-            ); // customization unsupported - it should work from deno.json, tho
-            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
-            return;
-        }
-        if (!settings.prettyCmd || settings.prettyCmd.trim() === "") {
-            await LogStuff(
-                `Can't prettify ${projectName}. No prettify command was specified.`,
-                "bruh",
+                (!validate(settings.prettyCmd) || normalize(settings.prettyCmd) === "__eslint")
+                    ? "__USE_DEFAULT"
+                    : { script: settings.prettyCmd },
             );
+            if (output === true) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
-        }
-        if (settings.prettyCmd === "__PRETTIER") {
-            const dependencies = (env.main.content as NodePkgJson).dependencies;
-            if (!dependencies || !dependencies["prettier"]) {
-                await LogStuff(
-                    `Can't prettify ${projectName}. No prettify command was specified and Prettier is not installed.`,
-                    "bruh",
-                );
-                return;
-            }
-            const output = await Commander(
-                commands.exec[0],
-                commands.exec.length === 1
-                    ? [
-                        "prettier",
-                        "--w",
-                        ".",
-                    ]
-                    : [
-                        commands.exec[1],
-                        "eslint",
-                        "--w",
-                        ".",
-                    ],
-                verbose,
-            );
-            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
-            return;
-        } else {
-            const output = await Commander(
-                commands.base,
-                ["run", settings.prettyCmd],
-                verbose,
-            );
-            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
+        } catch (e) {
+            await LogStuff(`Failed to pretty ${projectName}, "bold")}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },
+    // TODO - interop; since it's not env dependant i'll leave this for the end
     Destroy: async (
         settings: FkNodeYaml,
         project: string,
@@ -229,6 +172,7 @@ const ProjectCleaningFeatures = {
             }
         }
     },
+    // TODO - interop, too
     Commit: async (
         settings: FkNodeYaml,
         project: string,
@@ -304,7 +248,7 @@ export async function PerformCleaning(
 ): Promise<void> {
     try {
         const motherfuckerInQuestion = await ParsePath(projectInQuestion);
-        const projectName = await NameProject(motherfuckerInQuestion, "name");
+        const projectName = ColorString(await NameProject(motherfuckerInQuestion, "name"), "bold");
         const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
         const settings = await GetProjectSettings(motherfuckerInQuestion);
 
@@ -405,7 +349,7 @@ export async function PerformHardCleanup(): Promise<void> {
     const bunHardPruneArgs: string[] = ["pm", "cache", "rm"];
     // const denoHardPruneArgs: string[] = ["clean"];
 
-    if (await CommandExists("npm")) {
+    if (CommandExists("npm")) {
         await LogStuff(
             "NPM",
             "package",
@@ -414,7 +358,7 @@ export async function PerformHardCleanup(): Promise<void> {
         await Commander("npm", npmHardPruneArgs, true);
         await LogStuff("Done", "tick");
     }
-    if (await CommandExists("pnpm")) {
+    if (CommandExists("pnpm")) {
         await LogStuff(
             "PNPM",
             "package",
@@ -423,7 +367,7 @@ export async function PerformHardCleanup(): Promise<void> {
         await Commander("pnpm", pnpmHardPruneArgs, true);
         await LogStuff("Done", "tick");
     }
-    if (await CommandExists("yarn")) {
+    if (CommandExists("yarn")) {
         await LogStuff(
             "YARN",
             "package",
@@ -433,7 +377,7 @@ export async function PerformHardCleanup(): Promise<void> {
         await LogStuff("Done", "tick");
     }
 
-    if (await CommandExists("bun")) {
+    if (CommandExists("bun")) {
         await LogStuff(
             "BUN",
             "package",
@@ -443,7 +387,7 @@ export async function PerformHardCleanup(): Promise<void> {
         await Commander("bun", bunHardPruneArgs, true);
         await LogStuff("Done", "tick");
     }
-    /* if (await CommandExists("deno")) {
+    /* if (CommandExists("deno")) {
         await Commander("deno", ["init"], false); // placebo 2
         await Commander("deno", denoHardPruneArgs, true);
     } */
@@ -453,7 +397,7 @@ export async function PerformHardCleanup(): Promise<void> {
     // using a program thats written in deno
     // and it throws an error and exits the CLI
     // epic.
-    if (await CommandExists("deno")) {
+    if (CommandExists("deno")) {
         try {
             const denoDir: string | undefined = Deno.env.get("DENO_DIR");
             if (!denoDir) throw "lmao";
@@ -505,6 +449,8 @@ export async function PerformMaximCleanup(projects: string[]): Promise<void> {
         const workingProject = await SpotProject(project);
         const name = await NameProject(workingProject, "name");
         const env = await GetProjectEnvironment(workingProject);
+
+        if (env.runtime === "rust" || env.runtime === "golang") continue;
 
         await LogStuff(
             `Maxim pruning for ${name}`,
@@ -610,17 +556,19 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
  * @export
  * @async
  * @param {string} path
- * @returns {Promise<SUPPORTED_JAVASCRIPT_LOCKFILE[]>} All lockfiles
+ * @returns {Promise<SUPPORTED_GLOBAL_LOCKFILE[]>} All lockfiles
  */
-export async function ResolveLockfiles(path: string): Promise<SUPPORTED_JAVASCRIPT_LOCKFILE[]> {
-    const lockfiles: SUPPORTED_JAVASCRIPT_LOCKFILE[] = [];
-    const possibleLockfiles: SUPPORTED_JAVASCRIPT_LOCKFILE[] = [
+export async function ResolveLockfiles(path: string): Promise<SUPPORTED_GLOBAL_LOCKFILE[]> {
+    const lockfiles: SUPPORTED_GLOBAL_LOCKFILE[] = [];
+    const possibleLockfiles: SUPPORTED_GLOBAL_LOCKFILE[] = [
         "pnpm-lock.yaml",
         "package-lock.json",
         "yarn.lock",
         "bun.lockb",
         "bun.lock",
         "deno.lock",
+        "go.sum",
+        "cargo.lock",
     ];
     for (const lockfile of possibleLockfiles) {
         if (await CheckForPath(await JoinPaths(path, lockfile))) {

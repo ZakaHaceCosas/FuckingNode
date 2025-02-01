@@ -1,5 +1,6 @@
+import { VERSION } from "../src/constants.ts";
 import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
-import type { JsProjectEnvironment } from "../src/types/platform.ts";
+import type { ProjectEnvironment } from "../src/types/platform.ts";
 
 // CONSTANTS
 export const CONSTANTS = {
@@ -8,13 +9,34 @@ export const CONSTANTS = {
 };
 
 // (naming things is fr the hardest)
-const TEST_PROJECTS: Record<string, JsProjectEnvironment> = {
+const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
     ONE: {
         root: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one`),
         main: {
             path: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`),
             name: "package.json",
-            content: JSON.parse(await Deno.readTextFile(await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`))),
+            stdContent: JSON.parse(await Deno.readTextFile(await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`))),
+            cpfContent: {
+                name: "uwu.js",
+                version: "1.0.0",
+                rm: "npm",
+                deps: [
+                    {
+                        name: "tslib",
+                        ver: "^2.0.0",
+                        rel: "univ:dep",
+                        src: "npm",
+                    },
+                ],
+                ws: [
+                    await ParsePath(`${CONSTANTS.ENV_PATH}/test-two`),
+                ],
+                internal: {
+                    fknode: VERSION,
+                    fknodeCpf: "1.0.0",
+                    fknodeIol: "1.0.0",
+                },
+            },
         },
         commands: {
             base: "npm",

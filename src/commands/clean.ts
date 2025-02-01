@@ -3,7 +3,7 @@ import { CheckForPath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects, GetProjectSettings, NameProject, SpotProject, UnderstandProjectSettings } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
-import GenericErrorHandler from "../utils/error.ts";
+import { GenericErrorHandler } from "../utils/error.ts";
 import {
     PerformCleaning,
     PerformHardCleanup,
@@ -59,42 +59,11 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             verbose,
         );
 
-        if (project !== 0) {
-            const workingProject = await SpotProject(project);
-            Deno.chdir(workingProject);
-            console.log("");
-            await LogStuff(
-                `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
-                "package",
-            );
-            const { doClean, doUpdate, doPrettify, doLint, doDestroy } = UnderstandProjectSettings.protection(
-                await GetProjectSettings(project),
-                {
-                    update,
-                    lint,
-                    destroy,
-                    prettify,
-                },
-            );
-            await PerformCleaning(
-                workingProject,
-                doUpdate,
-                doClean,
-                doLint,
-                doPrettify,
-                doDestroy,
-                commit,
-                realIntensity,
-                verbose,
-            );
-            if (realIntensity === "maxim") await PerformMaximCleanup([project]);
-            Deno.chdir(originalLocation);
-            return;
-        }
+        const workingProjects = project === 0 ? projects : [await SpotProject(project)];
 
         const results: tRESULT[] = [];
 
-        for (const project of projects) {
+        for (const project of workingProjects) {
             if (!(await CheckForPath(project))) {
                 await LogStuff(
                     `Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`,
@@ -203,7 +172,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         }
 
         if (realIntensity === "hard") await PerformHardCleanup();
-        if (realIntensity === "maxim") await PerformMaximCleanup(projects);
+        if (realIntensity === "maxim") await PerformMaximCleanup(workingProjects);
 
         // go back home
         Deno.chdir(originalLocation);
@@ -215,6 +184,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         if (verbose) await ShowReport(results);
         return;
     } catch (e) {
-        await GenericErrorHandler(e);
+        GenericErrorHandler(e, true); // TODO <- check
     }
 }

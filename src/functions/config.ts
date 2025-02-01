@@ -1,6 +1,6 @@
 import { APP_NAME, DEFAULT_SCHEDULE_FILE, DEFAULT_SETTINGS, I_LIKE_JS } from "../constants.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
-import GenericErrorHandler, { FknError } from "../utils/error.ts";
+import { FknError, GenericErrorHandler } from "../utils/error.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { parse as parseYaml } from "@std/yaml";
 import { StringifyYaml } from "./io.ts";
@@ -61,8 +61,7 @@ export async function GetAppPath(
                 throw new Error(`Invalid config path ${path} requested.`);
         }
     } catch (e) {
-        await GenericErrorHandler(e);
-        Deno.exit(1);
+        GenericErrorHandler(e, false);
     }
 }
 

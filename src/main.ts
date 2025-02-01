@@ -10,35 +10,68 @@ import TheAbouter from "./commands/about.ts";
 import TheKickstarter from "./commands/kickstart.ts";
 import TheAuditer from "./commands/audit.ts";
 import TheReleaser from "./commands/release.ts";
+import TheExporter from "./commands/export.ts";
+import TheCompater from "./commands/compat.ts";
 // other things
-import { VERSION } from "./constants.ts";
+import { APP_NAME, VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
-import { FreshSetup, GetSettings } from "./functions/config.ts";
-import GenericErrorHandler from "./utils/error.ts";
+import { FreshSetup, GetAppPath, GetSettings } from "./functions/config.ts";
+import { GenericErrorHandler } from "./utils/error.ts";
 import type { TheCleanerConstructedParams } from "./commands/constructors/command.ts";
 import { RunScheduledTasks } from "./functions/schedules.ts";
+import { StringUtils } from "@zakahacecosas/string-utils";
+
+// this is outside the main loop so it can be executed
+// without depending on other modules
+// yes i added this feature because of a breaking change i wasn't expecting
+if (StringUtils.normalize(Deno.args[0] ?? "") === "something-fucked-up") {
+    const c = await LogStuff(
+        `This command will reset ${APP_NAME.CASED}'s settings, logs, and configs ENTIRELY (except for project list). Are you sure things fucked up that much?`,
+        "what",
+        "bold",
+        true,
+    );
+    if (c === true) {
+        const paths = [
+            await GetAppPath("SCHEDULE"),
+            await GetAppPath("SETTINGS"),
+            await GetAppPath("ERRORS"),
+            await GetAppPath("LOGS"),
+        ];
+
+        for (const path of paths) {
+            await Deno.remove(path, { recursive: true });
+        }
+
+        await LogStuff("Done. Don't fuck up again this time!", "tick");
+    } else {
+        await LogStuff("I knew it wasn't that bad...");
+    }
+    Deno.exit(0);
+}
 
 async function init() {
     await FreshSetup();
     await RunScheduledTasks();
 }
 
-if (!Deno.args[0]) {
+/** Normalized Deno.args */
+const flags = Deno.args.map((arg) => StringUtils.normalize(arg));
+
+if (!StringUtils.validate(flags[0])) {
     await init();
     await TheHelper({});
     Deno.exit(0);
 }
 
-const flags = Deno.args.map((arg) => arg.toLowerCase());
-
 function hasFlag(flag: string, allowShort: boolean): boolean {
-    return ParseFlag(flag, allowShort).some((f) => flags.includes(f));
+    return ParseFlag(flag, allowShort).some((f) => flags.includes(StringUtils.normalize(f)));
 }
 
 if (hasFlag("help", true)) {
     await init();
     try {
-        await TheHelper({ query: Deno.args[1] });
+        await TheHelper({ query: flags[1] });
         Deno.exit(0);
     } catch (e) {
         console.error("Critical error", e);
@@ -55,8 +88,8 @@ if (hasFlag("experimental-audit", false)) {
             "bright-yellow",
         );
         await TheAuditer(
-            Deno.args[1] ?? null,
-            ParseFlag("strict", true).includes(Deno.args[2] ?? ""),
+            flags[1] ?? null,
+            ParseFlag("strict", true).includes(flags[2] ?? ""),
         );
         Deno.exit(0);
     } catch (e) {
@@ -65,7 +98,7 @@ if (hasFlag("experimental-audit", false)) {
     }
 }
 
-if (hasFlag("version", true) && !Deno.args[1]) {
+if (hasFlag("version", true) && !flags[1]) {
     await LogStuff(VERSION, "bulb", "bright-green");
     Deno.exit(0);
 }
@@ -75,16 +108,16 @@ async function main(command: string) {
 
     /* this is a bit unreadable, i admit */
     const projectArg = (
-            Deno.args[1] &&
-            Deno.args[1].trim() !== "" &&
-            (((!Deno.args[1].trim().startsWith("--") && !Deno.args[1].trim().startsWith("-")) &&
-                !ParseFlag("self", false).includes(Deno.args[1])) || ParseFlag("self", false).includes(Deno.args[1]))
+            flags[1] &&
+            flags[1].trim() !== "" &&
+            (((!flags[1].trim().startsWith("--") && !flags[1].trim().startsWith("-")) &&
+                !ParseFlag("self", false).includes(flags[1])) || ParseFlag("self", false).includes(flags[1]))
         )
-        ? Deno.args[1]
+        ? flags[1]
         : 0 as const;
 
-    const intensityArg = (Deno.args[2] && Deno.args[2].trim() !== "" && !Deno.args[2].trim().includes("--"))
-        ? Deno.args[2]
+    const intensityArg = (flags[2] && flags[2].trim() !== "" && !flags[2].trim().includes("--"))
+        ? flags[2]
         : (await GetSettings()).defaultCleanerIntensity;
 
     const cleanerArgs: TheCleanerConstructedParams = {
@@ -103,7 +136,7 @@ async function main(command: string) {
     };
 
     try {
-        switch (command.toLowerCase()) {
+        switch (StringUtils.normalize(command, true, true)) {
             case "clean":
                 await TheCleaner(cleanerArgs);
                 break;
@@ -129,20 +162,20 @@ async function main(command: string) {
                 });
                 break;
             case "manager":
-                await TheManager(Deno.args);
+                await TheManager(flags);
                 break;
             case "kickstart":
                 await TheKickstarter({
-                    gitUrl: Deno.args[1] ?? "",
-                    path: Deno.args[2] ?? "",
-                    manager: Deno.args[3] ?? "",
+                    gitUrl: flags[1] ?? "",
+                    path: flags[2] ?? "",
+                    manager: flags[3] ?? "",
                 });
                 break;
             case "settings":
-                await TheSettings({ args: Deno.args });
+                await TheSettings({ args: flags });
                 break;
             case "migrate":
-                await TheMigrator({ project: Deno.args[1], desiredManager: Deno.args[2] });
+                await TheMigrator({ project: flags[1], desiredManager: flags[2] });
                 break;
             case "self-update":
             case "upgrade":
@@ -157,14 +190,29 @@ async function main(command: string) {
             case "release":
             case "publish":
                 await TheReleaser({
-                    project: Deno.args[1],
-                    version: Deno.args[2],
+                    project: flags[1],
+                    version: flags[2],
                     push: hasFlag("push", true),
                     dry: hasFlag("dry-run", true),
                 });
                 break;
+            case "export":
+            case "gen-cpf":
+            case "generate-cpf":
+                await TheExporter({
+                    project: flags[1],
+                    json: hasFlag("json", false),
+                    cli: hasFlag("cli", false),
+                });
+                break;
+            case "compat":
+            case "features":
+                await TheCompater({
+                    target: flags[1],
+                });
+                break;
             case "stats":
-                await TheStatistics(Deno.args[1] ?? "");
+                await TheStatistics(flags[1] ?? "");
                 break;
             case "documentation":
             case "docs":
@@ -189,14 +237,14 @@ async function main(command: string) {
                 );
                 break;
             default:
-                await TheHelper({ query: Deno.args[1] });
+                await TheHelper({ query: flags[1] });
                 Deno.exit(0);
         }
 
         Deno.exit(0);
     } catch (e) {
-        await GenericErrorHandler(e);
+        GenericErrorHandler(e, true);
     }
 }
 
-await main(Deno.args[0]);
+await main(flags[0]);

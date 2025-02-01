@@ -2,7 +2,7 @@ import { format, parse } from "@std/semver";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheReleaserConstructedParams } from "./constructors/command.ts";
-import type { DenoPkgJson, NodePkgJson } from "../types/platform.ts";
+import type { DenoPkgFile, NodePkgFile } from "../types/platform.ts";
 import { Commander } from "../functions/cli.ts";
 import { GetProjectSettings } from "../functions/projects.ts";
 import { PerformCleaning } from "./toolkit/cleaner.ts";
@@ -34,6 +34,10 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             throw new Error(`Failed to load environment or settings for project '${params.project}'.`);
         }
 
+        if (env.commands.publish === "__UNSUPPORTED") {
+            throw new Error(`Platform ${env.runtime} doesn't support publishing. Aborting.`);
+        }
+
         if (!settings.releaseCmd?.trim()) {
             throw new Error(
                 "Your fknode.yaml file lacks a releaseCmd key. If you don't want to run any additional command before releasing, please set it to __DISABLE.",
@@ -41,8 +45,8 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         }
 
         // bump version from pkg json first
-        const newPackageFile: NodePkgJson | DenoPkgJson = {
-            ...env.main.content,
+        const newPackageFile: NodePkgFile | DenoPkgFile = {
+            ...env.main.stdContent,
             version: format(parsedVersion),
         };
 

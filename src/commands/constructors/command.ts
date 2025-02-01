@@ -169,3 +169,42 @@ export interface TheReleaserConstructedParams {
      */
     dry: boolean;
 }
+
+/**
+ * The Exporter
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheExporterConstructedParams
+ */
+export interface TheExporterConstructedParams {
+    /**
+     * Project to generate FnCPF for.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * Whether to use JSON or not.
+     *
+     * @type {boolean}
+     */
+    json: boolean;
+    /**
+     * Whether to output the file to the CLI too.
+     *
+     * @type {boolean}
+     */
+    cli: boolean;
+}
+
+/**
+ * The Compater
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheCompaterConstructedParams
+ */
+export interface TheCompaterConstructedParams {
+    target?: UnknownString;
+}

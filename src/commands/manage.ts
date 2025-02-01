@@ -3,7 +3,7 @@ import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
-import GenericErrorHandler, { FknError } from "../utils/error.ts";
+import { FknError, GenericErrorHandler } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
 import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
@@ -82,13 +82,15 @@ export async function AddProject(
         return;
     }
 
+    const workspaceString: string[] = [];
+
+    for (const ws of workspaces) {
+        workspaceString.push(await NameProject(ws, "all"));
+    }
+
     const addWorkspaces = await LogStuff(
-        `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these Node workspaces:\n\n${
-            workspaces.map(
-                async (thingy) => {
-                    return await NameProject(thingy, "all");
-                },
-            )
+        `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these workspaces:\n\n${
+            workspaceString.join("\n")
         }.\n\nShould we add them to your list as well, so they're all cleaned?`,
         "bulb",
         undefined,
@@ -153,7 +155,7 @@ export async function RemoveProject(
 
         if (list.length > 0) {
             await LogStuff(
-                `Let me guess: ${await NameProject(
+                `I'll guess: ${await NameProject(
                     workingEntry,
                     "name",
                 )} was another "revolutionary cutting edge project" that's now gone, right?`,
@@ -314,7 +316,7 @@ async function ListProjects(
         }
         return;
     } catch (e) {
-        await GenericErrorHandler(e);
+        GenericErrorHandler(e, false);
     }
 }
 

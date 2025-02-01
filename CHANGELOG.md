@@ -10,17 +10,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Breaking changes
 
-- **Schedule and update files will reset:** We now use a different date format, forcing them to be reset.
+> [!CAUTION]
+> Old uses will need to run (`fuckingnode something-fucked-up`) once before being able to use v3.
+
+- **Schedule and update files won't work:** We now use a different date format.
 - **Order of `clean` arguments swapped:** It's now `clean <project | "--"> <intensity | "--"> [...flags]` instead of `clean <intensity | "--"> <project | "--"> [...flags]`. This was made so the command makes more sense. E.g., `clean my-project hard`.
 
 ### Added
 
+- **Cross-platform support** - Golang and Rust projects can now benefit from FuckingNode (just as with Deno/Bun, unbridgeable features won't work but won't interrupt the flow either). While compatibility is more limited, it's better than nothing.
+  - Added a new `export <project>` command to export a project's FnCPF (an internal "file" used for interoperability purposes). If something's not working, it _might_ help out, as it'll show whether we're correctly reading your project's info or not.
 - Added a **new command** `release`. Automatically runs our typical cleanup & maintenance automation, but also bumps SemVer version from your package file, commits your changes, creates a Git tag, pushes to mainstream, and **automatically publishes to `npm` or `jsr`**, from a single command.
   - `dry-run` and other options are available to prevent Git commit and npm/jsr publish tasks from running, if desired.
   - The process is 90-100% automated, however you'll have to move your hands in some cases (we still save you some time with this addition :wink:):
     - Always when publishing to JSR, as you're required to click once in their web UI to authorize the publishing.
     - When publishing to npm and have 2FA enabled and required for publishing.
   - `publish` is allowed as an alias to the command.
+- Added a **new command** `something-fucked-up` to completely reset all internal settings except for your project list.
+- Added a **new command** `compat (feature)` to show overall compatibility, or compatibility of a specific feature if provided, of the CLI across environments (NodeJS, Bun, Go...).
 - Added a new `maxim-only` intensity level. Plus, now `maxim` cleanup should work on per-project cleanup as well.
 - (WIP; Windows only) Added new shell-based installers (`.ps1` for Windows, and soon `.sh` for macOS and Linux).
 - (WIP; Windows only) Added an `fknode` CLI shortcut. Equivalent to `fuckingnode`.
@@ -32,6 +39,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Now error messages for not found / not added projects are consistent.
 - Now any generated YAML files by the CLI follow common formatting.
+- Now commands are normalized, meaning even stupid things like `fuckingnode mÀnaGëR lÌSt` will work perfectly.
+- Now the CLI more reliably tells whether a runtime is installed or not (at the expense of some extra milliseconds).
 
 ### Fixed
 
@@ -45,6 +54,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed Bun projects' config files not being properly read.
 - Fixed the app randomly showing "That worked out!" before any other CLI output.
 - Fixed schedules running each time you run the CLI after they reach their scheduled run time once (they didn't reset the timer).
+- Fixed report not being shown when using verbose flag & per-project cleanup.
+- Fixed kickstart not always running the correct install command.
+- Fixed a bunch of issues with how kickstart determined a project's environment and the runtime to work with.
+- Fixed how workspaces are shown to the user when found while adding a project.
+- Fixed some minor issues with the cleaner.
+- Fixed FknError `Generic__NonFoundProject` not showing the name inputted (showing instead `trim function`-whatever).
 
 ## [2.2.1] 16-01-2025
 

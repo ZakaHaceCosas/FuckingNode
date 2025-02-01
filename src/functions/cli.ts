@@ -59,28 +59,39 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
 
     const result: CommanderOutput = {
         success: (await process.status).success,
+        // (doesn't work) stdout: `${new TextDecoder().decode((await process.output()).stdout)}\n${new TextDecoder().decode((await process.output()).stdout)}`,
     };
 
     return result;
 }
 
 /**
- * Validates if a command exists. Useful to check if the user has some tool installed before running anything. Uses `-v` as an arg to whatever command you pass.
+ * Validates if a command exists. Useful to check if the user has some tool installed before running anything. Uses `-v` and `--version` as an arg to whatever command you pass.
  *
  * @export
- * @async
  * @param {string} cmd
- * @returns {Promise<boolean>}
+ * @returns {boolean}
  */
-export async function CommandExists(cmd: string): Promise<boolean> {
+export function CommandExists(cmd: string): boolean {
     try {
         const process = new Deno.Command(cmd, {
             args: ["-v"], // this single line fixed a bug that has been present for at least two months 😭
             stdout: "null",
             stderr: "null",
         });
+        const processTwo = new Deno.Command(cmd, {
+            args: ["--version"],
+            stdout: "null",
+            stderr: "null",
+        });
+        const processThree = new Deno.Command(cmd, {
+            args: ["help"], // platform-specific fix (go)
+            stdout: "null",
+            stderr: "null",
+        });
 
-        return (await process.output()).success;
+        // sync on purpose so we pause execution until we 100% know if command exists or not
+        return (process.outputSync()).success || (processTwo.outputSync()).success || (processThree.outputSync()).success;
     } catch {
         // error = false
         return false;

@@ -235,4 +235,35 @@ export const Git = {
             return 1;
         }
     },
+    GetTag: async (project: string, showOutput: boolean): Promise<string | undefined> => {
+        try {
+            const path = await SpotProject(project);
+            const getTagOutput = await Commander(
+                "git",
+                [
+                    "-C",
+                    path,
+                    "describe",
+                    "--tags",
+                    "--abbrev=0",
+                ],
+                false,
+            );
+            if (!getTagOutput.success) {
+                throw new Error(getTagOutput.stdout);
+            }
+            if (!getTagOutput.stdout) {
+                throw new Error(`git describe --tags --abbrev=0 returned an undefined output for ${path}`);
+            }
+            return getTagOutput.stdout.trim(); // describe --tags --abbrev=0 should return a string with nothing but the latest tag, so this will do
+        } catch (e) {
+            if (showOutput) {
+                await LogStuff(
+                    `Error - could not get latest tag at ${ColorString(project, "bold")} because of error: ${e}`,
+                    "error",
+                );
+            }
+            return undefined;
+        }
+    },
 };
