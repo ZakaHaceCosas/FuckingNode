@@ -41,34 +41,33 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 - [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [x] Better error handling.
 
-I'm not a fan of people who gives buzzword-ish names to projects, but regardless; I don't want to early-disclose what our next major release is about, so here you got. **Progress in here is not in the repo - it IS made, just uncommitted.**
+**Cross-platform support!**
 
-- [ ] Project `REDACTED`
-    - [ ] Cross-Platform Support
-        - [x] FnCPF (FuckingNode CommonPackageFile)
-            - [x] Internal generation
-            - [x] Ability to export it
-        - [ ] Platforms
-            - [ ] Golang
-                - [x] Base
-                    - [x] Recon
-                    - [x] Interaction
-                - [ ] Operations
-                    - [x] Base op
-                    - [ ] Advanced op
-                - [ ] Extras
-            - [ ] Cargo (Rust)
-                - [x] Base
-                    - [x] Recon
-                    - [x] Interaction
-                - [ ] Operations
-                    - [ ] Base op
-                    - [ ] Advanced op
-                - [ ] Extras
-    - [ ] FkNode Interop Layer
-        - [x] Linter
-        - [x] Prettifier
-        - [ ] Auditer
+- [ ] Cross-Platform Support
+    - [x] FnCPF (FuckingNode CommonPackageFile)
+        - [x] Internal generation
+        - [x] Ability to export it
+    - [ ] Platforms
+        - [ ] Golang
+            - [x] Base
+                - [x] Recon
+                - [x] Interaction
+            - [ ] Operations
+                - [x] Base op
+                - [ ] Advanced op
+            - [ ] Extras
+        - [ ] Cargo (Rust)
+            - [x] Base
+                - [x] Recon
+                - [x] Interaction
+            - [ ] Operations
+                - [ ] Base op
+                - [ ] Advanced op
+            - [ ] Extras
+- [ ] FkNode Interop Layer
+    - [x] Linter
+    - [x] Prettifier
+    - [ ] Auditer (this is a bit special, you'll see later on)
 
 ----
 
