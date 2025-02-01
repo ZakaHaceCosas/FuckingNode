@@ -63,25 +63,25 @@ Function New-Shortcut {
         Write-Host "Shortcut created successfully at $cleanPath"
 
         # fkclean-v (no args) (verbose)
-        $cleanVContent = "@echo off`n%~dp0$($appName).exe clean -- -v"
+        $cleanVContent = "@echo off`n%~dp0$($appName).exe clean -- -- -v"
         $cleanVPath = Join-Path -Path $installDir -ChildPath "fkclean-v.bat"
         Set-Content -Path $cleanVPath -Value $cleanVContent -Encoding ASCII
         Write-Host "Shortcut created successfully at $cleanVPath"
 
         # fkcommit (1 string arg)
-        $commitContent = '@echo off`nif "%~1"=="" (echo Error: No commit message provided! & exit /b) else ( %~dp0$($appName).exe commit "%~1" )'
+        $commitContent = "@echo off`nif ""%~1""=="""" (echo Error: No commit message provided! & exit /b) else ( %~dp0$($appName).exe commit ""%~1"" )"
         $commitPath = Join-Path -Path $installDir -ChildPath "fkcommit.bat"
         Set-Content -Path $commitPath -Value $commitContent -Encoding ASCII
         Write-Host "Shortcut created successfully at $commitPath"
 
         # fkadd (1 string arg)
-        $addContent = '@echo off`nif "%~1"=="" (echo Error: No argument provided! & exit /b) else ( %~dp0$($appName).exe manager add "%~1" )'
+        $addContent = "@echo off`nif ""%~1""=="""" (echo Error: No argument provided! & exit /b) else ( %~dp0$($appName).exe manager add ""%~1"" )"
         $addPath = Join-Path -Path $installDir -ChildPath "fkadd.bat"
         Set-Content -Path $addPath -Value $addContent -Encoding ASCII
         Write-Host "Shortcut created successfully at $addPath"
 
         # fkrem (1 string arg)
-        $remContent = '@echo off`nif "%~1"=="" (echo Error: No argument provided! & exit /b) else ( %~dp0$($appName).exe manager remove "%~1" )'
+        $remContent = "@echo off`nif ""%~1""=="""" (echo Error: No argument provided! & exit /b) else ( %~dp0$($appName).exe manager remove ""%~1"" )"
         $remPath = Join-Path -Path $installDir -ChildPath "fkrem.bat"
         Set-Content -Path $remPath -Value $remContent -Encoding ASCII
         Write-Host "Shortcut created successfully at $remPath"

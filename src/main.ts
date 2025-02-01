@@ -64,7 +64,10 @@ if (!StringUtils.validate(flags[0])) {
     Deno.exit(0);
 }
 
-function hasFlag(flag: string, allowShort: boolean): boolean {
+function hasFlag(flag: string, allowShort: boolean, firstOnly: boolean = false): boolean {
+    if (firstOnly === true) {
+        return ParseFlag(flag, allowShort).includes(StringUtils.normalize(flags[0] ?? ""));
+    }
     return ParseFlag(flag, allowShort).some((f) => flags.includes(StringUtils.normalize(f)));
 }
 
@@ -98,7 +101,7 @@ if (hasFlag("experimental-audit", false)) {
     }
 }
 
-if (hasFlag("version", true) && !flags[1]) {
+if (hasFlag("version", true, true) && !flags[1]) {
     await LogStuff(VERSION, "bulb", "bright-green");
     Deno.exit(0);
 }
