@@ -1,4 +1,1 @@
-this test should NOT be committed
-
-
-hi mom
+This is another test. I'm testing "fuckingnode commit" command right now. It's (ironically) uncommitted as of now.
