@@ -1,19 +1,26 @@
 // send help
 
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 import { APP_NAME, I_LIKE_JS } from "../../constants.ts";
 import { Commander } from "../../functions/cli.ts";
 import { ColorString, LogStuff, MultiColorString } from "../../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../../functions/projects.ts";
-import type { FkNodeSecurityAudit, ParsedNpmReport, SecurityVulnerability } from "../../types/audit.ts";
+import type {
+    AnalyzedIndividualSecurityVulnerability,
+    ApiFetchedIndividualSecurityVulnerability,
+    FkNodeSecurityAudit,
+    ParsedNodeReport,
+} from "../../types/audit.ts";
+import type { tURL } from "../../types/misc.ts";
 
 /**
  * Gets a package's security vulnerabilities from OSV.dev.
  *
  * @async
  * @param {string} packageName Name of the package.
- * @returns {Promise<SecurityVulnerability[]>} Array of vulnerabilities associated to the package.
+ * @returns {Promise<ApiFetchedIndividualSecurityVulnerability[]>} Array of vulnerabilities associated to the package.
  */
-async function FetchVulnerability(packageName: string): Promise<SecurityVulnerability[]> {
+async function FetchVulnerability(packageName: string): Promise<ApiFetchedIndividualSecurityVulnerability[]> {
     const response = await fetch("https://api.osv.dev/v1/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -27,7 +34,7 @@ async function FetchVulnerability(packageName: string): Promise<SecurityVulnerab
 
     if (!response.ok) throw new Error(`Error checking with OSV.dev: ${response.statusText}`);
 
-    const data: { vulns: SecurityVulnerability[] | undefined } = await response.json();
+    const data: { vulns: ApiFetchedIndividualSecurityVulnerability[] | undefined } = await response.json();
 
     return data.vulns || [];
 }
@@ -85,9 +92,9 @@ const VULNERABILITY_VECTORS = {
 /**
  * Analyzes security vulnerabilities searching for keywords, returns an array of starter questions for the interrogatory. While unused, also returns the keywords (`vectors`) found.
  *
- * @param {SecurityVulnerability[]} vulnerabilities
+ * @param {ApiFetchedIndividualSecurityVulnerability[]} vulnerabilities
  */
-function AnalyzeVulnerabilities(vulnerabilities: SecurityVulnerability[]): {
+function AnalyzeVulnerabilities(vulnerabilities: ApiFetchedIndividualSecurityVulnerability[]): {
     questions: string[];
     vectors: string[];
 } {
@@ -95,20 +102,13 @@ function AnalyzeVulnerabilities(vulnerabilities: SecurityVulnerability[]): {
     const vectors: Set<string> = new Set<string>();
 
     function includes(target: string, substrings: string[]): boolean {
-        return substrings.some((substring) => target.includes(substring));
+        return substrings.some((substring) => target.includes(StringUtils.normalize(substring)));
     }
 
-    function has(vuln: SecurityVulnerability, keywords: string[]): boolean {
-        const details = vuln.details
-            ? (typeof vuln.details === "string" ? vuln.details.toLowerCase().trim() : vuln.details.toString().toLowerCase().trim())
-            : "";
-
-        const summary = vuln.summary ? vuln.summary.toLowerCase().trim() : "";
-
-        const hasInSum = includes(summary, keywords.map((keyword) => keyword.toLowerCase()));
-        const hasInDet = includes(details, keywords.map((keyword) => keyword.toLowerCase()));
-
-        return hasInSum || hasInDet;
+    function has(vuln: ApiFetchedIndividualSecurityVulnerability, keywords: string[]): boolean {
+        const details = StringUtils.normalize(vuln.details.toString());
+        const summary = StringUtils.normalize(vuln.summary);
+        return includes(summary, keywords) || includes(details, keywords);
     }
 
     for (const vulnerability of vulnerabilities) {
@@ -337,31 +337,80 @@ async function DisplayAudit(percentage: number): Promise<void> {
     console.log("");
 }
 
+function GetHighestSeverity(severities: string[]): "low" | "moderate" | "high" | "critical" {
+    if (severities.includes("critical")) {
+        return "critical";
+    } else if (severities.includes("high")) {
+        return "high";
+    } else if (severities.includes("moderate")) {
+        return "moderate";
+    } else if (severities.includes("low")) {
+        return "low";
+    } else {
+        // 1. rare edge case, we should have detected a severity already
+        // 2. just in case, default to moderate instead of low (as we don't really know what's up)
+        return "moderate";
+    }
+}
+const validSeverity = (s: UnknownString): s is "low" | "moderate" | "high" | "critical" => {
+    return StringUtils.validate(s) && ["low", "moderate", "high", "critical"].includes(s);
+};
+const validUrl = (s: UnknownString): s is tURL => {
+    return StringUtils.validate(s) && StringUtils.normalize(s).startsWith("https://");
+};
+
 /**
  * Takes the output of npm audit command and parses it to get what we care about.
  *
- * Don't tell me about npm audit --json, I know that exists, we parse bare output by design, not by mistake.
+ * _Don't tell me about npm audit --json, I know that exists, we parse bare output by design, not by mistake._
  *
  * @export
  * @param {string} report
- * @returns {ParsedNpmReport}
+ * @returns {ParsedNodeReport}
  */
-export function ParseNpmReport(report: string): ParsedNpmReport {
-    const vulnerablePackages: string[] = [];
+export function ParseNpmReport(report: string): ParsedNodeReport {
+    const vulnerablePackages: AnalyzedIndividualSecurityVulnerability[] = [];
     const directlyAffectedDependencies: string[] = [];
     const indirectlyAffectedDependencies: string[] = [];
     const severities: string[] = [];
     let breakingChanges = false;
     let nonBreakingChanges = false;
 
-    // process each line of the report
-    const lines = report.split("\n");
+    const lines = report.split("\n").map((s) => StringUtils.normalize(s)).filter((s) => StringUtils.validate(s) === true);
+
+    const installations: Record<string, string> = {}; // "packageName": "installed version"
+    let currentPackage: string = "";
+
     lines.forEach((line) => {
-        line = line.trim();
-        if (/^\w+/.test(line) && !line.startsWith("#")) {
-            // extract names of affected packages (format: package [version])
-            const match = line.match(/^(\w+)/);
-            if (match && match[1]) vulnerablePackages.push(match[1]);
+        if (!line.startsWith("#") && lines[lines.indexOf(line) + 1]?.includes("severity")) {
+            currentPackage = line.split(" ")[0]!;
+        }
+
+        const installMatch = line.match(/will\s+install\s+\S+@([^\s]+)/i);
+        if (currentPackage && installMatch && installMatch[1]) {
+            installations[currentPackage] = installMatch[1].replace(",", "");
+        }
+    });
+
+    lines.forEach((line) => {
+        if (!line.startsWith("#") && lines[lines.indexOf(line) + 1]?.includes("severity")) {
+            const match = line.split(" ");
+            const i = lines.indexOf(line);
+            const sev = lines[i + 1]?.split(" ")[1];
+            const sum = lines[i + 2]?.split(" - ")[0]?.trim();
+            const advUrl = lines[i + 2]?.split(" - ")[1]?.trim();
+
+            if (match[0] && match[1] && validSeverity(sev) && sum && validUrl(advUrl)) {
+                const entry: AnalyzedIndividualSecurityVulnerability = {
+                    packageName: match[0],
+                    vulnerableVersions: match.slice(1).join("").replace("-", ","),
+                    severity: sev,
+                    summary: sum,
+                    advisoryUrl: advUrl,
+                    patchedVersions: installations[match[0]] || "UNKNOWN",
+                };
+                vulnerablePackages.push(entry);
+            }
         } else if (line.includes("fix available via") && line.includes("--force")) {
             // fix (breaking)
             breakingChanges = true;
@@ -372,15 +421,15 @@ export function ParseNpmReport(report: string): ParsedNpmReport {
             // extract affected dependencies
             const match = line.match(/node_modules\/([\w-]+)/);
             if (match && match[1]) {
-                if (line.includes("Depends on vulnerable versions")) {
+                if (line.includes("depends on vulnerable versions")) {
                     indirectlyAffectedDependencies.push(match[1]);
                 } else {
                     directlyAffectedDependencies.push(match[1]);
                 }
             }
-        } else if (/Severity:\s*(\w+)/.test(line)) {
+        } else if (/severity:\s*(\w+)/.test(line)) {
             // get severity
-            const match = line.match(/Severity:\s*(\w+)/);
+            const match = line.match(/severity:\s*(\w+)/);
             if (match && match[1]) {
                 severities.push(match[1]);
             }
@@ -389,26 +438,13 @@ export function ParseNpmReport(report: string): ParsedNpmReport {
 
     // determine the kind of change
     let changeType: "noBreak" | "break" | "both" = "noBreak";
-    let risk: "critical" | "high" | "moderate" | "low";
 
     if (breakingChanges && nonBreakingChanges) {
         changeType = "both";
     } else if (breakingChanges) {
         changeType = "break";
-    }
-
-    if (severities.includes("critical")) {
-        risk = "critical";
-    } else if (severities.includes("high")) {
-        risk = "high";
-    } else if (severities.includes("moderate")) {
-        risk = "moderate";
-    } else if (severities.includes("low")) {
-        risk = "low";
     } else {
-        // 1. rare edge case, we should have detected a severity already
-        // 2. just in case, default to moderate instead of low (as we don't really know what's up)
-        risk = "moderate";
+        changeType = "noBreak";
     }
 
     return {
@@ -416,7 +452,68 @@ export function ParseNpmReport(report: string): ParsedNpmReport {
         changeType,
         directDependencies: [...new Set(directlyAffectedDependencies)],
         indirectDependencies: [...new Set(indirectlyAffectedDependencies)],
-        risk,
+        risk: GetHighestSeverity(severities),
+    };
+}
+
+// TODO - unify stuff
+export function ParsePnpmReport(report: string): ParsedNodeReport {
+    const vulnerablePackages: AnalyzedIndividualSecurityVulnerability[] = [];
+    const severities: string[] = [];
+
+    const blocks = report.split("┌─────────────────────┬────────────────────────────────────────────────────────┐")
+        .map((i) => i.replaceAll("\r\n", "\n"));
+
+    for (const block of blocks) {
+        const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
+
+        let severity = "";
+        let summary = "";
+        let packageName = "";
+        let vulnerableVersions = "";
+        let patchedVersions = "";
+        const paths: string[] = [];
+        let advisoryUrl = "";
+
+        for (const line of lines) {
+            if (line.startsWith("│ low") || line.startsWith("│ moderate") || line.startsWith("│ high") || line.startsWith("│ critical")) {
+                severity = line.split(" ")[1]!.trim();
+                severities.push(StringUtils.normalize(severity));
+                summary = line.split("│")[2]!.trim();
+            } else if (line.startsWith("│ Package")) {
+                packageName = line.split("│")[2]?.trim() || "";
+            } else if (line.startsWith("│ Vulnerable versions")) {
+                vulnerableVersions = line?.split("│").slice(2).toString().replaceAll(",", "").trim().replace(" ", ",");
+            } else if (line.startsWith("│ Patched versions")) {
+                patchedVersions = line?.split("│").slice(2).toString().replaceAll(",", "").trim().replace(" ", ",");
+            } else if (line.startsWith("│ Paths")) {
+                // NOTE - unused as of now.
+                paths.push(...line.split("│").slice(2).map((a) => a.trim()).filter((b) => b !== ""));
+            } else if (line.startsWith("│ More info")) {
+                advisoryUrl = (line.split("│")[2] ?? "").trim();
+            }
+        }
+
+        severity = StringUtils.normalize(severity);
+
+        if (validSeverity(severity) && packageName && validUrl(advisoryUrl)) {
+            vulnerablePackages.push({
+                severity,
+                summary,
+                packageName,
+                vulnerableVersions,
+                patchedVersions,
+                advisoryUrl,
+            });
+        }
+    }
+
+    return {
+        vulnerablePackages,
+        directDependencies: vulnerablePackages.map((p) => p.packageName), // todo
+        indirectDependencies: [], // todo
+        changeType: "break", // todo
+        risk: GetHighestSeverity(vulnerablePackages.map((p) => p.severity)),
     };
 }
 
@@ -425,21 +522,18 @@ export function ParseNpmReport(report: string): ParsedNpmReport {
  *
  * @export
  * @async
- * @param {ParsedNpmReport} bareReport Parsed npm audit.
+ * @param {ParsedNodeReport} bareReport Parsed npm audit.
  * @param {boolean} strict If true, uses a slightly stricter criteria for the audit.
  * @returns {Promise<FkNodeSecurityAudit>}
  */
-export async function AuditProject(bareReport: ParsedNpmReport, strict: boolean): Promise<FkNodeSecurityAudit> {
+export async function AuditProject(bareReport: ParsedNodeReport, strict: boolean): Promise<FkNodeSecurityAudit> {
     const { vulnerablePackages, risk } = bareReport;
 
-    const vulnerabilities: SecurityVulnerability[] = [];
+    const vulnerabilities: ApiFetchedIndividualSecurityVulnerability[] = [];
 
     for (const dependency of vulnerablePackages) {
-        const res = await FetchVulnerability(dependency);
-
-        for (const foundVulnerability of res) {
-            vulnerabilities.push(foundVulnerability);
-        }
+        const res = await FetchVulnerability(dependency.packageName);
+        vulnerabilities.push(...res);
     }
 
     const totalVulnerabilities: number = vulnerabilities.length;
@@ -505,7 +599,7 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
         const current = Deno.cwd();
         if (env.commands.audit === "__UNSUPPORTED") {
             await LogStuff(
-                `Audit is not supported for ${env.manager.toUpperCase()} (${project}).`,
+                `Audit is unsupported for ${env.manager.toUpperCase()} (${project}).`,
                 "prohibited",
             );
             return 1;
@@ -517,15 +611,31 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
             env.commands.audit,
             false,
         );
-        if (res.success || !res.stdout || res.stdout?.trim() === "") {
+        if (!res.stdout || res.stdout?.trim() === "") {
+            if (res.success) {
+                await LogStuff(
+                    `Clear! There aren't any known vulnerabilities affecting ${name}.`,
+                    "tick",
+                );
+                return 0;
+            } else {
+                await LogStuff(
+                    `An error occurred with ${name} and we weren't able to get ${env.commands.audit}'s stdout. Unable to audit.`,
+                    "error",
+                );
+                return 1;
+            }
+        }
+
+        const bareReport = env.manager === "pnpm" ? ParsePnpmReport(res.stdout) : ParseNpmReport(res.stdout);
+
+        if (bareReport.vulnerablePackages.length === 0) {
             await LogStuff(
                 `Clear! There aren't any known vulnerabilities affecting ${name}.`,
                 "tick",
             );
             return 0;
         }
-
-        const bareReport = ParseNpmReport(res.stdout);
 
         const ret = await AuditProject(bareReport, strict);
 

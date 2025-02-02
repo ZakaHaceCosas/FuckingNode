@@ -34,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added support for quick flags (or however you call those) for the `clean` command, so `-l` instead of `--lint` for example will work.
 - Added recognition of new `bun.lock` file to identify Bun projects.
 - Added a new `errors.log` file, stored with all of our config files. Some errors will now dump more detailed info in there.
+- Added support for `pnpm` for the audit experiment.
 
 ### Changed
 
@@ -41,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now any generated YAML files by the CLI follow common formatting.
 - Now commands are normalized, meaning even stupid things like `fuckingnode mÀnaGëR lÌSt` will work perfectly.
 - Now the CLI more reliably tells whether a runtime is installed or not (at the expense of some extra milliseconds).
+- Now audit experiment's parsing rules are more reliable. _They still have known issues (direct/indirect deps + patched version), but they're internal-only and don't affect usage as of now_.
 
 ### Fixed
 
@@ -60,6 +62,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed how workspaces are shown to the user when found while adding a project.
 - Fixed some minor issues with the cleaner.
 - Fixed FknError `Generic__NonFoundProject` not showing the name inputted (showing instead `trim function`-whatever).
+- Fixed audit experiment not properly handling vulnerability-less projects (showing `0.00% risk factor` instead of a "no vulns found" message as it should).
 
 ## [2.2.1] 16-01-2025
 
