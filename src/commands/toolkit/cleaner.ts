@@ -217,7 +217,7 @@ const ProjectCleaningFeatures = {
  * @param {boolean} shouldCommit
  * @param {("normal" | "hard" | "maxim")} intensity
  * @param {boolean} verboseLogging
- * @returns {Promise<void>}
+ * @returns {Promise<boolean>}
  */
 export async function PerformCleaning(
     projectInQuestion: string,
@@ -229,7 +229,7 @@ export async function PerformCleaning(
     shouldCommit: boolean,
     intensity: "normal" | "hard" | "maxim",
     verboseLogging: boolean,
-): Promise<void> {
+): Promise<boolean> {
     try {
         const motherfuckerInQuestion = await ParsePath(projectInQuestion);
         const projectName = ColorString(await NameProject(motherfuckerInQuestion, "name"), "bold");
@@ -297,6 +297,8 @@ export async function PerformCleaning(
                 verboseLogging,
             );
         }
+
+        return true;
     } catch (e) {
         throw e;
     }

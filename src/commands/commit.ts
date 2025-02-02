@@ -8,6 +8,7 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 import { FknError } from "../utils/error.ts";
 import { PerformCleaning } from "./toolkit/cleaner.ts";
 import { APP_NAME } from "../constants.ts";
+import { waitFor } from "@std/async/unstable-wait-for";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
     try {
@@ -96,16 +97,20 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
 
         // run our maintenance task
         try {
-            await PerformCleaning(
-                project,
-                true,
-                true,
-                true,
-                true,
-                true,
-                false,
-                "normal",
-                true,
+            await waitFor(
+                () =>
+                    PerformCleaning(
+                        project,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        "normal",
+                        true,
+                    ),
+                15000,
             );
         } catch (e) {
             throw new Error(`${APP_NAME.CASED} clean failed with error: ${e}`);
