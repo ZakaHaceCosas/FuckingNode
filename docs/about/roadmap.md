@@ -26,9 +26,13 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
         - [ ] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
         - [ ] Deno.
 - [ ] Stabilize `audit` feature and support it everywhere NodeJS.
-    - [ ] pnpm
-    - [ ] yarn
-- [ ] Shorter commands.
+    - [ ] Stabilize it
+        - [ ] Fix known issues (see TODO.md at repository's `v3` branch).
+        - [ ] Expand vector string lists.
+    - [X] Support it
+        - [X] pnpm
+        - [X] yarn
+- [X] Shorter commands.
     - [X] Shorter core command, `fknode (args)`.
         - [X] :fontawesome-brands-windows: Windows support
         - [X] :simple-apple: macOS and :simple-linux: Linux support

@@ -166,7 +166,12 @@ interface GenericProjectEnvironment {
         /**
          * Audit commands.
          */
-        audit: ["audit"] | ["audit", "--ignore-registry-errors"] | ["audit", "--include-workspace-root"] | "__UNSUPPORTED";
+        audit:
+            | ["audit"]
+            | ["audit", "--ignore-registry-errors"]
+            | ["audit", "--include-workspace-root"]
+            | ["audit", "--recursive", "--all"]
+            | "__UNSUPPORTED";
         /**
          * Package publish commands.
          */
@@ -194,7 +199,11 @@ interface NodeEnvironment extends GenericProjectEnvironment {
             | [["clean"]]
             | [["autoclean", "--force"]]
             | "__UNSUPPORTED";
-        audit: ["audit", "--ignore-registry-errors"] | ["audit", "--include-workspace-root"] | "__UNSUPPORTED";
+        audit:
+            | ["audit", "--ignore-registry-errors"]
+            | ["audit", "--include-workspace-root"]
+            | ["audit", "--recursive", "--all"]
+            | "__UNSUPPORTED";
         publish: ["publish"] | ["publish", "--non-interactive"];
     };
     /**

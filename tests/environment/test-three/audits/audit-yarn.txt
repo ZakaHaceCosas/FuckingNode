@@ -1,7 +1,3 @@
-i prefer parsing this than their JSON (it's so broken)
-same for pnpm's
----
-yarn audit --recursive --all
 ┌───────────────┬──────────────────────────────────────────────────────────────┐
 │ moderate      │ Regular Expression Denial of Service (ReDoS) in lodash       │
 ├───────────────┼──────────────────────────────────────────────────────────────┤

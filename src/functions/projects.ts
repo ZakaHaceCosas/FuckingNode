@@ -570,7 +570,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
                     update: ["upgrade"],
                     clean: [["autoclean", "--force"]],
                     run: ["yarn", "run"],
-                    audit: "__UNSUPPORTED",
+                    audit: ["audit", "--recursive", "--all"],
                     publish: ["publish", "--non-interactive"],
                 },
                 workspaces,

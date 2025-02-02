@@ -456,12 +456,13 @@ export function ParseNpmReport(report: string): ParsedNodeReport {
     };
 }
 
-// TODO - unify stuff
-export function ParsePnpmReport(report: string): ParsedNodeReport {
+export function ParsePnpmYarnReport(report: string, target: "pnpm" | "yarn"): ParsedNodeReport {
     const vulnerablePackages: AnalyzedIndividualSecurityVulnerability[] = [];
     const severities: string[] = [];
-
-    const blocks = report.split("┌─────────────────────┬────────────────────────────────────────────────────────┐")
+    // it's the stupid fact that they put the "┬" in different places what forces me to differentiate pnpm from yarn
+    const stupidYarnBlock = "┌───────────────┬──────────────────────────────────────────────────────────────┐";
+    const stupidPnpmBlock = "┌─────────────────────┬────────────────────────────────────────────────────────┐";
+    const blocks = report.split(target === "pnpm" ? stupidPnpmBlock : stupidYarnBlock)
         .map((i) => i.replaceAll("\r\n", "\n"));
 
     for (const block of blocks) {
@@ -470,7 +471,7 @@ export function ParsePnpmReport(report: string): ParsedNodeReport {
         let severity = "";
         let summary = "";
         let packageName = "";
-        let vulnerableVersions = "";
+        let vulnerableVersions = "__unknown"; // TODO - yarn doesn't give this
         let patchedVersions = "";
         const paths: string[] = [];
         let advisoryUrl = "";
@@ -484,7 +485,7 @@ export function ParsePnpmReport(report: string): ParsedNodeReport {
                 packageName = line.split("│")[2]?.trim() || "";
             } else if (line.startsWith("│ Vulnerable versions")) {
                 vulnerableVersions = line?.split("│").slice(2).toString().replaceAll(",", "").trim().replace(" ", ",");
-            } else if (line.startsWith("│ Patched versions")) {
+            } else if (line.startsWith("│ Patched versions") || line.startsWith("│ Patched in")) {
                 patchedVersions = line?.split("│").slice(2).toString().replaceAll(",", "").trim().replace(" ", ",");
             } else if (line.startsWith("│ Paths")) {
                 // NOTE - unused as of now.
@@ -597,7 +598,11 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
         const env = await GetProjectEnvironment(workingPath);
         const name = await NameProject(env.root, "name-ver");
         const current = Deno.cwd();
-        if (env.commands.audit === "__UNSUPPORTED") {
+        // === "__UNSUPPORTED" already does the job, but typescript wants me to specify
+        if (
+            env.commands.audit === "__UNSUPPORTED" || env.manager === "deno" || env.manager === "bun" || env.manager === "cargo" ||
+            env.manager === "go"
+        ) {
             await LogStuff(
                 `Audit is unsupported for ${env.manager.toUpperCase()} (${project}).`,
                 "prohibited",
@@ -605,12 +610,14 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
             return 1;
         }
         Deno.chdir(env.root);
+
         await LogStuff(`Auditing ${name}`, "working");
         const res = await Commander(
             env.commands.base,
             env.commands.audit,
             false,
         );
+
         if (!res.stdout || res.stdout?.trim() === "") {
             if (res.success) {
                 await LogStuff(
@@ -627,7 +634,7 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
             }
         }
 
-        const bareReport = env.manager === "pnpm" ? ParsePnpmReport(res.stdout) : ParseNpmReport(res.stdout);
+        const bareReport = (env.manager === "npm") ? ParseNpmReport(res.stdout) : ParsePnpmYarnReport(res.stdout, env.manager);
 
         if (bareReport.vulnerablePackages.length === 0) {
             await LogStuff(
