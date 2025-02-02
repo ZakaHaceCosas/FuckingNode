@@ -448,9 +448,9 @@ export function ParseNpmReport(report: string): ParsedNodeReport {
     }
 
     return {
-        vulnerablePackages: [...new Set(vulnerablePackages)], // (Set to remove duplicates)
+        vulnerablePackages: Array.from(new Set(vulnerablePackages)).sort(), // (Set to remove duplicates)
         changeType,
-        directDependencies: [...new Set(directlyAffectedDependencies)],
+        directDependencies: Array.from(new Set(directlyAffectedDependencies)).sort(),
         indirectDependencies: [...new Set(indirectlyAffectedDependencies)],
         risk: GetHighestSeverity(severities),
     };
@@ -510,8 +510,8 @@ export function ParsePnpmYarnReport(report: string, target: "pnpm" | "yarn"): Pa
     }
 
     return {
-        vulnerablePackages,
-        directDependencies: vulnerablePackages.map((p) => p.packageName), // todo
+        vulnerablePackages: Array.from(new Set(vulnerablePackages)).sort(),
+        directDependencies: Array.from(new Set(vulnerablePackages.map((p) => p.packageName))).sort(), // todo
         indirectDependencies: [], // todo
         changeType: "break", // todo
         risk: GetHighestSeverity(vulnerablePackages.map((p) => p.severity)),

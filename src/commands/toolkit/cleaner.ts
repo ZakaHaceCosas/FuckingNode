@@ -118,7 +118,6 @@ const ProjectCleaningFeatures = {
             return;
         }
     },
-    // TODO - interop; since it's not env dependant i'll leave this for the end
     Destroy: async (
         settings: FkNodeYaml,
         project: string,
@@ -156,7 +155,6 @@ const ProjectCleaningFeatures = {
             }
         }
     },
-    // TODO - interop, too
     Commit: async (
         settings: FkNodeYaml,
         project: string,

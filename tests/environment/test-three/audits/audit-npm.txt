@@ -2,8 +2,8 @@
 
 body-parser  <=1.20.2
 Severity: high
-body-parser vulnerable to denial of service when url encoding is enabled - https://github.com/advisories/GHSA-qwcr-r
-2fm-qrc7                                                                                                            Depends on vulnerable versions of qs
+body-parser vulnerable to denial of service when url encoding is enabled - https://github.com/advisories/GHSA-qwcr-r2fm-qrc7
+Depends on vulnerable versions of qs
 fix available via `npm audit fix --force`
 Will install express@4.21.2, which is outside the stated dependency range
 node_modules/body-parser
@@ -17,23 +17,23 @@ node_modules/body-parser
   node_modules/express
 
 cookie  <0.7.0
-cookie accepts cookie name, path, and domain with out of bounds characters - https://github.com/advisories/GHSA-pxg6
--pf52-xh8x                                                                                                          fix available via `npm audit fix --force`
+cookie accepts cookie name, path, and domain with out of bounds characters - https://github.com/advisories/GHSA-pxg6-pf52-xh8x
+fix available via `npm audit fix --force`
 Will install express@4.21.2, which is outside the stated dependency range
 node_modules/cookie
 
 
 jquery  <=3.4.1
 Severity: moderate
-Potential XSS vulnerability in jQuery - https://github.com/advisories/GHSA-jpcq-cgw6-v4j6
 Potential XSS vulnerability in jQuery - https://github.com/advisories/GHSA-gxr4-xjj5-5px2
+Potential XSS vulnerability in jQuery - https://github.com/advisories/GHSA-jpcq-cgw6-v4j6
 fix available via `npm audit fix --force`
 Will install jquery@3.7.1, which is outside the stated dependency range
 node_modules/jquery
 
 lodash  <=4.17.20
 Severity: high
-Regular Expression Denial of Service (ReDoS) in lodash - https://github.com/advisories/GHSA-29mw-wpgm-hmr9
+Regular Expression Denial of Service (ReDoS) in lodash - https://github.com/advisories/GHSA-29mw-wpgm-hmr9        
 Command Injection in lodash - https://github.com/advisories/GHSA-35jh-r3h4-6jhm
 fix available via `npm audit fix --force`
 Will install lodash@4.17.21, which is outside the stated dependency range
@@ -41,8 +41,8 @@ node_modules/lodash
 
 path-to-regexp  <=0.1.11
 Severity: high
-path-to-regexp outputs backtracking regular expressions - https://github.com/advisories/GHSA-9wv6-86v2-598j
 Unpatched `path-to-regexp` ReDoS in 0.1.x - https://github.com/advisories/GHSA-rhx6-c78j-4q9w
+path-to-regexp outputs backtracking regular expressions - https://github.com/advisories/GHSA-9wv6-86v2-598j       
 fix available via `npm audit fix --force`
 Will install express@4.21.2, which is outside the stated dependency range
 node_modules/path-to-regexp
@@ -55,7 +55,7 @@ Will install express@4.21.2, which is outside the stated dependency range
 node_modules/qs
 
 send  <0.19.0
-send vulnerable to template injection that can lead to XSS - https://github.com/advisories/GHSA-m6fv-jmcg-4jfg      
+send vulnerable to template injection that can lead to XSS - https://github.com/advisories/GHSA-m6fv-jmcg-4jfg    
 fix available via `npm audit fix --force`
 Will install express@4.21.2, which is outside the stated dependency range
 node_modules/send
