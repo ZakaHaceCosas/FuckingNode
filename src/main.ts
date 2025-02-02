@@ -12,6 +12,7 @@ import TheAuditer from "./commands/audit.ts";
 import TheReleaser from "./commands/release.ts";
 import TheExporter from "./commands/export.ts";
 import TheCompater from "./commands/compat.ts";
+import TheCommitter from "./commands/commit.ts";
 // other things
 import { APP_NAME, VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
@@ -197,6 +198,13 @@ async function main(command: string) {
                     version: flags[2],
                     push: hasFlag("push", true),
                     dry: hasFlag("dry-run", true),
+                });
+                break;
+            case "commit":
+                await TheCommitter({
+                    message: flags[1],
+                    branch: flags[2],
+                    push: hasFlag("push", true),
                 });
                 break;
             case "export":

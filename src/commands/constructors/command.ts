@@ -206,5 +206,38 @@ export interface TheExporterConstructedParams {
  * @interface TheCompaterConstructedParams
  */
 export interface TheCompaterConstructedParams {
+    /**
+     * Feature to fetch compat for.
+     *
+     * @type {?UnknownString}
+     */
     target?: UnknownString;
+}
+
+/**
+ * The Committer
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheCommitterConstructedParams
+ */
+export interface TheCommitterConstructedParams {
+    /**
+     * Commit message.
+     *
+     * @type {UnknownString}
+     */
+    message: UnknownString;
+    /**
+     * Whether to push changes to remote or not.
+     *
+     * @type {boolean}
+     */
+    push: boolean;
+    /**
+     * Branch to commit to. Optional.
+     *
+     * @type {?UnknownString}
+     */
+    branch?: UnknownString;
 }

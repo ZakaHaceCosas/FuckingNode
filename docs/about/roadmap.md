@@ -11,7 +11,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 - [ ] Make a proper logo for the project.
 - [ ] New features
-    - [ ] `fuckingnode commit "message"` to `REDACTED`.
+    - [X] `fuckingnode commit "message"` to automatically run our maintenance task and custom commands before making a Git commit and only committing if they all succeed. With the "Shorter commands" goal, it could be something like `fkcommit "message"`.
     - [X] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
     - [ ] `fuckingnode give-up <project>` to `REDACTED`.
     - [ ] `fuckingnode setup <project>` to `REDACTED`.

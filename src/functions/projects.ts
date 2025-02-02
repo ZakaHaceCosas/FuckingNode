@@ -445,7 +445,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
                     path: mainPath,
                     name: "go.mod",
                     stdContent: PackageFileParsers.Golang.STD(mainString),
-                    cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetTag(workingPath, false), workspaces),
+                    cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetLatestTag(workingPath, false), workspaces),
                 },
                 lockfile: {
                     name: "go.sum",

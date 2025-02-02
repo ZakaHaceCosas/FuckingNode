@@ -3,6 +3,7 @@ import { JoinPaths } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import { VERSION } from "../constants.ts";
+import { StringUtils } from "@zakahacecosas/string-utils";
 
 export const Git = {
     /**
@@ -78,22 +79,26 @@ export const Git = {
             return false;
         }
     },
-    Commit: async (project: string, message: string, avoid: string[], showOutput: boolean): Promise<0 | 1> => {
+    Commit: async (project: string, message: string, add: string[] | "all" | "none", avoid: string[], showOutput: boolean): Promise<0 | 1> => {
         try {
             const path = await SpotProject(project);
 
-            const addOutput = await Commander(
-                "git",
-                [
-                    "-C",
-                    path,
-                    "add",
-                    "-A",
-                ],
-                showOutput,
-            );
-            if (!addOutput.success) {
-                throw new Error(addOutput.stdout);
+            const toAdd = add === "none" ? [] : add === "all" ? ["add", "-A"] : [];
+
+            if (toAdd.length > 0) {
+                const addOutput = await Commander(
+                    "git",
+                    [
+                        "-C",
+                        path,
+                        "add",
+                        ...toAdd,
+                    ],
+                    showOutput,
+                );
+                if (!addOutput.success) {
+                    throw new Error(addOutput.stdout);
+                }
             }
             if (avoid.length > 0) {
                 const restoreOutput = await Commander(
@@ -108,7 +113,7 @@ export const Git = {
                     showOutput,
                 );
                 if (!restoreOutput.success) {
-                    throw new Error(addOutput.stdout);
+                    throw new Error(restoreOutput.stdout);
                 }
             }
             const commitOutput = await Commander(
@@ -134,9 +139,11 @@ export const Git = {
             return 1;
         }
     },
-    Push: async (project: string, showOutput: boolean): Promise<0 | 1> => {
+    Push: async (project: string, branch: string | false, showOutput: boolean): Promise<0 | 1> => {
         try {
             const path = await SpotProject(project);
+
+            const pushToBranch = branch === false ? [] : ["origin", branch.trim()];
 
             const pushOutput = await Commander(
                 "git",
@@ -144,6 +151,7 @@ export const Git = {
                     "-C",
                     path,
                     "push",
+                    ...pushToBranch,
                 ],
                 showOutput,
             );
@@ -171,7 +179,7 @@ export const Git = {
 
             if (gitIgnoreContent.includes(toBeIgnored)) return 0;
 
-            await Deno.writeTextFile(gitIgnoreFile, `\n# auto-added by FuckingNode release command (CLI version ${VERSION})\n${toBeIgnored}`, {
+            await Deno.writeTextFile(gitIgnoreFile, `# auto-added by FuckingNode release command (CLI version ${VERSION})\n${toBeIgnored}`, {
                 append: true,
             });
 
@@ -235,7 +243,7 @@ export const Git = {
             return 1;
         }
     },
-    GetTag: async (project: string, showOutput: boolean): Promise<string | undefined> => {
+    GetLatestTag: async (project: string, showOutput: boolean): Promise<string | undefined> => {
         try {
             const path = await SpotProject(project);
             const getTagOutput = await Commander(
@@ -264,6 +272,70 @@ export const Git = {
                 );
             }
             return undefined;
+        }
+    },
+    GetFilesReadyForCommit: async (project: string, showOutput: boolean): Promise<string[]> => {
+        try {
+            const path = await SpotProject(project);
+            const getFilesOutput = await Commander(
+                "git",
+                [
+                    "-C",
+                    path,
+                    "diff",
+                    "--cached",
+                    "--name-only",
+                ],
+                false,
+            );
+            if (!getFilesOutput.success) {
+                throw new Error(getFilesOutput.stdout);
+            }
+            if (!getFilesOutput.stdout) {
+                throw new Error(`git diff --cached --name-only returned an undefined output for ${path}`);
+            }
+            return StringUtils.softlyNormalizeArray(getFilesOutput.stdout.split("\n"));
+        } catch (e) {
+            if (showOutput) {
+                await LogStuff(
+                    `Error - could not get staged files at ${ColorString(project, "bold")} because of error: ${e}`,
+                    "error",
+                );
+            }
+            return [];
+        }
+    },
+    GetBranches: async (project: string, showOutput: boolean): Promise<{ current: string; all: string[] }> => {
+        try {
+            const path = await SpotProject(project);
+            const getBranchesOutput = await Commander(
+                "git",
+                [
+                    "-C",
+                    path,
+                    "branch",
+                ],
+                false,
+            );
+            if (!getBranchesOutput.success) {
+                throw new Error(getBranchesOutput.stdout);
+            }
+            if (!getBranchesOutput.stdout) {
+                throw new Error(`git diff --cached --name-only returned an undefined output for ${path}`);
+            }
+            const current = getBranchesOutput.stdout.match(/^\* (.+)$/m)![1]!;
+            return {
+                current,
+                all: StringUtils.sortAlphabetically(StringUtils.softlyNormalizeArray(getBranchesOutput.stdout.replace("*", "").split("\n"))),
+            };
+        } catch (e) {
+            if (showOutput) {
+                await LogStuff(
+                    `Error - could not get staged files at ${ColorString(project, "bold")} because of error: ${e}`,
+                    "error",
+                );
+            }
+            return { current: "__ERROR", all: [] };
         }
     },
 };

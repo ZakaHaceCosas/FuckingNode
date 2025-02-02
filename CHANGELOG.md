@@ -26,11 +26,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     - Always when publishing to JSR, as you're required to click once in their web UI to authorize the publishing.
     - When publishing to npm and have 2FA enabled and required for publishing.
   - `publish` is allowed as an alias to the command.
+- Added a **new command** `commit (message) [branch] [--push]` to run FuckingNode's maintenance task and any other task of your choice before committing, and making the commit only if those tasks succeed.
 - Added a **new command** `something-fucked-up` to completely reset all internal settings except for your project list.
 - Added a **new command** `compat (feature)` to show overall compatibility, or compatibility of a specific feature if provided, of the CLI across environments (NodeJS, Bun, Go...).
 - Added a new `maxim-only` intensity level. Plus, now `maxim` cleanup should work on per-project cleanup as well.
-- (WIP; Windows only) Added new shell-based installers (`.ps1` for Windows, and soon `.sh` for macOS and Linux).
-- (WIP; Windows only) Added an `fknode` CLI shortcut. Equivalent to `fuckingnode`.
+- Added new shell-based installers (`.ps1` for Windows, and soon `.sh` for macOS and Linux).
+- Added an `fknode` CLI shortcut. Equivalent to `fuckingnode`.
+- Added `fkclean`, `fkcommit`, `fkadd`, and `fkrem` aliases for `clean`, `commit`, `manager add`, and `manager remove` respectively. They take the same arguments the normal command would do. They're standard `.ps1` / `.sh` scripts, auto-added on installation, and live on the same path as the `fuckingnode` executable.
 - Added support for quick flags (or however you call those) for the `clean` command, so `-l` instead of `--lint` for example will work.
 - Added recognition of new `bun.lock` file to identify Bun projects.
 - Added a new `errors.log` file, stored with all of our config files. Some errors will now dump more detailed info in there.

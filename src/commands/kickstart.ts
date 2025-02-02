@@ -161,6 +161,6 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
 
         await LogStuff(`Great! ${await NameProject(clonePath, "name-ver")} is now setup. Enjoy!`, "tick-clear");
     } catch (e) {
-        await LogStuff(`Error: ${e}`, "error");
+        throw e;
     }
 }

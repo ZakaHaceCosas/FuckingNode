@@ -164,6 +164,12 @@ export interface FkNodeYaml {
      * @type {?boolean}
      */
     releaseAlwaysDry?: boolean;
+    /**
+     * A task (run) to be executed upon running the commit command.
+     *
+     * @type {?string}
+     */
+    commitCmd?: string;
 }
 
 /**
@@ -269,6 +275,10 @@ export function ValidateFkNodeYaml(
     }
 
     if (obj.releaseAlwaysDry !== undefined && typeof obj.releaseAlwaysDry !== "boolean") {
+        return false;
+    }
+
+    if (obj.commitCmd !== undefined && typeof obj.commitCmd !== "string") {
         return false;
     }
 
