@@ -16,7 +16,6 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] `fuckingnode give-up <project>` to `REDACTED`.
     - [ ] `fuckingnode setup <project>` to `REDACTED`.
     - [x] `fuckingnode compat` to show cross-runtime compatibility without the need to open the browser.
-    - [x] `fuckingnode export <project>` to export a project's FnCPF.
 - [ ] Better installer
     - [X] Revamped `.ps1` based installer for Windows.
     - [X] New `.sh` based installed for mac and Linux.
@@ -44,30 +43,19 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [x] Better error handling.
-
-**Cross-platform support!**
-
-- [ ] Cross-Platform Support
+- [X] **Cross-platform support!**
     - [x] FnCPF (FuckingNode CommonPackageFile)
         - [x] Internal generation
         - [x] Ability to export it
-    - [ ] Platforms
-        - [ ] Golang
-            - [x] Base
-                - [x] Recon
-                - [x] Interaction
-            - [ ] Operations
-                - [x] Base op
-                - [ ] Advanced op
-            - [ ] Extras
-        - [ ] Cargo (Rust)
-            - [x] Base
-                - [x] Recon
-                - [x] Interaction
-            - [ ] Operations
-                - [ ] Base op
-                - [ ] Advanced op
-            - [ ] Extras
+    - [x] Platforms
+        - [x] Golang
+            - [X] Base support (Recognition, package file parsing...)
+            - [X] Operations (Cleanup, lint, pretty...) (_May be limited_)
+            - [X] Extras (Kickstart, stats...) (_May be limited_)
+        - [x] Cargo (Rust)
+            - [X] Base support (Recognition, package file parsing...)
+            - [X] Operations (Cleanup, lint, pretty...) (_May be limited_)
+            - [X] Extras (Kickstart, stats...) (_May be limited_)
 - [ ] FkNode Interop Layer
     - [x] Linter
     - [x] Prettifier

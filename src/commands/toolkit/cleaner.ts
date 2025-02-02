@@ -25,38 +25,22 @@ const ProjectCleaningFeatures = {
         settings: FkNodeYaml,
         verbose: boolean,
     ) => {
-        // TODO - interop this
-        const { commands } = env;
         await LogStuff(
-            `Updating ${projectName}.`,
+            `Updating dependencies for ${projectName}.`,
             "working",
         );
-        if (
-            validate(settings.updateCmdOverride) &&
-            settings.updateCmdOverride !== "__USE_DEFAULT"
-        ) {
-            if (commands.run === "__UNSUPPORTED") {
-                throw new FknError(
-                    "Interop__CannotRunJsLike",
-                    `${env.manager} does not support JavaScript-like "run" commands, however you've set updateCmdOverride in your fknode.yaml to ${settings.updateCmdOverride}. Update task cannot proceed.`,
-                );
-            }
-            await LogStuff(`${commands.run.join(" ")} ${settings.updateCmdOverride}`, "wip");
-            const output = await Commander(
-                commands.run[0],
-                [commands.run[1], settings.updateCmdOverride],
+        try {
+            const output = await FkNodeInterop.Features.Update(
+                env,
                 verbose,
+                (!validate(settings.updateCmdOverride) || normalize(settings.updateCmdOverride) === "__use_default")
+                    ? "__USE_DEFAULT"
+                    : { script: settings.updateCmdOverride },
             );
-            if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
+            if (output === true) await LogStuff(`Updated dependencies for ${projectName}!`, "tick");
             return;
-        } else {
-            await LogStuff(`${commands.base} ${commands.update}`, "wip");
-            const output = await Commander(
-                commands.base,
-                commands.update,
-                verbose,
-            );
-            if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
+        } catch (e) {
+            await LogStuff(`Failed to update deps for ${projectName}, "bold")}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },

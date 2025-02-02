@@ -40,8 +40,5 @@ export const FkNodeInterop = {
         Cargo: Installers.Cargo,
         Golang: Installers.Golang,
     },
-    Features: {
-        Lint: InteropedFeatures.Lint,
-        Pretty: InteropedFeatures.Pretty,
-    },
+    Features: InteropedFeatures,
 };

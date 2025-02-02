@@ -206,4 +206,61 @@ export const InteropedFeatures = {
             }
         }
     },
+    Update: async (
+        env: ProjectEnvironment,
+        verbose: boolean,
+        updater: { script: string } | "__USE_DEFAULT",
+    ): Promise<boolean> => {
+        if (!validateScript(updater)) return false;
+
+        if (updater === "__USE_DEFAULT") {
+            const output = await Commander(
+                env.commands.base,
+                env.commands.update,
+                verbose,
+            );
+
+            if (!output.success) {
+                throw new FknError(
+                    "Unknown__CleanerTask__Update",
+                    "Something went wrong and we don't know what",
+                ).debug(
+                    output.stdout ??
+                        "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
+                );
+            }
+
+            return true;
+        }
+
+        switch (env.runtime) {
+            case "rust":
+            case "golang":
+                throw new FknError(
+                    "Interop__CannotRunJsLike",
+                    `${env.manager} does not support JavaScript-like "run" commands, however you've set updateCmdOverride in your fknode.yaml to ${updater.script}. Since we don't know what you're doing, update task wont proceed for this project.`,
+                );
+            case "bun":
+            case "deno":
+            case "node": {
+                const output = await Commander(
+                    env.commands.run[0],
+                    [env.commands.run[1], updater.script],
+                    verbose,
+                );
+
+                if (!output.success) {
+                    throw new FknError(
+                        "Unknown__CleanerTask__Update",
+                        "Something went wrong and we don't know what",
+                    ).debug(
+                        output.stdout ??
+                            "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
+                    );
+                }
+
+                return true;
+            }
+        }
+    },
 };
