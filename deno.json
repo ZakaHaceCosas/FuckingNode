@@ -55,6 +55,7 @@
         "./src/commands/help.ignore.ts"
     ],
     "imports": {
+        "@std/async": "jsr:@std/async@^1.0.10",
         "@std/datetime": "jsr:@std/datetime@^0.225.3",
         "@std/fs": "jsr:@std/fs@^1.0.11",
         "@std/jsonc": "jsr:@std/jsonc@^1.0.1",
