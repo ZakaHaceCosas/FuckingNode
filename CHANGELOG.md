@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Breaking changes
 
 > [!CAUTION]
-> Old uses will need to run (`fuckingnode something-fucked-up`) once before being able to use v3.
+> Old users will need to run (`fuckingnode something-fucked-up`) once before being able to use v3.
 
 - **Schedule and update files won't work:** We now use a different date format.
 - **Order of `clean` arguments swapped:** It's now `clean <project | "--"> <intensity | "--"> [...flags]` instead of `clean <intensity | "--"> <project | "--"> [...flags]`. This was made so the command makes more sense. E.g., `clean my-project hard`.

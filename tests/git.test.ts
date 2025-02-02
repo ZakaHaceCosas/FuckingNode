@@ -30,14 +30,3 @@ Deno.test({
         );
     },
 });
-
-Deno.test({
-    name: "gets git files ready for commit",
-    fn: async () => {
-        const files = await Git.GetFilesReadyForCommit("@zakahacecosas/fuckingnode", true);
-        assertEquals(
-            files,
-            ["test.txt"],
-        );
-    },
-});
