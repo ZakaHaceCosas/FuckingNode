@@ -29,8 +29,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added a **new command** `commit (message) [branch] [--push]` to run FuckingNode's maintenance task and any other task of your choice before committing, and making the commit only if those tasks succeed.
 - Added a **new command** `something-fucked-up` to completely reset all internal settings except for your project list.
 - Added a **new command** `compat (feature)` to show overall compatibility, or compatibility of a specific feature if provided, of the CLI across environments (NodeJS, Bun, Go...).
+- Added Bun and Deno support for `migrate` feature.
 - Added a new `maxim-only` intensity level. Plus, now `maxim` cleanup should work on per-project cleanup as well.
-- Added new shell-based installers (`.ps1` for Windows, and soon `.sh` for macOS and Linux).
+- Added new shell-based installers (`.ps1` for Windows and `.sh` for macOS and Linux).
 - Added an `fknode` CLI shortcut. Equivalent to `fuckingnode`.
 - Added `fkclean`, `fkcommit`, `fkadd`, and `fkrem` aliases for `clean`, `commit`, `manager add`, and `manager remove` respectively. They take the same arguments the normal command would do. They're standard `.ps1` / `.sh` scripts, auto-added on installation, and live on the same path as the `fuckingnode` executable.
 - Added support for quick flags (or however you call those) for the `clean` command, so `-l` instead of `--lint` for example will work.
@@ -44,7 +45,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now any generated YAML files by the CLI follow common formatting.
 - Now commands are normalized, meaning even stupid things like `fuckingnode mÀnaGëR lÌSt` will work perfectly.
 - Now the CLI more reliably tells whether a runtime is installed or not (at the expense of some extra milliseconds).
-- Now audit experiment's parsing rules are more reliable. _They still have known issues (direct/indirect deps + patched version), but they're internal-only and don't affect usage as of now_.
+- Now `audit` experiment's parsing rules are more reliable. _They still have known issues (direct/indirect deps + patched version), but they're internal-only and don't affect usage as of now_.
+- Now `migrate` will back up your project's package file and lockfile.
 
 ### Fixed
 
@@ -58,13 +60,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed Bun projects' config files not being properly read.
 - Fixed the app randomly showing "That worked out!" before any other CLI output.
 - Fixed schedules running each time you run the CLI after they reach their scheduled run time once (they didn't reset the timer).
-- Fixed report not being shown when using verbose flag & per-project cleanup.
-- Fixed kickstart not always running the correct install command.
-- Fixed a bunch of issues with how kickstart determined a project's environment and the runtime to work with.
+- Fixed Report not being shown when using verbose flag & per-project cleanup.
+- Fixed `kickstart` not always running the correct install command.
+- Fixed a bunch of issues with how `kickstart` determined a project's environment and the runtime to work with.
 - Fixed how workspaces are shown to the user when found while adding a project.
-- Fixed some minor issues with the cleaner.
+- Fixed some minor issues with `clean`.
 - Fixed FknError `Generic__NonFoundProject` not showing the name inputted (showing instead `trim function`-whatever).
-- Fixed audit experiment not properly handling vulnerability-less projects (showing `0.00% risk factor` instead of a "no vulns found" message as it should).
+- Fixed `audit` experiment not properly handling vulnerability-less projects (showing `0.00% risk factor` instead of a "no vulns found" message as it should).
+- Fixed input validation not being precise enough and showing wrong (duplicate) error messages in `migrate`.
 
 ## [2.2.1] 16-01-2025
 

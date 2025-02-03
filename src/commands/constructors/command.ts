@@ -68,15 +68,15 @@ export interface TheMigratorConstructedParams {
     /**
      * Project to be migrated.
      *
-     * @type {(string | undefined)}
+     * @type {UnknownString}
      */
-    project: string | undefined;
+    projectPath: UnknownString;
     /**
      * The manager to migrate to.
      *
-     * @type {(string | undefined)}
+     * @type {UnknownString}
      */
-    desiredManager: string | undefined;
+    wantedManager: UnknownString;
 }
 
 /**

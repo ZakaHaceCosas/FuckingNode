@@ -1,6 +1,7 @@
 import { InteropedFeatures } from "./feature-module.ts";
 import { dedupeDependencies, findDependency, internalValidators, Parsers } from "./parse-module.ts";
 import { Installers } from "./installer-module.ts";
+import { Generators } from "./pkggen-module.ts";
 
 /**
  * Functions to help with interoperability.
@@ -35,10 +36,7 @@ export const FkNodeInterop = {
         SpotDependency: findDependency,
         DedupeDependencies: dedupeDependencies,
     },
-    Installers: {
-        UniJs: Installers.UniJs,
-        Cargo: Installers.Cargo,
-        Golang: Installers.Golang,
-    },
+    Installers: Installers,
     Features: InteropedFeatures,
+    Generators: Generators,
 };
