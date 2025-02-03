@@ -1,5 +1,5 @@
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { VERSION } from "../constants.ts";
+import { APP_NAME, VERSION } from "../constants.ts";
 import { GetDateNow } from "../functions/date.ts";
 import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
@@ -7,6 +7,7 @@ import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/pr
 import type { ProjectEnvironment, SUPPORTED_JAVASCRIPT_MANAGER } from "../types/platform.ts";
 import type { TheMigratorConstructedParams } from "./constructors/command.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
+import { rename } from "node:fs";
 
 export default async function TheMigrator(params: TheMigratorConstructedParams): Promise<void> {
     const { projectPath, wantedManager } = params;
@@ -36,7 +37,11 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
 
             await LogStuff("Please wait (this will take a while)...", "working");
 
-            await LogStuff("Removing node_modules (1/4)...", "working");
+            await LogStuff("Updating dependencies (1/5)...", "working");
+            // TODO - use settings too
+            await FkNodeInterop.Features.Update(env, true, "__USE_DEFAULT");
+
+            await LogStuff("Removing node_modules (2/5)...", "working");
             await Deno.remove(env.hall_of_trash, {
                 recursive: true,
             });
@@ -46,7 +51,7 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
             // TODO - this is already reliable enough for release
             // ...BUT reading the lockfile would be better
             // (we promised that for 3.0 but i don't want this to release in 2077 so yeah)
-            await LogStuff("Migrating versions from previous package file (2/4)...", "working");
+            await LogStuff("Migrating versions from previous package file (3/5)...", "working");
             await LogStuff("A copy will be made (package.json.bak), just in case", "wink");
             if (env.main.path.endsWith("jsonc")) {
                 await LogStuff(
@@ -64,8 +69,8 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
                     env.main.stdContent,
                 );
             await Deno.writeTextFile(
-                await JoinPaths(env.root, "package.json.bak"),
-                `// This is a backup of your previous project file. We (FuckingNode@${VERSION}) overwrote it at ${GetDateNow()}.\n${
+                await JoinPaths(env.root, `${env.main.name}.jsonc.bak`),
+                `// This is a backup of your previous project file. We (${APP_NAME.CASED}@${VERSION}) overwrote it at ${GetDateNow()}.\n${
                     JSON.stringify(env.main.stdContent)
                 }`,
             );
@@ -74,14 +79,23 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
                 JSON.stringify(newPackageFile),
             );
 
-            await LogStuff("Making a backup of your previous lockfile (3/4)...", "working");
-            await Deno.writeTextFile(
-                await JoinPaths(env.root, `${env.lockfile.name}.bak`),
-                await Deno.readTextFile(env.lockfile.path),
-            );
-            await Deno.remove(env.lockfile.path);
+            await LogStuff("Making a backup of your previous lockfile (4/5)...", "working");
+            if (env.lockfile.name === "bun.lockb" && await CheckForPath(await JoinPaths(env.root, "bun.lock"))) {
+                // handle case where bun.lockb was replaced with bun.lock
+                rename(env.lockfile.path, await JoinPaths(env.root, "bun.lockb.bak"), async (e) => {
+                    if (e) throw e;
+                    await LogStuff("Your bun.lockb file will be backed up and replaced with a text-based lockfile (bun.lock).", "bruh");
+                });
+                await Deno.remove(env.lockfile.path);
+            } else {
+                await Deno.writeTextFile(
+                    await JoinPaths(env.root, `${env.lockfile.name}.bak`),
+                    await Deno.readTextFile(env.lockfile.path),
+                );
+                await Deno.remove(env.lockfile.path);
+            }
 
-            await LogStuff("Installing modules with the desired manager (4/4)...", "working");
+            await LogStuff("Installing modules with the desired manager (5/5)...", "working");
             try {
                 await FkNodeInterop.Installers.UniJs(env.root, to);
             } catch (e) {

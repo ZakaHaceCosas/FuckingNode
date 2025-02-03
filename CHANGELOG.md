@@ -46,6 +46,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now commands are normalized, meaning even stupid things like `fuckingnode mÀnaGëR lÌSt` will work perfectly.
 - Now the CLI more reliably tells whether a runtime is installed or not (at the expense of some extra milliseconds).
 - Now `audit` experiment's parsing rules are more reliable. _They still have known issues (direct/indirect deps + patched version), but they're internal-only and don't affect usage as of now_.
+- Now updating dependencies will always run with `--save-text-lockfile` in Bun.
+- Now `migrate` will always update dependencies before running.
 - Now `migrate` will back up your project's package file and lockfile.
 
 ### Fixed

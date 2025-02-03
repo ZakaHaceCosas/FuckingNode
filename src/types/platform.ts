@@ -158,7 +158,7 @@ interface GenericProjectEnvironment {
         /**
          * Update commands.
          */
-        update: ["update"] | ["outdated", "--update"] | ["upgrade"] | ["get", "-u", "all"];
+        update: ["update"] | ["update", "--save-text-lockfile"] | ["outdated", "--update"] | ["upgrade"] | ["get", "-u", "all"];
         /**
          * Clean commands.
          */
@@ -175,7 +175,7 @@ interface GenericProjectEnvironment {
         /**
          * Package publish commands.
          */
-        publish: ["publish"] | ["publish", "--non-interactive"] | ["publish", "--check=all"] | /* ["test", "./..."] */ "__UNSUPPORTED";
+        publish: ["publish"] | ["publish", "--non-interactive"] | ["publish", "--check=all"] | "__UNSUPPORTED";
     };
     /**
      * File paths to valid workspaces.
@@ -223,7 +223,7 @@ interface BunEnvironment extends GenericProjectEnvironment {
         base: "bun";
         exec: ["bunx"];
         run: ["bun", "run"];
-        update: ["update"];
+        update: ["update", "--save-text-lockfile"];
         clean: "__UNSUPPORTED";
         audit: "__UNSUPPORTED";
         publish: ["publish"];

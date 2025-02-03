@@ -21,9 +21,9 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [X] New `.sh` based installed for mac and Linux.
 - [ ] Better migration feature.
     - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
-    - [ ] Cross-runtime migration.
-        - [ ] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
-        - [ ] Deno.
+    - [X] Cross-runtime migration.
+        - [X] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
+        - [X] Deno.
 - [ ] Stabilize `audit` feature and support it everywhere NodeJS.
     - [ ] Stabilize it
         - [ ] Fix known issues (see TODO.md at repository's `v3` branch).

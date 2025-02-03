@@ -179,7 +179,7 @@ async function main(command: string) {
                 await TheSettings({ args: flags });
                 break;
             case "migrate":
-                await TheMigrator({ project: flags[1], desiredManager: flags[2] });
+                await TheMigrator({ projectPath: flags[1], wantedManager: flags[2] });
                 break;
             case "self-update":
             case "upgrade":
