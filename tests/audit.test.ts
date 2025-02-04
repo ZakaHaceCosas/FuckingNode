@@ -1,6 +1,7 @@
 import { assertEquals } from "@std/testing";
 import { ParseNpmReport, ParsePnpmYarnReport } from "../src/commands/toolkit/auditer.ts";
 import type { ParsedNodeReport } from "../src/types/audit.ts";
+import { JoinPaths } from "../src/functions/filesystem.ts";
 
 const expected: ParsedNodeReport = {
     vulnerablePackages: [
@@ -122,7 +123,9 @@ Deno.test({
     fn: async () => {
         assertEquals(
             ParsePnpmYarnReport(
-                await Deno.readTextFile("C:\\Users\\Zaka\\FuckingNode\\tests\\environment\\test-three\\audits\\audit-pnpm.txt"),
+                await Deno.readTextFile(
+                    await JoinPaths(Deno.cwd(), "tests/environment/test-three/audits-audit-pnpm.txt"),
+                ),
                 "pnpm",
             ),
             expected,
@@ -135,7 +138,9 @@ Deno.test({
     fn: async () => {
         assertEquals(
             ParseNpmReport(
-                await Deno.readTextFile("C:\\Users\\Zaka\\FuckingNode\\tests\\environment\\test-three\\audits\\audit-npm.txt"),
+                await Deno.readTextFile(
+                    await JoinPaths(Deno.cwd(), "tests/environment/test-three/audits-audit-npm.txt"),
+                ),
             ),
             expected,
         );
@@ -147,7 +152,9 @@ Deno.test({
     fn: async () => {
         assertEquals(
             ParsePnpmYarnReport(
-                await Deno.readTextFile("C:\\Users\\Zaka\\FuckingNode\\tests\\environment\\test-three\\audits\\audit-yarn.txt"),
+                await Deno.readTextFile(
+                    await JoinPaths(Deno.cwd(), "tests/environment/test-three/audits-audit-yarn.txt"),
+                ),
                 "yarn",
             ),
             expected,
