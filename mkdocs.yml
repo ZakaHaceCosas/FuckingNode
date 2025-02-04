@@ -75,6 +75,7 @@ plugins:
               "roadmap.md": "about/roadmap.md"
               "cross-runtime.md": "learn/cross-runtime-support.md"
               "cross-platform.md": "learn/cross-runtime-support.md"
+              "follow-us.md": "about/social.md"
 
 markdown_extensions:
     - abbr
