@@ -57,7 +57,7 @@ export class FknError extends Error {
                 break;
             case "Env__UnparsableMainFile":
                 this.hint =
-                    "Your project's main file (package.json, deno.json, go.mod, etc.) is unparsable. Check for typos or syntax errors. This is an internal error, so if you're sure the file is correct, please open an issue on GitHub.";
+                    "Your project's main file (package.json, deno.json, go.mod, etc.) is unparsable. Check for typos or syntax errors. If you're sure the file is correct, please open an issue on GitHub (if everything's right, it might be a bug with our interop layer).";
                 break;
         }
         if (Error.captureStackTrace) {
@@ -129,9 +129,9 @@ export class FknError extends Error {
     /**
      * handles and exits the CLI. you should always call this immediately after throwing.
      */
-    public exit(currentErr?: string): Promise<never> {
+    public exit(currentErr?: string, continueFlow: boolean = true): void | never {
         this.handleMessage(currentErr);
-        Deno.exit(1);
+        if (continueFlow === false) Deno.exit(1);
     }
 }
 
@@ -140,13 +140,16 @@ export class FknError extends Error {
  *
  * @export
  * @param {unknown} e The error.
- * @returns {Promise<never>} _Below any call to this function nothing can happen. It exits the CLI with code 1._
+ * @param {boolean} continueExecution If true, return changes up from never to void.
+ * @returns {never | void} _Below any call to this function nothing can happen. It exits the CLI with code 1._
  */
-export function GenericErrorHandler(e: unknown): Promise<never> {
+export function GenericErrorHandler(e: unknown, continueExecution: true): void;
+export function GenericErrorHandler(e: unknown, continueExecution: false): never;
+export function GenericErrorHandler(e: unknown, continueExecution: boolean): void | never {
     if (e instanceof FknError) {
-        e.exit(e.message);
+        e.exit(e.message, continueExecution);
     } else {
         console.error(`${MultiColorString(I_LIKE_JS.FK, "red", "bold")}! An unknown error happened: ${e}`);
+        if (continueExecution === false) Deno.exit(1);
     }
-    Deno.exit(1); // <- doesn't do anything if the error is a FknError because e.exit() already exits, but without this VSCode rises an error (it doesn't know e.exit() is a <never>)
 }

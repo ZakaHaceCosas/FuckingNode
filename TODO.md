@@ -79,5 +79,7 @@ self-reminders:
 
 ## Known issues
 
-- Hard cleanup output not hidden behind verbose
-- TMP dir not removed never because it's being used (we gotta schedule it somehow)
+- [ ] Hard cleanup output not hidden behind verbose
+- [ ] TMP dir not removed never because it's being used (we gotta schedule it somehow)
+- [ ] Audit tags indirect vulnerabilities as direct (not priority)
+  - [ ] Because of this, fixed version of the _vulnerable_ package is sometimes set to the fixed version of a _different_ package (for example, a vulnerability in `body-parser` gets the fixed version of `express` set as _it's own_ fixed version). **Not a problem as of now, but for future (v3) plans I have, this needs to get resolved.**

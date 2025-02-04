@@ -7,3 +7,4 @@ destroy:
         - "dist"
 commitActions: true
 commitMessage: "Maintenance tasks (automated by FuckingNode itself)" # lol
+commitCmd: "test"

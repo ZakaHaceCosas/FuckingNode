@@ -5,6 +5,64 @@ What we're planning to do. Only includes minor and major releases, patch release
 
 We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make progress and/or change our plans.
 
+## 3.X
+
+### Upcoming Version 3.0
+
+- [ ] Make a proper logo for the project.
+- [ ] New features
+    - [X] `fuckingnode commit "message"` to automatically run our maintenance task and custom commands before making a Git commit and only committing if they all succeed. With the "Shorter commands" goal, it could be something like `fkcommit "message"`.
+    - [X] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
+    - [ ] `fuckingnode give-up <project>` to `REDACTED`.
+    - [ ] `fuckingnode setup <project>` to `REDACTED`.
+    - [x] `fuckingnode compat` to show cross-runtime compatibility without the need to open the browser.
+- [ ] Better installer
+    - [X] Revamped `.ps1` based installer for Windows.
+    - [X] New `.sh` based installed for mac and Linux.
+- [ ] Better migration feature.
+    - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
+    - [X] Cross-runtime migration.
+        - [X] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
+        - [X] Deno.
+- [ ] Stabilize `audit` feature and support it everywhere NodeJS.
+    - [ ] Stabilize it
+        - [ ] Fix known issues (see TODO.md at repository's `v3` branch).
+        - [ ] Expand vector string lists.
+    - [X] Support it
+        - [X] pnpm
+        - [X] yarn
+- [X] Shorter commands.
+    - [X] Shorter core command, `fknode (args)`.
+        - [X] :fontawesome-brands-windows: Windows support
+        - [X] :simple-apple: macOS and :simple-linux: Linux support
+    - [X] Shorter flags, for example, `fknode clean -- -l -p` instead of `fuckingnode clean -- --lint --pretty`.
+    - [X] Shorthands, for example, `fkclean` instead of `fuckingnode clean`, which together with `defaultCleanerIntensity` setting and flagless features should handle everything.
+        - [X] :fontawesome-brands-windows: Windows support
+        - [X] :simple-apple: macOS and :simple-linux: Linux support
+- [ ] Make `fuckingnode stats` actually useful
+    - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
+- [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
+- [x] Better error handling.
+- [X] **Cross-platform support!**
+    - [x] FnCPF (FuckingNode CommonPackageFile)
+        - [x] Internal generation
+        - [x] Ability to export it
+    - [x] Platforms
+        - [x] Golang
+            - [X] Base support (Recognition, package file parsing...)
+            - [X] Operations (Cleanup, lint, pretty...) (_May be limited_)
+            - [X] Extras (Kickstart, stats...) (_May be limited_)
+        - [x] Cargo (Rust)
+            - [X] Base support (Recognition, package file parsing...)
+            - [X] Operations (Cleanup, lint, pretty...) (_May be limited_)
+            - [X] Extras (Kickstart, stats...) (_May be limited_)
+- [ ] FkNode Interop Layer
+    - [x] Linter
+    - [x] Prettifier
+    - [ ] Auditer (this is a bit special, you'll see later on)
+
+----
+
 ## 2.X
 
 ### Version 2.1 (Released)
@@ -22,66 +80,3 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 - [X] Per-project cleanup.
 - [X] Flagless features via `fknode.yaml`.
 - [X] Auto-flush for log files.
-
-----
-
-## 3.X
-
-### Version 3.0
-
-- [ ] Make a proper logo for the project.
-- [ ] New features
-    - [ ] `fuckingnode commit "message"` to `REDACTED`.
-    - [X] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
-    - [ ] `fuckingnode give-up <project>` to `REDACTED`.
-    - [ ] `fuckingnode setup <project>` to `REDACTED`.
-    - [x] `fuckingnode compat` to show cross-runtime compatibility without the need to open the browser.
-    - [x] `fuckingnode export <project>` to `REDACTED`.
-- [ ] Better installer
-    - [X] Revamped `.ps1` based installer for Windows.
-    - [ ] New `.sh` based installed for mac and Linux.
-- [ ] Better migration feature.
-    - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
-    - [ ] Cross-runtime migration.
-        - [ ] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
-        - [ ] Deno.
-- [ ] Stabilize `audit` feature and support it everywhere NodeJS.
-    - [ ] pnpm
-    - [ ] yarn
-- [ ] Shorter commands.
-    - [ ] Shorter core, for example `fknode`.
-        - [X] :fontawesome-brands-windows: Windows support
-        - [ ] :simple-apple: macOS and :simple-linux: Linux support
-    - [X] Shorter flags, for example, `fknode clean -- -l -p` instead of `fuckingnode clean -- --lint --pretty`.
-    - [ ] Shorthands, for example, `fkclean` instead of `fuckingnode clean`, which together with `defaultCleanerIntensity` setting and flagless features should handle everything.
-- [ ] Make `fuckingnode stats` actually useful
-    - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
-- [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
-- [x] Better error handling.
-
-I'm not a fan of people who gives buzzword-ish names to projects, but regardless; I don't want to early-disclose what our next major release is about, so here you got. **Progress in here is not in the repo - it IS made, just uncommitted.**
-
-- [ ] Project `REDACTED`
-    - [ ] Cr-P S.
-        - [x] FnCPF
-            - [x] Internal generation
-            - [x] Ability to export it
-        - [ ] Ps.
-            - [ ] G`REDACTED`
-                - [x] Base
-                    - [x] Recon
-                    - [x] Interaction
-                - [ ] Operations
-                    - [x] Base op
-                    - [ ] Advanced op
-                - [ ] Extras
-            - [ ] C`REDACTED`
-                - [ ] Base
-                    - [ ] Recon
-                    - [x] Interaction
-                - [ ] Operations
-                    - [ ] Base op
-                    - [ ] Advanced op
-                - [ ] Extras
-    - [ ] FnIL
-        - [ ] Audit

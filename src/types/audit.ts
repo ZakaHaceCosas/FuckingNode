@@ -1,9 +1,9 @@
 import type { tURL } from "./misc.ts";
 
 /**
- * A security vulnerability.
+ * A security vulnerability fetched from https://OSV.dev.
  */
-export type SecurityVulnerability = {
+export type ApiFetchedIndividualSecurityVulnerability = {
     id: string;
     references: {
         type: "REPORT";
@@ -11,6 +11,18 @@ export type SecurityVulnerability = {
     }[];
     summary: string;
     details: string | string[];
+};
+
+/**
+ * An analyzed security vulnerability.
+ */
+export type AnalyzedIndividualSecurityVulnerability = {
+    severity: "low" | "moderate" | "high" | "critical";
+    summary: string;
+    packageName: string;
+    vulnerableVersions: string;
+    patchedVersions: string;
+    advisoryUrl: tURL;
 };
 
 /**
@@ -38,15 +50,15 @@ export type FkNodeSecurityAudit = {
 };
 
 /**
- * A parsed `npm` report.
+ * A parsed NodeJS report, from either `npm`, `pnpm`, or `yarn`.
  */
-export type ParsedNpmReport = {
+export type ParsedNodeReport = {
     /**
      * Packages that are vulnerable.
      *
-     * @type {string[]}
+     * @type {AnalyzedIndividualSecurityVulnerability[]}
      */
-    vulnerablePackages: string[];
+    vulnerablePackages: AnalyzedIndividualSecurityVulnerability[];
     /**
      * Do the proposed fixes imply breaking changes, non-breaking changes, or a mix of both?
      *

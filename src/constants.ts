@@ -4,6 +4,7 @@ import { format, parse } from "@std/semver";
 import type { CF_FKNODE_SCHEDULE, CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
 import * as DenoJson from "../deno.json" with { type: "json" };
 import { GetDateNow } from "./functions/date.ts";
+import type { FnCPF } from "./types/platform.ts";
 
 /**
  * Current app version as a SemVer object. **Change it from `deno.json`.**
@@ -19,15 +20,40 @@ const _SV_VER: SemVer = parse(DenoJson.default.version);
  */
 export const VERSION: string = format(_SV_VER);
 
+export const INTEROP_SPEC_VERSIONING = {
+    /** Common Package File */
+    CPF: "1.0.0",
+    /** InterOp Layer */
+    IOL: "1.0.0",
+};
+
+/**
+ * Internal field for FnCPF files.
+ *
+ * @type {FnCPF["internal"]}
+ */
+export const FnCPFInternal: FnCPF["internal"] = {
+    fknode: VERSION,
+    fknodeCpf: INTEROP_SPEC_VERSIONING.CPF,
+    fknodeIol: INTEROP_SPEC_VERSIONING.IOL,
+};
+
 /**
  * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
  *
- * @type {{CASED: string, CLI: string, STYLED: string}}
+ * @type {{CASED: string, CLI: string, STYLED: string, SCOPE: string}}
  */
-export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
+export const APP_NAME: { CASED: string; CLI: string; STYLED: string; SCOPE: string } = {
     CASED: "FuckingNode",
     CLI: "fuckingnode",
     STYLED: "F\*ckingNode",
+    SCOPE: "@zakahacecosas/fuckingnode",
+};
+
+/** URLs have trailing slash/ */
+export const APP_URLs = {
+    REPO: "https://github.com/ZakaHaceCosas/FuckingNode/",
+    WEBSITE: "https://zakahacecosas.github.io/FuckingNode/",
 };
 
 /**

@@ -68,15 +68,15 @@ export interface TheMigratorConstructedParams {
     /**
      * Project to be migrated.
      *
-     * @type {(string | undefined)}
+     * @type {UnknownString}
      */
-    project: string | undefined;
+    projectPath: UnknownString;
     /**
      * The manager to migrate to.
      *
-     * @type {(string | undefined)}
+     * @type {UnknownString}
      */
-    desiredManager: string | undefined;
+    wantedManager: UnknownString;
 }
 
 /**
@@ -168,4 +168,76 @@ export interface TheReleaserConstructedParams {
      * @type {boolean}
      */
     dry: boolean;
+}
+
+/**
+ * The Exporter
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheExporterConstructedParams
+ */
+export interface TheExporterConstructedParams {
+    /**
+     * Project to generate FnCPF for.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * Whether to use JSON or not.
+     *
+     * @type {boolean}
+     */
+    json: boolean;
+    /**
+     * Whether to output the file to the CLI too.
+     *
+     * @type {boolean}
+     */
+    cli: boolean;
+}
+
+/**
+ * The Compater
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheCompaterConstructedParams
+ */
+export interface TheCompaterConstructedParams {
+    /**
+     * Feature to fetch compat for.
+     *
+     * @type {?UnknownString}
+     */
+    target?: UnknownString;
+}
+
+/**
+ * The Committer
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheCommitterConstructedParams
+ */
+export interface TheCommitterConstructedParams {
+    /**
+     * Commit message.
+     *
+     * @type {UnknownString}
+     */
+    message: UnknownString;
+    /**
+     * Whether to push changes to remote or not.
+     *
+     * @type {boolean}
+     */
+    push: boolean;
+    /**
+     * Branch to commit to. Optional.
+     *
+     * @type {?UnknownString}
+     */
+    branch?: UnknownString;
 }
