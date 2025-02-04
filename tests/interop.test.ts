@@ -1,6 +1,6 @@
 import { FkNodeInterop } from "../src/commands/interop/interop.ts";
 import { assertEquals } from "@std/testing";
-import { VERSION } from "../src/constants.ts";
+import { APP_NAME, VERSION } from "../src/constants.ts";
 
 Deno.test({
     name: "interop layer manages cargo pkg file",
@@ -222,7 +222,7 @@ Deno.test({
     fn: () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Deno.CPF(
             `{
-    "name": "@zakahacecosas/fuckingnode",
+    "name": ${APP_NAME.SCOPE},
     "version": "3.0.0-alpha",
     "imports": {
         "@std/fs": "jsr:@std/fs@^1.0.10",
@@ -236,7 +236,7 @@ Deno.test({
         assertEquals(
             commonPkgFile,
             {
-                name: "@zakahacecosas/fuckingnode",
+                name: APP_NAME.SCOPE,
                 version: "3.0.0-alpha",
                 rm: "deno",
                 deps: [

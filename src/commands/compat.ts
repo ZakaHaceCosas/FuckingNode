@@ -1,6 +1,7 @@
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import type { TheCompaterConstructedParams } from "./constructors/command.ts";
+import { APP_URLs } from "../constants.ts";
 
 const featureCompatibility = [
     { Feature: "Cleanup", NodeJS: "Yes", Deno: "Partial", Bun: "Partial", Go: "Partial", Cargo: "No" },
@@ -35,7 +36,7 @@ export default async function TheCompater(params: TheCompaterConstructedParams) 
     await LogStuff(
         `${
             ColorString("This table shows feature compatibility across environments.", "bold")
-        }\nMore details available at https://zakahacecosas.github.io/FuckingNode/manual/cross-runtime`,
+        }\nMore details available at ${APP_URLs.WEBSITE}/manual/cross-runtime`,
         "bulb",
     );
 

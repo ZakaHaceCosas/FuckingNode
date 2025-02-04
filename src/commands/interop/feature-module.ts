@@ -91,7 +91,7 @@ export const InteropedFeatures = {
                 await LogStuff(
                     `Linting is unsupported for ${StringUtils.toUpperCaseFirst(env.runtime)}. Skipping task...", "warn", "bright-yellow`,
                 );
-                // TODO - funnily enough, FuckingNode's repository itself has a gluefix for this (iterates thru all code files running the check command individually)
+                // TODO - funnily enough, our repository itself has a gluefix for this (iterates thru all code files running the check command individually)
                 // both Deno and cargo use <rt> check <file> cmd, so we should do that later on
                 return false;
             case "golang": {

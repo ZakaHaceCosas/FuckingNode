@@ -14,7 +14,7 @@ import TheExporter from "./commands/export.ts";
 import TheCompater from "./commands/compat.ts";
 import TheCommitter from "./commands/commit.ts";
 // other things
-import { APP_NAME, VERSION } from "./constants.ts";
+import { APP_NAME, APP_URLs, VERSION } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetAppPath, GetSettings } from "./functions/config.ts";
 import { GenericErrorHandler } from "./utils/error.ts";
@@ -229,14 +229,15 @@ async function main(command: string) {
             case "docs":
             case "web":
             case "website":
-                await LogStuff("Best documentation website for best CLI, live at https://zakahacecosas.github.io/FuckingNode/", "bulb");
+                await LogStuff(`Best documentation website for best CLI, live at ${APP_URLs.WEBSITE}`, "bulb");
                 break;
             case "github":
             case "repo":
             case "repository":
             case "oss":
+            case "gh":
                 await LogStuff(
-                    "Free and open source, and free as in freedom, live at https://zakahacecosas.github.io/FuckingNode/repo\n(The above URL is a redirect to GitHub.)",
+                    `Free and open source, and free as in freedom, live at ${APP_URLs.WEBSITE}repo\n(The above URL is a redirect to GitHub.)`,
                     "bulb",
                 );
                 break;

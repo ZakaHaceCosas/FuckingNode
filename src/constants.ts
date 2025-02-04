@@ -41,12 +41,19 @@ export const FnCPFInternal: FnCPF["internal"] = {
 /**
  * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
  *
- * @type {{CASED: string, CLI: string, STYLED: string}}
+ * @type {{CASED: string, CLI: string, STYLED: string, SCOPE: string}}
  */
-export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
+export const APP_NAME: { CASED: string; CLI: string; STYLED: string; SCOPE: string } = {
     CASED: "FuckingNode",
     CLI: "fuckingnode",
     STYLED: "F\*ckingNode",
+    SCOPE: "@zakahacecosas/fuckingnode",
+};
+
+/** URLs have trailing slash/ */
+export const APP_URLs = {
+    REPO: "https://github.com/ZakaHaceCosas/FuckingNode/",
+    WEBSITE: "https://zakahacecosas.github.io/FuckingNode/",
 };
 
 /**

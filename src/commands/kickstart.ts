@@ -9,6 +9,7 @@ import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
 import { FknError } from "../utils/error.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
+import { APP_NAME } from "../constants.ts";
 
 async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favoriteEditor"]) {
     let executionCommand: "subl" | "code" | "emacs" | "notepad++" | "codium" | "atom";
@@ -148,7 +149,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
         try {
             await AddProject(clonePath);
         } catch (e) {
-            throw new Error(`Error setting up your favorite CLI tool (fuckingnode) in this project! ${e}`);
+            throw new Error(`Error setting up your favorite CLI tool (${APP_NAME.CLI}) in this project! ${e}`);
         }
 
         const favEditor = (await GetSettings()).favoriteEditor;

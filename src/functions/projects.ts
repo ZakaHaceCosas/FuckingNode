@@ -2,7 +2,7 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { parse as parseJsonc } from "@std/jsonc";
 import { expandGlob } from "@std/fs";
-import { DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
+import { APP_NAME, DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CargoPkgFile, NodePkgFile, ProjectEnvironment } from "../types/platform.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff, MultiColorString, NaturalizeFormattedString } from "./io.ts";
@@ -143,7 +143,7 @@ export async function GetProjectSettings(
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
         await Deno.writeTextFile(
             pathToDivineFile,
-            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to https://github.com/ZakaHaceCosas/FuckingNode to learn about how fknode.yaml works.]`,
+            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to https://github.com/ZakaHaceCosas/FuckingNode to learn about how fknode.yaml works.]`,
             {
                 append: true,
             },
@@ -511,7 +511,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
                 commands: {
                     base: "bun",
                     exec: ["bunx"],
-                    update: ["update"],
+                    update: ["update", "--save-text-lockfile"],
                     clean: "__UNSUPPORTED",
                     run: ["bun", "run"],
                     audit: "__UNSUPPORTED",

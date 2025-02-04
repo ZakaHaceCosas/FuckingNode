@@ -2,7 +2,7 @@ import { Commander } from "../functions/cli.ts";
 import { JoinPaths } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
-import { VERSION } from "../constants.ts";
+import { APP_NAME, VERSION } from "../constants.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 
 export const Git = {
@@ -179,9 +179,13 @@ export const Git = {
 
             if (gitIgnoreContent.includes(toBeIgnored)) return 0;
 
-            await Deno.writeTextFile(gitIgnoreFile, `# auto-added by FuckingNode release command (CLI version ${VERSION})\n${toBeIgnored}`, {
-                append: true,
-            });
+            await Deno.writeTextFile(
+                gitIgnoreFile,
+                `# auto-added by ${APP_NAME.CASED} release command (CLI version ${VERSION})\n${toBeIgnored}`,
+                {
+                    append: true,
+                },
+            );
 
             if (showOutput) {
                 await LogStuff(

@@ -402,7 +402,7 @@ interface FnCPFDependency {
 }
 
 /**
- * FuckingNode Common Package File.
+ * Fn Common Package File.
  * @author ZakaHaceCosas
  *
  * @export
@@ -449,11 +449,11 @@ export interface FnCPF {
      *     }}
      */
     internal: {
-        /** FuckingNode version. */
+        /** App version. */
         fknode: string;
-        /** FuckingNode InterOp Layer version. */
+        /** InterOp Layer version. */
         fknodeIol: string;
-        /** FuckingNode CPF version. */
+        /** FnCPF version. */
         fknodeCpf: string;
     };
 }
