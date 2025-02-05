@@ -1,5 +1,4 @@
 import type { CleanerIntensity } from "./config_params.ts";
-import type { RIGHT_NOW_DATE } from "./misc.ts";
 
 /**
  * Supported code editors.
@@ -51,22 +50,22 @@ export interface CF_FKNODE_SCHEDULE {
      *
      * @type {{
      *         latestVer: string;
-     *         lastCheck: RIGHT_NOW_DATE;
+     *         lastCheck: string;
      *     }}
      */
     updater: {
         latestVer: string;
-        lastCheck: RIGHT_NOW_DATE;
+        lastCheck: string;
     };
     /**
      * Log flushes.
      *
      * @type {{
-     *         lastFlush: RIGHT_NOW_DATE;
+     *         lastFlush: string;
      *     }}
      */
     flusher: {
-        lastFlush: RIGHT_NOW_DATE;
+        lastFlush: string;
     };
 }
 
@@ -165,6 +164,12 @@ export interface FkNodeYaml {
      * @type {?boolean}
      */
     releaseAlwaysDry?: boolean;
+    /**
+     * A task (run) to be executed upon running the commit command.
+     *
+     * @type {?string}
+     */
+    commitCmd?: string;
 }
 
 /**
@@ -270,6 +275,10 @@ export function ValidateFkNodeYaml(
     }
 
     if (obj.releaseAlwaysDry !== undefined && typeof obj.releaseAlwaysDry !== "boolean") {
+        return false;
+    }
+
+    if (obj.commitCmd !== undefined && typeof obj.commitCmd !== "string") {
         return false;
     }
 

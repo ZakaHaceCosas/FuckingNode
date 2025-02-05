@@ -13,7 +13,7 @@ const internalJokes = [
     "Dima definitely approves", // indeed he does
     "Sokora Seal of Approval", // and i'm proud of it
     "verified, just as sokora", // indeed
-    "(not) powered by Vuelto <https://vuelto.me>", // rewrite to Vuelto coming 2026
+    "(not) powered by Vuelto <https://vuelto.pp.ua/>", // rewrite to Vuelto coming 2026
     "Proudly running on anything but a FireBlitz server", // those who know :skull:
     "not made in germany", // those who know :skull:
     `(it's called like this because node is ${I_LIKE_JS.FKN} annoying, not because i ${I_LIKE_JS.FK} it)`, // (someone really told me the 2nd one)

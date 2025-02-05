@@ -46,6 +46,8 @@ export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
                 return `🗑`;
             case "chart":
                 return `📊`;
+            case "wink":
+                return `😉`;
             default:
                 return "";
         }

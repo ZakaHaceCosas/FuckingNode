@@ -2,15 +2,20 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { parse as parseJsonc } from "@std/jsonc";
 import { expandGlob } from "@std/fs";
-import { DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import type { DenoPkgJson, JsProjectEnvironment, NodePkgJson } from "../types/platform.ts";
+import { APP_NAME, APP_URLs, DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
+import type { CargoPkgFile, NodePkgFile, ProjectEnvironment } from "../types/platform.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff, MultiColorString, NaturalizeFormattedString } from "./io.ts";
-import GenericErrorHandler, { FknError } from "../utils/error.ts";
+import { FknError } from "../utils/error.ts";
 import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import { GetAppPath } from "./config.ts";
 import { GetDateNow } from "./date.ts";
 import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
+import { FkNodeInterop } from "../commands/interop/interop.ts";
+import type { tValidColors } from "../types/misc.ts";
+import { Git } from "../utils/git.ts";
+import { internalGolangRequireLikeStringParser } from "../commands/interop/parse-module.ts";
+import { StringUtils } from "@zakahacecosas/string-utils";
 
 /**
  * Gets all the users projects and returns their absolute root paths as a `string[]`.
@@ -69,42 +74,36 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
         if (!exists) throw new Error("(path doesn't exist, this won't be shown and the formatted path will be returned instead)");
         const env = await GetProjectEnvironment(workingPath);
 
-        let fullNamedProject: string;
-        let formattedName: string;
-        let formattedVersion: string;
-        let formattedNameVer: string;
-
+        let runtimeColor: tValidColors;
         switch (env.runtime) {
+            case "bun":
+                runtimeColor = "pink";
+                break;
             case "node":
-            case "bun": {
-                const packageJson: NodePkgJson = env.main.content;
-
-                if (!packageJson.name) return formattedPath;
-
-                formattedName = ColorString(packageJson.name, "bold");
-
-                formattedVersion = packageJson.version ? ColorString(packageJson.version, "purple") : "";
-
-                formattedNameVer = `${ColorString(formattedName, env.runtime === "node" ? "bright-green" : "pink")}@${formattedVersion}`;
-
-                fullNamedProject = `${formattedNameVer} ${formattedPath}`;
+                runtimeColor = "bright-green";
                 break;
-            }
-            case "deno": {
-                const denoJson: DenoPkgJson = env.main.content;
-
-                if (!denoJson.name) return formattedPath;
-
-                formattedName = ColorString(denoJson.name, "bold");
-
-                formattedVersion = denoJson.version ? ColorString(denoJson.version, "purple") : "";
-
-                formattedNameVer = `${ColorString(formattedName, "bright-blue")}@${formattedVersion}`;
-
-                fullNamedProject = `${formattedNameVer} ${formattedPath}`;
+            case "deno":
+                runtimeColor = "bright-blue";
                 break;
-            }
+            case "rust":
+                runtimeColor = "orange";
+                break;
+            case "golang":
+                runtimeColor = "cyan";
+                break;
         }
+
+        const pkgFile = env.main.cpfContent;
+
+        if (!pkgFile.name) return formattedPath;
+
+        const formattedName = ColorString(pkgFile.name, "bold");
+
+        const formattedVersion = pkgFile.version ? `@${ColorString(pkgFile.version, "purple")}` : "";
+
+        const formattedNameVer = `${ColorString(formattedName, runtimeColor)}${formattedVersion}`;
+
+        const fullNamedProject = `${formattedNameVer} ${formattedPath}`;
 
         switch (wanted) {
             case "all":
@@ -137,14 +136,13 @@ export async function GetProjectSettings(
     const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
 
     if (!(await CheckForPath(pathToDivineFile))) return DEFAULT_FKNODE_YAML;
-    const divineContent = await Deno.readTextFile(pathToDivineFile);
-    const cleanContent = parseYaml(divineContent);
+    const divineContent = parseYaml(await Deno.readTextFile(pathToDivineFile));
 
-    if (!ValidateFkNodeYaml(cleanContent)) {
+    if (!ValidateFkNodeYaml(divineContent)) {
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
         await Deno.writeTextFile(
             pathToDivineFile,
-            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by fuckingnode). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to https://github.com/ZakaHaceCosas/FuckingNode to learn about how fknode.yaml works.]`,
+            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to ${APP_URLs.WEBSITE} to learn about how fknode.yaml works.]\n`,
             {
                 append: true,
             },
@@ -152,17 +150,15 @@ export async function GetProjectSettings(
         return DEFAULT_FKNODE_YAML;
     }
 
-    return cleanContent;
+    return divineContent;
 }
 
 /**
- * Wraps a bunch of functions (well currently just one but more in the future) to easily work around with fknode.yaml. Where `UnderstandProjectSettings` is `A`:
- *
- * `A.protection(settings: FkNodeYaml)` will return "*", "updater", "cleanup", or null depending on the level of protection of the project.
+ * Wraps a bunch of functions to easily work around with fknode.yaml. See each function's JSDoc to see what they do.
  */
 export const UnderstandProjectSettings = {
     /**
-     * Tells you about the protection of a project. Returns an object where 'true' means allowed and 'false' means protected.
+     * Tells you about the protection of a project. Returns an object where `true` means allowed and `false` means protected.
      */
     protection: (settings: FkNodeYaml, options: {
         update: boolean;
@@ -170,7 +166,11 @@ export const UnderstandProjectSettings = {
         lint: boolean;
         destroy: boolean;
     }) => {
-        if (!settings.divineProtection || settings.divineProtection === "disabled") {
+        const protection = StringUtils.normalizeArray(
+            Array.isArray(settings.divineProtection) ? settings.divineProtection : [settings.divineProtection],
+        );
+
+        if (!StringUtils.validate(protection[0]) || protection[0] === "disabled") {
             return {
                 doClean: true,
                 doUpdate: options.update,
@@ -178,7 +178,7 @@ export const UnderstandProjectSettings = {
                 doLint: options.lint,
                 doDestroy: options.destroy,
             };
-        } else if (settings.divineProtection === "*") {
+        } else if (protection[0] === "*") {
             return {
                 doClean: false,
                 doUpdate: false,
@@ -186,15 +186,15 @@ export const UnderstandProjectSettings = {
                 doLint: false,
                 doDestroy: false,
             };
+        } else {
+            return {
+                doClean: protection.includes("cleaner") ? false : true,
+                doUpdate: protection.includes("updater") ? false : options.update,
+                doPrettify: protection.includes("prettifier") ? false : options.prettify,
+                doLint: protection.includes("linter") ? false : options.lint,
+                doDestroy: protection.includes("destroyer") ? false : options.destroy,
+            };
         }
-        const protection = settings.divineProtection;
-        return {
-            doClean: protection.includes("cleaner") ? false : true,
-            doUpdate: protection.includes("updater") ? false : options.update,
-            doPrettify: protection.includes("prettifier") ? false : options.prettify,
-            doLint: protection.includes("linter") ? false : options.lint,
-            doDestroy: protection.includes("destroyer") ? false : options.destroy,
-        };
     },
 };
 
@@ -232,9 +232,9 @@ export async function ValidateProject(entry: string, existing: boolean): Promise
  *
  * @async
  * @param {string} path Path to the root of the project.
- * @returns {Promise<string[] | null>}
+ * @returns {Promise<string[]>}
  */
-export async function GetWorkspaces(path: string): Promise<string[] | null> {
+export async function GetWorkspaces(path: string): Promise<string[]> {
     try {
         const workingPath: string = await ParsePath(path);
 
@@ -245,7 +245,7 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
         // Check package.json for Node, npm, and yarn (and Bun workspaces).
         const packageJsonPath = await JoinPaths(workingPath, "package.json");
         if (await CheckForPath(packageJsonPath)) {
-            const pkgJson: NodePkgJson = JSON.parse(await Deno.readTextFile(packageJsonPath));
+            const pkgJson: NodePkgFile = JSON.parse(await Deno.readTextFile(packageJsonPath));
             if (pkgJson.workspaces) {
                 const pkgWorkspaces = Array.isArray(pkgJson.workspaces) ? pkgJson.workspaces : pkgJson.workspaces?.packages || [];
                 workspacePaths.push(...pkgWorkspaces);
@@ -290,11 +290,27 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
             }
         }
 
-        if (workspacePaths.length === 0) return null;
+        // Check for Cargo configuration (cargo.toml)
+        const cargoTomlPath = await JoinPaths(workingPath, "cargo.toml");
+        if (await CheckForPath(cargoTomlPath)) {
+            const cargoToml = parseToml(await Deno.readTextFile(cargoTomlPath)) as unknown as CargoPkgFile;
+            if (cargoToml.workspace && Array.isArray(cargoToml.workspace.members)) workspacePaths.push(...cargoToml.workspace.members);
+        }
+
+        // Check for Golang configuration (go.work)
+        const goWorkPath = await JoinPaths(workingPath, "go.work");
+        if (await CheckForPath(goWorkPath)) {
+            const goWork = internalGolangRequireLikeStringParser((await Deno.readTextFile(goWorkPath)).split("\n"), "use");
+            if (goWork.length > 0) workspacePaths.push(...goWork.filter((s) => !["(", ")"].includes(StringUtils.normalize(s))));
+        }
+
+        if (workspacePaths.length === 0) return [];
 
         const absoluteWorkspaces: string[] = [];
+
         for (const workspacePath of workspacePaths) {
             const fullPath = await JoinPaths(workingPath, workspacePath);
+            if (!(await CheckForPath(fullPath))) continue;
             for await (const dir of expandGlob(fullPath)) {
                 if (dir.isDirectory) {
                     absoluteWorkspaces.push(dir.path);
@@ -305,7 +321,7 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
         return absoluteWorkspaces;
     } catch (e) {
         await LogStuff(`Error looking for workspaces: ${e}`, "error");
-        return null;
+        return [];
     }
 }
 
@@ -315,9 +331,9 @@ export async function GetWorkspaces(path: string): Promise<string[] | null> {
  * @export
  * @async
  * @param {string} path Path to the project's root.
- * @returns {Promise<JsProjectEnvironment>}
+ * @returns {Promise<ProjectEnvironment>}
  */
-export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvironment> {
+export async function GetProjectEnvironment(path: string): Promise<ProjectEnvironment> {
     try {
         const workingPath = await ParsePath(path);
 
@@ -329,7 +345,7 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
         }
 
         const trash = await JoinPaths(workingPath, "node_modules");
-        const workspaces = await GetWorkspaces(workingPath) ?? "no";
+        const workspaces = await GetWorkspaces(workingPath) || [];
 
         const paths = {
             deno: {
@@ -347,6 +363,14 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 lockNpm: await JoinPaths(workingPath, "package-lock.json"),
                 lockPnpm: await JoinPaths(workingPath, "pnpm-lock.yaml"),
                 lockYarn: await JoinPaths(workingPath, "yarn.lock"),
+            },
+            golang: {
+                pkg: await JoinPaths(workingPath, "go.mod"),
+                lock: await JoinPaths(workingPath, "go.sum"),
+            },
+            rust: {
+                pkg: await JoinPaths(workingPath, "cargo.toml"),
+                lock: await JoinPaths(workingPath, "cargo.lock"),
             },
         };
 
@@ -367,43 +391,116 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 lockPnpm: await CheckForPath(paths.node.lockPnpm),
                 lockYarn: await CheckForPath(paths.node.lockYarn),
             },
+            golang: {
+                pkg: await CheckForPath(paths.golang.pkg),
+                lock: await CheckForPath(paths.golang.lock),
+            },
+            rust: {
+                pkg: await CheckForPath(paths.rust.pkg),
+                lock: await CheckForPath(paths.rust.lock),
+            },
         };
 
+        const isGolang = pathChecks.golang.pkg || pathChecks.golang.lock;
+        const isRust = pathChecks.rust.pkg || pathChecks.rust.lock;
         const isDeno = pathChecks.deno.lock ||
             pathChecks.deno.json ||
             pathChecks.deno.jsonc;
         const isBun = pathChecks.bun.lock ||
             pathChecks.bun.lockb ||
             pathChecks.bun.toml;
-        const isNode = pathChecks.node.lockNpm || pathChecks.node.lockPnpm || pathChecks.node.lockYarn;
+        const isNode = pathChecks.node.lockNpm ||
+            pathChecks.node.lockPnpm ||
+            pathChecks.node.lockYarn;
 
-        if (!pathChecks.node.json && !pathChecks.deno.json && !pathChecks.bun.toml) {
+        if (!pathChecks.node.json && !pathChecks.deno.json && !pathChecks.bun.toml && !pathChecks.golang.pkg && !pathChecks.rust.pkg) {
             throw new FknError(
                 "Internal__Projects__CantDetermineEnv",
-                `No main file present (package.json, deno.json...) at ${ColorString(path, "bold")}.`,
+                `No main file present (package.json, deno.json, cargo.toml...) at ${ColorString(path, "bold")}.`,
             );
         }
 
-        if (!isNode && !isBun && !isDeno) {
+        if (!isNode && !isBun && !isDeno && !isGolang && !isRust) {
             throw new FknError(
                 "Internal__Projects__CantDetermineEnv",
                 `No lockfile present (required for the project to work) at ${ColorString(path, "bold")}.`,
             );
         }
 
-        const mainPath = isDeno
+        const mainPath = isGolang
+            ? paths.golang.pkg
+            : isRust
+            ? paths.rust.pkg
+            : isDeno
             ? pathChecks.deno.jsonc ? paths.deno.jsonc : pathChecks.deno.json ? paths.deno.json : paths.node.json
             : paths.node.json;
 
         const mainString: string = await Deno.readTextFile(mainPath);
 
+        const { PackageFileParsers } = FkNodeInterop;
+
+        if (isGolang) {
+            return {
+                root: workingPath,
+                main: {
+                    path: mainPath,
+                    name: "go.mod",
+                    stdContent: PackageFileParsers.Golang.STD(mainString),
+                    cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetLatestTag(workingPath, false), workspaces),
+                },
+                lockfile: {
+                    name: "go.sum",
+                    path: paths.golang.lock,
+                },
+                runtime: "golang",
+                manager: "go",
+                commands: {
+                    base: "go",
+                    exec: ["go", "run"],
+                    update: ["get", "-u", "all"],
+                    clean: [["clean"], ["mod", "tidy"]],
+                    run: "__UNSUPPORTED",
+                    audit: "__UNSUPPORTED", // i thought it was vet
+                    publish: "__UNSUPPORTED", // ["test", "./..."]
+                },
+                workspaces,
+            };
+        }
+        if (isRust) {
+            return {
+                root: workingPath,
+                main: {
+                    path: mainPath,
+                    name: "cargo.toml",
+                    stdContent: PackageFileParsers.Cargo.STD(mainString),
+                    cpfContent: PackageFileParsers.Cargo.CPF(mainString, workspaces),
+                },
+                lockfile: {
+                    name: "cargo.lock",
+                    path: paths.rust.lock,
+                },
+                runtime: "rust",
+                manager: "cargo",
+                commands: {
+                    base: "cargo",
+                    exec: ["cargo", "run"],
+                    update: ["update"],
+                    clean: [["clean"]],
+                    run: "__UNSUPPORTED",
+                    audit: "__UNSUPPORTED", // ["audit"]
+                    publish: "__UNSUPPORTED", // ["publish"],
+                },
+                workspaces,
+            };
+        }
         if (isBun) {
             return {
                 root: workingPath,
                 main: {
                     path: mainPath,
                     name: "package.json",
-                    content: JSON.parse(mainString),
+                    stdContent: PackageFileParsers.NodeBun.STD(mainString),
+                    cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "bun", workspaces),
                 },
                 lockfile: {
                     name: pathChecks.bun.lockb ? "bun.lockb" : "bun.lock",
@@ -415,7 +512,7 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 commands: {
                     base: "bun",
                     exec: ["bunx"],
-                    update: ["update"],
+                    update: ["update", "--save-text-lockfile"],
                     clean: "__UNSUPPORTED",
                     run: ["bun", "run"],
                     audit: "__UNSUPPORTED",
@@ -429,7 +526,8 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 main: {
                     path: mainPath,
                     name: pathChecks.deno.jsonc ? "deno.jsonc" : "deno.json",
-                    content: JSON.parse(mainString),
+                    stdContent: PackageFileParsers.Deno.STD(mainString),
+                    cpfContent: PackageFileParsers.Deno.CPF(mainString, workspaces),
                 },
                 lockfile: {
                     name: "deno.lock",
@@ -456,7 +554,8 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 main: {
                     path: mainPath,
                     name: "package.json",
-                    content: JSON.parse(mainString),
+                    stdContent: parseJsonc(mainString) as NodePkgFile,
+                    cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "yarn", workspaces),
                 },
                 lockfile: {
                     name: "yarn.lock",
@@ -472,7 +571,7 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                     update: ["upgrade"],
                     clean: [["autoclean", "--force"]],
                     run: ["yarn", "run"],
-                    audit: "__UNSUPPORTED",
+                    audit: ["audit", "--recursive", "--all"],
                     publish: ["publish", "--non-interactive"],
                 },
                 workspaces,
@@ -483,7 +582,8 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 main: {
                     path: mainPath,
                     name: "package.json",
-                    content: JSON.parse(mainString),
+                    stdContent: PackageFileParsers.NodeBun.STD(mainString),
+                    cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "pnpm", workspaces),
                 },
                 lockfile: {
                     name: "pnpm-lock.yaml",
@@ -510,7 +610,8 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
                 main: {
                     path: mainPath,
                     name: "package.json",
-                    content: JSON.parse(mainString),
+                    stdContent: PackageFileParsers.NodeBun.STD(mainString),
+                    cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "npm", workspaces),
                 },
                 lockfile: {
                     name: "package-lock.json",
@@ -538,8 +639,7 @@ export async function GetProjectEnvironment(path: string): Promise<JsProjectEnvi
             `Unknown reason. Happened with ${ColorString(path, "bold")}.`,
         );
     } catch (e) {
-        await GenericErrorHandler(e);
-        Deno.exit(1); // (for TS to shut up)
+        throw e; // (for TS to shut up)
     }
 }
 
@@ -591,6 +691,6 @@ export async function SpotProject(name: string): Promise<string> {
             `'${name.trim()}' (=> '${workingProject}') exists but is not an added project.`,
         );
     } else {
-        throw new FknError("Generic__NonFoundProject", `'${name.trim}' (=> '${workingProject}') does not exist.`);
+        throw new FknError("Generic__NonFoundProject", `'${name.trim()}' (=> '${workingProject}') does not exist.`);
     }
 }

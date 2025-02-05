@@ -2,12 +2,14 @@ import { format, parse } from "@std/semver";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheReleaserConstructedParams } from "./constructors/command.ts";
-import type { DenoPkgJson, NodePkgJson } from "../types/platform.ts";
+import type { DenoPkgFile, NodePkgFile } from "../types/platform.ts";
 import { Commander } from "../functions/cli.ts";
 import { GetProjectSettings } from "../functions/projects.ts";
 import { PerformCleaning } from "./toolkit/cleaner.ts";
 import { Git } from "../utils/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
+import { APP_NAME } from "../constants.ts";
+import { waitFor } from "@std/async/unstable-wait-for";
 
 export default async function TheReleaser(params: TheReleaserConstructedParams) {
     try {
@@ -34,15 +36,15 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             throw new Error(`Failed to load environment or settings for project '${params.project}'.`);
         }
 
-        if (!settings.releaseCmd?.trim()) {
-            throw new Error(
-                "Your fknode.yaml file lacks a releaseCmd key. If you don't want to run any additional command before releasing, please set it to __DISABLE.",
-            );
+        if (env.commands.publish === "__UNSUPPORTED") {
+            throw new Error(`Platform ${env.runtime} doesn't support publishing. Aborting.`);
         }
 
+        const releaseCmd = StringUtils.validate(settings.releaseCmd) ? StringUtils.normalize(settings.releaseCmd) : "__DISABLE";
+
         // bump version from pkg json first
-        const newPackageFile: NodePkgJson | DenoPkgJson = {
-            ...env.main.content,
+        const newPackageFile: NodePkgFile | DenoPkgFile = {
+            ...env.main.stdContent,
             version: format(parsedVersion),
         };
 
@@ -52,11 +54,11 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             `Update your ${env.main.name}'s "version" field`,
             `Create a ${ColorString(`${env.main.name}.bak`, "bold")} file, and add it to .gitignore`,
         ];
-        if (settings.releaseCmd.trim() !== "__DISABLE") {
+        if (releaseCmd !== "__DISABLE") {
             actions.push(
                 `Run ${
                     ColorString(
-                        `${env.commands.run[0]} ${env.commands.run[1]} ${settings.releaseCmd}`,
+                        `${env.commands.run.join(" ")} ${releaseCmd}`,
                         "bold",
                     )
                 }`,
@@ -75,9 +77,12 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             );
         }
         const confirmation = await LogStuff(
-            `We're about to do the following actions:\n${actions.join("\n")}\n- all of this at ${await NameProject(project, "all")}`,
-            "what",
-            "bright-yellow",
+            `Heads up! We're about to take the following actions:\n${actions.join("\n")}\n\n- all of this at ${await NameProject(
+                project,
+                "all",
+            )}`,
+            "heads-up",
+            "red",
             true,
         );
 
@@ -92,31 +97,39 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         }
 
         // run their releaseCmd
-        if (settings.releaseCmd.trim() !== "__DISABLE") {
+        if (releaseCmd !== "__DISABLE") {
             const releaseOutput = await Commander(
                 env.commands.run[0],
-                [env.commands.run[1], settings.releaseCmd],
+                [env.commands.run[1], releaseCmd],
             );
 
             if (!releaseOutput.success) {
                 throw new Error(
-                    `Release command failed (${settings.releaseCmd}): ${releaseOutput.stdout}`,
+                    `Release command failed (${releaseCmd}): ${releaseOutput.stdout}`,
                 );
             }
         }
 
         // run our maintenance task
-        await PerformCleaning(
-            project,
-            true,
-            true,
-            true,
-            true,
-            true,
-            false,
-            "normal",
-            true,
-        );
+        try {
+            await waitFor(
+                async () =>
+                    await PerformCleaning(
+                        project,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        "normal",
+                        true,
+                    ),
+                15000,
+            );
+        } catch (e) {
+            throw new Error(`${APP_NAME.CASED} clean failed with error: ${e}`);
+        }
 
         // just in case
         await Git.Ignore(
@@ -128,7 +141,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         await Git.Commit(
             project,
             `Release v${format(parsedVersion)} (automated by F*ckingNode)`,
-            // [`${env.main.name}.bak`],
+            "all",
             [],
             true,
         );
@@ -142,7 +155,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
 
         if (params.push) {
             // push stuff to git
-            const pushOutput = await Git.Push(project, true);
+            const pushOutput = await Git.Push(project, false, true);
             if (pushOutput === 1) {
                 throw new Error(`Git push failed unexpectedly.`);
             }
@@ -171,9 +184,9 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     } catch (e) {
         if (e instanceof TypeError) {
             await LogStuff(`Invalid version: ${params.version}. Please use a valid SemVer version.`, "error", "red");
+            return;
         } else {
-            await LogStuff(`Error: ${e}`, "error", "red");
+            throw e;
         }
-        throw e;
     }
 }

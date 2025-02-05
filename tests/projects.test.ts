@@ -18,7 +18,7 @@ Deno.test(
     {
         name: "reads workspaces",
         fn: async () => {
-            const workspaces = (await GetWorkspaces(TEST_ONE.root)) ?? "no";
+            const workspaces = await GetWorkspaces(TEST_ONE.root);
             assertEquals(workspaces, TEST_ONE.workspaces);
         },
     },

@@ -11,7 +11,11 @@ export type GLOBAL_ERROR_CODES =
     | "Manager__NonExistingPath"
     | "Internal__NoEnvForConfigPath"
     | "Generic__NonFoundProject"
-    | "Env__UnparsableMainFile";
+    | "Env__UnparsableMainFile"
+    | "Interop__CannotRunJsLike"
+    | "Unknown__CleanerTask__Lint"
+    | "Unknown__CleanerTask__Pretty"
+    | "Unknown__CleanerTask__Update";
 
 /**
  * All possible project validation error codes.
