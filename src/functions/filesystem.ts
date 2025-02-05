@@ -1,6 +1,5 @@
-import { join } from "@std/path";
+import { join, normalize } from "@std/path";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { normalize } from "node:path";
 
 /**
  * Returns `true` if a given path exists, `false` if otherwise.

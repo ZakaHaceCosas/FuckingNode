@@ -222,7 +222,7 @@ Deno.test({
     fn: () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Deno.CPF(
             `{
-    "name": ${APP_NAME.SCOPE},
+    "name": "${APP_NAME.SCOPE}",
     "version": "3.0.0-alpha",
     "imports": {
         "@std/fs": "jsr:@std/fs@^1.0.10",

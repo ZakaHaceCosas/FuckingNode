@@ -98,8 +98,8 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
         // run our maintenance task
         try {
             await waitFor(
-                () =>
-                    PerformCleaning(
+                async () =>
+                    await PerformCleaning(
                         project,
                         true,
                         true,

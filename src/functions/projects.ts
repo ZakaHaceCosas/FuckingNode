@@ -2,7 +2,7 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { parse as parseJsonc } from "@std/jsonc";
 import { expandGlob } from "@std/fs";
-import { APP_NAME, DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
+import { APP_NAME, APP_URLs, DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CargoPkgFile, NodePkgFile, ProjectEnvironment } from "../types/platform.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff, MultiColorString, NaturalizeFormattedString } from "./io.ts";
@@ -136,14 +136,13 @@ export async function GetProjectSettings(
     const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
 
     if (!(await CheckForPath(pathToDivineFile))) return DEFAULT_FKNODE_YAML;
-    const divineContent = await Deno.readTextFile(pathToDivineFile);
-    const cleanContent = parseYaml(divineContent);
+    const divineContent = parseYaml(await Deno.readTextFile(pathToDivineFile));
 
-    if (!ValidateFkNodeYaml(cleanContent)) {
+    if (!ValidateFkNodeYaml(divineContent)) {
         await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
         await Deno.writeTextFile(
             pathToDivineFile,
-            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to https://github.com/ZakaHaceCosas/FuckingNode to learn about how fknode.yaml works.]`,
+            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to ${APP_URLs.WEBSITE} to learn about how fknode.yaml works.]\n`,
             {
                 append: true,
             },
@@ -151,17 +150,15 @@ export async function GetProjectSettings(
         return DEFAULT_FKNODE_YAML;
     }
 
-    return cleanContent;
+    return divineContent;
 }
 
 /**
- * Wraps a bunch of functions (well currently just one but more in the future) to easily work around with fknode.yaml. Where `UnderstandProjectSettings` is `A`:
- *
- * `A.protection(settings: FkNodeYaml)` will return "*", "updater", "cleanup", or null depending on the level of protection of the project.
+ * Wraps a bunch of functions to easily work around with fknode.yaml. See each function's JSDoc to see what they do.
  */
 export const UnderstandProjectSettings = {
     /**
-     * Tells you about the protection of a project. Returns an object where 'true' means allowed and 'false' means protected.
+     * Tells you about the protection of a project. Returns an object where `true` means allowed and `false` means protected.
      */
     protection: (settings: FkNodeYaml, options: {
         update: boolean;
@@ -169,7 +166,11 @@ export const UnderstandProjectSettings = {
         lint: boolean;
         destroy: boolean;
     }) => {
-        if (!settings.divineProtection || settings.divineProtection === "disabled") {
+        const protection = StringUtils.normalizeArray(
+            Array.isArray(settings.divineProtection) ? settings.divineProtection : [settings.divineProtection],
+        );
+
+        if (!StringUtils.validate(protection[0]) || protection[0] === "disabled") {
             return {
                 doClean: true,
                 doUpdate: options.update,
@@ -177,7 +178,7 @@ export const UnderstandProjectSettings = {
                 doLint: options.lint,
                 doDestroy: options.destroy,
             };
-        } else if (settings.divineProtection === "*") {
+        } else if (protection[0] === "*") {
             return {
                 doClean: false,
                 doUpdate: false,
@@ -185,15 +186,15 @@ export const UnderstandProjectSettings = {
                 doLint: false,
                 doDestroy: false,
             };
+        } else {
+            return {
+                doClean: protection.includes("cleaner") ? false : true,
+                doUpdate: protection.includes("updater") ? false : options.update,
+                doPrettify: protection.includes("prettifier") ? false : options.prettify,
+                doLint: protection.includes("linter") ? false : options.lint,
+                doDestroy: protection.includes("destroyer") ? false : options.destroy,
+            };
         }
-        const protection = settings.divineProtection;
-        return {
-            doClean: protection.includes("cleaner") ? false : true,
-            doUpdate: protection.includes("updater") ? false : options.update,
-            doPrettify: protection.includes("prettifier") ? false : options.prettify,
-            doLint: protection.includes("linter") ? false : options.lint,
-            doDestroy: protection.includes("destroyer") ? false : options.destroy,
-        };
     },
 };
 

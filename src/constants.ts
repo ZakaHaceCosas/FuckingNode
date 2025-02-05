@@ -172,6 +172,7 @@ export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
     },
     commitActions: false,
     commitMessage: "__USE_DEFAULT",
+    commitCmd: "__DISABLE",
     updateCmdOverride: "__USE_DEFAULT",
     flagless: {
         flaglessUpdate: false,
@@ -180,4 +181,6 @@ export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
         flaglessDestroy: false,
         flaglessCommit: false,
     },
+    releaseAlwaysDry: false,
+    releaseCmd: "__DISABLE",
 };
