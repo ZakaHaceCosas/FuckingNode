@@ -65,7 +65,7 @@ export async function ParsePath(target: string): Promise<string> {
             try {
                 workingTarget = await Deno.realPath(workingTarget);
             } catch {
-                workingTarget;
+                // workingTarget;
             }
         }
 

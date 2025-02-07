@@ -1,7 +1,8 @@
-import { I_LIKE_JS } from "../constants.ts";
-import { GetAppPath } from "../functions/config.ts";
+import { join } from "@std/path/join";
+import { APP_NAME, I_LIKE_JS } from "../constants.ts";
 import { ColorString, MultiColorString } from "../functions/io.ts";
 import type { GLOBAL_ERROR_CODES } from "../types/errors.ts";
+import { GetDateNow } from "../functions/date.ts";
 
 /**
  * Errors that we know about, or that are caused by the user.
@@ -101,25 +102,39 @@ export class FknError extends Error {
      * Dumps a debug log into the `ERRORS` file. Write anything here, such as an entire main file string.
      *
      * @public
-     * @async
      * @param {string} debuggableContent The content to be dumped.
      * @returns {Promise<void>}
      */
-    public async debug(debuggableContent: string): Promise<void> {
-        const debugPath = await GetAppPath("ERRORS");
-        const debuggableError = {
-            "timestamp": new Date().toISOString(),
-            "FknError code": this.code,
-            "thrown message": this.message,
-            "thrown hint": this.hint,
-            "---":
-                " below goes the debugged content dump. this could be, for example, an entire project main file, dumped here for reviewal. it could be a sh*t ton of stuff to read ---",
-            "debugged content": debuggableContent,
-        };
+    public debug(debuggableContent: string): void {
+        const base = Deno.build.os === "windows"
+            ? Deno.env.get("APPDATA")
+            : (Deno.env.get("XDG_CONFIG_HOME") || `${Deno.env.get("HOME") ?? ""}.config/`);
+        // base! because if we're already debugging stuff we assume the CLI got to run
+        // meaning that path does exist
+        const debugPath = join(base!, APP_NAME.CLI, `${APP_NAME.CLI}-errors.log`);
+        const debuggableError = `\n
+---
+# BEGIN FknERROR ${this.code} @ ${new Date().toISOString()}
+---
+- INFO (so you know where you at)
+Timestamp      :  ${GetDateNow()},
+FknError code  :  ${this.code},
+Thrown message :  ${this.message},
+Thrown hint    :  ${this.hint},
+- STACK (so the dev knows where he at)
+${this.stack}
+-
+below goes the debugged content dump. this could be, for example, an entire project main file, dumped here for reviewal. it could be a sh*t ton of stuff to read
+- DEBUGGABLE CONTENT (in most cases, what the CLI command that was executed returned, in case we were able to gather it)
+${debuggableContent}
+---
+# END   FknERROR ${this.code} # GOOD LUCK FIXING THIS
+---\n
+        `.trim();
         console.warn(ColorString(`For details about what happened, see last entry @ ${debugPath}.`, "orange"));
-        await Deno.writeTextFile(
+        Deno.writeTextFileSync(
             debugPath,
-            JSON.stringify(debuggableError, undefined, 4),
+            debuggableError,
             {
                 append: true,
             },

@@ -9,7 +9,6 @@ import { PerformCleaning } from "./toolkit/cleaner.ts";
 import { Git } from "../utils/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { APP_NAME } from "../constants.ts";
-import { waitFor } from "@std/async/unstable-wait-for";
 
 export default async function TheReleaser(params: TheReleaserConstructedParams) {
     try {
@@ -112,21 +111,19 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
 
         // run our maintenance task
         try {
-            await waitFor(
-                async () =>
-                    await PerformCleaning(
-                        project,
-                        true,
-                        true,
-                        true,
-                        true,
-                        true,
-                        false,
-                        "normal",
-                        true,
-                    ),
-                15000,
+            const output = await PerformCleaning(
+                project,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                "normal",
+                true,
             );
+
+            if (output === false) throw new Error("(unknown)");
         } catch (e) {
             throw new Error(`${APP_NAME.CASED} clean failed with error: ${e}`);
         }

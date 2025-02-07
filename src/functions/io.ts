@@ -233,7 +233,7 @@ export function MultiColorString(string: string | number, ...colors: tValidColor
  */
 export function NaturalizeFormattedString(string: string): string {
     // deno-lint-ignore no-control-regex
-    return string.replace(/\x1b\[[0-9;]*m/g, "");
+    return string.replace(/\x1b[0-9;?]*[a-zA-Z]/g, "");
 }
 
 /**

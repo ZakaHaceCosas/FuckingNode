@@ -8,7 +8,7 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 import { FknError } from "../utils/error.ts";
 import { PerformCleaning } from "./toolkit/cleaner.ts";
 import { APP_NAME } from "../constants.ts";
-import { waitFor } from "@std/async/unstable-wait-for";
+import { NaturalizeFormattedString } from "../functions/io.ts";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
     try {
@@ -97,21 +97,18 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
 
         // run our maintenance task
         try {
-            await waitFor(
-                async () =>
-                    await PerformCleaning(
-                        project,
-                        true,
-                        true,
-                        true,
-                        true,
-                        true,
-                        false,
-                        "normal",
-                        true,
-                    ),
-                15000,
+            const output = await PerformCleaning(
+                project,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                "normal",
+                true,
             );
+            if (output === false) throw new Error("(unknown)");
         } catch (e) {
             throw new Error(`${APP_NAME.CASED} clean failed with error: ${e}`);
         }
@@ -121,12 +118,14 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
             const commitCmdOutput = await Commander(
                 env.commands.run[0],
                 [env.commands.run[1], commitCmd],
+                false,
             );
 
             if (!commitCmdOutput.success) {
-                throw new Error(
-                    `Commit command failed (${commitCmd}): ${commitCmdOutput.stdout}`,
-                );
+                throw new FknError(
+                    "Commit__Fail__CommitCmd",
+                    `Commit command (${commitCmd}) exited with a non-0 exit code. Check what's up!`,
+                ).debug(NaturalizeFormattedString(commitCmdOutput.stdout ?? "UNKNOWN OUTPUT"));
             }
         }
 

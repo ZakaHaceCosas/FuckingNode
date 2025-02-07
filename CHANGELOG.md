@@ -64,6 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed schedules running each time you run the CLI after they reach their scheduled run time once (they didn't reset the timer).
 - Fixed Report not being shown when using verbose flag & per-project cleanup.
 - Fixed `kickstart` not always running the correct install command.
+- Fixed `kickstart` throwing `Internal__CantDetermineEnv` with reason "Path _x_ doesn't exist" even though it does exist.
 - Fixed a bunch of issues with how `kickstart` determined a project's environment and the runtime to work with.
 - Fixed how workspaces are shown to the user when found while adding a project.
 - Fixed some minor issues with `clean`.

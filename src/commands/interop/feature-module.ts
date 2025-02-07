@@ -18,7 +18,6 @@ const validateScript: (script: { script: string } | "__USE_DEFAULT") => boolean 
     return true;
 };
 
-// TODO - the rest
 export const InteropedFeatures = {
     Lint: async (
         env: ProjectEnvironment,

@@ -15,7 +15,8 @@ export type GLOBAL_ERROR_CODES =
     | "Interop__CannotRunJsLike"
     | "Unknown__CleanerTask__Lint"
     | "Unknown__CleanerTask__Pretty"
-    | "Unknown__CleanerTask__Update";
+    | "Unknown__CleanerTask__Update"
+    | "Commit__Fail__CommitCmd";
 
 /**
  * All possible project validation error codes.

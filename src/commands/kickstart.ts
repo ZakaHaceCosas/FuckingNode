@@ -80,7 +80,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
         Deno.chdir(clonePath);
 
         try {
-            await GetProjectEnvironment(clonePath);
+            await GetProjectEnvironment(Deno.cwd());
         } catch (e) {
             if (manager && ["npm", "pnpm", "yarn", "deno", "bun", "cargo", "go"].includes(manager.trim())) {
                 await LogStuff(`This project lacks a lockfile. We'll generate it right away!`, "warn");
@@ -90,7 +90,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
                         ColorString("This project lacks a lockfile and we can't set it up.", "bold")
                     }\nIf the project lacks a lockfile and you don't specify a package manager to use (kickstart 3RD argument), we simply can't tell what to use to install dependencies. Sorry!\n${
                         ColorString(
-                            `PS. Git DID clone the project at ${clonePath}. Just run there the install command you'd like!`,
+                            `PS. Git DID clone the project at ${Deno.cwd()}. Just run there the install command you'd like!`,
                             "italic",
                         )
                     }`,
@@ -104,7 +104,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
 
         // assume we skipped error
         const typedProvidedManager = manager?.trim() as "npm" | "pnpm" | "yarn" | "deno" | "bun" | "cargo" | "go" || "";
-        const env = await GetProjectEnvironment(clonePath);
+        const env = await GetProjectEnvironment(Deno.cwd());
 
         const fallbackNodeManager: "pnpm" | "npm" = CommandExists("pnpm") ? "pnpm" : "npm";
 
@@ -128,17 +128,17 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
         try {
             switch (managerToUse) {
                 case "go":
-                    await FkNodeInterop.Installers.Golang(clonePath);
+                    await FkNodeInterop.Installers.Golang(Deno.cwd());
                     break;
                 case "cargo":
-                    await FkNodeInterop.Installers.Cargo(clonePath);
+                    await FkNodeInterop.Installers.Cargo(Deno.cwd());
                     break;
                 case "bun":
                 case "deno":
                 case "npm":
                 case "pnpm":
                 case "yarn":
-                    await FkNodeInterop.Installers.UniJs(clonePath, managerToUse);
+                    await FkNodeInterop.Installers.UniJs(Deno.cwd(), managerToUse);
                     break;
             }
         } catch (e) {
@@ -147,7 +147,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
 
         // lol
         try {
-            await AddProject(clonePath);
+            await AddProject(Deno.cwd());
         } catch (e) {
             throw new Error(`Error setting up your favorite CLI tool (${APP_NAME.CLI}) in this project! ${e}`);
         }
@@ -160,7 +160,9 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
 
         await LaunchIDE(favEditor);
 
-        await LogStuff(`Great! ${await NameProject(clonePath, "name-ver")} is now setup. Enjoy!`, "tick-clear");
+        await LogStuff(`Great! ${await NameProject(Deno.cwd(), "name-ver")} is now setup. Enjoy!`, "tick-clear");
+
+        Deno.chdir(cwd);
     } catch (e) {
         throw e;
     }

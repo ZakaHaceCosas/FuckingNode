@@ -55,10 +55,10 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
         stdin: "inherit",
     });
 
-    const process = command.spawn();
+    const process = await command.output();
 
     const result: CommanderOutput = {
-        success: (await process.status).success,
+        success: process.code === 0,
         // (doesn't work) stdout: `${new TextDecoder().decode((await process.output()).stdout)}\n${new TextDecoder().decode((await process.output()).stdout)}`,
     };
 
