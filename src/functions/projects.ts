@@ -122,6 +122,44 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
 }
 
 /**
+ * Simple object check.
+ * @param item
+ * @returns {boolean}
+ */
+export function isObject(
+    // deno-lint-ignore no-explicit-any
+    item: any,
+): boolean {
+    return (item && typeof item === "object" && !Array.isArray(item));
+}
+
+/**
+ * Deep merge two objects. Not my code, from https://stackoverflow.com/a/34749873.
+ */
+export function deepMerge(
+    // deno-lint-ignore no-explicit-any
+    target: any,
+    // deno-lint-ignore no-explicit-any
+    ...sources: any[]
+) {
+    if (!sources.length) return target;
+    const source = sources.shift();
+
+    if (isObject(target) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!target[key]) Object.assign(target, { [key]: {} });
+                deepMerge(target[key], source[key]);
+            } else {
+                Object.assign(target, { [key]: source[key] });
+            }
+        }
+    }
+
+    return deepMerge(target, ...sources);
+}
+
+/**
  * Gets a project's fknode.yaml, parses it and returns it.
  *
  * @export
@@ -150,7 +188,9 @@ export async function GetProjectSettings(
         return DEFAULT_FKNODE_YAML;
     }
 
-    return divineContent;
+    // now with this setting keys should be always present, i think?
+    // idk, but im honestly considering re-doing the system from scratch
+    return deepMerge(DEFAULT_FKNODE_YAML, divineContent);
 }
 
 /**
