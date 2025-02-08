@@ -62,9 +62,6 @@ extra:
         - icon: fontawesome/brands/youtube
           link: https://youtube.com/watch?v=_lppvGYUXNk
           name: See us on YouTube!
-        - icon: fontawesome/brands/instagram
-          link: https://instagram.com/fuckingnode
-          name: See us on Instagram!
 
 plugins:
     - social

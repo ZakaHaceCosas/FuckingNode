@@ -38,7 +38,6 @@ const coolStrings = {
     side: ColorString("Another side project", "italic"),
     date: ColorString("September 28, 2024", "cyan"),
     yt: ColorString("YouTube", "red"),
-    ig: ColorString("Instagram", "pink"),
 };
 
 export default async function TheAbouter() {
@@ -62,7 +61,7 @@ export default async function TheAbouter() {
         `Written in ${coolStrings.ts}. Running in ${coolStrings.deno}.\nDeveloped in ${coolStrings.spain} by ${coolStrings.zakaOne} (${coolStrings.zakaTwo} in spanish).\n`,
     );
     await LogStuff(
-        `See cool trailer on ${coolStrings.yt} · Follow on ${coolStrings.ig} / ${APP_URLs.WEBSITE}follow-us`,
+        `See cool trailer on ${coolStrings.yt} / ${APP_URLs.WEBSITE}follow-us`,
     );
     await LogStuff(
         `${I_LIKE_JS.FK} communism, love freedom. this one's open-source: ${coolStrings.gitUrl}\n`,
