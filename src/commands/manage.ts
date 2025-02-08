@@ -3,7 +3,7 @@ import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
-import { FknError, GenericErrorHandler } from "../utils/error.ts";
+import { FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
 import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
@@ -253,71 +253,67 @@ async function CleanupProjects(): Promise<0 | 1 | 2> {
 async function ListProjects(
     ignore: "limit" | "exclude" | false,
 ): Promise<void> {
-    try {
-        const list = await GetAllProjects(ignore);
+    const list = await GetAllProjects(ignore);
 
-        if (list.length === 0) {
-            if (ignore === "limit") {
-                await LogStuff(
-                    "Huh, you didn't ignore anything! Good to see you care about all your projects (not for long, I can bet).",
-                    "moon-face",
-                );
-                return;
-            } else {
-                await LogStuff(
-                    "Bruh, your mfs list is empty! Ain't nobody here!",
-                    "moon-face",
-                );
-                return;
-            }
-        }
-
-        const toPrint: string[] = [];
-        let message: string;
-
+    if (list.length === 0) {
         if (ignore === "limit") {
-            message = `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`;
-            for (const entry of list) {
-                const protection = (await GetProjectSettings(entry)).divineProtection; // array
-                let protectionString: string;
-                if (!(Array.isArray(protection))) {
-                    protectionString = "ERROR: CANNOT READ SETTINGS, CHECK YOUR FKNODE.YAML!";
-                } else {
-                    protectionString = protection.join(" and ");
-                }
-
-                toPrint.push(
-                    `${await NameProject(entry, "all")} (${
-                        ColorString(
-                            protectionString,
-                            "bold",
-                        )
-                    })\n`,
-                );
-            }
-        } else if (ignore === "exclude") {
-            message = `Here are the ${I_LIKE_JS.MFS} you added (and haven't ignored) so far:\n`;
-            for (const entry of list) {
-                toPrint.push(await NameProject(entry, "all"));
-            }
+            await LogStuff(
+                "Huh, you didn't ignore anything! Good to see you care about all your projects (not for long, I can bet).",
+                "moon-face",
+            );
+            return;
         } else {
-            message = `Here are the ${I_LIKE_JS.MFS} you added so far:\n`;
-            for (const entry of list) {
-                toPrint.push(await NameProject(entry, "all"));
-            }
+            await LogStuff(
+                "Bruh, your mfs list is empty! Ain't nobody here!",
+                "moon-face",
+            );
+            return;
         }
-
-        await LogStuff(
-            message,
-            "bulb",
-        );
-        for (const entry of StringUtils.sortAlphabetically(toPrint)) {
-            await LogStuff(entry);
-        }
-        return;
-    } catch (e) {
-        GenericErrorHandler(e, false);
     }
+
+    const toPrint: string[] = [];
+    let message: string;
+
+    if (ignore === "limit") {
+        message = `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`;
+        for (const entry of list) {
+            const protection = (await GetProjectSettings(entry)).divineProtection; // array
+            let protectionString: string;
+            if (!(Array.isArray(protection))) {
+                protectionString = "ERROR: CANNOT READ SETTINGS, CHECK YOUR FKNODE.YAML!";
+            } else {
+                protectionString = protection.join(" and ");
+            }
+
+            toPrint.push(
+                `${await NameProject(entry, "all")} (${
+                    ColorString(
+                        protectionString,
+                        "bold",
+                    )
+                })\n`,
+            );
+        }
+    } else if (ignore === "exclude") {
+        message = `Here are the ${I_LIKE_JS.MFS} you added (and haven't ignored) so far:\n`;
+        for (const entry of list) {
+            toPrint.push(await NameProject(entry, "all"));
+        }
+    } else {
+        message = `Here are the ${I_LIKE_JS.MFS} you added so far:\n`;
+        for (const entry of list) {
+            toPrint.push(await NameProject(entry, "all"));
+        }
+    }
+
+    await LogStuff(
+        message,
+        "bulb",
+    );
+    for (const entry of StringUtils.sortAlphabetically(toPrint)) {
+        await LogStuff(entry);
+    }
+    return;
 }
 
 export default async function TheManager(args: string[]) {

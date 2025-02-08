@@ -49,6 +49,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now updating dependencies will always run with `--save-text-lockfile` in Bun.
 - Now `migrate` will always update dependencies before running.
 - Now `migrate` will back up your project's package file and lockfile.
+- Now error handling is more consistent (and also uses less `try-catch` code). (I just learnt that JS errors propagate up to the caller, that's why there we so many damn `catch (e) { throw e }` lines, sorry mb).
 
 ### Fixed
 

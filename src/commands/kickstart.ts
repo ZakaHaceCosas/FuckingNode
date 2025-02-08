@@ -49,69 +49,68 @@ async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favoriteEditor"]) {
 }
 
 export default async function TheKickstarter(params: TheKickstarterConstructedParams) {
+    const { gitUrl, path, manager } = params;
+
+    if (!gitUrl) throw new Error("Error: Git URL is required!");
+
+    const gitUrlRegex = /^(https?:\/\/.*?\/)([^\/]+)\.git$/;
+    const regexMatch = gitUrl.match(gitUrlRegex);
+    if (!regexMatch) throw new Error(`Error: ${gitUrl} is not a valid Git URL!`);
+
+    const projectName = regexMatch[2];
+    if (!projectName) throw new Error(`RegEx Error: Can't spot the project name in ${gitUrl}`);
+
+    const cwd = Deno.cwd();
+    const clonePath: string = path ? await ParsePath(path) : await ParsePath(await JoinPaths(cwd, projectName));
+
+    const clonePathValidator = await CheckForDir(clonePath);
+    if (clonePathValidator === "ValidButNotEmpty") {
+        throw new Error(`${clonePath} is not empty! Stuff would break if we tried to kickstart with this path, so choose another one!`);
+    }
+    if (clonePathValidator === "NotDir") {
+        throw new Error(`${path} is not a directory...`);
+    }
+
+    await LogStuff("Let's begin! Wait a moment please...", "tick-clear");
+
+    const gitOutput = await Commander("git", ["clone", gitUrl, clonePath], true);
+    if (!gitOutput.success) throw new Error(`Error cloning repository: ${gitOutput.stdout}`);
+
+    Deno.chdir(clonePath);
+
     try {
-        const { gitUrl, path, manager } = params;
-
-        if (!gitUrl) throw new Error("Error: Git URL is required!");
-
-        const gitUrlRegex = /^(https?:\/\/.*?\/)([^\/]+)\.git$/;
-        const regexMatch = gitUrl.match(gitUrlRegex);
-        if (!regexMatch) throw new Error(`Error: ${gitUrl} is not a valid Git URL!`);
-
-        const projectName = regexMatch[2];
-        if (!projectName) throw new Error(`RegEx Error: Can't spot the project name in ${gitUrl}`);
-
-        const cwd = Deno.cwd();
-        const clonePath: string = path ? await ParsePath(path) : await ParsePath(await JoinPaths(cwd, projectName));
-
-        const clonePathValidator = await CheckForDir(clonePath);
-        if (clonePathValidator === "ValidButNotEmpty") {
-            throw new Error(`${clonePath} is not empty! Stuff would break if we tried to kickstart with this path, so choose another one!`);
+        await GetProjectEnvironment(Deno.cwd());
+    } catch (e) {
+        if (manager && ["npm", "pnpm", "yarn", "deno", "bun", "cargo", "go"].includes(manager.trim())) {
+            await LogStuff(`This project lacks a lockfile. We'll generate it right away!`, "warn");
+        } else if (e instanceof FknError && e.code === "Internal__Projects__CantDetermineEnv") {
+            await LogStuff(
+                `${
+                    ColorString("This project lacks a lockfile and we can't set it up.", "bold")
+                }\nIf the project lacks a lockfile and you don't specify a package manager to use (kickstart 3RD argument), we simply can't tell what to use to install dependencies. Sorry!\n${
+                    ColorString(
+                        `PS. Git DID clone the project at ${Deno.cwd()}. Just run there the install command you'd like!`,
+                        "italic",
+                    )
+                }`,
+                "warn",
+            );
+            return;
+        } else {
+            throw new Error(`Unknown error fetching project's environment: ${e}`);
         }
-        if (clonePathValidator === "NotDir") {
-            throw new Error(`${path} is not a directory...`);
-        }
+    }
 
-        await LogStuff("Let's begin! Wait a moment please...", "tick-clear");
+    // assume we skipped error
+    const typedProvidedManager = manager?.trim() as "npm" | "pnpm" | "yarn" | "deno" | "bun" | "cargo" | "go" || "";
+    const env = await GetProjectEnvironment(Deno.cwd());
 
-        const gitOutput = await Commander("git", ["clone", gitUrl, clonePath], true);
-        if (!gitOutput.success) throw new Error(`Error cloning repository: ${gitOutput.stdout}`);
+    const fallbackNodeManager: "pnpm" | "npm" = CommandExists("pnpm") ? "pnpm" : "npm";
 
-        Deno.chdir(clonePath);
+    const isNodeManager = (manager: string): manager is "npm" | "pnpm" | "yarn" => ["npm", "pnpm", "yarn"].includes(manager);
 
-        try {
-            await GetProjectEnvironment(Deno.cwd());
-        } catch (e) {
-            if (manager && ["npm", "pnpm", "yarn", "deno", "bun", "cargo", "go"].includes(manager.trim())) {
-                await LogStuff(`This project lacks a lockfile. We'll generate it right away!`, "warn");
-            } else if (e instanceof FknError && e.code === "Internal__Projects__CantDetermineEnv") {
-                await LogStuff(
-                    `${
-                        ColorString("This project lacks a lockfile and we can't set it up.", "bold")
-                    }\nIf the project lacks a lockfile and you don't specify a package manager to use (kickstart 3RD argument), we simply can't tell what to use to install dependencies. Sorry!\n${
-                        ColorString(
-                            `PS. Git DID clone the project at ${Deno.cwd()}. Just run there the install command you'd like!`,
-                            "italic",
-                        )
-                    }`,
-                    "warn",
-                );
-                return;
-            } else {
-                throw new Error(`Unknown error fetching project's environment: ${e}`);
-            }
-        }
-
-        // assume we skipped error
-        const typedProvidedManager = manager?.trim() as "npm" | "pnpm" | "yarn" | "deno" | "bun" | "cargo" | "go" || "";
-        const env = await GetProjectEnvironment(Deno.cwd());
-
-        const fallbackNodeManager: "pnpm" | "npm" = CommandExists("pnpm") ? "pnpm" : "npm";
-
-        const isNodeManager = (manager: string): manager is "npm" | "pnpm" | "yarn" => ["npm", "pnpm", "yarn"].includes(manager);
-
-        // deno-fmt-ignore
-        const managerToUse: "npm" | "pnpm" | "yarn" | "deno" | "bun" | "go" | "cargo" =
+    // deno-fmt-ignore
+    const managerToUse: "npm" | "pnpm" | "yarn" | "deno" | "bun" | "go" | "cargo" =
             StringUtils.validate(manager)
                 ? (isNodeManager(env.manager) && isNodeManager(typedProvidedManager))
                     ? typedProvidedManager
@@ -120,50 +119,47 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
                     ? fallbackNodeManager
                     : env.manager;
 
-        await LogStuff(
-            `Installation began using ${managerToUse}. Have a coffee meanwhile!`,
-            "tick-clear",
-        );
+    await LogStuff(
+        `Installation began using ${managerToUse}. Have a coffee meanwhile!`,
+        "tick-clear",
+    );
 
-        try {
-            switch (managerToUse) {
-                case "go":
-                    await FkNodeInterop.Installers.Golang(Deno.cwd());
-                    break;
-                case "cargo":
-                    await FkNodeInterop.Installers.Cargo(Deno.cwd());
-                    break;
-                case "bun":
-                case "deno":
-                case "npm":
-                case "pnpm":
-                case "yarn":
-                    await FkNodeInterop.Installers.UniJs(Deno.cwd(), managerToUse);
-                    break;
-            }
-        } catch (e) {
-            throw new Error(`Error installing dependencies: ${e}`);
+    try {
+        switch (managerToUse) {
+            case "go":
+                await FkNodeInterop.Installers.Golang(Deno.cwd());
+                break;
+            case "cargo":
+                await FkNodeInterop.Installers.Cargo(Deno.cwd());
+                break;
+            case "bun":
+            case "deno":
+            case "npm":
+            case "pnpm":
+            case "yarn":
+                await FkNodeInterop.Installers.UniJs(Deno.cwd(), managerToUse);
+                break;
         }
-
-        // lol
-        try {
-            await AddProject(Deno.cwd());
-        } catch (e) {
-            throw new Error(`Error setting up your favorite CLI tool (${APP_NAME.CLI}) in this project! ${e}`);
-        }
-
-        const favEditor = (await GetSettings()).favoriteEditor;
-
-        if (!(["vscode", "sublime", "emacs", "notepad++", "atom", "vscodium"].includes(favEditor))) {
-            await LogStuff(`Error: ${favEditor} is not a supported editor!`, "error");
-        }
-
-        await LaunchIDE(favEditor);
-
-        await LogStuff(`Great! ${await NameProject(Deno.cwd(), "name-ver")} is now setup. Enjoy!`, "tick-clear");
-
-        Deno.chdir(cwd);
     } catch (e) {
-        throw e;
+        throw new Error(`Error installing dependencies: ${e}`);
     }
+
+    // lol
+    try {
+        await AddProject(Deno.cwd());
+    } catch (e) {
+        throw new Error(`Error setting up your favorite CLI tool (${APP_NAME.CLI}) in this project! ${e}`);
+    }
+
+    const favEditor = (await GetSettings()).favoriteEditor;
+
+    if (!(["vscode", "sublime", "emacs", "notepad++", "atom", "vscodium"].includes(favEditor))) {
+        await LogStuff(`Error: ${favEditor} is not a supported editor!`, "error");
+    }
+
+    await LaunchIDE(favEditor);
+
+    await LogStuff(`Great! ${await NameProject(Deno.cwd(), "name-ver")} is now setup. Enjoy!`, "tick-clear");
+
+    Deno.chdir(cwd);
 }

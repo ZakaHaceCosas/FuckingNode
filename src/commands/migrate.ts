@@ -139,8 +139,6 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
         await LogStuff(`That worked out! Enjoy using ${desiredManager} for ${await NameProject(workingEnv.root, "all")}`);
 
         return;
-    } catch (e) {
-        throw e;
     } finally {
         Deno.chdir(cwd);
     }

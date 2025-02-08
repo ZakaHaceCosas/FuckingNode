@@ -3,35 +3,23 @@ import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.t
 
 export const Installers = {
     UniJs: async (path: string, manager: "bun" | "npm" | "pnpm" | "yarn" | "deno") => {
-        try {
-            Deno.chdir(await ParsePath(path));
-            await Commander(manager, ["install"]);
-            return;
-        } catch (e) {
-            throw e;
-        }
+        Deno.chdir(await ParsePath(path));
+        await Commander(manager, ["install"]);
+        return;
     },
     Golang: async (path: string) => {
-        try {
-            Deno.chdir(await ParsePath(path));
-            if (await CheckForPath(await JoinPaths(Deno.cwd(), "vendor"))) {
-                await Commander("go", ["mod", "vendor"]);
-                return;
-            }
-            await Commander("go", ["mod", "tidy"]);
+        Deno.chdir(await ParsePath(path));
+        if (await CheckForPath(await JoinPaths(Deno.cwd(), "vendor"))) {
+            await Commander("go", ["mod", "vendor"]);
             return;
-        } catch (e) {
-            throw e;
         }
+        await Commander("go", ["mod", "tidy"]);
+        return;
     },
     Cargo: async (path: string) => {
-        try {
-            Deno.chdir(await ParsePath(path));
-            await Commander("cargo", ["fetch"]);
-            await Commander("cargo", ["check"]);
-            return;
-        } catch (e) {
-            throw e;
-        }
+        Deno.chdir(await ParsePath(path));
+        await Commander("cargo", ["fetch"]);
+        await Commander("cargo", ["check"]);
+        return;
     },
 };

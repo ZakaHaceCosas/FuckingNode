@@ -593,63 +593,59 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
     | 0
     | 1
 > {
-    try {
-        const workingPath = await SpotProject(project);
-        const env = await GetProjectEnvironment(workingPath);
-        const name = await NameProject(env.root, "name-ver");
-        const current = Deno.cwd();
-        // === "__UNSUPPORTED" already does the job, but typescript wants me to specify
-        if (
-            env.commands.audit === "__UNSUPPORTED" || env.manager === "deno" || env.manager === "bun" || env.manager === "cargo" ||
-            env.manager === "go"
-        ) {
-            await LogStuff(
-                `Audit is unsupported for ${env.manager.toUpperCase()} (${project}).`,
-                "prohibited",
-            );
-            return 1;
-        }
-        Deno.chdir(env.root);
-
-        await LogStuff(`Auditing ${name}`, "working");
-        const res = await Commander(
-            env.commands.base,
-            env.commands.audit,
-            false,
+    const workingPath = await SpotProject(project);
+    const env = await GetProjectEnvironment(workingPath);
+    const name = await NameProject(env.root, "name-ver");
+    const current = Deno.cwd();
+    // === "__UNSUPPORTED" already does the job, but typescript wants me to specify
+    if (
+        env.commands.audit === "__UNSUPPORTED" || env.manager === "deno" || env.manager === "bun" || env.manager === "cargo" ||
+        env.manager === "go"
+    ) {
+        await LogStuff(
+            `Audit is unsupported for ${env.manager.toUpperCase()} (${project}).`,
+            "prohibited",
         );
+        return 1;
+    }
+    Deno.chdir(env.root);
 
-        if (!res.stdout || res.stdout?.trim() === "") {
-            if (res.success) {
-                await LogStuff(
-                    `Clear! There aren't any known vulnerabilities affecting ${name}.`,
-                    "tick",
-                );
-                return 0;
-            } else {
-                await LogStuff(
-                    `An error occurred with ${name} and we weren't able to get ${env.commands.audit}'s stdout. Unable to audit.`,
-                    "error",
-                );
-                return 1;
-            }
-        }
+    await LogStuff(`Auditing ${name}`, "working");
+    const res = await Commander(
+        env.commands.base,
+        env.commands.audit,
+        false,
+    );
 
-        const bareReport = (env.manager === "npm") ? ParseNpmReport(res.stdout) : ParsePnpmYarnReport(res.stdout, env.manager);
-
-        if (bareReport.vulnerablePackages.length === 0) {
+    if (!res.stdout || res.stdout?.trim() === "") {
+        if (res.success) {
             await LogStuff(
                 `Clear! There aren't any known vulnerabilities affecting ${name}.`,
                 "tick",
             );
             return 0;
+        } else {
+            await LogStuff(
+                `An error occurred with ${name} and we weren't able to get ${env.commands.audit}'s stdout. Unable to audit.`,
+                "error",
+            );
+            return 1;
         }
-
-        const ret = await AuditProject(bareReport, strict);
-
-        Deno.chdir(current);
-
-        return ret;
-    } catch (e) {
-        throw e;
     }
+
+    const bareReport = (env.manager === "npm") ? ParseNpmReport(res.stdout) : ParsePnpmYarnReport(res.stdout, env.manager);
+
+    if (bareReport.vulnerablePackages.length === 0) {
+        await LogStuff(
+            `Clear! There aren't any known vulnerabilities affecting ${name}.`,
+            "tick",
+        );
+        return 0;
+    }
+
+    const ret = await AuditProject(bareReport, strict);
+
+    Deno.chdir(current);
+
+    return ret;
 }

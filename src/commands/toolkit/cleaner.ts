@@ -228,78 +228,74 @@ export async function PerformCleaning(
     intensity: "normal" | "hard" | "maxim",
     verboseLogging: boolean,
 ): Promise<boolean> {
-    try {
-        const motherfuckerInQuestion = await ParsePath(projectInQuestion);
-        const projectName = ColorString(await NameProject(motherfuckerInQuestion, "name"), "bold");
-        const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
-        const settings = await GetProjectSettings(motherfuckerInQuestion);
+    const motherfuckerInQuestion = await ParsePath(projectInQuestion);
+    const projectName = ColorString(await NameProject(motherfuckerInQuestion, "name"), "bold");
+    const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
+    const settings = await GetProjectSettings(motherfuckerInQuestion);
 
-        /* "what should we do with the drunken sailor..." */
-        const whatShouldWeDo: Record<
-            "update" | "lint" | "pretty" | "destroy" | "commit",
-            boolean
-        > = {
-            update: shouldUpdate || (settings.flagless?.flaglessUpdate === true),
-            lint: shouldLint || (settings.flagless?.flaglessLint === true),
-            pretty: shouldPrettify || (settings.flagless?.flaglessPretty === true),
-            destroy: shouldDestroy || (settings.flagless?.flaglessDestroy === true),
-            commit: shouldCommit || (settings.flagless?.flaglessCommit === true),
-        };
+    /* "what should we do with the drunken sailor..." */
+    const whatShouldWeDo: Record<
+        "update" | "lint" | "pretty" | "destroy" | "commit",
+        boolean
+    > = {
+        update: shouldUpdate || (settings.flagless?.flaglessUpdate === true),
+        lint: shouldLint || (settings.flagless?.flaglessLint === true),
+        pretty: shouldPrettify || (settings.flagless?.flaglessPretty === true),
+        destroy: shouldDestroy || (settings.flagless?.flaglessDestroy === true),
+        commit: shouldCommit || (settings.flagless?.flaglessCommit === true),
+    };
 
-        if (shouldClean) {
-            await ProjectCleaningFeatures.Clean(
-                projectName,
-                workingEnv,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["update"]) {
-            await ProjectCleaningFeatures.Update(
-                projectName,
-                workingEnv,
-                settings,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["lint"]) {
-            await ProjectCleaningFeatures.Lint(
-                projectName,
-                workingEnv,
-                settings,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["pretty"]) {
-            await ProjectCleaningFeatures.Prettify(
-                projectName,
-                workingEnv,
-                settings,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["destroy"]) {
-            await ProjectCleaningFeatures.Destroy(
-                settings,
-                motherfuckerInQuestion,
-                intensity,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["commit"]) {
-            await ProjectCleaningFeatures.Commit(
-                settings,
-                motherfuckerInQuestion,
-                whatShouldWeDo["update"],
-                whatShouldWeDo["lint"],
-                whatShouldWeDo["pretty"],
-                verboseLogging,
-            );
-        }
-
-        return true;
-    } catch (e) {
-        throw e;
+    if (shouldClean) {
+        await ProjectCleaningFeatures.Clean(
+            projectName,
+            workingEnv,
+            verboseLogging,
+        );
     }
+    if (whatShouldWeDo["update"]) {
+        await ProjectCleaningFeatures.Update(
+            projectName,
+            workingEnv,
+            settings,
+            verboseLogging,
+        );
+    }
+    if (whatShouldWeDo["lint"]) {
+        await ProjectCleaningFeatures.Lint(
+            projectName,
+            workingEnv,
+            settings,
+            verboseLogging,
+        );
+    }
+    if (whatShouldWeDo["pretty"]) {
+        await ProjectCleaningFeatures.Prettify(
+            projectName,
+            workingEnv,
+            settings,
+            verboseLogging,
+        );
+    }
+    if (whatShouldWeDo["destroy"]) {
+        await ProjectCleaningFeatures.Destroy(
+            settings,
+            motherfuckerInQuestion,
+            intensity,
+            verboseLogging,
+        );
+    }
+    if (whatShouldWeDo["commit"]) {
+        await ProjectCleaningFeatures.Commit(
+            settings,
+            motherfuckerInQuestion,
+            whatShouldWeDo["update"],
+            whatShouldWeDo["lint"],
+            whatShouldWeDo["pretty"],
+            verboseLogging,
+        );
+    }
+
+    return true;
 }
 
 // cache cleaning is global, so doing these for every project like we used to do

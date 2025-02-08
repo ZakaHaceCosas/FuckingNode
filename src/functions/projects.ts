@@ -26,35 +26,27 @@ import { StringUtils } from "@zakahacecosas/string-utils";
  * @returns {Promise<string[]>} The list of projects.
  */
 export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Promise<string[]> {
-    try {
-        const content = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
-        const list = ParsePathList(content);
+    const content = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
+    const list = ParsePathList(content);
 
-        if (!ignored) return list;
+    if (!ignored) return list;
 
-        const ignoredReturn: string[] = [];
-        const aliveReturn: string[] = [];
+    const ignoredReturn: string[] = [];
+    const aliveReturn: string[] = [];
 
-        for (const entry of list) {
-            const protection = (await GetProjectSettings(entry)).divineProtection;
-            if (!protection || protection === "disabled") {
-                if (ignored === "exclude") aliveReturn.push(entry);
-                continue;
-            }
-            if (ignored === "limit") ignoredReturn.push(entry);
+    for (const entry of list) {
+        const protection = (await GetProjectSettings(entry)).divineProtection;
+        if (!protection || protection === "disabled") {
+            if (ignored === "exclude") aliveReturn.push(entry);
+            continue;
         }
-
-        if (ignored === "limit") return ignoredReturn;
-        if (ignored === "exclude") return aliveReturn;
-
-        return list;
-    } catch (e) {
-        await LogStuff(
-            `Failed to read your projects - ${e}`,
-            "error",
-        );
-        Deno.exit(1);
+        if (ignored === "limit") ignoredReturn.push(entry);
     }
+
+    if (ignored === "limit") return ignoredReturn;
+    if (ignored === "exclude") return aliveReturn;
+
+    return list;
 }
 
 /**
@@ -374,313 +366,309 @@ export async function GetWorkspaces(path: string): Promise<string[]> {
  * @returns {Promise<ProjectEnvironment>}
  */
 export async function GetProjectEnvironment(path: string): Promise<ProjectEnvironment> {
-    try {
-        const workingPath = await ParsePath(path);
+    const workingPath = await ParsePath(path);
 
-        if (!(await CheckForPath(workingPath))) {
-            throw new FknError(
-                "Internal__Projects__CantDetermineEnv",
-                `Path ${workingPath} doesn't exist.`,
-            );
-        }
-
-        const trash = await JoinPaths(workingPath, "node_modules");
-        const workspaces = await GetWorkspaces(workingPath) || [];
-
-        const paths = {
-            deno: {
-                json: await JoinPaths(workingPath, "deno.json"),
-                jsonc: await JoinPaths(workingPath, "deno.jsonc"),
-                lock: await JoinPaths(workingPath, "deno.lock"),
-            },
-            bun: {
-                toml: await JoinPaths(workingPath, "bunfig.toml"),
-                lock: await JoinPaths(workingPath, "bun.lock"),
-                lockb: await JoinPaths(workingPath, "bun.lockb"),
-            },
-            node: {
-                json: await JoinPaths(workingPath, "package.json"),
-                lockNpm: await JoinPaths(workingPath, "package-lock.json"),
-                lockPnpm: await JoinPaths(workingPath, "pnpm-lock.yaml"),
-                lockYarn: await JoinPaths(workingPath, "yarn.lock"),
-            },
-            golang: {
-                pkg: await JoinPaths(workingPath, "go.mod"),
-                lock: await JoinPaths(workingPath, "go.sum"),
-            },
-            rust: {
-                pkg: await JoinPaths(workingPath, "cargo.toml"),
-                lock: await JoinPaths(workingPath, "cargo.lock"),
-            },
-        };
-
-        const pathChecks = {
-            deno: {
-                json: await CheckForPath(paths.deno.json),
-                jsonc: await CheckForPath(paths.deno.jsonc),
-                lock: await CheckForPath(paths.deno.lock),
-            },
-            bun: {
-                toml: await CheckForPath(paths.bun.toml),
-                lock: await CheckForPath(paths.bun.lock),
-                lockb: await CheckForPath(paths.bun.lockb),
-            },
-            node: {
-                json: await CheckForPath(paths.node.json),
-                lockNpm: await CheckForPath(paths.node.lockNpm),
-                lockPnpm: await CheckForPath(paths.node.lockPnpm),
-                lockYarn: await CheckForPath(paths.node.lockYarn),
-            },
-            golang: {
-                pkg: await CheckForPath(paths.golang.pkg),
-                lock: await CheckForPath(paths.golang.lock),
-            },
-            rust: {
-                pkg: await CheckForPath(paths.rust.pkg),
-                lock: await CheckForPath(paths.rust.lock),
-            },
-        };
-
-        const isGolang = pathChecks.golang.pkg || pathChecks.golang.lock;
-        const isRust = pathChecks.rust.pkg || pathChecks.rust.lock;
-        const isDeno = pathChecks.deno.lock ||
-            pathChecks.deno.json ||
-            pathChecks.deno.jsonc;
-        const isBun = pathChecks.bun.lock ||
-            pathChecks.bun.lockb ||
-            pathChecks.bun.toml;
-        const isNode = pathChecks.node.lockNpm ||
-            pathChecks.node.lockPnpm ||
-            pathChecks.node.lockYarn;
-
-        if (!pathChecks.node.json && !pathChecks.deno.json && !pathChecks.bun.toml && !pathChecks.golang.pkg && !pathChecks.rust.pkg) {
-            throw new FknError(
-                "Internal__Projects__CantDetermineEnv",
-                `No main file present (package.json, deno.json, cargo.toml...) at ${ColorString(path, "bold")}.`,
-            );
-        }
-
-        if (!isNode && !isBun && !isDeno && !isGolang && !isRust) {
-            throw new FknError(
-                "Internal__Projects__CantDetermineEnv",
-                `No lockfile present (required for the project to work) at ${ColorString(path, "bold")}.`,
-            );
-        }
-
-        const mainPath = isGolang
-            ? paths.golang.pkg
-            : isRust
-            ? paths.rust.pkg
-            : isDeno
-            ? pathChecks.deno.jsonc ? paths.deno.jsonc : pathChecks.deno.json ? paths.deno.json : paths.node.json
-            : paths.node.json;
-
-        const mainString: string = await Deno.readTextFile(mainPath);
-
-        const { PackageFileParsers } = FkNodeInterop;
-
-        if (isGolang) {
-            return {
-                root: workingPath,
-                main: {
-                    path: mainPath,
-                    name: "go.mod",
-                    stdContent: PackageFileParsers.Golang.STD(mainString),
-                    cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetLatestTag(workingPath, false), workspaces),
-                },
-                lockfile: {
-                    name: "go.sum",
-                    path: paths.golang.lock,
-                },
-                runtime: "golang",
-                manager: "go",
-                commands: {
-                    base: "go",
-                    exec: ["go", "run"],
-                    update: ["get", "-u", "all"],
-                    clean: [["clean"], ["mod", "tidy"]],
-                    run: "__UNSUPPORTED",
-                    audit: "__UNSUPPORTED", // i thought it was vet
-                    publish: "__UNSUPPORTED", // ["test", "./..."]
-                },
-                workspaces,
-            };
-        }
-        if (isRust) {
-            return {
-                root: workingPath,
-                main: {
-                    path: mainPath,
-                    name: "cargo.toml",
-                    stdContent: PackageFileParsers.Cargo.STD(mainString),
-                    cpfContent: PackageFileParsers.Cargo.CPF(mainString, workspaces),
-                },
-                lockfile: {
-                    name: "cargo.lock",
-                    path: paths.rust.lock,
-                },
-                runtime: "rust",
-                manager: "cargo",
-                commands: {
-                    base: "cargo",
-                    exec: ["cargo", "run"],
-                    update: ["update"],
-                    clean: [["clean"]],
-                    run: "__UNSUPPORTED",
-                    audit: "__UNSUPPORTED", // ["audit"]
-                    publish: "__UNSUPPORTED", // ["publish"],
-                },
-                workspaces,
-            };
-        }
-        if (isBun) {
-            return {
-                root: workingPath,
-                main: {
-                    path: mainPath,
-                    name: "package.json",
-                    stdContent: PackageFileParsers.NodeBun.STD(mainString),
-                    cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "bun", workspaces),
-                },
-                lockfile: {
-                    name: pathChecks.bun.lockb ? "bun.lockb" : "bun.lock",
-                    path: paths.bun.lock,
-                },
-                runtime: "bun",
-                manager: "bun",
-                hall_of_trash: trash,
-                commands: {
-                    base: "bun",
-                    exec: ["bunx"],
-                    update: ["update", "--save-text-lockfile"],
-                    clean: "__UNSUPPORTED",
-                    run: ["bun", "run"],
-                    audit: "__UNSUPPORTED",
-                    publish: ["publish"],
-                },
-                workspaces,
-            };
-        }
-        if (isDeno) {
-            return {
-                main: {
-                    path: mainPath,
-                    name: pathChecks.deno.jsonc ? "deno.jsonc" : "deno.json",
-                    stdContent: PackageFileParsers.Deno.STD(mainString),
-                    cpfContent: PackageFileParsers.Deno.CPF(mainString, workspaces),
-                },
-                lockfile: {
-                    name: "deno.lock",
-                    path: paths.deno.lock,
-                },
-                runtime: "deno",
-                manager: "deno",
-                hall_of_trash: trash,
-                root: workingPath,
-                commands: {
-                    base: "deno",
-                    exec: ["deno", "run"],
-                    update: ["outdated", "--update"],
-                    clean: "__UNSUPPORTED",
-                    run: ["deno", "task"],
-                    audit: "__UNSUPPORTED",
-                    publish: ["publish", "--check=all"],
-                },
-                workspaces,
-            };
-        }
-        if (pathChecks.node.lockYarn) {
-            return {
-                main: {
-                    path: mainPath,
-                    name: "package.json",
-                    stdContent: parseJsonc(mainString) as NodePkgFile,
-                    cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "yarn", workspaces),
-                },
-                lockfile: {
-                    name: "yarn.lock",
-                    path: paths.node.lockYarn,
-                },
-                runtime: "node",
-                manager: "yarn",
-                hall_of_trash: trash,
-                root: workingPath,
-                commands: {
-                    base: "yarn",
-                    exec: ["yarn", "dlx"],
-                    update: ["upgrade"],
-                    clean: [["autoclean", "--force"]],
-                    run: ["yarn", "run"],
-                    audit: ["audit", "--recursive", "--all"],
-                    publish: ["publish", "--non-interactive"],
-                },
-                workspaces,
-            };
-        }
-        if (pathChecks.node.lockPnpm) {
-            return {
-                main: {
-                    path: mainPath,
-                    name: "package.json",
-                    stdContent: PackageFileParsers.NodeBun.STD(mainString),
-                    cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "pnpm", workspaces),
-                },
-                lockfile: {
-                    name: "pnpm-lock.yaml",
-                    path: paths.node.lockPnpm,
-                },
-                runtime: "node",
-                manager: "pnpm",
-                hall_of_trash: trash,
-                root: workingPath,
-                commands: {
-                    base: "pnpm",
-                    exec: ["pnpm", "dlx"],
-                    update: ["update"],
-                    clean: [["dedupe"], ["prune"]],
-                    run: ["pnpm", "run"],
-                    audit: ["audit", "--ignore-registry-errors"],
-                    publish: ["publish"],
-                },
-                workspaces,
-            };
-        }
-        if (pathChecks.node.lockNpm) {
-            return {
-                main: {
-                    path: mainPath,
-                    name: "package.json",
-                    stdContent: PackageFileParsers.NodeBun.STD(mainString),
-                    cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "npm", workspaces),
-                },
-                lockfile: {
-                    name: "package-lock.json",
-                    path: paths.node.lockNpm,
-                },
-                runtime: "node",
-                manager: "npm",
-                hall_of_trash: trash,
-                root: workingPath,
-                commands: {
-                    base: "npm",
-                    exec: ["npx"],
-                    update: ["update"],
-                    clean: [["dedupe"], ["prune"]],
-                    run: ["npm", "run"],
-                    audit: ["audit", "--include-workspace-root"],
-                    publish: ["publish"],
-                },
-                workspaces,
-            };
-        }
-
+    if (!(await CheckForPath(workingPath))) {
         throw new FknError(
             "Internal__Projects__CantDetermineEnv",
-            `Unknown reason. Happened with ${ColorString(path, "bold")}.`,
+            `Path ${workingPath} doesn't exist.`,
         );
-    } catch (e) {
-        throw e; // (for TS to shut up)
     }
+
+    const trash = await JoinPaths(workingPath, "node_modules");
+    const workspaces = await GetWorkspaces(workingPath) || [];
+
+    const paths = {
+        deno: {
+            json: await JoinPaths(workingPath, "deno.json"),
+            jsonc: await JoinPaths(workingPath, "deno.jsonc"),
+            lock: await JoinPaths(workingPath, "deno.lock"),
+        },
+        bun: {
+            toml: await JoinPaths(workingPath, "bunfig.toml"),
+            lock: await JoinPaths(workingPath, "bun.lock"),
+            lockb: await JoinPaths(workingPath, "bun.lockb"),
+        },
+        node: {
+            json: await JoinPaths(workingPath, "package.json"),
+            lockNpm: await JoinPaths(workingPath, "package-lock.json"),
+            lockPnpm: await JoinPaths(workingPath, "pnpm-lock.yaml"),
+            lockYarn: await JoinPaths(workingPath, "yarn.lock"),
+        },
+        golang: {
+            pkg: await JoinPaths(workingPath, "go.mod"),
+            lock: await JoinPaths(workingPath, "go.sum"),
+        },
+        rust: {
+            pkg: await JoinPaths(workingPath, "cargo.toml"),
+            lock: await JoinPaths(workingPath, "cargo.lock"),
+        },
+    };
+
+    const pathChecks = {
+        deno: {
+            json: await CheckForPath(paths.deno.json),
+            jsonc: await CheckForPath(paths.deno.jsonc),
+            lock: await CheckForPath(paths.deno.lock),
+        },
+        bun: {
+            toml: await CheckForPath(paths.bun.toml),
+            lock: await CheckForPath(paths.bun.lock),
+            lockb: await CheckForPath(paths.bun.lockb),
+        },
+        node: {
+            json: await CheckForPath(paths.node.json),
+            lockNpm: await CheckForPath(paths.node.lockNpm),
+            lockPnpm: await CheckForPath(paths.node.lockPnpm),
+            lockYarn: await CheckForPath(paths.node.lockYarn),
+        },
+        golang: {
+            pkg: await CheckForPath(paths.golang.pkg),
+            lock: await CheckForPath(paths.golang.lock),
+        },
+        rust: {
+            pkg: await CheckForPath(paths.rust.pkg),
+            lock: await CheckForPath(paths.rust.lock),
+        },
+    };
+
+    const isGolang = pathChecks.golang.pkg || pathChecks.golang.lock;
+    const isRust = pathChecks.rust.pkg || pathChecks.rust.lock;
+    const isDeno = pathChecks.deno.lock ||
+        pathChecks.deno.json ||
+        pathChecks.deno.jsonc;
+    const isBun = pathChecks.bun.lock ||
+        pathChecks.bun.lockb ||
+        pathChecks.bun.toml;
+    const isNode = pathChecks.node.lockNpm ||
+        pathChecks.node.lockPnpm ||
+        pathChecks.node.lockYarn;
+
+    if (!pathChecks.node.json && !pathChecks.deno.json && !pathChecks.bun.toml && !pathChecks.golang.pkg && !pathChecks.rust.pkg) {
+        throw new FknError(
+            "Internal__Projects__CantDetermineEnv",
+            `No main file present (package.json, deno.json, cargo.toml...) at ${ColorString(path, "bold")}.`,
+        );
+    }
+
+    if (!isNode && !isBun && !isDeno && !isGolang && !isRust) {
+        throw new FknError(
+            "Internal__Projects__CantDetermineEnv",
+            `No lockfile present (required for the project to work) at ${ColorString(path, "bold")}.`,
+        );
+    }
+
+    const mainPath = isGolang
+        ? paths.golang.pkg
+        : isRust
+        ? paths.rust.pkg
+        : isDeno
+        ? pathChecks.deno.jsonc ? paths.deno.jsonc : pathChecks.deno.json ? paths.deno.json : paths.node.json
+        : paths.node.json;
+
+    const mainString: string = await Deno.readTextFile(mainPath);
+
+    const { PackageFileParsers } = FkNodeInterop;
+
+    if (isGolang) {
+        return {
+            root: workingPath,
+            main: {
+                path: mainPath,
+                name: "go.mod",
+                stdContent: PackageFileParsers.Golang.STD(mainString),
+                cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetLatestTag(workingPath, false), workspaces),
+            },
+            lockfile: {
+                name: "go.sum",
+                path: paths.golang.lock,
+            },
+            runtime: "golang",
+            manager: "go",
+            commands: {
+                base: "go",
+                exec: ["go", "run"],
+                update: ["get", "-u", "all"],
+                clean: [["clean"], ["mod", "tidy"]],
+                run: "__UNSUPPORTED",
+                audit: "__UNSUPPORTED", // i thought it was vet
+                publish: "__UNSUPPORTED", // ["test", "./..."]
+            },
+            workspaces,
+        };
+    }
+    if (isRust) {
+        return {
+            root: workingPath,
+            main: {
+                path: mainPath,
+                name: "cargo.toml",
+                stdContent: PackageFileParsers.Cargo.STD(mainString),
+                cpfContent: PackageFileParsers.Cargo.CPF(mainString, workspaces),
+            },
+            lockfile: {
+                name: "cargo.lock",
+                path: paths.rust.lock,
+            },
+            runtime: "rust",
+            manager: "cargo",
+            commands: {
+                base: "cargo",
+                exec: ["cargo", "run"],
+                update: ["update"],
+                clean: [["clean"]],
+                run: "__UNSUPPORTED",
+                audit: "__UNSUPPORTED", // ["audit"]
+                publish: "__UNSUPPORTED", // ["publish"],
+            },
+            workspaces,
+        };
+    }
+    if (isBun) {
+        return {
+            root: workingPath,
+            main: {
+                path: mainPath,
+                name: "package.json",
+                stdContent: PackageFileParsers.NodeBun.STD(mainString),
+                cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "bun", workspaces),
+            },
+            lockfile: {
+                name: pathChecks.bun.lockb ? "bun.lockb" : "bun.lock",
+                path: paths.bun.lock,
+            },
+            runtime: "bun",
+            manager: "bun",
+            hall_of_trash: trash,
+            commands: {
+                base: "bun",
+                exec: ["bunx"],
+                update: ["update", "--save-text-lockfile"],
+                clean: "__UNSUPPORTED",
+                run: ["bun", "run"],
+                audit: "__UNSUPPORTED",
+                publish: ["publish"],
+            },
+            workspaces,
+        };
+    }
+    if (isDeno) {
+        return {
+            main: {
+                path: mainPath,
+                name: pathChecks.deno.jsonc ? "deno.jsonc" : "deno.json",
+                stdContent: PackageFileParsers.Deno.STD(mainString),
+                cpfContent: PackageFileParsers.Deno.CPF(mainString, workspaces),
+            },
+            lockfile: {
+                name: "deno.lock",
+                path: paths.deno.lock,
+            },
+            runtime: "deno",
+            manager: "deno",
+            hall_of_trash: trash,
+            root: workingPath,
+            commands: {
+                base: "deno",
+                exec: ["deno", "run"],
+                update: ["outdated", "--update"],
+                clean: "__UNSUPPORTED",
+                run: ["deno", "task"],
+                audit: "__UNSUPPORTED",
+                publish: ["publish", "--check=all"],
+            },
+            workspaces,
+        };
+    }
+    if (pathChecks.node.lockYarn) {
+        return {
+            main: {
+                path: mainPath,
+                name: "package.json",
+                stdContent: parseJsonc(mainString) as NodePkgFile,
+                cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "yarn", workspaces),
+            },
+            lockfile: {
+                name: "yarn.lock",
+                path: paths.node.lockYarn,
+            },
+            runtime: "node",
+            manager: "yarn",
+            hall_of_trash: trash,
+            root: workingPath,
+            commands: {
+                base: "yarn",
+                exec: ["yarn", "dlx"],
+                update: ["upgrade"],
+                clean: [["autoclean", "--force"]],
+                run: ["yarn", "run"],
+                audit: ["audit", "--recursive", "--all"],
+                publish: ["publish", "--non-interactive"],
+            },
+            workspaces,
+        };
+    }
+    if (pathChecks.node.lockPnpm) {
+        return {
+            main: {
+                path: mainPath,
+                name: "package.json",
+                stdContent: PackageFileParsers.NodeBun.STD(mainString),
+                cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "pnpm", workspaces),
+            },
+            lockfile: {
+                name: "pnpm-lock.yaml",
+                path: paths.node.lockPnpm,
+            },
+            runtime: "node",
+            manager: "pnpm",
+            hall_of_trash: trash,
+            root: workingPath,
+            commands: {
+                base: "pnpm",
+                exec: ["pnpm", "dlx"],
+                update: ["update"],
+                clean: [["dedupe"], ["prune"]],
+                run: ["pnpm", "run"],
+                audit: ["audit", "--ignore-registry-errors"],
+                publish: ["publish"],
+            },
+            workspaces,
+        };
+    }
+    if (pathChecks.node.lockNpm) {
+        return {
+            main: {
+                path: mainPath,
+                name: "package.json",
+                stdContent: PackageFileParsers.NodeBun.STD(mainString),
+                cpfContent: PackageFileParsers.NodeBun.CPF(mainString, "npm", workspaces),
+            },
+            lockfile: {
+                name: "package-lock.json",
+                path: paths.node.lockNpm,
+            },
+            runtime: "node",
+            manager: "npm",
+            hall_of_trash: trash,
+            root: workingPath,
+            commands: {
+                base: "npm",
+                exec: ["npx"],
+                update: ["update"],
+                clean: [["dedupe"], ["prune"]],
+                run: ["npm", "run"],
+                audit: ["audit", "--include-workspace-root"],
+                publish: ["publish"],
+            },
+            workspaces,
+        };
+    }
+
+    throw new FknError(
+        "Internal__Projects__CantDetermineEnv",
+        `Unknown reason. Happened with ${ColorString(path, "bold")}.`,
+    );
 }
 
 /**

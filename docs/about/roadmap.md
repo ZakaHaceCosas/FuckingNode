@@ -13,7 +13,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 - [ ] New features
     - [X] `fuckingnode commit "message"` to automatically run our maintenance task and custom commands before making a Git commit and only committing if they all succeed. With the "Shorter commands" goal, it could be something like `fkcommit "message"`.
     - [X] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
-    - [ ] `fuckingnode give-up <project>` to `REDACTED`.
+    - [ ] `fuckingnode surrender <project>` to `REDACTED`.
     - [ ] `fuckingnode setup <project>` to `REDACTED`.
     - [x] `fuckingnode compat` to show cross-runtime compatibility without the need to open the browser.
 - [ ] Better installer
@@ -43,6 +43,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [X] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [x] Better error handling.
+- [ ] Improve `fknode.yaml`
 - [X] **Cross-platform support!**
     - [x] FnCPF (FuckingNode CommonPackageFile)
         - [x] Internal generation

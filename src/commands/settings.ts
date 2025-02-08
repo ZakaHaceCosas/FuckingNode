@@ -57,119 +57,106 @@ export async function Flush(what: string, force: boolean, silent: boolean = fals
 
     if (!shouldProceed) return;
 
-    try {
-        await BulkRemoveFiles(file);
-        if (silent === true) return;
-        await LogStuff("That worked out!", "tick-clear");
-        return;
-    } catch (e) {
-        await LogStuff(`Error flushing files: ${e}`, "error");
-        return;
-    }
+    await BulkRemoveFiles(file);
+    if (silent === true) return;
+    await LogStuff("That worked out!", "tick-clear");
+    return;
 }
 
 async function ResetSettings() {
-    try {
-        const confirmation = await LogStuff(
-            "Are you sure you want to reset your settings to the defaults? Current settings will be lost",
-            "warn",
-            undefined,
-            true,
-        );
+    const confirmation = await LogStuff(
+        "Are you sure you want to reset your settings to the defaults? Current settings will be lost",
+        "warn",
+        undefined,
+        true,
+    );
 
-        if (!confirmation) return;
+    if (!confirmation) return;
 
-        await FreshSetup(true);
-        await LogStuff("Switched to defaults successfully:", "tick");
-        await DisplaySettings();
-    } catch (e) {
-        throw e;
-    }
+    await FreshSetup(true);
+    await LogStuff("Switched to defaults successfully:", "tick");
+    await DisplaySettings();
 }
 
 async function ChangeSetting(
     setting: "default-int" | "update-freq" | "fav-editor" | "flush-freq",
     value: string,
 ) {
-    try {
-        const currentSettings = await GetSettings();
+    const currentSettings = await GetSettings();
 
-        switch (setting) {
-            case "default-int": {
-                if (!["normal", "hard", "hard-only", "maxim"].includes(value)) {
-                    await LogStuff(`${value} is not valid. Enter either 'normal', 'hard', 'hard-only', or 'maxim'.`);
-                    return;
-                }
-                const newValue: CleanerIntensity = value as CleanerIntensity;
-                const newSettings: CF_FKNODE_SETTINGS = {
-                    ...currentSettings,
-                    defaultCleanerIntensity: newValue,
-                };
-                await Deno.writeTextFile(
-                    await GetAppPath("SETTINGS"),
-                    StringifyYaml(newSettings),
-                );
-                break;
+    switch (setting) {
+        case "default-int": {
+            if (!["normal", "hard", "hard-only", "maxim"].includes(value)) {
+                await LogStuff(`${value} is not valid. Enter either 'normal', 'hard', 'hard-only', or 'maxim'.`);
+                return;
             }
-            case "update-freq": {
-                const newValue = Number(value);
-                if (isNaN(newValue)) {
-                    await LogStuff(`${value} is not valid. Enter a number.`);
-                    return;
-                }
-                if (Math.ceil(newValue) <= 0) {
-                    await LogStuff(`${value} is not valid. You must input a value greater than 0.`);
-                    return;
-                }
-                const newSettings: CF_FKNODE_SETTINGS = {
-                    ...currentSettings,
-                    updateFreq: Math.ceil(newValue),
-                };
-                await Deno.writeTextFile(
-                    await GetAppPath("SETTINGS"),
-                    StringifyYaml(newSettings),
-                );
-                break;
-            }
-            case "fav-editor": {
-                if (!["vscode", "sublime", "emacs", "atom", "notepad++", "vscodium"].includes(value)) {
-                    await LogStuff(`${value} is not valid. Enter either:\n'vscode', 'sublime', 'emacs', 'atom', 'notepad++', or 'vscodium'.`);
-                    return;
-                }
-                const newSettings: CF_FKNODE_SETTINGS = {
-                    ...currentSettings,
-                    favoriteEditor: (value as SUPPORTED_EDITORS),
-                };
-                await Deno.writeTextFile(
-                    await GetAppPath("SETTINGS"),
-                    StringifyYaml(newSettings),
-                );
-                break;
-            }
-            case "flush-freq": {
-                const workingValue = Number(value);
-                if (typeof workingValue !== "number" || isNaN(workingValue)) {
-                    await LogStuff(`${workingValue} is not a valid number.`);
-                    return;
-                }
-                const newSettings: CF_FKNODE_SETTINGS = {
-                    ...currentSettings,
-                    logFlushFreq: Math.trunc(workingValue),
-                };
-                await Deno.writeTextFile(
-                    await GetAppPath("SETTINGS"),
-                    StringifyYaml(newSettings),
-                );
-                break;
-            }
+            const newValue: CleanerIntensity = value as CleanerIntensity;
+            const newSettings: CF_FKNODE_SETTINGS = {
+                ...currentSettings,
+                defaultCleanerIntensity: newValue,
+            };
+            await Deno.writeTextFile(
+                await GetAppPath("SETTINGS"),
+                StringifyYaml(newSettings),
+            );
+            break;
         }
-
-        await LogStuff(`Settings successfully updated! ${setting} is now ${value}`, "tick-clear");
-
-        return;
-    } catch (e) {
-        throw e;
+        case "update-freq": {
+            const newValue = Number(value);
+            if (isNaN(newValue)) {
+                await LogStuff(`${value} is not valid. Enter a number.`);
+                return;
+            }
+            if (Math.ceil(newValue) <= 0) {
+                await LogStuff(`${value} is not valid. You must input a value greater than 0.`);
+                return;
+            }
+            const newSettings: CF_FKNODE_SETTINGS = {
+                ...currentSettings,
+                updateFreq: Math.ceil(newValue),
+            };
+            await Deno.writeTextFile(
+                await GetAppPath("SETTINGS"),
+                StringifyYaml(newSettings),
+            );
+            break;
+        }
+        case "fav-editor": {
+            if (!["vscode", "sublime", "emacs", "atom", "notepad++", "vscodium"].includes(value)) {
+                await LogStuff(`${value} is not valid. Enter either:\n'vscode', 'sublime', 'emacs', 'atom', 'notepad++', or 'vscodium'.`);
+                return;
+            }
+            const newSettings: CF_FKNODE_SETTINGS = {
+                ...currentSettings,
+                favoriteEditor: (value as SUPPORTED_EDITORS),
+            };
+            await Deno.writeTextFile(
+                await GetAppPath("SETTINGS"),
+                StringifyYaml(newSettings),
+            );
+            break;
+        }
+        case "flush-freq": {
+            const workingValue = Number(value);
+            if (typeof workingValue !== "number" || isNaN(workingValue)) {
+                await LogStuff(`${workingValue} is not a valid number.`);
+                return;
+            }
+            const newSettings: CF_FKNODE_SETTINGS = {
+                ...currentSettings,
+                logFlushFreq: Math.trunc(workingValue),
+            };
+            await Deno.writeTextFile(
+                await GetAppPath("SETTINGS"),
+                StringifyYaml(newSettings),
+            );
+            break;
+        }
     }
+
+    await LogStuff(`Settings successfully updated! ${setting} is now ${value}`, "tick-clear");
+
+    return;
 }
 
 async function DisplaySettings() {
