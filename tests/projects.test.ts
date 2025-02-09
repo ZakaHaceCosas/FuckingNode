@@ -1,42 +1,45 @@
-import { GetAllProjects, GetProjectEnvironment, GetWorkspaces } from "../src/functions/projects.ts";
+import { GetAllProjects, GetProjectEnvironment, NameProject, SpotProject } from "../src/functions/projects.ts";
 import { assertEquals } from "@std/testing";
 import { TEST_ONE } from "./constants.ts";
 import { mocks } from "./mocks.ts";
+import { ColorString } from "../src/functions/io.ts";
 
 // ACTUAL TESTS
-Deno.test(
-    {
-        name: "reads node env",
-        fn: async () => {
-            const env = await GetProjectEnvironment(TEST_ONE.root);
-            assertEquals(env, TEST_ONE);
-        },
+Deno.test({
+    name: "reads node env",
+    fn: async () => {
+        const env = await GetProjectEnvironment(TEST_ONE.root);
+        assertEquals(env, TEST_ONE);
     },
-);
+});
 
-Deno.test(
-    {
-        name: "reads workspaces",
-        fn: async () => {
-            const workspaces = await GetWorkspaces(TEST_ONE.root);
-            assertEquals(workspaces, TEST_ONE.workspaces);
-        },
+Deno.test({
+    name: "returns all projects",
+    fn: async () => {
+        const originalReadTextFile = Deno.readTextFile;
+        // mock readTextFile
+        Deno.readTextFile = mocks.readTextFile();
+
+        const projects = await GetAllProjects();
+        assertEquals(projects, [TEST_ONE.root]);
+
+        // Restore the original method
+        Deno.readTextFile = originalReadTextFile;
     },
-);
+});
 
-Deno.test(
-    {
-        name: "returns all projects",
-        fn: async () => {
-            const originalReadTextFile = Deno.readTextFile;
-            // mock readTextFile
-            Deno.readTextFile = mocks.readTextFile();
+Deno.test({
+    name: "names projects accordingly",
+    fn: async () => {
+        const toName = await SpotProject(TEST_ONE.root);
 
-            const projects = await GetAllProjects();
-            assertEquals(projects, [TEST_ONE.root]);
-
-            // Restore the original method
-            Deno.readTextFile = originalReadTextFile;
-        },
+        assertEquals(
+            await NameProject(toName, "name-colorless"),
+            TEST_ONE.main.cpfContent.name,
+        );
+        assertEquals(
+            await NameProject(toName, "name"),
+            ColorString(TEST_ONE.main.cpfContent.name, "bold"),
+        );
     },
-);
+});

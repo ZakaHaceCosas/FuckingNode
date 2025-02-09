@@ -43,7 +43,7 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
 
         const result: CommanderOutput = {
             success: process.success,
-            stdout: `${new TextDecoder().decode(process.stdout)}\n${new TextDecoder().decode(process.stderr)}`,
+            stdout: `${new TextDecoder().decode(process.stdout)}${process.stderr ? "\n" + new TextDecoder().decode(process.stderr) : ""}`,
         };
 
         return result;
