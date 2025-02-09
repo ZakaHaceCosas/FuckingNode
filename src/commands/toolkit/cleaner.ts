@@ -13,8 +13,6 @@ import type { FkNodeYaml } from "../../types/config_files.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { FkNodeInterop } from "../interop/interop.ts";
 
-const { validate, normalize } = StringUtils;
-
 /**
  * All project cleaning features.
  */
@@ -33,14 +31,14 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Update(
                 env,
                 verbose,
-                (!validate(settings.updateCmdOverride) || normalize(settings.updateCmdOverride) === "__use_default")
+                (!StringUtils.validate(settings.updateCmdOverride) || StringUtils.normalize(settings.updateCmdOverride) === "__use_default")
                     ? "__USE_DEFAULT"
                     : { script: settings.updateCmdOverride },
             );
             if (output === true) await LogStuff(`Updated dependencies for ${projectName}!`, "tick");
             return;
         } catch (e) {
-            await LogStuff(`Failed to update deps for ${projectName}, "bold")}: ${e}`, "warn", "bright-yellow");
+            await LogStuff(`Failed to update deps for ${projectName}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },
@@ -84,12 +82,14 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Lint(
                 env,
                 verbose,
-                (!validate(settings.lintCmd) || normalize(settings.lintCmd) === "__eslint") ? "__USE_DEFAULT" : { script: settings.lintCmd },
+                (!StringUtils.validate(settings.lintCmd) || StringUtils.normalize(settings.lintCmd) === "__eslint")
+                    ? "__USE_DEFAULT"
+                    : { script: settings.lintCmd },
             );
             if (output === true) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
         } catch (e) {
-            await LogStuff(`Failed to lint ${projectName}, "bold")}: ${e}`, "warn", "bright-yellow");
+            await LogStuff(`Failed to lint ${projectName}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },
@@ -107,14 +107,14 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Pretty(
                 env,
                 verbose,
-                (!validate(settings.prettyCmd) || normalize(settings.prettyCmd) === "__eslint")
+                (!StringUtils.validate(settings.prettyCmd) || StringUtils.normalize(settings.prettyCmd) === "__eslint")
                     ? "__USE_DEFAULT"
                     : { script: settings.prettyCmd },
             );
             if (output === true) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
         } catch (e) {
-            await LogStuff(`Failed to pretty ${projectName}, "bold")}: ${e}`, "warn", "bright-yellow");
+            await LogStuff(`Failed to pretty ${projectName}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },

@@ -39,7 +39,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             throw new Error(`Platform ${env.runtime} doesn't support publishing. Aborting.`);
         }
 
-        const releaseCmd = StringUtils.validate(settings.releaseCmd) ? StringUtils.normalize(settings.releaseCmd) : "__DISABLE";
+        const releaseCmd = StringUtils.validate(settings.releaseCmd) ? StringUtils.normalize(settings.releaseCmd) : "__disable";
 
         // bump version from pkg json first
         const newPackageFile: NodePkgFile | DenoPkgFile = {
@@ -53,7 +53,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             `Update your ${env.main.name}'s "version" field`,
             `Create a ${ColorString(`${env.main.name}.bak`, "bold")} file, and add it to .gitignore`,
         ];
-        if (releaseCmd !== "__DISABLE") {
+        if (releaseCmd !== "__disable") {
             actions.push(
                 `Run ${
                     ColorString(
@@ -96,7 +96,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         }
 
         // run their releaseCmd
-        if (releaseCmd !== "__DISABLE") {
+        if (releaseCmd.toLowerCase().trim() !== "__disable") {
             const releaseOutput = await Commander(
                 env.commands.run[0],
                 [env.commands.run[1], releaseCmd],

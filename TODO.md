@@ -18,8 +18,8 @@
 
 ## Random ideas
 
-- [X] macOS and Linux install scripts.
-- [X] A shorthand for the CLI, like "`fknode`", that automatically runs `clean` with the default intensity.
+- [x] macOS and Linux install scripts.
+- [x] A shorthand for the CLI, like "`fknode`", that automatically runs `clean` with the default intensity.
 - [ ] ~~Actually write some f\*cking tests.~~ (not happening)
 
 ## Docs
