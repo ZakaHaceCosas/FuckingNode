@@ -376,7 +376,7 @@ export function ParseNpmReport(report: string): ParsedNodeReport {
     let breakingChanges = false;
     let nonBreakingChanges = false;
 
-    const lines = report.split("\n").map((s) => StringUtils.normalize(s)).filter((s) => StringUtils.validate(s) === true);
+    const lines = StringUtils.normalizeArray(report.split("\n"));
 
     const installations: Record<string, string> = {}; // "packageName": "installed version"
     let currentPackage: string = "";
@@ -393,20 +393,20 @@ export function ParseNpmReport(report: string): ParsedNodeReport {
     });
 
     lines.forEach((line) => {
-        if (!line.startsWith("#") && lines[lines.indexOf(line) + 1]?.includes("severity")) {
+        if (
+            !line.startsWith("#") && (lines[lines.indexOf(line) + 2] || lines[lines.indexOf(line) + 3] || "").includes("severity") &&
+            (lines[lines.indexOf(line) + 2] || lines[lines.indexOf(line) + 3] || "").includes("fix available")
+        ) {
             const match = line.split(" ");
             const i = lines.indexOf(line);
             const sev = lines[i + 1]?.split(" ")[1];
-            const sum = lines[i + 2]?.split(" - ")[0]?.trim();
             const advUrl = lines[i + 2]?.split(" - ")[1]?.trim();
-
-            if (match[0] && match[1] && validSeverity(sev) && sum && validUrl(advUrl)) {
+            if (match[0] && match[1] && validSeverity(sev)) {
                 const entry: AnalyzedIndividualSecurityVulnerability = {
                     packageName: match[0],
                     vulnerableVersions: match.slice(1).join("").replace("-", ","),
                     severity: sev,
-                    summary: sum,
-                    advisoryUrl: advUrl,
+                    advisoryUrl: validUrl(advUrl) ? advUrl : undefined,
                     patchedVersions: installations[match[0]] || "UNKNOWN",
                 };
                 vulnerablePackages.push(entry);
@@ -469,7 +469,6 @@ export function ParsePnpmYarnReport(report: string, target: "pnpm" | "yarn"): Pa
         const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
 
         let severity = "";
-        let summary = "";
         let packageName = "";
         let vulnerableVersions = "__unknown"; // TODO - yarn doesn't give this
         let patchedVersions = "";
@@ -480,7 +479,7 @@ export function ParsePnpmYarnReport(report: string, target: "pnpm" | "yarn"): Pa
             if (line.startsWith("│ low") || line.startsWith("│ moderate") || line.startsWith("│ high") || line.startsWith("│ critical")) {
                 severity = line.split(" ")[1]!.trim();
                 severities.push(StringUtils.normalize(severity));
-                summary = line.split("│")[2]!.trim();
+                // summary = line.split("│")[2]!.trim();
             } else if (line.startsWith("│ Package")) {
                 packageName = line.split("│")[2]?.trim() || "";
             } else if (line.startsWith("│ Vulnerable versions")) {
@@ -500,7 +499,6 @@ export function ParsePnpmYarnReport(report: string, target: "pnpm" | "yarn"): Pa
         if (validSeverity(severity) && packageName && validUrl(advisoryUrl)) {
             vulnerablePackages.push({
                 severity,
-                summary,
                 packageName,
                 vulnerableVersions,
                 patchedVersions,
@@ -610,32 +608,15 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
     }
     Deno.chdir(env.root);
 
-    await LogStuff(`Auditing ${name}`, "working");
+    await LogStuff(`Auditing ${name} [${MultiColorString(env.commands.audit.join(" "), "italic", "half-opaque")}]`, "working");
     const res = await Commander(
         env.commands.base,
         env.commands.audit,
         false,
+        true,
     );
 
-    if (!res.stdout || res.stdout?.trim() === "") {
-        if (res.success) {
-            await LogStuff(
-                `Clear! There aren't any known vulnerabilities affecting ${name}.`,
-                "tick",
-            );
-            return 0;
-        } else {
-            await LogStuff(
-                `An error occurred with ${name} and we weren't able to get ${env.commands.audit}'s stdout. Unable to audit.`,
-                "error",
-            );
-            return 1;
-        }
-    }
-
-    const bareReport = (env.manager === "npm") ? ParseNpmReport(res.stdout) : ParsePnpmYarnReport(res.stdout, env.manager);
-
-    if (bareReport.vulnerablePackages.length === 0) {
+    if (res.success) {
         await LogStuff(
             `Clear! There aren't any known vulnerabilities affecting ${name}.`,
             "tick",
@@ -643,9 +624,26 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
         return 0;
     }
 
-    const ret = await AuditProject(bareReport, strict);
+    const bareReport = (env.manager === "npm") ? ParseNpmReport(res.stdout ?? "") : ParsePnpmYarnReport(res.stdout ?? "", env.manager);
+
+    if (bareReport.vulnerablePackages.length === 0) {
+        if (!res.stdout || res.stdout?.trim() === "") {
+            await LogStuff(
+                `An error occurred at ${name} and we weren't able to get the stdout. Unable to audit.`,
+                "error",
+            );
+            return 1;
+        }
+        await LogStuff(
+            `Clear! There aren't any known vulnerabilities affecting ${name}.`,
+            "tick",
+        );
+        return 0;
+    }
+
+    const audit = await AuditProject(bareReport, strict);
 
     Deno.chdir(current);
 
-    return ret;
+    return audit;
 }

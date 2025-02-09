@@ -87,7 +87,7 @@ if (hasFlag("experimental-audit", false)) {
     await init();
     try {
         await LogStuff(
-            "Beware that, as an experimental features, errors are likely to happen. Report any issue, suggestion, or feedback on GitHub.",
+            "Beware that as an experimental feature, errors are likely to happen. Report issues, suggestions, or feedback on GitHub.",
             "warn",
             "bright-yellow",
         );
@@ -243,7 +243,7 @@ async function main(command: string) {
                 break;
             case "audit":
                 await LogStuff(
-                    "The Audit feature is experimental. It's only available for NodeJS projects using npm, and hidden behind '--experimental-audit'.",
+                    "The Audit feature is experimental and only available for NodeJS projects. Run '--experimental-audit' to use it.",
                     "warn",
                     "bright-yellow",
                 );

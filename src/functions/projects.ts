@@ -28,13 +28,14 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Promise<string[]> {
     const content = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
     const list = ParsePathList(content);
+    const cleanList = list.filter(async (p) => await CheckForPath(p) === true);
 
-    if (!ignored) return list;
+    if (!ignored) return cleanList;
 
     const ignoredReturn: string[] = [];
     const aliveReturn: string[] = [];
 
-    for (const entry of list) {
+    for (const entry of cleanList) {
         const protection = (await GetProjectSettings(entry)).divineProtection;
         if (!protection || protection === "disabled") {
             if (ignored === "exclude") aliveReturn.push(entry);
@@ -46,7 +47,7 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
     if (ignored === "limit") return ignoredReturn;
     if (ignored === "exclude") return aliveReturn;
 
-    return list;
+    return cleanList;
 }
 
 /**
@@ -658,7 +659,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
                 update: ["update"],
                 clean: [["dedupe"], ["prune"]],
                 run: ["npm", "run"],
-                audit: ["audit", "--include-workspace-root"],
+                audit: ["audit"],
                 publish: ["publish"],
             },
             workspaces,

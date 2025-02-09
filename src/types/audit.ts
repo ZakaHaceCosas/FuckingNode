@@ -18,11 +18,10 @@ export type ApiFetchedIndividualSecurityVulnerability = {
  */
 export type AnalyzedIndividualSecurityVulnerability = {
     severity: "low" | "moderate" | "high" | "critical";
-    summary: string;
     packageName: string;
     vulnerableVersions: string;
     patchedVersions: string;
-    advisoryUrl: tURL;
+    advisoryUrl: tURL | undefined;
 };
 
 /**

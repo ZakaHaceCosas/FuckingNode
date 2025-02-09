@@ -37,7 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added support for quick flags (or however you call those) for the `clean` command, so `-l` instead of `--lint` for example will work.
 - Added recognition of new `bun.lock` file to identify Bun projects.
 - Added a new `errors.log` file, stored with all of our config files. Some errors will now dump more detailed info in there.
-- Added support for `pnpm` for the audit experiment.
+- Added support for `pnpm` and `yarn` for the audit experiment.
 
 ### Changed
 
@@ -72,6 +72,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed some minor issues with `clean`.
 - Fixed FknError `Generic__NonFoundProject` not showing the name inputted (showing instead `trim function`-whatever).
 - Fixed `audit` experiment not properly handling vulnerability-less projects (showing `0.00% risk factor` instead of a "no vulns found" message as it should).
+- Fixed `audit` showing an empty report table when no projects are vulnerable.
+- Fixed `audit` using workspace flags in all npm projects, making workspace-less projects fail.
 - Fixed input validation not being precise enough and showing wrong (duplicate) error messages in `migrate`.
 
 ## [2.2.1] 16-01-2025

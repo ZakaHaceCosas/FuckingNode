@@ -10,7 +10,7 @@ export default async function TheAuditer(project: string | null, strict: boolean
     if (shouldAuditAll) {
         const projects = await GetAllProjects();
         await LogStuff(
-            `${APP_NAME.CASED} Audit is only supported for npm projects as of now.`,
+            `${APP_NAME.CASED} Audit is only supported for NodeJS projects as of now.`,
             "heads-up",
         );
         const report: {
@@ -32,12 +32,16 @@ export default async function TheAuditer(project: string | null, strict: boolean
             return string;
         }));
         console.log("");
-        await LogStuff(
-            `Report (${ColorString(strict ? "strict" : "standard", "bold")})\n${reportDetails.join("\n")}${
-                strict ? "" : "\n" + ColorString("Unsure about the results? Run with --strict (or -s) for stricter criteria", "italic")
-            }`,
-            "chart",
-        );
+        if (reportDetails.length > 0) {
+            await LogStuff(
+                `Report (${ColorString(strict ? "strict" : "standard", "bold")})\n${reportDetails.join("\n")}${
+                    strict ? "" : "\n" + ColorString("Unsure about the results? Run with --strict (or -s) for stricter criteria", "italic")
+                }`,
+                "chart",
+            );
+        } else {
+            await LogStuff("Not a single project has security issues. Great!\n", "tick");
+        }
     } else {
         await PerformAuditing(project, strict);
     }

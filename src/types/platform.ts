@@ -169,7 +169,7 @@ interface GenericProjectEnvironment {
         audit:
             | ["audit"]
             | ["audit", "--ignore-registry-errors"]
-            | ["audit", "--include-workspace-root"]
+            | ["audit"]
             | ["audit", "--recursive", "--all"]
             | "__UNSUPPORTED";
         /**
@@ -201,7 +201,7 @@ interface NodeEnvironment extends GenericProjectEnvironment {
             | "__UNSUPPORTED";
         audit:
             | ["audit", "--ignore-registry-errors"]
-            | ["audit", "--include-workspace-root"]
+            | ["audit"]
             | ["audit", "--recursive", "--all"]
             | "__UNSUPPORTED";
         publish: ["publish"] | ["publish", "--non-interactive"];
