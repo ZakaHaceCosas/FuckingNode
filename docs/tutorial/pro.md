@@ -1,4 +1,5 @@
 <!-- markdownlint-disable md046 md033 -->
+
 # Professional-tier F\*ckingNode usage tutorial
 
 Here comes the fun part, we'll learn how to _configure_ a F\*ckingNode project with advanced settings and how to automate complex tasks like keeping your codebase linted and formatted.
@@ -118,12 +119,12 @@ This file will help us tweak and enable some stuff.
 
 See this table for what you need to configure.
 
-| Thing to toggle | What for and why | Required? |
-| --- | --- | --- |
-| `lintCmd` | To specify a script from your `package.json` to be used as the **linting** command. | No. When not provided, ESLint is used as a default. |
-| `prettyCmd` | To specify a script from your `package.json` to be used as the **prettification** command. | No. When not provided, Prettier is used as a default. |
-| `destroy` | To specify files & directories that'll be **destroyed** | Yes. If not provided, we'll skip destroying. |
-| `commitActions` | To specify whether to commit your actions or not. | Yes. As explained, we need explicit permission to commit stuff. |
+| Thing to toggle | What for and why                                                                           | Required?                                                       |
+| --------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| `lintCmd`       | To specify a script from your `package.json` to be used as the **linting** command.        | No. When not provided, ESLint is used as a default.             |
+| `prettyCmd`     | To specify a script from your `package.json` to be used as the **prettification** command. | No. When not provided, Prettier is used as a default.           |
+| `destroy`       | To specify files & directories that'll be **destroyed**                                    | Yes. If not provided, we'll skip destroying.                    |
+| `commitActions` | To specify whether to commit your actions or not.                                          | Yes. As explained, we need explicit permission to commit stuff. |
 
 "Required?" means required _for the specific feature to work_, nothing is really mandatory for F\*ckingNode to function (`fknode.yaml` itself is an optional file).
 
@@ -159,11 +160,11 @@ Favorite editor: vscode
 
 You can change them with the `settings change <setting> value`. These are all settings that can be changed, how, and what they do.
 
-| Command | Type | Description | Notes |
-| :--- | ---: | :--: | ---: |
-| `change default-int <value>` | `normal`, `hard`, `hard-only`, or `maxim` | Changes the default intensity for the `clean` command. | / |
-| `change update-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests. |
-| `change fav-editor <value>` | `vscode`, `sublime` | Your favorite code editor. Used by `kickstart`. | You can't set it to a different editor as of now, sorry. |
+| Command                      |                                      Type |                                 Description                                 |                                                                                                Notes |
+| :--------------------------- | ----------------------------------------: | :-------------------------------------------------------------------------: | ---------------------------------------------------------------------------------------------------: |
+| `change default-int <value>` | `normal`, `hard`, `hard-only`, or `maxim` |           Changes the default intensity for the `clean` command.            |                                                                                                    / |
+| `change update-freq <value>` |                            A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests. |
+| `change fav-editor <value>`  |                       `vscode`, `sublime` |               Your favorite code editor. Used by `kickstart`.               |                                             You can't set it to a different editor as of now, sorry. |
 
 Settings includes an additional `flush` command, that takes a `<file>` (`logs`, `updates`, `projects`, or `all`) as an argument, removing that from F\*ckingNode's configuration. Removing `logs` is particularly recommended. Removals of `projects` and `all` are discouraged - by the way, yes, we store all logs in a `.log` file, it lives in `%APPDATA%/FuckingNode` on Windows and `/home/USER/.config/FuckingNode` on Linux & macOS.
 

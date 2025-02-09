@@ -1,4 +1,5 @@
 <!-- markdownlint-disable md010 md046 md033 -->
+
 # Using F\*ckingNode: cleanup
 
 The core idea of F\*ckingNode is to automate cleanup of your NodeJS projects. On top of that base, additional maintenance features and [cross-runtime support](cross-runtime.md) exist as well.
@@ -48,8 +49,7 @@ The `normal` level recursively "cleans" each of your project. We define "cleanin
 The `hard` level does the previous (unless using `hard-only`), plus cleans global caches. This will make the most sense for `pnpm` user, which is known for it's global module cache, however cleaning is made for all package managers.
 
 !!! warning
-    As `npm` itself warns you when cache cleaning manually, it will make `npm` even slower than what it already is next time you use it.
-    Our recommendation is simple: to use `pnpm` as your default package manager. Don't remove `npm`, though, as compatibility issues may appear.
+    As `npm` itself warns you when cache cleaning manually, it will make `npm` even slower than what it already is next time you use it. Our recommendation is simple: to use `pnpm` as your default package manager. Don't remove `npm`, though, as compatibility issues may appear.
 
 We recommend running `normal` cleanups in a mid-frequent basis, and `hard` cleanups two or three times a month. That's our recommendation, of course. Do whatever you please with your PC.
 
@@ -90,13 +90,13 @@ fuckingnode clean -- --update --lint --pretty --destroy --commit
 
 Available flags are:
 
-| Flag | Why does this exist |
-| :--- | ---: |
-| `--lint` | does the obvious (lints)|
-| `--pretty` | does the obvious (prettifies)|
-| `--destroy`| does the obvious (destroys*) |
-| `--commit`| does the obvious (commits)|
-| `--update` | does the obvious (updates)|
+| Flag        |           Why does this exist |
+| :---------- | ----------------------------: |
+| `--lint`    |      does the obvious (lints) |
+| `--pretty`  | does the obvious (prettifies) |
+| `--destroy` |  does the obvious (destroys*) |
+| `--commit`  |    does the obvious (commits) |
+| `--update`  |    does the obvious (updates) |
 
 \* if not obvious enough, removes files and directories you specify, such as `.react`, `out/`, `dist/`, or anything you'd like to do away with.
 

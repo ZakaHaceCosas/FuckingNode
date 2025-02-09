@@ -95,12 +95,12 @@ As most apps, we offer settings you can tweak. We use default values that should
 
 Currently supported settings are:
 
-| Command | Type | Description | Notes |
-| :--- | ---: | :--: | ---: |
-| `change default-int <value>` | `normal`, `hard`, `hard-only`, or `maxim` | Changes the default intensity for the `clean` command. | / |
-| `change update-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests. |
-| `change flush-freq <value>` | A fixed number | Changes how frequently (in DAYS) the CLI removes the `.log` file to save up space. | Cannot be disabled, setting it to `0` will make it auto-flush each time. |
-| `change fav-editor <value>` | `vscode`, `sublime` | Your favorite code editor. Used by `kickstart`. | You can't set it to a different editor as of now, sorry. |
+| Command                      |                                      Type |                                    Description                                     |                                                                                                Notes |
+| :--------------------------- | ----------------------------------------: | :--------------------------------------------------------------------------------: | ---------------------------------------------------------------------------------------------------: |
+| `change default-int <value>` | `normal`, `hard`, `hard-only`, or `maxim` |               Changes the default intensity for the `clean` command.               |                                                                                                    / |
+| `change update-freq <value>` |                            A fixed number |    Changes how frequently (in DAYS) the CLI sends an HTTP request for updates.     | We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests. |
+| `change flush-freq <value>`  |                            A fixed number | Changes how frequently (in DAYS) the CLI removes the `.log` file to save up space. |                             Cannot be disabled, setting it to `0` will make it auto-flush each time. |
+| `change fav-editor <value>`  |                       `vscode`, `sublime` |                  Your favorite code editor. Used by `kickstart`.                   |                                             You can't set it to a different editor as of now, sorry. |
 
 ### View current settings
 

@@ -13,35 +13,35 @@ hide:
 
 - :simple-googlecloudstorage:{ .lg .middle } **Save up storage**
 
-    ---
+  ---
 
-    Automate cleanup of all your projects & runtime caches with a single command.
+  Automate cleanup of all your projects & runtime caches with a single command.
 
-    [:octicons-arrow-right-24: Getting started](manual/usage.md#the-clean-command)
+  [:octicons-arrow-right-24: Getting started](manual/usage.md#the-clean-command)
 
 - :material-connection:{ .lg .middle } **Use it everywhere**
 
-    ---
+  ---
 
-    Works with any NodeJS package manager. DenoJS and BunJS are partially supported too.
+  Works with any NodeJS package manager. DenoJS and BunJS are partially supported too.
 
-    [:octicons-arrow-right-24: Cross-platform support](manual/cross-runtime.md)
+  [:octicons-arrow-right-24: Cross-platform support](manual/cross-runtime.md)
 
 - :material-speedometer:{ .lg .middle } **Speed up your workflow**
 
-    ---
+  ---
 
-    Automate linting, prettifying, updating, and even releasing your projects.
+  Automate linting, prettifying, updating, and even releasing your projects.
 
-    [:octicons-arrow-right-24: Advanced features](manual/index.md#fckingnode-full-manual)
+  [:octicons-arrow-right-24: Advanced features](manual/index.md#fckingnode-full-manual)
 
 - :material-arm-flex:{ .lg .middle } **Flex about it**
 
-    ---
+  ---
 
-    Your friends spend a lot of time manually maintaining JS projects they ain't even releasing. Show 'em the way of the _f*cking_ Gods.
+  Your friends spend a lot of time manually maintaining JS projects they ain't even releasing. Show 'em the way of the _f*cking_ Gods.
 
-    [:octicons-arrow-right-24: Download now](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest)
+  [:octicons-arrow-right-24: Download now](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest)
 
 </div>
 

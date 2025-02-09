@@ -130,9 +130,9 @@ We basically run the CLI commands you'd run by yourself recursively across all o
 
 Where `EXP` indicates experimental, `CAVEAT` indicates partial support / support with known flaws, and `YES` and `NO` indicate the obvious.
 
-| Support | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
-| :-- | -- | -- | -- | -- | -- |
-| **v2.0.0** | YES | YES | YES | CAVEAT | CAVEAT |
-| v1.0.0 | YES | YES | YES | NO | NO |
+| Support    | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno   | Bun    |
+| :--------- | ---------- | ----------- | ----------- | ------ | ------ |
+| **v2.0.0** | YES        | YES         | YES         | CAVEAT | CAVEAT |
+| v1.0.0     | YES        | YES         | YES         | NO     | NO     |
 
 To learn more about cross-runtime compatibility, [refer to this page](../manual/cross-runtime.md).
