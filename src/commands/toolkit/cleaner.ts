@@ -557,3 +557,31 @@ export async function ResolveLockfiles(path: string): Promise<SUPPORTED_GLOBAL_L
     }
     return lockfiles;
 }
+
+/**
+ * Names a lockfile using a manager name.
+ *
+ * @export
+ * @param {("npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo")} manager Manager to name
+ * @returns {("package-lock.json" | "pnpm-lock.yaml" | "yarn.lock" | "bun.lock" | "deno.lock" | "go.sum" | "cargo.lock")} Lockfile name
+ */
+export function NameLockfile(
+    manager: "npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo",
+): "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock" | "bun.lock" | "deno.lock" | "go.sum" | "cargo.lock" {
+    switch (manager) {
+        case "npm":
+            return "package-lock.json";
+        case "pnpm":
+            return "pnpm-lock.yaml";
+        case "yarn":
+            return "yarn.lock";
+        case "bun":
+            return "bun.lock";
+        case "deno":
+            return "deno.lock";
+        case "go":
+            return "go.sum";
+        case "cargo":
+            return "cargo.lock";
+    }
+}

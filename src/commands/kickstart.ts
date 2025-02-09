@@ -7,9 +7,9 @@ import type { TheKickstarterConstructedParams } from "./constructors/command.ts"
 import { AddProject } from "./manage.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
-import { FknError } from "../utils/error.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { APP_NAME } from "../constants.ts";
+import { NameLockfile, ResolveLockfiles } from "./toolkit/cleaner.ts";
 
 async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favoriteEditor"]) {
     let executionCommand: "subl" | "code" | "emacs" | "notepad++" | "codium" | "atom";
@@ -78,12 +78,18 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
 
     Deno.chdir(clonePath);
 
-    try {
-        await GetProjectEnvironment(Deno.cwd());
-    } catch (e) {
-        if (manager && ["npm", "pnpm", "yarn", "deno", "bun", "cargo", "go"].includes(manager.trim())) {
+    const lockfiles = await ResolveLockfiles(Deno.cwd());
+
+    if (lockfiles.length === 0) {
+        if (["npm", "pnpm", "yarn", "deno", "bun", "cargo", "go"].includes(StringUtils.normalize(manager ?? ""))) {
             await LogStuff(`This project lacks a lockfile. We'll generate it right away!`, "warn");
-        } else if (e instanceof FknError && e.code === "Internal__Projects__CantDetermineEnv") {
+            await Deno.writeTextFile(
+                await JoinPaths(Deno.cwd(), NameLockfile(manager as "npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo")),
+                "",
+            ); // fix Internal__CantDetermineEnv by adding a fake lockfile
+            // the pkg manager SHOULD BE smart enough to ignore and overwrite it
+            // tested with pnpm and it works, i'll assume it works everywhere
+        } else {
             await LogStuff(
                 `${
                     ColorString("This project lacks a lockfile and we can't set it up.", "bold")
@@ -96,8 +102,6 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
                 "warn",
             );
             return;
-        } else {
-            throw new Error(`Unknown error fetching project's environment: ${e}`);
         }
     }
 

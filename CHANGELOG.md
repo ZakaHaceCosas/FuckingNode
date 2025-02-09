@@ -66,6 +66,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed Report not being shown when using verbose flag & per-project cleanup.
 - Fixed `kickstart` not always running the correct install command.
 - Fixed `kickstart` throwing `Internal__CantDetermineEnv` with reason "Path _x_ doesn't exist" even though it does exist.
+- Fixed `kickstart` throwing `Internal__CantDetermineEnv` with reason "No lockfile present" for lockfile-less projects even if a package manager is specified when running.
 - Fixed a bunch of issues with how `kickstart` determined a project's environment and the runtime to work with.
 - Fixed how workspaces are shown to the user when found while adding a project.
 - Fixed some minor issues with `clean`.
