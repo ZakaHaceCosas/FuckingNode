@@ -1,5 +1,5 @@
 import { APP_NAME, APP_URLs, I_LIKE_JS, VERSION } from "../constants.ts";
-import { ColorString, MultiColorString } from "../functions/io.ts";
+import { ColorString } from "../functions/io.ts";
 import { LogStuff } from "../functions/io.ts";
 import type { tValidColors } from "../types/misc.ts";
 import { phrases } from "../utils/phrases.ts";
@@ -7,7 +7,7 @@ import { phrases } from "../utils/phrases.ts";
 function getRandomPhrase(): string {
     const randomIndex = Math.floor(Math.random() * phrases.length);
     const string = phrases[randomIndex] ?? "Make JS fun again!";
-    return MultiColorString(string, "bright-green", "italic");
+    return ColorString(string, "bright-green", "italic");
 }
 
 function getRandomColor(): tValidColors {

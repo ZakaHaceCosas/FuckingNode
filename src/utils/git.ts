@@ -79,7 +79,7 @@ export const Git = {
             return false;
         }
     },
-    Commit: async (project: string, message: string, add: string[] | "all" | "none", avoid: string[], showOutput: boolean): Promise<0 | 1> => {
+    Commit: async (project: string, message: string, add: string[] | "all" | "none", avoid: string[]): Promise<0 | 1> => {
         try {
             const path = await SpotProject(project);
 
@@ -94,7 +94,7 @@ export const Git = {
                         "add",
                         ...toAdd,
                     ],
-                    showOutput,
+                    false,
                 );
                 if (!addOutput.success) {
                     throw new Error(addOutput.stdout);
@@ -110,7 +110,7 @@ export const Git = {
                         "--staged",
                         ...avoid,
                     ],
-                    showOutput,
+                    false,
                 );
                 if (!restoreOutput.success) {
                     throw new Error(restoreOutput.stdout);
@@ -125,7 +125,7 @@ export const Git = {
                     "-m",
                     message.trim(),
                 ],
-                showOutput,
+                false,
             );
             if (!commitOutput.success) {
                 throw new Error(commitOutput.stdout);
@@ -136,10 +136,11 @@ export const Git = {
                 `Error - could not create commit ${ColorString(message, "bold")} at ${ColorString(project, "bold")} because of error: ${e}`,
                 "error",
             );
+
             return 1;
         }
     },
-    Push: async (project: string, branch: string | false, showOutput: boolean): Promise<0 | 1> => {
+    Push: async (project: string, branch: string | false): Promise<0 | 1> => {
         try {
             const path = await SpotProject(project);
 
@@ -153,7 +154,7 @@ export const Git = {
                     "push",
                     ...pushToBranch,
                 ],
-                showOutput,
+                false,
             );
             if (!pushOutput.success) {
                 throw new Error(pushOutput.stdout);
@@ -170,7 +171,7 @@ export const Git = {
     /**
      * Make sure to `Git.Commit()` changes to `.gitignore`.
      */
-    Ignore: async (project: string, toBeIgnored: string, showOutput: boolean): Promise<0 | 1> => {
+    Ignore: async (project: string, toBeIgnored: string): Promise<0 | 1> => {
         try {
             const path = await SpotProject(project);
             const env = await GetProjectEnvironment(path);
@@ -187,24 +188,22 @@ export const Git = {
                 },
             );
 
-            if (showOutput) {
-                await LogStuff(
-                    `Ignored ${toBeIgnored} successfully`,
-                    "tick",
-                );
-            }
+            await LogStuff(
+                `Ignored ${toBeIgnored} successfully`,
+                "tick",
+            );
+
             return 0;
         } catch (e) {
-            if (showOutput) {
-                await LogStuff(
-                    `Error - could not ignore file ${toBeIgnored} at ${ColorString(project, "bold")} because of error: ${e}`,
-                    "error",
-                );
-            }
+            await LogStuff(
+                `Error - could not ignore file ${toBeIgnored} at ${ColorString(project, "bold")} because of error: ${e}`,
+                "error",
+            );
+
             return 1;
         }
     },
-    Tag: async (project: string, tag: string, push: boolean, showOutput: boolean): Promise<0 | 1> => {
+    Tag: async (project: string, tag: string, push: boolean): Promise<0 | 1> => {
         try {
             const path = await SpotProject(project);
             const tagOutput = await Commander(
@@ -215,7 +214,7 @@ export const Git = {
                     "tag",
                     tag.trim(),
                 ],
-                showOutput,
+                false,
             );
             if (!tagOutput.success) {
                 throw new Error(tagOutput.stdout);
@@ -230,7 +229,7 @@ export const Git = {
                         "origin",
                         "--tags",
                     ],
-                    showOutput,
+                    false,
                 );
                 if (!pushOutput.success) {
                     throw new Error(pushOutput.stdout);
@@ -238,16 +237,15 @@ export const Git = {
             }
             return 0;
         } catch (e) {
-            if (showOutput) {
-                await LogStuff(
-                    `Error - could not create tag ${tag} at ${ColorString(project, "bold")} because of error: ${e}`,
-                    "error",
-                );
-            }
+            await LogStuff(
+                `Error - could not create tag ${tag} at ${ColorString(project, "bold")} because of error: ${e}`,
+                "error",
+            );
+
             return 1;
         }
     },
-    GetLatestTag: async (project: string, showOutput: boolean): Promise<string | undefined> => {
+    GetLatestTag: async (project: string): Promise<string | undefined> => {
         try {
             const path = await SpotProject(project);
             const getTagOutput = await Commander(
@@ -269,16 +267,15 @@ export const Git = {
             }
             return getTagOutput.stdout.trim(); // describe --tags --abbrev=0 should return a string with nothing but the latest tag, so this will do
         } catch (e) {
-            if (showOutput) {
-                await LogStuff(
-                    `Error - could not get latest tag at ${ColorString(project, "bold")} because of error: ${e}`,
-                    "error",
-                );
-            }
+            await LogStuff(
+                `Error - could not get latest tag at ${ColorString(project, "bold")} because of error: ${e}`,
+                "error",
+            );
+
             return undefined;
         }
     },
-    GetFilesReadyForCommit: async (project: string, showOutput: boolean): Promise<string[]> => {
+    GetFilesReadyForCommit: async (project: string): Promise<string[]> => {
         try {
             const path = await SpotProject(project);
             const getFilesOutput = await Commander(
@@ -300,16 +297,14 @@ export const Git = {
             }
             return StringUtils.softlyNormalizeArray(getFilesOutput.stdout.split("\n"));
         } catch (e) {
-            if (showOutput) {
-                await LogStuff(
-                    `Error - could not get staged files at ${ColorString(project, "bold")} because of error: ${e}`,
-                    "error",
-                );
-            }
+            await LogStuff(
+                `Error - could not get staged files at ${ColorString(project, "bold")} because of error: ${e}`,
+                "error",
+            );
             return [];
         }
     },
-    GetBranches: async (project: string, showOutput: boolean): Promise<{ current: string; all: string[] }> => {
+    GetBranches: async (project: string): Promise<{ current: string; all: string[] }> => {
         try {
             const path = await SpotProject(project);
             const getBranchesOutput = await Commander(
@@ -333,12 +328,11 @@ export const Git = {
                 all: StringUtils.sortAlphabetically(StringUtils.softlyNormalizeArray(getBranchesOutput.stdout.replace("*", "").split("\n"))),
             };
         } catch (e) {
-            if (showOutput) {
-                await LogStuff(
-                    `Error - could not get staged files at ${ColorString(project, "bold")} because of error: ${e}`,
-                    "error",
-                );
-            }
+            await LogStuff(
+                `Error - could not get staged files at ${ColorString(project, "bold")} because of error: ${e}`,
+                "error",
+            );
+
             return { current: "__ERROR", all: [] };
         }
     },

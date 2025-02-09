@@ -5,12 +5,10 @@ import type { ProjectEnvironment } from "../../types/platform.ts";
 import { FknError } from "../../utils/error.ts";
 import { FkNodeInterop } from "./interop.ts";
 
-const { validate, normalize } = StringUtils;
-
 const validateScript: (script: { script: string } | "__USE_DEFAULT") => boolean = (script: { script: string } | "__USE_DEFAULT"): boolean => {
     if (
-        (typeof script === "string" && normalize(script) !== "__USE_DEFAULT") ||
-        (typeof script !== "string" && !validate(script.script) && normalize(script.script) !== "__USE_DEFAULT")
+        (typeof script === "string" && StringUtils.normalize(script) !== "__USE_DEFAULT") ||
+        (typeof script !== "string" && !StringUtils.validate(script.script) && StringUtils.normalize(script.script) !== "__USE_DEFAULT")
     ) {
         return false;
     }

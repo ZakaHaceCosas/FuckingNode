@@ -75,6 +75,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed `audit` showing an empty report table when no projects are vulnerable.
 - Fixed `audit` using workspace flags in all npm projects, making workspace-less projects fail.
 - Fixed input validation not being precise enough and showing wrong (duplicate) error messages in `migrate`.
+- Fixed the CLI sometimes not finding your projects because of string manipulation issues.
+- Fixed Git-related commands sometimes not working because of output handling.
+  - As as side effect, you now don't get to see Git's output live.
 
 ## [2.2.1] 16-01-2025
 

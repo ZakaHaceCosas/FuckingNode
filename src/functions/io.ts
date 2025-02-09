@@ -90,9 +90,9 @@ export async function LogStuff(
         if (verbose === undefined || verbose === true) {
             if (color) {
                 if (Array.isArray(color)) {
-                    console.log(MultiColorString(finalMessage, ...color));
+                    console.log(ColorString(finalMessage, ...color));
                 } else {
-                    console.log(MultiColorString(finalMessage, color));
+                    console.log(ColorString(finalMessage, color));
                 }
             } else {
                 console.log(finalMessage);
@@ -136,104 +136,84 @@ export function ParseFlag(flag: string, min: boolean): string[] {
 
 /**
  * Given a string, returns a CLI-colored version of it.
- *
- * @export
- * @param {string | number} string The string.
- * @param {tValidColors} color The color you wish to give it. Some styles that aren't "colors" are also allowed, e.g. `bold` or `half-opaque`.
- * @returns {string} The colored string.
- */
-export function ColorString(string: string | number, color: tValidColors): string {
-    const finalString = typeof string === "string" ? string : String(string);
-    const RESET = "\x1b[0m";
-    let colorCode = RESET;
-
-    switch (color) {
-        case "red":
-            colorCode = "\x1b[31m";
-            break;
-        case "white":
-            colorCode = "\x1b[37m";
-            break;
-        case "bold":
-            colorCode = "\x1b[1m";
-            break;
-        case "blue":
-            colorCode = "\x1b[34m";
-            break;
-        case "green":
-            colorCode = "\x1b[32m";
-            break;
-        case "cyan":
-            colorCode = "\x1b[36m";
-            break;
-        case "purple":
-            colorCode = "\x1b[35m";
-            break;
-        case "pink":
-            colorCode = "\x1b[38;5;213m"; // (custom color)
-            break;
-        case "half-opaque":
-            colorCode = "\x1b[2m";
-            break;
-        case "bright-green":
-            colorCode = "\x1b[92m";
-            break;
-        case "bright-blue":
-            colorCode = "\x1b[94m";
-            break;
-        case "bright-yellow":
-            colorCode = "\x1b[93m";
-            break;
-        case "italic":
-            colorCode = "\x1b[3m";
-            break;
-        case "orange":
-            colorCode = "\x1b[38;5;202m"; // (custom color)
-            break;
-        default:
-            break;
-    }
-
-    return `${colorCode}${finalString}${RESET}`;
-}
-
-/**
- * Recursively colors a string.
  * @author ZakaHaceCosas
  *
  * @export
  * @param {(string | number)} string String to color.
- * @param {...tValidColors[]} colors All the colors you wanna add in.
+ * @param {...tValidColors[]} colors The color you wish to give it. Some styles that aren't "colors" are also allowed, e.g. `bold` or `half-opaque`. You can pass many values to add as many colors as you wish.
  * @returns {string} A colorful string.
  */
-export function MultiColorString(string: string | number, ...colors: tValidColors[]): string {
+export function ColorString(string: string | number, ...colors: tValidColors[]): string {
+    const internalColorString = (string: string | number, color: tValidColors): string => {
+        const finalString = typeof string === "string" ? string : String(string);
+        const RESET = "\x1b[0m";
+        let colorCode = RESET;
+
+        switch (color) {
+            case "red":
+                colorCode = "\x1b[31m";
+                break;
+            case "white":
+                colorCode = "\x1b[37m";
+                break;
+            case "bold":
+                colorCode = "\x1b[1m";
+                break;
+            case "blue":
+                colorCode = "\x1b[34m";
+                break;
+            case "green":
+                colorCode = "\x1b[32m";
+                break;
+            case "cyan":
+                colorCode = "\x1b[36m";
+                break;
+            case "purple":
+                colorCode = "\x1b[35m";
+                break;
+            case "pink":
+                colorCode = "\x1b[38;5;213m"; // (custom color)
+                break;
+            case "half-opaque":
+                colorCode = "\x1b[2m";
+                break;
+            case "bright-green":
+                colorCode = "\x1b[92m";
+                break;
+            case "bright-blue":
+                colorCode = "\x1b[94m";
+                break;
+            case "bright-yellow":
+                colorCode = "\x1b[93m";
+                break;
+            case "italic":
+                colorCode = "\x1b[3m";
+                break;
+            case "orange":
+                colorCode = "\x1b[38;5;202m"; // (custom color)
+                break;
+            default:
+                break;
+        }
+
+        return `${colorCode}${finalString}${RESET}`;
+    };
+
     const finalString = typeof string === "string" ? string : String(string);
 
     if (colors === undefined || colors.length === 0 || !colors[0]) return finalString;
 
     // initial color
-    let result = ColorString(finalString, colors[0]);
+    let result = internalColorString(finalString, colors[0]);
 
     // recursively apply ColorFunc with the rest of the arguments
     for (let i = 1; i < colors.length; i++) {
         const color = colors[i];
         if (color === undefined || !color) return finalString;
-        result = ColorString(result, color);
+        result = internalColorString(result, color);
     }
 
     return result;
-}
-
-/**
- * In case you have a formatted string (CLI-colored) and want to compare it to a regular string, use this function - otherwise control characters will make JS think strings are different even if they aren't.
- *
- * @export
- * @param {string} string Formatted string
- * @returns {string} Naturalized string
- */
-export function NaturalizeFormattedString(string: string): string {
-    // deno-lint-ignore no-control-regex
-    return string.replace(/\x1b[0-9;?]*[a-zA-Z]/g, "");
 }
 
 /**

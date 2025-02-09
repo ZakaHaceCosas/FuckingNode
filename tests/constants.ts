@@ -56,7 +56,6 @@ const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
             ],
             audit: [
                 "audit",
-                "--include-workspace-root",
             ],
             run: ["npm", "run"],
             publish: ["publish"],

@@ -3,7 +3,7 @@
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 import { APP_NAME, I_LIKE_JS } from "../../constants.ts";
 import { Commander } from "../../functions/cli.ts";
-import { ColorString, LogStuff, MultiColorString } from "../../functions/io.ts";
+import { ColorString, LogStuff } from "../../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../../functions/projects.ts";
 import type {
     AnalyzedIndividualSecurityVulnerability,
@@ -150,7 +150,7 @@ function AnalyzeVulnerabilities(vulnerabilities: ApiFetchedIndividualSecurityVul
  * @returns {Promise<"true" | "false">}
  */
 async function askQuestion(question: string, isFollowUp: boolean, isReversed: boolean): Promise<"true" | "false"> {
-    const formattedQuestion = MultiColorString(question, isFollowUp ? "bright-blue" : "bright-yellow", "italic");
+    const formattedQuestion = ColorString(question, isFollowUp ? "bright-blue" : "bright-yellow", "italic");
     const response = await LogStuff(formattedQuestion, undefined, undefined, true);
     switch (response) {
         case true:
@@ -325,7 +325,7 @@ async function DisplayAudit(percentage: number): Promise<void> {
         }`;
     }
     console.log("");
-    const percentageString = MultiColorString(
+    const percentageString = ColorString(
         `${percentage.toFixed(2)}%`,
         color,
         "bold",
@@ -608,7 +608,7 @@ export async function PerformAuditing(project: string, strict: boolean): Promise
     }
     Deno.chdir(env.root);
 
-    await LogStuff(`Auditing ${name} [${MultiColorString(env.commands.audit.join(" "), "italic", "half-opaque")}]`, "working");
+    await LogStuff(`Auditing ${name} [${ColorString(env.commands.audit.join(" "), "italic", "half-opaque")}]`, "working");
     const res = await Commander(
         env.commands.base,
         env.commands.audit,

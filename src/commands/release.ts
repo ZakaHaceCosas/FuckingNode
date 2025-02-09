@@ -132,7 +132,6 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         await Git.Ignore(
             project,
             `${env.main.name}.bak`,
-            true,
         );
 
         await Git.Commit(
@@ -140,19 +139,17 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             `Release v${format(parsedVersion)} (automated by F*ckingNode)`,
             "all",
             [],
-            true,
         );
 
         await Git.Tag(
             project,
             format(parsedVersion),
             params.push,
-            true,
         );
 
         if (params.push) {
             // push stuff to git
-            const pushOutput = await Git.Push(project, false, true);
+            const pushOutput = await Git.Push(project, false);
             if (pushOutput === 1) {
                 throw new Error(`Git push failed unexpectedly.`);
             }

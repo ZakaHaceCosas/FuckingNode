@@ -57,11 +57,10 @@ export const internalValidators = {
 export function internalGolangRequireLikeStringParser(content: string[], kw: string): string[] {
     const toReturn: string[] = [];
     let requireCount = 0;
-    const { normalize } = StringUtils;
 
     content.map((line) => {
-        const l = normalize(line);
-        if (l === `${normalize(kw, true, true)} (`) {
+        const l = StringUtils.normalize(line);
+        if (l === `${StringUtils.normalize(kw, true, true)} (`) {
             if (requireCount === 0) toReturn.push(l);
             requireCount++;
         } else if (l === ")") {

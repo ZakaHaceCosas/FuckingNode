@@ -1,6 +1,6 @@
 import { join } from "@std/path/join";
 import { APP_NAME, I_LIKE_JS } from "../constants.ts";
-import { ColorString, MultiColorString } from "../functions/io.ts";
+import { ColorString } from "../functions/io.ts";
 import type { GLOBAL_ERROR_CODES } from "../types/errors.ts";
 import { GetDateNow } from "../functions/date.ts";
 
@@ -164,7 +164,7 @@ export function GenericErrorHandler(e: unknown, continueExecution: boolean): voi
     if (e instanceof FknError) {
         e.exit(e.message, continueExecution);
     } else {
-        console.error(`${MultiColorString(I_LIKE_JS.FK, "red", "bold")}! An unknown error happened: ${e}`);
+        console.error(`${ColorString(I_LIKE_JS.FK, "red", "bold")}! An unknown error happened: ${e}`);
         if (continueExecution === false) Deno.exit(1);
     }
 }

@@ -1,5 +1,5 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { ColorString, LogStuff, MultiColorString } from "../functions/io.ts";
+import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import { NameProject } from "../functions/projects.ts";
 import type { FnCPF } from "../types/platform.ts";
@@ -35,7 +35,7 @@ export default async function TheStatistics(target: string) {
         .slice(0, maxDeps)
         .map((dep) =>
             `${ColorString(dep.name, "bold")}@${dep.ver} ${env.manager === "deno" ? `> ${dep.src}` : ""} # ${
-                MultiColorString(StringifyDependencyRelationship(dep.rel), "italic", "half-opaque")
+                ColorString(StringifyDependencyRelationship(dep.rel), "italic", "half-opaque")
             }`
         )
         .join("\n");

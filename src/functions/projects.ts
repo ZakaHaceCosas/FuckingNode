@@ -5,7 +5,7 @@ import { expandGlob } from "@std/fs";
 import { APP_NAME, APP_URLs, DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
 import type { CargoPkgFile, NodePkgFile, ProjectEnvironment } from "../types/platform.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
-import { ColorString, LogStuff, MultiColorString, NaturalizeFormattedString } from "./io.ts";
+import { ColorString, LogStuff } from "./io.ts";
 import { FknError } from "../utils/error.ts";
 import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import { GetAppPath } from "./config.ts";
@@ -55,12 +55,12 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
  *
  * @export
  * @param {string} path Path to the **root** of the project.
- * @param {?"name" | "path" | "name-ver" | "all"} wanted What to return. `name` returns the name, `path` the file path, `name-ver` a `name@version` string, and `all` returns everything together.
+ * @param {?"name" | "name-colorless" | "path" | "name-ver" | "all"} wanted What to return. `name` returns the name, `path` the file path, `name-ver` a `name@version` string, and `all` returns everything together.
  * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
  */
-export async function NameProject(path: string, wanted?: "name" | "path" | "name-ver" | "all"): Promise<string> {
+export async function NameProject(path: string, wanted?: "name" | "name-colorless" | "path" | "name-ver" | "all"): Promise<string> {
     const workingPath = await ParsePath(path);
-    const formattedPath = MultiColorString(workingPath, "italic", "half-opaque");
+    const formattedPath = ColorString(workingPath, "italic", "half-opaque");
 
     try {
         const exists = await CheckForPath(workingPath);
@@ -103,6 +103,8 @@ export async function NameProject(path: string, wanted?: "name" | "path" | "name
                 return fullNamedProject;
             case "name":
                 return formattedName;
+            case "name-colorless":
+                return pkgFile.name;
             case "path":
                 return formattedPath;
             case "name-ver":
@@ -478,7 +480,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
                 path: mainPath,
                 name: "go.mod",
                 stdContent: PackageFileParsers.Golang.STD(mainString),
-                cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetLatestTag(workingPath, false), workspaces),
+                cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetLatestTag(workingPath), workspaces),
             },
             lockfile: {
                 name: "go.sum",
@@ -704,22 +706,25 @@ export async function SpotProject(name: string): Promise<string> {
         return workingProject;
     }
 
-    const normalizedInputName = name.toLowerCase().trim();
+    const toSpot = StringUtils.normalize(name, false, true);
 
     for (const project of allProjects) {
-        const projectName = await NameProject(project, "name");
-        const normalizedProjectName = NaturalizeFormattedString(projectName).toLowerCase();
-        if (normalizedInputName === normalizedProjectName) {
-            return project; // (assume it's already ParsePath-ed())
+        const projectName = StringUtils.normalize(
+            await NameProject(project, "name-colorless"),
+            false,
+            true,
+        );
+        if (toSpot === projectName) {
+            return project;
         }
     }
 
     if (await CheckForPath(workingProject)) {
         throw new FknError(
             "Generic__NonFoundProject",
-            `'${name.trim()}' (=> '${workingProject}') exists but is not an added project.`,
+            `'${name.trim()}' (=> '${toSpot}') exists but is not an added project.`,
         );
     } else {
-        throw new FknError("Generic__NonFoundProject", `'${name.trim()}' (=> '${workingProject}') does not exist.`);
+        throw new FknError("Generic__NonFoundProject", `'${name.trim()}' (=> '${toSpot}') does not exist.`);
     }
 }

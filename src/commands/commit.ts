@@ -1,4 +1,4 @@
-import { ColorString, LogStuff, MultiColorString, ParseFlag } from "../functions/io.ts";
+import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheCommitterConstructedParams } from "./constructors/command.ts";
 import { Commander } from "../functions/cli.ts";
@@ -8,7 +8,6 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 import { FknError } from "../utils/error.ts";
 import { PerformCleaning } from "./toolkit/cleaner.ts";
 import { APP_NAME } from "../constants.ts";
-import { NaturalizeFormattedString } from "../functions/io.ts";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
     if (!StringUtils.validate(params.message)) {
@@ -33,10 +32,10 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
         );
     }
 
-    const branches = await Git.GetBranches(project, false);
+    const branches = await Git.GetBranches(project);
 
     const gitProps = {
-        fileCount: (await Git.GetFilesReadyForCommit(project, false)).length,
+        fileCount: (await Git.GetFilesReadyForCommit(project)).length,
         branch: (params.branch && !ParseFlag("push", true).includes(params.branch))
             ? branches.all.includes(StringUtils.normalize(params.branch)) ? params.branch : "__ERROR"
             : branches.current,
@@ -73,7 +72,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
     actions.push(
         `If everything above went alright, commit ${ColorString(gitProps.fileCount, "bold")} file(s) to branch ${
             ColorString(gitProps.branch, "bold")
-        } with message "${MultiColorString(params.message.trim(), "bold", "italic")}"`,
+        } with message "${ColorString(params.message.trim(), "bold", "italic")}"`,
     );
 
     if (params.push) {
@@ -124,7 +123,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
             throw new FknError(
                 "Commit__Fail__CommitCmd",
                 `Commit command (${commitCmd}) exited with a non-0 exit code. Check what's up!`,
-            ).debug(NaturalizeFormattedString(commitCmdOutput.stdout ?? "UNKNOWN OUTPUT"));
+            ).debug(StringUtils.stripCliColors(commitCmdOutput.stdout ?? "UNKNOWN OUTPUT"));
         }
     }
 
@@ -134,12 +133,11 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
         params.message,
         "none",
         [],
-        true,
     );
 
     if (params.push) {
         // push stuff to git
-        const pushOutput = await Git.Push(project, gitProps.branch, true);
+        const pushOutput = await Git.Push(project, gitProps.branch);
         if (pushOutput === 1) {
             throw new Error(`Git push failed unexpectedly.`);
         }

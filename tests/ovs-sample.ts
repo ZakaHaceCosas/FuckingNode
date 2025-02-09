@@ -335,5 +335,5 @@ const OVS_SAMPLE_RETURN = {
     ],
 };
 
-console.debug("This file is for testing purposes only. Don't mind it.");
-console.debug(OVS_SAMPLE_RETURN);
+console.info("This file is for testing purposes only. Don't mind it.");
+console.info(OVS_SAMPLE_RETURN);
