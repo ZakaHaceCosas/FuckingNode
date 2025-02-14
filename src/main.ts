@@ -14,7 +14,7 @@ import TheExporter from "./commands/export.ts";
 import TheCompater from "./commands/compat.ts";
 import TheCommitter from "./commands/commit.ts";
 // other things
-import { APP_NAME, APP_URLs, VERSION } from "./constants.ts";
+import { APP_NAME, APP_URLs, FULL_NAME } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetAppPath, GetSettings } from "./functions/config.ts";
 import { GenericErrorHandler } from "./utils/error.ts";
@@ -103,7 +103,7 @@ if (hasFlag("experimental-audit", false)) {
 }
 
 if (hasFlag("version", true, true) && !flags[1]) {
-    await LogStuff(VERSION, "bulb", "bright-green");
+    await LogStuff(FULL_NAME, "bulb", "bright-green");
     Deno.exit(0);
 }
 
@@ -140,7 +140,7 @@ async function main(command: string) {
     };
 
     try {
-        switch (StringUtils.normalize(command, true, true)) {
+        switch (StringUtils.normalize(command, false, true)) {
             case "clean":
                 await TheCleaner(cleanerArgs);
                 break;
@@ -183,8 +183,7 @@ async function main(command: string) {
                 break;
             case "self-update":
             case "upgrade":
-                if (command.toLowerCase() === "self-update") await LogStuff("Use upgrade instead", "warn", "bright-yellow");
-                await LogStuff(`Currently on version ${ColorString(VERSION, "green")}`);
+                await LogStuff(`Currently using ${ColorString(FULL_NAME, "green")}`);
                 await LogStuff("Checking for updates...");
                 await TheUpdater({ silent: false });
                 break;

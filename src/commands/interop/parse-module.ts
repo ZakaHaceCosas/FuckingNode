@@ -14,9 +14,7 @@ import { FkNodeInterop } from "./interop.ts";
 export const internalValidators = {
     // deno-lint-ignore no-explicit-any
     isPkgFileCargo: (obj: any): obj is CargoPkgFile => {
-        return obj && typeof obj === "object" && obj.package && obj.package.name && StringUtils.validate(obj.package.name) &&
-            obj.package.version &&
-            StringUtils.validate(obj.package.version);
+        return obj && typeof obj === "object" && obj.package && obj.package.name && StringUtils.validate(obj.package.name);
     },
 
     // deno-lint-ignore no-explicit-any
@@ -24,14 +22,17 @@ export const internalValidators = {
         return obj && typeof obj === "object" && obj.module && StringUtils.validate(obj.module) && obj.go && StringUtils.validate(obj.go);
     },
 
+    // TODO - JS pkg files can lack name, ver, or even both (deno init only adds a tasks field, which can also be missing)
+    // we'll have to rethink how these are validated
+
     // deno-lint-ignore no-explicit-any
     isPkgFileDeno: (obj: any): obj is DenoPkgFile => {
-        return obj && typeof obj === "object" && obj.name && StringUtils.validate(obj.name) && obj.version && StringUtils.validate(obj.version);
+        return obj && typeof obj === "object";
     },
 
     // deno-lint-ignore no-explicit-any
     isPkgFileNodeBun: (obj: any): obj is NodePkgFile => {
-        return obj && typeof obj === "object" && obj.name && StringUtils.validate(obj.name) && obj.version && StringUtils.validate(obj.version);
+        return obj && typeof obj === "object";
     },
 };
 
@@ -267,7 +268,7 @@ export const Parsers = {
         CPF: (content: string, rt: "npm" | "pnpm" | "yarn" | "bun", ws: string[]): FnCPF => {
             const parsedContent = internalParsers.NodeBunPkgFile(content);
 
-            if (!parsedContent.name || !parsedContent.version) {
+            if (!parsedContent.name) {
                 throw new Error("Invalid package.json file");
             }
 
@@ -287,7 +288,7 @@ export const Parsers = {
 
             return {
                 name: parsedContent.name,
-                version: parsedContent.version,
+                version: parsedContent.version ?? "0.0.0",
                 rm: rt,
                 deps: dedupeDependencies(deps),
                 ws,
@@ -300,10 +301,6 @@ export const Parsers = {
         CPF: (content: string, ws: string[]): FnCPF => {
             try {
                 const parsedContent = internalParsers.DenoPkgFile(content);
-
-                if (!parsedContent.name || !parsedContent.version) {
-                    throw new Error("Invalid deno.json(c) file");
-                }
 
                 const denoImportRegex = /^(?<source>[a-z]+):(?<package>@[a-zA-Z0-9_\-/]+)@(?<version>[~^<>=]*\d+\.\d+\.\d+)$/;
                 // regex not mine. deno uses platform:@scope/package@version imports so we gotta do that.
@@ -323,8 +320,8 @@ export const Parsers = {
                 });
 
                 return {
-                    name: parsedContent.name,
-                    version: parsedContent.version,
+                    name: parsedContent.name ?? "__ERROR_NOT_PROVIDED",
+                    version: parsedContent.version ?? "0.0.0",
                     rm: "deno",
                     deps: dedupeDependencies(deps),
                     ws,

@@ -18,9 +18,9 @@ const _SV_VER: SemVer = parse(DenoJson.default.version);
  *
  * @type {string}
  */
-export const VERSION: string = format(_SV_VER);
-
-export const INTEROP_SPEC_VERSIONING = {
+export const VERSIONING: { APP: string; CPF: string; IOL: string } = {
+    /** App itself */
+    APP: format(_SV_VER),
     /** Common Package File */
     CPF: "1.0.0",
     /** InterOp Layer */
@@ -33,9 +33,9 @@ export const INTEROP_SPEC_VERSIONING = {
  * @type {FnCPF["internal"]}
  */
 export const FnCPFInternal: FnCPF["internal"] = {
-    fknode: VERSION,
-    fknodeCpf: INTEROP_SPEC_VERSIONING.CPF,
-    fknodeIol: INTEROP_SPEC_VERSIONING.IOL,
+    fknode: VERSIONING.APP,
+    fknodeCpf: VERSIONING.CPF,
+    fknodeIol: VERSIONING.IOL,
 };
 
 /**
@@ -49,6 +49,9 @@ export const APP_NAME: { CASED: string; CLI: string; STYLED: string; SCOPE: stri
     STYLED: "F\*ckingNode",
     SCOPE: "@zakahacecosas/fuckingnode",
 };
+
+/** Full, cased name of the app in NAME vVERSION format. */
+export const FULL_NAME: string = `${APP_NAME.CASED}@${VERSIONING.APP}`;
 
 /** URLs have trailing slash/ */
 export const APP_URLs = {
@@ -147,7 +150,7 @@ export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
  */
 export const DEFAULT_SCHEDULE_FILE: CF_FKNODE_SCHEDULE = {
     updater: {
-        latestVer: VERSION,
+        latestVer: VERSIONING.APP,
         lastCheck: GetDateNow(),
     },
     flusher: {

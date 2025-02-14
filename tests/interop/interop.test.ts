@@ -1,33 +1,14 @@
-import { FkNodeInterop } from "../src/commands/interop/interop.ts";
+import { FkNodeInterop } from "../../src/commands/interop/interop.ts";
 import { assertEquals } from "@std/testing";
-import { APP_NAME, VERSION } from "../src/constants.ts";
+import { VERSIONING } from "../../src/constants.ts";
+import { CONSTANTS } from "../constants.ts";
+import { JoinPaths } from "../../src/functions/filesystem.ts";
 
 Deno.test({
     name: "interop layer manages cargo pkg file",
-    fn: () => {
+    fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Cargo.CPF(
-            `
-                [package]
-    name =      "my_project"
-version = "0.1.0"
-    edition = "2021"
-    publish = ["https://crates.io"]
-    
-    # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-    
-    [dependencies]
-    serde = "1.0"          # Dependency for serialization/deserialization
-    reqwest = { version = "0.11", features = ["json"] }  # HTTP client library with JSON support
-    tokio = { version = "1", features = ["full"] }      # Asynchronous runtime for Rust
-    
-    [dev-dependencies]
-    criterion = "0.3"      # Library for benchmarking
-    mockito = "0.31"       # Mock HTTP requests in tests
-    
-    [build-dependencies]
-    bindgen = "0.59"       # Dependency for generating Rust bindings to C libraries
-    
-            `,
+            await Deno.readTextFile(await JoinPaths(CONSTANTS.INTEROP_PATH, "cargo.toml")),
             [],
         );
 
@@ -47,7 +28,7 @@ version = "0.1.0"
                 ],
                 ws: [],
                 internal: {
-                    fknode: VERSION,
+                    fknode: VERSIONING.APP,
                     fknodeCpf: "1.0.0",
                     fknodeIol: "1.0.0",
                 },
@@ -58,29 +39,9 @@ version = "0.1.0"
 
 Deno.test({
     name: "interop layer manages golang pkg file",
-    fn: () => {
+    fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Golang.CPF(
-            `
-             module vuelto.pp.ua
-
-    go 1.18
-
-    require (
-        github.com/faiface/beep v1.1.0
-        github.com/go-gl/glfw/v3.3/glfw v0.0.0-20231124074035-2de0cf0c80af
-    )
-
-    require (
-        github.com/hajimehoshi/go-mp3 v0.3.0 // indirect
-        github.com/hajimehoshi/oto v0.7.1 // indirect
-        github.com/pkg/errors v0.9.1 // indirect
-        golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8 // indirect
-        golang.org/x/image v0.18.0 // indirect
-        golang.org/x/mobile v0.0.0-20190415191353-3e0bab5405d6 // indirect
-        golang.org/x/sys v0.17.0 // indirect
-    )
-
-            `,
+            await Deno.readTextFile(await JoinPaths(CONSTANTS.INTEROP_PATH, "go.mod")),
             "v1.1.0",
             [],
         );
@@ -149,7 +110,7 @@ Deno.test({
                 ],
                 ws: [],
                 internal: {
-                    fknode: VERSION,
+                    fknode: VERSIONING.APP,
                     fknodeCpf: "1.0.0",
                     fknodeIol: "1.0.0",
                 },
@@ -160,22 +121,9 @@ Deno.test({
 
 Deno.test({
     name: "interop layer manages node/bun CPF",
-    fn: () => {
+    fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.NodeBun.CPF(
-            `
-        {
-        "name": "TEST",
-        "version": "0.59.123",
-        "dependencies": {
-        "eslint": "^7.32.0",
-        },  
-        "devDependencies": {
-            "typescript": "^4.4.3",
-            },
-        "peerDependencies": {
-            "react": "^17.0.2",
-        }
-    }`,
+            await Deno.readTextFile(await JoinPaths(CONSTANTS.INTEROP_PATH, "package.json")),
             "pnpm",
             [],
         );
@@ -183,7 +131,7 @@ Deno.test({
         assertEquals(
             commonPkgFile,
             {
-                name: "TEST",
+                name: "test",
                 version: "0.59.123",
                 rm: "pnpm",
                 deps: [
@@ -208,7 +156,7 @@ Deno.test({
                 ],
                 ws: [],
                 internal: {
-                    fknode: VERSION,
+                    fknode: VERSIONING.APP,
                     fknodeCpf: "1.0.0",
                     fknodeIol: "1.0.0",
                 },
@@ -219,25 +167,17 @@ Deno.test({
 
 Deno.test({
     name: "interop layer manages deno CPF",
-    fn: () => {
+    fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Deno.CPF(
-            `{
-    "name": "${APP_NAME.SCOPE}",
-    "version": "3.0.0-alpha",
-    "imports": {
-        "@std/fs": "jsr:@std/fs@^1.0.10",
-    },
-    "lock": true
-}
-`,
+            await Deno.readTextFile(await JoinPaths(CONSTANTS.INTEROP_PATH, "_deno.json")),
             [],
         );
 
         assertEquals(
             commonPkgFile,
             {
-                name: APP_NAME.SCOPE,
-                version: "3.0.0-alpha",
+                name: "@zakahacecosas/string-utils",
+                version: "1.7.0",
                 rm: "deno",
                 deps: [
                     {
@@ -249,7 +189,7 @@ Deno.test({
                 ],
                 ws: [],
                 internal: {
-                    fknode: VERSION,
+                    fknode: VERSIONING.APP,
                     fknodeCpf: "1.0.0",
                     fknodeIol: "1.0.0",
                 },

@@ -48,6 +48,8 @@ export function Emojify(message: string, emoji: SUPPORTED_EMOJIS): string {
                 return `📊`;
             case "wink":
                 return `😉`;
+            case "comrade":
+                return `🫡`;
             default:
                 return "";
         }

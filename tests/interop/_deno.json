@@ -1,0 +1,8 @@
+{
+    "name": "@zakahacecosas/string-utils",
+    "version": "1.7.0",
+    "imports": {
+        "@std/fs": "jsr:@std/fs@^1.0.10"
+    },
+    "lock": true
+}

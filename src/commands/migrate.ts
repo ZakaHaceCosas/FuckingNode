@@ -1,5 +1,5 @@
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { APP_NAME, VERSION } from "../constants.ts";
+import { FULL_NAME } from "../constants.ts";
 import { GetDateNow } from "../functions/date.ts";
 import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
@@ -70,7 +70,7 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
                 );
             await Deno.writeTextFile(
                 await JoinPaths(env.root, `${env.main.name}.jsonc.bak`),
-                `// This is a backup of your previous project file. We (${APP_NAME.CASED}@${VERSION}) overwrote it at ${GetDateNow()}.\n${
+                `// This is a backup of your previous project file. We (${FULL_NAME}) overwrote it at ${GetDateNow()}.\n${
                     JSON.stringify(env.main.stdContent)
                 }`,
             );

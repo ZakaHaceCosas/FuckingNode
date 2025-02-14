@@ -1,4 +1,4 @@
-import { VERSION } from "../src/constants.ts";
+import { VERSIONING } from "../src/constants.ts";
 import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
 import type { ProjectEnvironment } from "../src/types/platform.ts";
 
@@ -6,6 +6,7 @@ import type { ProjectEnvironment } from "../src/types/platform.ts";
 export const CONSTANTS = {
     CWD: Deno.cwd(),
     ENV_PATH: await JoinPaths(Deno.cwd(), "tests/environment"),
+    INTEROP_PATH: await JoinPaths(Deno.cwd(), "tests/interop"),
 };
 
 // (naming things is fr the hardest)
@@ -32,7 +33,7 @@ const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
                     await ParsePath(`${CONSTANTS.ENV_PATH}/test-two`),
                 ],
                 internal: {
-                    fknode: VERSION,
+                    fknode: VERSIONING.APP,
                     fknodeCpf: "1.0.0",
                     fknodeIol: "1.0.0",
                 },

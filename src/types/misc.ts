@@ -20,7 +20,8 @@ export type SUPPORTED_EMOJIS =
     | "package"
     | "trash"
     | "chart"
-    | "wink";
+    | "wink"
+    | "comrade";
 
 /**
  * A GitHub release asset.

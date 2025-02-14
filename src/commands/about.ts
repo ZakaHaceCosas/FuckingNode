@@ -1,4 +1,4 @@
-import { APP_NAME, APP_URLs, I_LIKE_JS, VERSION } from "../constants.ts";
+import { APP_NAME, APP_URLs, I_LIKE_JS, VERSIONING } from "../constants.ts";
 import { ColorString } from "../functions/io.ts";
 import { LogStuff } from "../functions/io.ts";
 import type { tValidColors } from "../types/misc.ts";
@@ -56,7 +56,7 @@ export default async function TheAbouter() {
 ╚═╝             ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝     ╚═╝  ╚═══╝ ╚═════╝ ╚═════╝ ╚══════╝`;
 
     await LogStuff(colorizeText(Math.random() > 0.5 ? ascii2 : ascii));
-    await LogStuff(`${getRandomPhrase()} · ${ColorString(VERSION, "bright-yellow")}\n`);
+    await LogStuff(`${ColorString(VERSIONING.APP, "bright-yellow")} · ${getRandomPhrase()}\n`);
     await LogStuff(
         `Written in ${coolStrings.ts}. Running in ${coolStrings.deno}.\nDeveloped in ${coolStrings.spain} by ${coolStrings.zakaOne} (${coolStrings.zakaTwo} in spanish).\n`,
     );

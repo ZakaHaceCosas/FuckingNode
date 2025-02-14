@@ -2,7 +2,7 @@ import { Commander } from "../functions/cli.ts";
 import { JoinPaths } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
-import { APP_NAME, VERSION } from "../constants.ts";
+import { FULL_NAME } from "../constants.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 
 export const Git = {
@@ -183,7 +183,7 @@ export const Git = {
 
             await Deno.writeTextFile(
                 gitIgnoreFile,
-                `# auto-added by ${APP_NAME.CASED} release command (CLI version ${VERSION})\n${toBeIgnored}`,
+                `# auto-added by ${FULL_NAME} release command\n${toBeIgnored}`,
                 {
                     append: true,
                 },

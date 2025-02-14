@@ -1,0 +1,21 @@
+[package]
+name = "my_project"
+version = "0.1.0"
+edition = "2021"
+publish = ["https://crates.io"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = "1.0" # Dependency for serialization/deserialization
+reqwest = { version = "0.11", features = [
+    "json",
+] } # HTTP client library with JSON support
+tokio = { version = "1", features = ["full"] } # Asynchronous runtime for Rust
+
+[dev-dependencies]
+criterion = "0.3" # Library for benchmarking
+mockito = "0.31"  # Mock HTTP requests in tests
+
+[build-dependencies]
+bindgen = "0.59" # Dependency for generating Rust bindings to C libraries
