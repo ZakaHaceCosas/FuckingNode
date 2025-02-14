@@ -83,7 +83,7 @@ export const Git = {
         try {
             const path = await SpotProject(project);
 
-            const toAdd = add === "none" ? [] : add === "all" ? ["add", "-A"] : [];
+            const toAdd = add === "none" ? [] : add === "all" ? ["-A"] : [];
 
             if (toAdd.length > 0) {
                 const addOutput = await Commander(
@@ -128,6 +128,7 @@ export const Git = {
                 false,
             );
             if (!commitOutput.success) {
+                if (commitOutput.stdout?.includes("working tree clean")) return 0;
                 throw new Error(commitOutput.stdout);
             }
             return 0;
