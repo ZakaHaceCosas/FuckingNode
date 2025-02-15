@@ -51,7 +51,7 @@ export const APP_NAME: { CASED: string; CLI: string; STYLED: string; SCOPE: stri
 };
 
 /** Full, cased name of the app in NAME vVERSION format. */
-export const FULL_NAME: string = `${APP_NAME.CASED}@${VERSIONING.APP}`;
+export const FULL_NAME: string = `${APP_NAME.CASED} v${VERSIONING.APP}`;
 
 /** URLs have trailing slash/ */
 export const APP_URLs = {
