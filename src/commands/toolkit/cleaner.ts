@@ -31,9 +31,7 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Update(
                 env,
                 verbose,
-                (!StringUtils.validate(settings.updateCmdOverride) || StringUtils.normalize(settings.updateCmdOverride) === "__use_default")
-                    ? "__USE_DEFAULT"
-                    : { script: settings.updateCmdOverride },
+                settings.updateCmdOverride ?? "__USE_DEFAULT",
             );
             if (output === true) await LogStuff(`Updated dependencies for ${projectName}!`, "tick");
             return;
@@ -82,9 +80,7 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Lint(
                 env,
                 verbose,
-                (!StringUtils.validate(settings.lintCmd) || StringUtils.normalize(settings.lintCmd) === "__eslint")
-                    ? "__USE_DEFAULT"
-                    : { script: settings.lintCmd },
+                settings.lintCmd ?? "__USE_DEFAULT",
             );
             if (output === true) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
@@ -107,9 +103,7 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Pretty(
                 env,
                 verbose,
-                (!StringUtils.validate(settings.prettyCmd) || StringUtils.normalize(settings.prettyCmd) === "__eslint")
-                    ? "__USE_DEFAULT"
-                    : { script: settings.prettyCmd },
+                settings.lintCmd ?? "__USE_DEFAULT",
             );
             if (output === true) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;

@@ -165,8 +165,8 @@ export const DEFAULT_SCHEDULE_FILE: CF_FKNODE_SCHEDULE = {
  */
 export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
     divineProtection: "disabled",
-    lintCmd: "__ESLINT",
-    prettyCmd: "__PRETTIER",
+    lintCmd: "__USE_DEFAULT",
+    prettyCmd: "__USE_DEFAULT",
     destroy: {
         intensities: ["maxim"],
         targets: [

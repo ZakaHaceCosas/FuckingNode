@@ -83,17 +83,17 @@ export interface FkNodeYaml {
      */
     divineProtection?: ("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled";
     /**
-     * If `--lint` is passed to `clean`, this script will be used to lint the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__ESLINT` overrides these rules (it's the default).
+     * If `--lint` is passed to `clean`, this script will be used to lint the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__USE_DEFAULT` overrides these rules (it's the default).
      *
-     * @type {?(string | "__ESLINT")}
+     * @type {?(string | "__USE_DEFAULT")}
      */
-    lintCmd?: string | "__ESLINT";
+    lintCmd?: string | "__USE_DEFAULT";
     /**
-     * If `--pretty` is passed to `clean`, this script will be used to prettify the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__PRETTIER` overrides these rules (it's the default).
+     * If `--pretty` is passed to `clean`, this script will be used to prettify the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__USE_DEFAULT` overrides these rules (it's the default).
      *
-     * @type {?(string | "__PRETTIER")}
+     * @type {?(string | "__USE_DEFAULT")}
      */
-    prettyCmd?: string | "__PRETTIER";
+    prettyCmd?: string | "__USE_DEFAULT";
     /**
      * If provided, file paths in `targets` will be removed when `clean` is called with any of the `intensities`. If not provided defaults to `maxim` intensity and `node_modules` path. Specifying `targets` _without_ `node_modules` does not override it, meaning it'll always be cleaned.
      *

@@ -5,25 +5,12 @@ import type { ProjectEnvironment } from "../../types/platform.ts";
 import { FknError } from "../../utils/error.ts";
 import { FkNodeInterop } from "./interop.ts";
 
-const validateScript: (script: { script: string } | "__USE_DEFAULT") => boolean = (script: { script: string } | "__USE_DEFAULT"): boolean => {
-    if (
-        (typeof script === "string" && StringUtils.normalize(script) !== "__USE_DEFAULT") ||
-        (typeof script !== "string" && !StringUtils.validate(script.script) && StringUtils.normalize(script.script) !== "__USE_DEFAULT")
-    ) {
-        return false;
-    }
-
-    return true;
-};
-
 export const InteropedFeatures = {
     Lint: async (
         env: ProjectEnvironment,
         verbose: boolean,
-        linter: { script: string } | "__USE_DEFAULT",
+        linter: string | "__USE_DEFAULT",
     ): Promise<boolean> => {
-        if (!validateScript(linter)) return false;
-
         switch (env.runtime) {
             case "bun":
             case "node":
@@ -67,7 +54,7 @@ export const InteropedFeatures = {
                 } else {
                     const output = await Commander(
                         env.commands.run[0],
-                        [env.commands.run[1], linter.script],
+                        [env.commands.run[1], linter],
                         verbose,
                     );
 
@@ -115,10 +102,8 @@ export const InteropedFeatures = {
     Pretty: async (
         env: ProjectEnvironment,
         verbose: boolean,
-        prettifier: { script: string } | "__USE_DEFAULT",
+        prettifier: string | "__USE_DEFAULT",
     ): Promise<boolean> => {
-        if (!validateScript(prettifier)) return false;
-
         switch (env.runtime) {
             case "bun":
             case "node":
@@ -162,7 +147,7 @@ export const InteropedFeatures = {
                 } else {
                     const output = await Commander(
                         env.commands.run[0],
-                        [env.commands.run[1], prettifier.script],
+                        [env.commands.run[1], prettifier],
                         verbose,
                     );
 
@@ -206,10 +191,10 @@ export const InteropedFeatures = {
     Update: async (
         env: ProjectEnvironment,
         verbose: boolean,
-        updater: { script: string } | "__USE_DEFAULT",
+        updater: string | "__USE_DEFAULT",
     ): Promise<boolean> => {
-        if (!validateScript(updater)) return false;
-
+        /*         if (!validateScript(updater)) return false;
+ */
         if (updater === "__USE_DEFAULT") {
             const output = await Commander(
                 env.commands.base,
@@ -235,14 +220,14 @@ export const InteropedFeatures = {
             case "golang":
                 throw new FknError(
                     "Interop__CannotRunJsLike",
-                    `${env.manager} does not support JavaScript-like "run" commands, however you've set updateCmdOverride in your fknode.yaml to ${updater.script}. Since we don't know what you're doing, update task wont proceed for this project.`,
+                    `${env.manager} does not support JavaScript-like "run" commands, however you've set updateCmdOverride in your fknode.yaml to ${updater}. Since we don't know what you're doing, update task wont proceed for this project.`,
                 );
             case "bun":
             case "deno":
             case "node": {
                 const output = await Commander(
                     env.commands.run[0],
-                    [env.commands.run[1], updater.script],
+                    [env.commands.run[1], updater],
                     verbose,
                 );
 
