@@ -13,6 +13,7 @@ import TheReleaser from "./commands/release.ts";
 import TheExporter from "./commands/export.ts";
 import TheCompater from "./commands/compat.ts";
 import TheCommitter from "./commands/commit.ts";
+import TheSurrenderer from "./commands/surrender.ts";
 // other things
 import { APP_NAME, APP_URLs, FULL_NAME } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
@@ -204,6 +205,21 @@ async function main(command: string) {
                     message: flags[1],
                     branch: flags[2],
                     push: hasFlag("push", true),
+                });
+                break;
+            case "surrender":
+            case "give-up":
+            case "i-give-up":
+            case "its-over":
+            case "i-really-hate":
+            // "im-done-with <project>" is wild LMAO
+            case "im-done-with":
+                await TheSurrenderer({
+                    project: flags[1],
+                    message: flags[2],
+                    alternative: flags[3],
+                    learnMoreUrl: flags[4],
+                    isGitHub: hasFlag("github", false) || hasFlag("gh", false),
                 });
                 break;
             case "export":

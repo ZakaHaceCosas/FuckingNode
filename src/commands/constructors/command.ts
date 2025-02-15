@@ -241,3 +241,43 @@ export interface TheCommitterConstructedParams {
      */
     branch?: UnknownString;
 }
+
+/**
+ * The Surrenderer
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheSurrendererConstructedParams
+ */
+export interface TheSurrendererConstructedParams {
+    /**
+     * Project to be deprecated.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * An optional deprecation message.
+     *
+     * @type {UnknownString}
+     */
+    message: UnknownString;
+    /**
+     * An optional name or URL to an alternative to this package.
+     *
+     * @type {UnknownString}
+     */
+    alternative: UnknownString;
+    /**
+     * An optional URL to somewhere you can learn more about this deprecation.
+     *
+     * @type {UnknownString}
+     */
+    learnMoreUrl: UnknownString;
+    /**
+     * Is it a GitHub repository? If true, GitHub's `> [!TAGS]` will be used for a prettier string.
+     *
+     * @type {?boolean}
+     */
+    isGitHub?: boolean;
+}
