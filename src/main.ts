@@ -23,6 +23,35 @@ import type { TheCleanerConstructedParams } from "./commands/constructors/comman
 import { RunScheduledTasks } from "./functions/schedules.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 
+// error handler for v2 -> v3 migration
+// NOTE: remove when we get to 3.1 or so
+async function HandleErr(e: unknown) {
+    const isV2error = e instanceof TypeError && e.message.trim().toLowerCase().includes("right_now_date regular expression");
+    const isV3error = e instanceof Error && e.message.trim().toLowerCase().includes('literal "-"');
+
+    if (isV2error || isV3error) {
+        await LogStuff(
+            "Due to internal changes from v3, all config files except your project list had to be reset.\nWe've taken care of that for you, please re-run the command you tried to run.\nIf you get here again, file an issue on GitHub.",
+            "error",
+            "red"
+        );
+
+        const paths = [
+            await GetAppPath("SCHEDULE"),
+            await GetAppPath("SETTINGS"),
+            await GetAppPath("ERRORS"),
+            await GetAppPath("LOGS"),
+        ];
+
+        for (const path of paths) {
+            await Deno.remove(path, { recursive: true });
+        }
+        Deno.exit(1);
+    } else {
+    GenericErrorHandler(e, true)
+    };
+}
+
 // this is outside the main loop so it can be executed
 // without depending on other modules
 // yes i added this feature because of a breaking change i wasn't expecting
@@ -61,9 +90,13 @@ async function init() {
 const flags = Deno.args.map((arg) => StringUtils.normalize(arg));
 
 if (!StringUtils.validate(flags[0])) {
-    await init();
-    await TheHelper({});
-    Deno.exit(0);
+    try {
+        await init();
+        await TheHelper({});
+        Deno.exit(0);
+    } catch (e) {
+        HandleErr(e);
+    }
 }
 
 function hasFlag(flag: string, allowShort: boolean, firstOnly: boolean = false): boolean {
@@ -109,8 +142,6 @@ if (hasFlag("version", true, true) && !flags[1]) {
 }
 
 async function main(command: string) {
-    await init();
-
     /* this is a bit unreadable, i admit */
     const projectArg = (
             flags[1] &&
@@ -141,6 +172,8 @@ async function main(command: string) {
     };
 
     try {
+        await init();
+
         switch (StringUtils.normalize(command, false, true)) {
             case "clean":
                 await TheCleaner(cleanerArgs);
@@ -270,8 +303,8 @@ async function main(command: string) {
 
         Deno.exit(0);
     } catch (e) {
-        GenericErrorHandler(e, true);
+        HandleErr(e);
     }
 }
 
-await main(flags[0]);
+await main(flags[0] ?? "");

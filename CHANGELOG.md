@@ -10,11 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Breaking changes
 
-> [!CAUTION]
-> Old users will need to run (`fuckingnode something-fucked-up`) once before being able to use v3.
-
 - **Schedule and update files won't work:** We now use a different date format.
 - **Order of `clean` arguments swapped:** It's now `clean <project | "--"> <intensity | "--"> [...flags]` instead of `clean <intensity | "--"> <project | "--"> [...flags]`. This was made so the command makes more sense. E.g., `clean my-project hard`.
+- **User settings will be reset once:** Some internal breaking changes force us to do this. This'll only happen once and won't reset your project list.
 
 ### Added
 
@@ -27,6 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
     - When publishing to npm and have 2FA enabled and required for publishing.
   - `publish` is allowed as an alias to the command.
 - Added a **new command** `commit (message) [branch] [--push]` to run FuckingNode's maintenance task and any other task of your choice before committing, and making the commit only if those tasks succeed.
+- Added a **new command** `surrender (project) [message] [alternative] [learn-more-url] [--github]` to deprecate a project (automatically add a deprecation notice, update dependencies one last time, commit and push all changes, and once the project's pushed, remove locally).
 - Added a **new command** `something-fucked-up` to completely reset all internal settings except for your project list.
 - Added a **new command** `compat (feature)` to show overall compatibility, or compatibility of a specific feature if provided, of the CLI across environments (NodeJS, Bun, Go...).
 - Added Bun and Deno support for `migrate` feature.
