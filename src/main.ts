@@ -22,6 +22,7 @@ import { GenericErrorHandler } from "./utils/error.ts";
 import type { TheCleanerConstructedParams } from "./commands/constructors/command.ts";
 import { RunScheduledTasks } from "./functions/schedules.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
+import { CleanupProjects } from "./functions/projects.ts";
 
 // error handler for v2 -> v3 migration
 // NOTE: remove when we get to 3.1 or so
@@ -33,7 +34,7 @@ async function HandleErr(e: unknown) {
         await LogStuff(
             "Due to internal changes from v3, all config files except your project list had to be reset.\nWe've taken care of that for you, please re-run the command you tried to run.\nIf you get here again, file an issue on GitHub.",
             "error",
-            "red"
+            "red",
         );
 
         const paths = [
@@ -48,8 +49,8 @@ async function HandleErr(e: unknown) {
         }
         Deno.exit(1);
     } else {
-    GenericErrorHandler(e, true)
-    };
+        GenericErrorHandler(e, true);
+    }
 }
 
 // this is outside the main loop so it can be executed
@@ -84,6 +85,7 @@ if (StringUtils.normalize(Deno.args[0] ?? "") === "something-fucked-up") {
 async function init() {
     await FreshSetup();
     await RunScheduledTasks();
+    await CleanupProjects();
 }
 
 /** Normalized Deno.args */

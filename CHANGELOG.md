@@ -37,26 +37,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added recognition of new `bun.lock` file to identify Bun projects.
 - Added a new `errors.log` file, stored with all of our config files. Some errors will now dump more detailed info in there.
 - Added support for `pnpm` and `yarn` for the audit experiment.
+- Added the ability for the CLI to auto-clean invalid entries from your project list, removing the need to do it for yourself.
 
 ### Changed
 
 - Now error messages for not found / not added projects are consistent.
 - Now any generated YAML files by the CLI follow common formatting.
-- Now commands are normalized, meaning even stupid things like `fuckingnode mÀnaGëR lÌSt` will work perfectly.
+- Now many commands (not all though) are strictly normalized, meaning even stupid things like `fuckingnode mÀnaGëR lÌSt` will work perfectly.
 - Now the CLI more reliably tells whether a runtime is installed or not (at the expense of some extra milliseconds).
 - Now `audit` experiment's parsing rules are more reliable. _They still have known issues (direct/indirect deps + patched version), but they're internal-only and don't affect usage as of now_.
 - Now updating dependencies will always run with `--save-text-lockfile` in Bun.
 - Now `migrate` will always update dependencies before running.
 - Now `migrate` will back up your project's package file and lockfile.
 - Now error handling is more consistent (and also uses less `try-catch` code). (I just learnt that JS errors propagate up to the caller, that's why there we so many damn `catch (e) { throw e }` lines, sorry mb).
+- Now when the cleaner's done it says "cleaned all your **JavaScript** projects" instead of "Node" projects. I admit it looks nice as an "easter egg" or something referencing where we come from, but it was not intended to be that, I just forgot to change it.
 
 ### Fixed
 
 - Fixed `manager add` allowing to add _one_ duplicate of each entry.
 - Fixed `manager add` project-env errors being ambiguous. Now they're more specific (missing lockfile, missing path, etc...).
+- Fixed `manager list` showing a "no projects exist" message when they do exist but are all ignored.
 - Fixed project paths not being correctly handled in some cases.
 - Fixed the CLI running init task (check for updates & config files) twice.
 - Fixed cleaner intensity being hypothetically case sensitive.
+- Fixed cleaner showing elapsed time since the _entire process_ had begun instead of since _that specific project's cleanup_ begun.
+- Fixed the CLI adding an odd-looking linebreak before "Cleaning..." when using per-project cleanup.
 - Fixed the confirmation for using maxim cleanup.
 - Fixed projects not being alphabetically sorted when listing them.
 - Fixed Bun projects' config files not being properly read.
@@ -78,6 +83,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed Git-related commands sometimes not working because of output handling.
   - As as side effect, you now don't get to see Git's output live.
 - Fixed the CLI not being able to handle projects that were missing the `name` or `version` field in a `package.json`/`deno.json` file.
+
+### Removed
+
+- Removed `manager cleanup`, running it will now show a message telling you we now automate project list cleanup for you.
 
 ## [2.2.1] 16-01-2025
 

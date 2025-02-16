@@ -10,18 +10,12 @@ import { PerformCleaning } from "./toolkit/cleaner.ts";
 import { APP_NAME } from "../constants.ts";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
-    if (!StringUtils.validate(params.message)) {
-        throw new Error("No commit message specified!");
-    }
+    if (!StringUtils.validate(params.message)) throw new Error("No commit message specified!");
 
     const CWD = Deno.cwd();
     const project = await SpotProject(CWD);
     const env = await GetProjectEnvironment(project);
     const settings = await GetProjectSettings(project);
-
-    if (!env || !settings) {
-        throw new Error(`Failed to load environment or settings for project '${await NameProject(project, "name")}'.`);
-    }
 
     const commitCmd = StringUtils.validate(settings.commitCmd) ? StringUtils.normalize(settings.commitCmd) : "__DISABLE";
 

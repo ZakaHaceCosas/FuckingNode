@@ -182,7 +182,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
     ]);
 
-    switch ((query ?? "").trim().toLowerCase()) {
+    switch (StringUtils.normalize(query ?? "", true)) {
         case "clean":
             await LogStuff(
                 `'clean' will clean your added projects. Options and flags:\n${CLEAN_OPTIONS}`,
@@ -218,8 +218,6 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         case "audit":
             await LogStuff("Audit is an experimental command subject to changes; thus it's not yet documented.");
             break;
-        case undefined:
-        case "":
         default:
             await NoParamProvided();
             break;

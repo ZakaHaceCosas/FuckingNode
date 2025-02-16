@@ -6,7 +6,6 @@ import TheHelper from "./help.ts";
 import { FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
-import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 
 /**
@@ -128,6 +127,7 @@ export async function AddProject(
  */
 export async function RemoveProject(
     entry: string | null,
+    silent: boolean = false,
 ): Promise<void> {
     if (!entry) {
         throw new FknError(
@@ -153,7 +153,7 @@ export async function RemoveProject(
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
 
-        if (list.length > 0) {
+        if (list.length > 0 && silent === true) {
             await LogStuff(
                 `I'll guess: ${await NameProject(
                     workingEntry,
@@ -162,13 +162,15 @@ export async function RemoveProject(
                 "tick-clear",
             );
         } else {
-            await LogStuff(
-                `Removed ${await NameProject(
-                    workingEntry,
-                    "name",
-                )}. That was your last project, the list is now empty.`,
-                "moon-face",
-            );
+            if (silent === true) {
+                await LogStuff(
+                    `Removed ${await NameProject(
+                        workingEntry,
+                        "name",
+                    )}. That was your last project, the list is now empty.`,
+                    "moon-face",
+                );
+            }
         }
     } catch (e) {
         if (e instanceof FknError && e.code === "Generic__NonFoundProject") {
@@ -181,66 +183,6 @@ export async function RemoveProject(
             throw e;
         }
     }
-}
-
-/**
- * Cleans up projects that are invalid and probably we won't be able to clean.
- *
- * @async
- * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, 2 if the user doesn't remove them.
- */
-async function CleanupProjects(): Promise<0 | 1 | 2> {
-    const listOfRemovals: { project: string; issue: PROJECT_ERROR_CODES }[] = [];
-
-    for (const project of (await GetAllProjects())) {
-        const validation = await ValidateProject(project, true);
-        if (validation !== true) listOfRemovals.push({ project: project, issue: validation });
-    }
-
-    // remove duplicates
-    const result = Array.from(
-        new Map(
-            listOfRemovals.map((item) => [JSON.stringify(item), item]), // make it a string so we can actually compare it's values
-        ).values(),
-    );
-
-    if (result.length === 0) {
-        await LogStuff(
-            `You're on the clear! Your list doesn't have any wrong ${I_LIKE_JS.MF}`,
-            "tick",
-        );
-        return 1;
-    }
-    await LogStuff(
-        `We've found issues! We're talking about getting rid of:\n`,
-        "bulb",
-    );
-    // doesn't use NameProject as it's likely to point to an invalid path
-    for (const idiot of result) {
-        await LogStuff(
-            `${idiot.project} ${ColorString(`Code: ${idiot.issue}`, "half-opaque")}`,
-            "trash",
-        );
-    }
-    console.log(""); // glue fix
-    const del = await LogStuff(
-        `Remove all of these ${I_LIKE_JS.MFS}?`,
-        "what",
-        undefined,
-        true,
-    );
-    if (!del) {
-        await LogStuff(
-            `I don't know why you'd keep those wrong projects, but okay...`,
-            "bruh",
-        );
-        return 2;
-    }
-    for (const target of result) {
-        await RemoveProject(target.project);
-    }
-    await LogStuff(`That worked out!`, "tick");
-    return 0;
 }
 
 /**
@@ -262,9 +204,15 @@ async function ListProjects(
                 "moon-face",
             );
             return;
+        } else if (ignore === "exclude") {
+            await LogStuff(
+                "Huh, you ignored all of your projects! What did you download this CLI for?",
+                "moon-face",
+            );
+            return;
         } else {
             await LogStuff(
-                "Bruh, your mfs list is empty! Ain't nobody here!",
+                "Man, your mfs list is empty! Ain't nobody here!",
                 "moon-face",
             );
             return;
@@ -306,13 +254,9 @@ async function ListProjects(
         }
     }
 
-    await LogStuff(
-        message,
-        "bulb",
-    );
-    for (const entry of StringUtils.sortAlphabetically(toPrint)) {
-        await LogStuff(entry);
-    }
+    await LogStuff(message, "bulb");
+    for (const entry of StringUtils.sortAlphabetically(toPrint)) await LogStuff(entry);
+
     return;
 }
 
@@ -355,7 +299,10 @@ export default async function TheManager(args: string[]) {
             }
             break;
         case "cleanup":
-            await CleanupProjects();
+            await LogStuff(
+                "We removed the need to manually cleanup your projects - each time you run the CLI we auto-clean them for you.\nEnjoy!",
+                "comrade",
+            );
             break;
         default:
             await TheHelper({ query: "manager" });

@@ -21,9 +21,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
     const { verbose, update, lint, prettify, destroy, commit } = params.flags;
     const { intensity, project } = params.parameters;
 
-    // start time
-    const startTime = new Date();
-
     // original path
     const originalLocation = Deno.cwd();
     const realIntensity: CleanerIntensity = await ValidateIntensity(intensity);
@@ -50,7 +47,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
     }
 
     await LogStuff(
-        `Cleaning started at ${new Date().toLocaleString()}`,
+        `Cleaning started at ${new Date().toLocaleString()}\n`,
         "working",
         "bright-green",
         undefined,
@@ -62,6 +59,9 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
     const results: tRESULT[] = [];
 
     for (const project of workingProjects) {
+        // start time of each cleanup
+        const startTime = new Date();
+
         if (!(await CheckForPath(project))) {
             await LogStuff(
                 `Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`,
@@ -94,7 +94,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
 
             if (lockfiles.length > 0) {
                 if (lockfiles.length === 1) {
-                    console.log("");
                     await LogStuff(
                         `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
                         "package",
@@ -175,7 +174,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
     // go back home
     Deno.chdir(originalLocation);
     await LogStuff(
-        `All your ${I_LIKE_JS.MFN} Node projects have been cleaned! Back to ${originalLocation}.`,
+        `All your ${I_LIKE_JS.MFN} JavaScript projects have been cleaned! Back to ${originalLocation}.`,
         "tick",
         "bright-green",
     );

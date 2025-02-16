@@ -27,7 +27,7 @@ export function ParseDate(date: string): Date {
 }
 
 /**
- * Gets the amount of time passed between `date1` and the current date.
+ * Gets the amount of time passed between `date` and the current date.
  *
  * @export
  * @param {Date} date Date to count from. It should be earlier from now, e.g. if now it's 13:30 and passed `date` is 13:20, elapsed time is of 10 minutes.

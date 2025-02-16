@@ -16,6 +16,7 @@ import type { tValidColors } from "../types/misc.ts";
 import { Git } from "../utils/git.ts";
 import { internalGolangRequireLikeStringParser } from "../commands/interop/parse-module.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
+import { RemoveProject } from "../commands/manage.ts";
 
 /**
  * Gets all the users projects and returns their absolute root paths as a `string[]`.
@@ -727,4 +728,33 @@ export async function SpotProject(name: string): Promise<string> {
     } else {
         throw new FknError("Generic__NonFoundProject", `'${name.trim()}' (=> '${toSpot}') does not exist.`);
     }
+}
+
+/**
+ * Cleans up projects that are invalid and probably we won't be able to clean.
+ *
+ * @export
+ * @async
+ * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, ~~2 if the user doesn't remove them~~.
+ */
+export async function CleanupProjects(): Promise<0 | 1> {
+    const listOfRemovals: { project: string; issue: PROJECT_ERROR_CODES }[] = [];
+
+    for (const project of (await GetAllProjects())) {
+        const validation = await ValidateProject(project, true);
+        if (validation !== true) listOfRemovals.push({ project: project, issue: validation });
+    }
+
+    // remove duplicates
+    const result = Array.from(
+        new Map(
+            listOfRemovals.map((item) => [JSON.stringify(item), item]), // make it a string so we can actually compare it's values
+        ).values(),
+    );
+
+    if (result.length === 0) return 1;
+
+    for (const target of result) await RemoveProject(target.project, true);
+
+    return 0;
 }
