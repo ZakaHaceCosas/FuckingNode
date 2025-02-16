@@ -3,18 +3,24 @@
 This is the simplest thing ever. Just run `fuckingnode stats *`, replacing `*` with the name of a project (from the `package.json`'s `"name"` field) or the path to the project's root, and something like this will be shown to you (using CLI colors and stuff):
 
 ```txt
-personaplus@0.0.6-preapp.27 C:\Users\Zaka\personaplus
-node runtime & npm pkg manager
+@zakahacecosas/fuckingnode@3.0.0-alpha.3 C:\Users\Zaka\FuckingNode
+deno runtime & deno pkg manager
 
-Depends on 37 m*therf*ckers:
-@expo/vector-icons@^14.0.3
-@react-native-picker/picker@2.9.0
-@react-navigation/native@^7.0.0
-expo@~52.0.20
-and 32 more.
+Depends on 8 m*therf*ckers:
+@std/datetime@^0.225.3 > jsr # Dependency
+@std/fs@^1.0.13 > jsr # Dependency
+@std/jsonc@^1.0.1 > jsr # Dependency
+@std/path@^1.0.8 > jsr # Dependency
+@std/toml@^1.0.2 > jsr # Dependency
+...and 3 more.
 ```
 
-We are thinking of a valid use case that we can give to this command. Until now, it's honestly useless.
+`> jsr # Dependency` exists because
+
+a) A Deno project can have `> jsr` or `> npm` dependencies
+b) Any JavaScript project can have `# Dependencies`, `# Dev Dependencies`, or `# Build Dependencies`
+
+We are thinking of a valid use case that we can give to this command. Most likely, an "audit" similar to GitHub's "_This is how your repo compares to the recommended community standards..._". Until then this is honestly useless, unless you need to count your project's dependencies.
 
 ---
 

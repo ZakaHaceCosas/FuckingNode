@@ -18,7 +18,7 @@ There isn't any preference towards font families to be used. We recommend a `mon
 
 ## Can acronyms or abbreviations be used?
 
-They are all discouraged. If you're really going to use an acronym in a case where it's objectively better, `FkNode` should be used. Neither `FNode` nor `FN` nor `FkngNode` are recommended.
+`FkNode` is the only valid abbreviation. We encourage to use the full name instead, though.
 
 ## Colors?
 
