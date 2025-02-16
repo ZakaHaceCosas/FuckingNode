@@ -26,8 +26,8 @@ If not specified, we simply run the default `clean` task (which also runs when y
 
 ---
 
-Okay, now that we know how to get stuff from Git the FkNode way, lets commit stuff back the FkNode way.
+Okay, now we know how to speed up commits. But how to speed up text-config files?
 
 ---
 
-[Next: Extra - commit](commit.md)
+[Next: Extra - setup](setup.md)
