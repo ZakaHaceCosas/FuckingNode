@@ -25,17 +25,17 @@ export interface CF_FKNODE_SETTINGS {
      *
      * @type {number}
      */
-    logFlushFreq: number;
+    flushFreq: number;
     /**
      * Default cleaner intensity, for running `clean` with no args.
      *
      * @type {CleanerIntensity}
      */
-    defaultCleanerIntensity: CleanerIntensity;
+    defaultIntensity: CleanerIntensity;
     /**
      * User's favorite code editor.
      */
-    favoriteEditor: SUPPORTED_EDITORS;
+    favEditor: SUPPORTED_EDITORS;
 }
 
 /**

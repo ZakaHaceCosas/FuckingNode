@@ -158,7 +158,7 @@ async function main(command: string) {
 
     const intensityArg = (flags[2] && flags[2].trim() !== "" && !flags[2].trim().includes("--"))
         ? flags[2]
-        : (await GetSettings()).defaultCleanerIntensity;
+        : (await GetSettings()).defaultIntensity;
 
     const cleanerArgs: TheCleanerConstructedParams = {
         flags: {

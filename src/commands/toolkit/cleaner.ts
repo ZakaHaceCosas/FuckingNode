@@ -467,7 +467,7 @@ export async function ValidateIntensity(intensity: string): Promise<CleanerInten
     }
 
     const workingIntensity = cleanedIntensity as CleanerIntensity | "--";
-    const defaultIntensity = (await GetSettings()).defaultCleanerIntensity;
+    const defaultIntensity = (await GetSettings()).defaultIntensity;
 
     if (workingIntensity === "--") {
         return defaultIntensity;

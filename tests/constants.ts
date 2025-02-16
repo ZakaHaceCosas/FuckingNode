@@ -1,7 +1,6 @@
-import { VERSIONING } from "../src/constants.ts";
+import { DEFAULT_FKNODE_YAML, VERSIONING } from "../src/constants.ts";
 import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
 import type { ProjectEnvironment } from "../src/types/platform.ts";
-import { DEFAULT_FKNODE_YAML } from '../src/constants';
 
 // CONSTANTS
 export const CONSTANTS = {

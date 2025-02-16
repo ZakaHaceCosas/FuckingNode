@@ -138,9 +138,9 @@ export const RELEASE_URL: tURL = `https://api.github.com/repos/ZakaHaceCosas/${A
  */
 export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
     updateFreq: 5,
-    logFlushFreq: 14,
-    defaultCleanerIntensity: "normal",
-    favoriteEditor: "vscode",
+    flushFreq: 14,
+    defaultIntensity: "normal",
+    favEditor: "vscode",
 };
 
 /**

@@ -8,7 +8,7 @@ import { StringifyYaml } from "./io.ts";
 import { VERSIONING } from "../constants.ts";
 
 export async function RunScheduledTasks() {
-    const { updateFreq, logFlushFreq } = await GetSettings();
+    const { updateFreq, flushFreq } = await GetSettings();
     const scheduleFilePath: string = await GetAppPath("SCHEDULE");
     const scheduleFile: CF_FKNODE_SCHEDULE = parseYaml(await Deno.readTextFile(scheduleFilePath)) as CF_FKNODE_SCHEDULE;
 
@@ -44,7 +44,7 @@ export async function RunScheduledTasks() {
         await Deno.writeTextFile(scheduleFilePath, StringifyYaml(updatedScheduleFile));
     }
 
-    if (dates.flusher.diff >= logFlushFreq) {
+    if (dates.flusher.diff >= flushFreq) {
         const updatedScheduleFile: CF_FKNODE_SCHEDULE = {
             ...scheduleFile,
             flusher: {

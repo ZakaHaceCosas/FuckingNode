@@ -3,7 +3,8 @@ import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { FknError, GenericErrorHandler } from "../utils/error.ts";
 import { CheckForPath, JoinPaths } from "./filesystem.ts";
 import { parse as parseYaml } from "@std/yaml";
-import { StringifyYaml } from "./io.ts";
+import { ColorString, LogStuff, StringifyYaml } from "./io.ts";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 
 /**
  * Returns file paths for all config files the app uses.
@@ -131,15 +132,115 @@ export async function FreshSetup(repairSetts?: boolean): Promise<void> {
 export async function GetSettings(): Promise<CF_FKNODE_SETTINGS> {
     const path = await GetAppPath("SETTINGS");
     const stuff: CF_FKNODE_SETTINGS = await parseYaml(await Deno.readTextFile(path)) as CF_FKNODE_SETTINGS;
-    if (!stuff.logFlushFreq || !stuff.defaultCleanerIntensity || !stuff.favoriteEditor || !stuff.updateFreq) {
+    if (!stuff.flushFreq || !stuff.defaultIntensity || !stuff.favEditor || !stuff.updateFreq) {
         const newStuff: CF_FKNODE_SETTINGS = {
-            logFlushFreq: stuff.logFlushFreq ?? DEFAULT_SETTINGS.logFlushFreq,
+            flushFreq: stuff.flushFreq ?? DEFAULT_SETTINGS.flushFreq,
             updateFreq: stuff.updateFreq ?? DEFAULT_SETTINGS.updateFreq,
-            favoriteEditor: stuff.favoriteEditor ?? DEFAULT_SETTINGS.favoriteEditor,
-            defaultCleanerIntensity: stuff.defaultCleanerIntensity ?? DEFAULT_SETTINGS.defaultCleanerIntensity,
+            favEditor: stuff.favEditor ?? DEFAULT_SETTINGS.favEditor,
+            defaultIntensity: stuff.defaultIntensity ?? DEFAULT_SETTINGS.defaultIntensity,
         };
         await Deno.writeTextFile(path, StringifyYaml(newStuff));
         return newStuff;
     }
     return stuff;
+}
+
+type setting = keyof CF_FKNODE_SETTINGS;
+
+export const VALID_SETTINGS: setting[] = ["defaultIntensity", "updateFreq", "favEditor", "flushFreq"];
+
+export async function ChangeSetting(
+    setting: setting,
+    value: UnknownString,
+) {
+    const settingsPath = await GetAppPath("SETTINGS");
+    const currentSettings = await GetSettings();
+
+    switch (setting) {
+        case "defaultIntensity": {
+            if (!StringUtils.validateAgainst(value, ["normal", "hard", "hard-only", "maxim", "maxim-only"])) {
+                await LogStuff(`${value} is not valid. Enter either 'normal', 'hard', 'hard-only', or 'maxim'.`);
+                return;
+            }
+            const newSettings: CF_FKNODE_SETTINGS = {
+                ...currentSettings,
+                defaultIntensity: value,
+            };
+            await Deno.writeTextFile(
+                settingsPath,
+                StringifyYaml(newSettings),
+            );
+            break;
+        }
+        case "updateFreq": {
+            const newValue = Math.ceil(Number(value));
+            if (typeof newValue !== "number" || isNaN(newValue) || newValue <= 0) {
+                await LogStuff(`${value} is not valid. Enter a valid number greater than 0.`);
+                return;
+            }
+            const newSettings: CF_FKNODE_SETTINGS = {
+                ...currentSettings,
+                updateFreq: Math.ceil(newValue),
+            };
+            await Deno.writeTextFile(
+                settingsPath,
+                StringifyYaml(newSettings),
+            );
+            break;
+        }
+        case "favEditor": {
+            if (!StringUtils.validateAgainst(value, ["vscode", "sublime", "emacs", "atom", "notepad++", "vscodium"])) {
+                await LogStuff(`${value} is not valid. Enter either:\n'vscode', 'sublime', 'emacs', 'atom', 'notepad++', or 'vscodium'.`);
+                return;
+            }
+            const newSettings: CF_FKNODE_SETTINGS = {
+                ...currentSettings,
+                favEditor: value,
+            };
+            await Deno.writeTextFile(
+                settingsPath,
+                StringifyYaml(newSettings),
+            );
+            break;
+        }
+        case "flushFreq": {
+            const newValue = Math.ceil(Number(value));
+            if (typeof newValue !== "number" || isNaN(newValue) || newValue <= 0) {
+                await LogStuff(`${value} is not valid. Enter a valid number greater than 0.`);
+                return;
+            }
+            const newSettings: CF_FKNODE_SETTINGS = {
+                ...currentSettings,
+                flushFreq: newValue,
+            };
+            await Deno.writeTextFile(
+                settingsPath,
+                StringifyYaml(newSettings),
+            );
+            break;
+        }
+    }
+
+    await LogStuff(`Settings successfully updated! ${setting} is now ${value}`, "tick-clear");
+
+    return;
+}
+
+/**
+ * Formats user settings and logs them.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
+export async function DisplaySettings(): Promise<void> {
+    const settings = await GetSettings();
+
+    const formattedSettings = [
+        `Update frequency: Each ${ColorString(settings.updateFreq, "bright-green")} days.`,
+        `Default cleaner intensity: ${ColorString(settings.defaultIntensity, "bright-green")}.`,
+        `Favorite editor: ${ColorString(settings.favEditor, "bright-green")}.`,
+        `Auto-flush log file frequency: Each ${ColorString(settings.flushFreq, "bright-green")} days.`,
+    ].join("\n");
+
+    await LogStuff(`${ColorString("Your current settings are:", "bright-yellow")}\n---\n${formattedSettings}`, "bulb");
 }

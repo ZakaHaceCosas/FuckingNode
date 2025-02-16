@@ -11,7 +11,7 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 import { APP_NAME } from "../constants.ts";
 import { NameLockfile, ResolveLockfiles } from "./toolkit/cleaner.ts";
 
-async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favoriteEditor"]) {
+async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favEditor"]) {
     let executionCommand: "subl" | "code" | "emacs" | "notepad++" | "codium" | "atom";
 
     switch (IDE) {
@@ -155,7 +155,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
         throw new Error(`Error setting up your favorite CLI tool (${APP_NAME.CLI}) in this project! ${e}`);
     }
 
-    const favEditor = (await GetSettings()).favoriteEditor;
+    const favEditor = (await GetSettings()).favEditor;
 
     if (!(["vscode", "sublime", "emacs", "notepad++", "atom", "vscodium"].includes(favEditor))) {
         await LogStuff(`Error: ${favEditor} is not a supported editor!`, "error");

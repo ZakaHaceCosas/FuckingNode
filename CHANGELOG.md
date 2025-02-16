@@ -52,6 +52,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now `migrate` will back up your project's package file and lockfile.
 - Now error handling is more consistent (and also uses less `try-catch` code). (I just learnt that JS errors propagate up to the caller, that's why there we so many damn `catch (e) { throw e }` lines, sorry mb).
 - Now when the cleaner's done it says "cleaned all your **JavaScript** projects" instead of "Node" projects. I admit it looks nice as an "easter egg" or something referencing where we come from, but it was not intended to be that, I just forgot to change it.
+- Now `settings change <key>` uses the same keys as the config file itself, so everything makes more sense.
+  - Saw breaking changes above? One of the reasons for the config reset is that some keys were renamed so you don't type a lot in the CLI because of this change.
 
 ### Fixed
 
