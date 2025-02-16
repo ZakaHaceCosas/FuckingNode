@@ -1,5 +1,5 @@
 import { join, normalize } from "@std/path";
-import { StringUtils } from "@zakahacecosas/string-utils";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 
 /**
  * Returns `true` if a given path exists, `false` if otherwise.
@@ -49,24 +49,19 @@ export async function CheckForDir(path: string): Promise<
  * Parses a string path, to ensure string cleanness and handle things like relative paths or `--self`.
  *
  * @export
- * @param {string} target The string to parse.
- * @returns {(string)} A string with the parsed path.
+ * @async Because of stuff like `realPath`.
+ * @param {UnknownString} target The string to parse.
+ * @returns {Promise<string>} A string with the parsed path.
  */
-export async function ParsePath(target: string): Promise<string> {
+export async function ParsePath(target: UnknownString): Promise<string> {
     try {
-        if (typeof target !== "string") {
-            throw new Error("Target must be (obviously) a string.");
-        }
+        if (!StringUtils.validate(target)) throw new Error("Target must be (obviously) a string.");
 
         let workingTarget = target.trim();
         if (workingTarget.toLowerCase() === "--self") {
             workingTarget = Deno.cwd();
         } else {
-            try {
-                workingTarget = await Deno.realPath(workingTarget);
-            } catch {
-                // workingTarget;
-            }
+            workingTarget = await Deno.realPath(workingTarget);
         }
 
         const cleanEntry = normalize(workingTarget);
