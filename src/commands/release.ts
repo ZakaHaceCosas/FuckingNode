@@ -4,7 +4,6 @@ import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/pr
 import type { TheReleaserConstructedParams } from "./constructors/command.ts";
 import type { DenoPkgFile, NodePkgFile } from "../types/platform.ts";
 import { Commander } from "../functions/cli.ts";
-import { GetProjectSettings } from "../functions/projects.ts";
 import { PerformCleaning } from "./toolkit/cleaner.ts";
 import { Git } from "../utils/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
@@ -27,8 +26,9 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     const project = await SpotProject(params.project);
     const CWD = Deno.cwd();
     const env = await GetProjectEnvironment(project);
+    const { settings } = env;
+
     Deno.chdir(env.root);
-    const settings = await GetProjectSettings(project);
 
     if (env.commands.publish === "__UNSUPPORTED") {
         throw new Error(`Platform ${env.runtime} doesn't support publishing. Aborting.`);
@@ -108,7 +108,6 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     try {
         const output = await PerformCleaning(
             project,
-            true,
             true,
             true,
             true,

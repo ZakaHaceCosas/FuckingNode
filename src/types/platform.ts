@@ -1,3 +1,19 @@
+import type { FullFkNodeYaml } from "./config_files.ts";
+
+/**
+ * Understood version of a project's protection settings.
+ *
+ * @export
+ * @interface UnderstoodProjectProtection
+ */
+export interface UnderstoodProjectProtection {
+    doClean: boolean;
+    doUpdate: boolean;
+    doPrettify: boolean;
+    doLint: boolean;
+    doDestroy: boolean;
+}
+
 /**
  * Use this when you just need the name or version of a package, to avoid Node-Deno type issues.
  *
@@ -81,6 +97,12 @@ interface GenericProjectEnvironment {
      * @type {string}
      */
     root: string;
+    /**
+     * Project's settings.
+     *
+     * @type {FullFkNodeYaml}
+     */
+    settings: FullFkNodeYaml;
     /**
      * Main file (`package.json`, `deno.json`, `cargo.toml`...)
      */

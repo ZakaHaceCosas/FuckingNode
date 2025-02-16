@@ -3,7 +3,7 @@ import { Commander, CommandExists } from "../../functions/cli.ts";
 import { GetSettings } from "../../functions/config.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
-import { GetProjectEnvironment, GetProjectSettings, NameProject, SpotProject } from "../../functions/projects.ts";
+import { GetProjectEnvironment, NameProject, SpotProject, UnderstandProjectProtection } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
 import type { ProjectEnvironment, SUPPORTED_GLOBAL_LOCKFILE } from "../../types/platform.ts";
 import { FknError } from "../../utils/error.ts";
@@ -201,7 +201,6 @@ const ProjectCleaningFeatures = {
  * @async
  * @param {string} projectInQuestion
  * @param {boolean} shouldUpdate
- * @param {boolean} shouldClean
  * @param {boolean} shouldLint
  * @param {boolean} shouldPrettify
  * @param {boolean} shouldDestroy
@@ -213,7 +212,6 @@ const ProjectCleaningFeatures = {
 export async function PerformCleaning(
     projectInQuestion: string,
     shouldUpdate: boolean,
-    shouldClean: boolean,
     shouldLint: boolean,
     shouldPrettify: boolean,
     shouldDestroy: boolean,
@@ -224,21 +222,28 @@ export async function PerformCleaning(
     const motherfuckerInQuestion = await ParsePath(projectInQuestion);
     const projectName = ColorString(await NameProject(motherfuckerInQuestion, "name"), "bold");
     const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
-    const settings = await GetProjectSettings(motherfuckerInQuestion);
+    const { settings } = workingEnv;
+
+    const { doClean, doDestroy, doLint, doPrettify, doUpdate } = UnderstandProjectProtection(settings, {
+        update: shouldUpdate,
+        prettify: shouldPrettify,
+        destroy: shouldDestroy,
+        lint: shouldLint,
+    });
 
     /* "what should we do with the drunken sailor..." */
     const whatShouldWeDo: Record<
         "update" | "lint" | "pretty" | "destroy" | "commit",
         boolean
     > = {
-        update: shouldUpdate || (settings.flagless?.flaglessUpdate === true),
-        lint: shouldLint || (settings.flagless?.flaglessLint === true),
-        pretty: shouldPrettify || (settings.flagless?.flaglessPretty === true),
-        destroy: shouldDestroy || (settings.flagless?.flaglessDestroy === true),
+        update: doUpdate || (settings.flagless?.flaglessUpdate === true),
+        lint: doPrettify || (settings.flagless?.flaglessLint === true),
+        pretty: doLint || (settings.flagless?.flaglessPretty === true),
+        destroy: doDestroy || (settings.flagless?.flaglessDestroy === true),
         commit: shouldCommit || (settings.flagless?.flaglessCommit === true),
     };
 
-    if (shouldClean) {
+    if (doClean) {
         await ProjectCleaningFeatures.Clean(
             projectName,
             workingEnv,

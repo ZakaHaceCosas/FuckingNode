@@ -1,7 +1,7 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
-import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
+import { GetAllProjects, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import { FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
@@ -218,7 +218,7 @@ async function ListProjects(
     if (ignore === "limit") {
         message = `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`;
         for (const entry of list) {
-            const protection = (await GetProjectSettings(entry)).divineProtection; // array
+            const protection = (await GetProjectEnvironment(entry)).settings.divineProtection; // array
             let protectionString: string;
             if (!(Array.isArray(protection))) {
                 protectionString = "ERROR: CANNOT READ SETTINGS, CHECK YOUR FKNODE.YAML!";

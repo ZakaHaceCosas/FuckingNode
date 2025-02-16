@@ -2,7 +2,6 @@ import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheCommitterConstructedParams } from "./constructors/command.ts";
 import { Commander } from "../functions/cli.ts";
-import { GetProjectSettings } from "../functions/projects.ts";
 import { Git } from "../utils/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { FknError } from "../utils/error.ts";
@@ -15,7 +14,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
     const CWD = Deno.cwd();
     const project = await SpotProject(CWD);
     const env = await GetProjectEnvironment(project);
-    const settings = await GetProjectSettings(project);
+    const { settings } = env;
 
     const commitCmd = StringUtils.validate(settings.commitCmd) ? StringUtils.normalize(settings.commitCmd) : "__DISABLE";
 
@@ -91,7 +90,6 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
     try {
         const output = await PerformCleaning(
             project,
-            true,
             true,
             true,
             true,

@@ -3,11 +3,11 @@ import { parse as parseToml } from "@std/toml";
 import { parse as parseJsonc } from "@std/jsonc";
 import { expandGlob } from "@std/fs";
 import { APP_NAME, APP_URLs, DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
-import type { CargoPkgFile, NodePkgFile, ProjectEnvironment } from "../types/platform.ts";
+import type { CargoPkgFile, NodePkgFile, ProjectEnvironment, UnderstoodProjectProtection } from "../types/platform.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
 import { FknError } from "../utils/error.ts";
-import { type FkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
+import { type FkNodeYaml, type FullFkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import { GetAppPath } from "./config.ts";
 import { GetDateNow } from "./date.ts";
 import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
@@ -55,11 +55,11 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
  * Given a path to a project, returns it's name.
  *
  * @export
- * @param {string} path Path to the **root** of the project.
+ * @param {UnknownString} path Path to the **root** of the project.
  * @param {?"name" | "name-colorless" | "path" | "name-ver" | "all"} wanted What to return. `name` returns the name, `path` the file path, `name-ver` a `name@version` string, and `all` returns everything together.
  * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
  */
-export async function NameProject(path: string, wanted?: "name" | "name-colorless" | "path" | "name-ver" | "all"): Promise<string> {
+export async function NameProject(path: UnknownString, wanted?: "name" | "name-colorless" | "path" | "name-ver" | "all"): Promise<string> {
     const workingPath = await ParsePath(path);
     const formattedPath = ColorString(workingPath, "italic", "half-opaque");
 
@@ -160,12 +160,12 @@ export function deepMerge(
  *
  * @export
  * @async
- * @param {string} path Path to the project
- * @returns {Promise<FkNodeYaml>} A FkNodeYaml object.
+ * @param {UnknownString} path Path to the project
+ * @returns {Promise<FullFkNodeYaml>} A FullFkNodeYaml object.
  */
-export async function GetProjectSettings(
-    path: string,
-): Promise<FkNodeYaml> {
+async function GetProjectSettings(
+    path: UnknownString,
+): Promise<FullFkNodeYaml> {
     const workingPath = await ParsePath(path);
     const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
 
@@ -190,49 +190,44 @@ export async function GetProjectSettings(
 }
 
 /**
- * Wraps a bunch of functions to easily work around with fknode.yaml. See each function's JSDoc to see what they do.
+ * Tells you about the protection of a project. Returns an object where `true` means allowed and `false` means protected.
  */
-export const UnderstandProjectSettings = {
-    /**
-     * Tells you about the protection of a project. Returns an object where `true` means allowed and `false` means protected.
-     */
-    protection: (settings: FkNodeYaml, options: {
-        update: boolean;
-        prettify: boolean;
-        lint: boolean;
-        destroy: boolean;
-    }) => {
-        const protection = StringUtils.normalizeArray(
-            Array.isArray(settings.divineProtection) ? settings.divineProtection : [settings.divineProtection],
-        );
+export function UnderstandProjectProtection(settings: FkNodeYaml, options: {
+    update: boolean;
+    prettify: boolean;
+    lint: boolean;
+    destroy: boolean;
+}): UnderstoodProjectProtection {
+    const protection = StringUtils.normalizeArray(
+        Array.isArray(settings.divineProtection) ? settings.divineProtection : [settings.divineProtection],
+    );
 
-        if (!StringUtils.validate(protection[0]) || protection[0] === "disabled") {
-            return {
-                doClean: true,
-                doUpdate: options.update,
-                doPrettify: options.prettify,
-                doLint: options.lint,
-                doDestroy: options.destroy,
-            };
-        } else if (protection[0] === "*") {
-            return {
-                doClean: false,
-                doUpdate: false,
-                doPrettify: false,
-                doLint: false,
-                doDestroy: false,
-            };
-        } else {
-            return {
-                doClean: protection.includes("cleaner") ? false : true,
-                doUpdate: protection.includes("updater") ? false : options.update,
-                doPrettify: protection.includes("prettifier") ? false : options.prettify,
-                doLint: protection.includes("linter") ? false : options.lint,
-                doDestroy: protection.includes("destroyer") ? false : options.destroy,
-            };
-        }
-    },
-};
+    if (!StringUtils.validate(protection[0]) || protection[0] === "disabled") {
+        return {
+            doClean: true,
+            doUpdate: options.update,
+            doPrettify: options.prettify,
+            doLint: options.lint,
+            doDestroy: options.destroy,
+        };
+    } else if (protection[0] === "*") {
+        return {
+            doClean: false,
+            doUpdate: false,
+            doPrettify: false,
+            doLint: false,
+            doDestroy: false,
+        };
+    } else {
+        return {
+            doClean: protection.includes("cleaner") ? false : true,
+            doUpdate: protection.includes("updater") ? false : options.update,
+            doPrettify: protection.includes("prettifier") ? false : options.prettify,
+            doLint: protection.includes("linter") ? false : options.lint,
+            doDestroy: protection.includes("destroyer") ? false : options.destroy,
+        };
+    }
+}
 
 /**
  * Given a path to a project, returns `true` if the project is valid, or a message indicating if it's not a valid Node/Deno/Bun project.
@@ -471,12 +466,14 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
         : paths.node.json;
 
     const mainString: string = await Deno.readTextFile(mainPath);
+    const settings: FullFkNodeYaml = await GetProjectSettings(workingPath);
 
     const { PackageFileParsers } = FkNodeInterop;
 
     if (isGolang) {
         return {
             root: workingPath,
+            settings,
             main: {
                 path: mainPath,
                 name: "go.mod",
@@ -504,6 +501,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     if (isRust) {
         return {
             root: workingPath,
+            settings,
+
             main: {
                 path: mainPath,
                 name: "cargo.toml",
@@ -531,6 +530,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     if (isBun) {
         return {
             root: workingPath,
+            settings,
+
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -558,6 +559,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (isDeno) {
         return {
+            root: workingPath,
+            settings,
             main: {
                 path: mainPath,
                 name: pathChecks.deno.jsonc ? "deno.jsonc" : "deno.json",
@@ -571,7 +574,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             runtime: "deno",
             manager: "deno",
             hall_of_trash: trash,
-            root: workingPath,
             commands: {
                 base: "deno",
                 exec: ["deno", "run"],
@@ -586,6 +588,9 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (pathChecks.node.lockYarn) {
         return {
+            root: workingPath,
+            settings,
+
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -599,7 +604,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             runtime: "node",
             manager: "yarn",
             hall_of_trash: trash,
-            root: workingPath,
             commands: {
                 base: "yarn",
                 exec: ["yarn", "dlx"],
@@ -614,6 +618,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (pathChecks.node.lockPnpm) {
         return {
+            root: workingPath,
+            settings: await GetProjectSettings(workingPath),
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -627,7 +633,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             runtime: "node",
             manager: "pnpm",
             hall_of_trash: trash,
-            root: workingPath,
             commands: {
                 base: "pnpm",
                 exec: ["pnpm", "dlx"],
@@ -642,6 +647,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (pathChecks.node.lockNpm) {
         return {
+            root: workingPath,
+            settings: await GetProjectSettings(workingPath),
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -655,7 +662,6 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             runtime: "node",
             manager: "npm",
             hall_of_trash: trash,
-            root: workingPath,
             commands: {
                 base: "npm",
                 exec: ["npx"],

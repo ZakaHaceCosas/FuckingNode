@@ -1,6 +1,7 @@
 import { VERSIONING } from "../src/constants.ts";
 import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
 import type { ProjectEnvironment } from "../src/types/platform.ts";
+import { DEFAULT_FKNODE_YAML } from '../src/constants';
 
 // CONSTANTS
 export const CONSTANTS = {
@@ -13,6 +14,7 @@ export const CONSTANTS = {
 const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
     ONE: {
         root: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one`),
+        settings: DEFAULT_FKNODE_YAML,
         main: {
             path: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`),
             name: "package.json",

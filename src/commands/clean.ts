@@ -1,7 +1,7 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { CheckForPath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
-import { GetAllProjects, GetProjectSettings, NameProject, SpotProject, UnderstandProjectSettings } from "../functions/projects.ts";
+import { GetAllProjects, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
 import {
     PerformCleaning,
@@ -80,15 +80,6 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
             Deno.chdir(project);
 
             const lockfiles = await ResolveLockfiles(project);
-            const { doClean, doUpdate, doPrettify, doLint, doDestroy } = UnderstandProjectSettings.protection(
-                await GetProjectSettings(project),
-                {
-                    update,
-                    lint,
-                    destroy,
-                    prettify,
-                },
-            );
 
             // TODO - readd preliminary status (basically showing '... # * protected' in report and a log warning for the user)
 
@@ -100,11 +91,10 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     );
                     await PerformCleaning(
                         project,
-                        doUpdate,
-                        doClean,
-                        doLint,
-                        doPrettify,
-                        doDestroy,
+                        update,
+                        lint,
+                        prettify,
+                        destroy,
                         commit,
                         realIntensity,
                         verbose,

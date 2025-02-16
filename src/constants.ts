@@ -1,7 +1,7 @@
 import type { tURL } from "./types/misc.ts";
 import type { SemVer } from "@std/semver/types";
 import { format, parse } from "@std/semver";
-import type { CF_FKNODE_SCHEDULE, CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
+import type { CF_FKNODE_SCHEDULE, CF_FKNODE_SETTINGS, FullFkNodeYaml } from "./types/config_files.ts";
 import * as DenoJson from "../deno.json" with { type: "json" };
 import { GetDateNow } from "./functions/date.ts";
 import type { FnCPF } from "./types/platform.ts";
@@ -161,9 +161,9 @@ export const DEFAULT_SCHEDULE_FILE: CF_FKNODE_SCHEDULE = {
 /**
  * Default project settings.
  *
- * @type {FkNodeYaml}
+ * @type {FullFkNodeYaml}
  */
-export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
+export const DEFAULT_FKNODE_YAML: FullFkNodeYaml = {
     divineProtection: "disabled",
     lintCmd: "__USE_DEFAULT",
     prettyCmd: "__USE_DEFAULT",

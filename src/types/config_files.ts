@@ -70,39 +70,38 @@ export interface CF_FKNODE_SCHEDULE {
 }
 
 /**
- * fknode.yaml file for configuring individual projects
- *
- * @export
- * @interface FkNodeYaml
+ * An `fknode.yaml` file for configuring individual projects
  */
-export interface FkNodeYaml {
+export type FkNodeYaml = Partial<FullFkNodeYaml>;
+
+export interface FullFkNodeYaml {
     /**
      * Divine protection, basically to ignore stuff. Must always be an array.
      *
-     * @type {?(("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled")}
+     * @type {(("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled")}
      */
-    divineProtection?: ("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled";
+    divineProtection: ("updater" | "cleaner" | "linter" | "prettifier" | "destroyer")[] | "*" | "disabled";
     /**
      * If `--lint` is passed to `clean`, this script will be used to lint the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__USE_DEFAULT` overrides these rules (it's the default).
      *
-     * @type {?(string | "__USE_DEFAULT")}
+     * @type {(string | "__USE_DEFAULT")}
      */
-    lintCmd?: string | "__USE_DEFAULT";
+    lintCmd: string | "__USE_DEFAULT";
     /**
      * If `--pretty` is passed to `clean`, this script will be used to prettify the project. It must be a runtime script (defined in `package.json` -> `scripts`), and must be a single word (no need for "npm run" prefix). `__USE_DEFAULT` overrides these rules (it's the default).
      *
-     * @type {?(string | "__USE_DEFAULT")}
+     * @type {(string | "__USE_DEFAULT")}
      */
-    prettyCmd?: string | "__USE_DEFAULT";
+    prettyCmd: string | "__USE_DEFAULT";
     /**
      * If provided, file paths in `targets` will be removed when `clean` is called with any of the `intensities`. If not provided defaults to `maxim` intensity and `node_modules` path. Specifying `targets` _without_ `node_modules` does not override it, meaning it'll always be cleaned.
      *
-     * @type {?{
+     * @type {{
      *         intensities: (CleanerIntensity | "*")[],
      *         targets: string[]
      *     }}
      */
-    destroy?: {
+    destroy: {
         /**
          * Intensities the destroyer should run at.
          *
@@ -119,57 +118,57 @@ export interface FkNodeYaml {
     /**
      * If true, if an action that changes the code is performed (update, prettify, or destroy) and the Git workspace is clean (no uncommitted stuff), a commit will be made.
      *
-     * @type {?boolean}
+     * @type {boolean}
      */
-    commitActions?: boolean;
+    commitActions: boolean;
     /**
      * If provided, if a commit is made (`commitActions`) this will be the commit message. If not provided a default message is used. `__USE_DEFAULT` indicates to use the default.
      *
-     * @type {?(string | "__USE_DEFAULT")}
+     * @type {(string | "__USE_DEFAULT")}
      */
-    commitMessage?: string | "__USE_DEFAULT";
+    commitMessage: string | "__USE_DEFAULT";
     /**
      * If provided, uses the provided runtime script command for the updating stage, overriding the default command. Like `lintCmd` or `prettyCmd`, it must be a runtime script.
      *
-     * @type {?(string | "__USE_DEFAULT")}
+     * @type {(string | "__USE_DEFAULT")}
      */
-    updateCmdOverride?: string | "__USE_DEFAULT";
+    updateCmdOverride: string | "__USE_DEFAULT";
     /**
      * Flagless features.
      *
-     * @type {?{
-     *         flaglessUpdate?: boolean;
-     *         flaglessDestroy?: boolean;
-     *         flaglessLint?: boolean;
-     *         flaglessPretty?: boolean;
-     *         flaglessCommit?: boolean;
+     * @type {{
+     *         flaglessUpdate: boolean;
+     *         flaglessDestroy: boolean;
+     *         flaglessLint: boolean;
+     *         flaglessPretty: boolean;
+     *         flaglessCommit: boolean;
      *     }}
      */
-    flagless?: {
-        flaglessUpdate?: boolean;
-        flaglessDestroy?: boolean;
-        flaglessLint?: boolean;
-        flaglessPretty?: boolean;
-        flaglessCommit?: boolean;
+    flagless: {
+        flaglessUpdate: boolean;
+        flaglessDestroy: boolean;
+        flaglessLint: boolean;
+        flaglessPretty: boolean;
+        flaglessCommit: boolean;
     };
     /**
      * A task (run) to be executed upon running the release command.
      *
-     * @type {?string}
+     * @type {string}
      */
-    releaseCmd?: string;
+    releaseCmd: string;
     /**
      * If true, releases will always use `dry-run`.
      *
-     * @type {?boolean}
+     * @type {boolean}
      */
-    releaseAlwaysDry?: boolean;
+    releaseAlwaysDry: boolean;
     /**
      * A task (run) to be executed upon running the commit command.
      *
-     * @type {?string}
+     * @type {string}
      */
-    commitCmd?: string;
+    commitCmd: string;
 }
 
 /**
