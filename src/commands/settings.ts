@@ -104,7 +104,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
         case "change":
             if (!StringUtils.validateAgainst(secondArg, VALID_SETTINGS)) {
                 await LogStuff(
-                    "Invalid option, use 'change default-int', 'change update-freq', 'change fav-editor', or 'change flush-freq' to tweak settings.",
+                    `Invalid option, use one of these keys to tweak settings: ${VALID_SETTINGS.toString()}`,
                 );
                 return;
             }

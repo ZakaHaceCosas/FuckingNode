@@ -7,16 +7,16 @@ import type { FnCPF } from "../types/platform.ts";
 
 function StringifyDependencyRelationship(rel: FnCPF["deps"][0]["rel"]): string {
     return rel === "univ:dep"
-        ? "Dep"
+        ? "Dependency"
         : rel === "univ:devD"
-        ? "Dev dep"
+        ? "Dev Dependency"
         : rel === "js:peer"
-        ? "JS Peer dep"
+        ? "JS Peer Dependency"
         : rel === "go:ind"
-        ? "Indirect dep"
+        ? "Indirect Dependency"
         : rel === "rst:buildD"
-        ? "Rust Build dep"
-        : "?Dep";
+        ? "Rust Build Dependency"
+        : "Dependency...?";
 }
 
 export default async function TheStatistics(target: UnknownString) {

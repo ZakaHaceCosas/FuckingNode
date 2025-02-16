@@ -61,7 +61,11 @@ export async function ParsePath(target: UnknownString): Promise<string> {
         if (workingTarget.toLowerCase() === "--self") {
             workingTarget = Deno.cwd();
         } else {
-            workingTarget = await Deno.realPath(workingTarget);
+            try {
+                workingTarget = await Deno.realPath(workingTarget);
+            } catch {
+                // this NEEDS to be here for it to work
+            }
         }
 
         const cleanEntry = normalize(workingTarget);

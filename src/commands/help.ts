@@ -45,7 +45,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "kickstart",
             "<git-url> [path] [npm | pnpm | yarn | deno | bun]",
-            `Quickly clones a repo, installs deps, setups ${APP_NAME.CASED}, and opens your favorite editor.`,
+            `Quickly clones a repo inside of [path] (or current working directory/<repo-name> by default), installs deps, setups ${APP_NAME.CASED}, and launches your favorite editor.`,
         ],
         [
             "settings",
@@ -57,9 +57,21 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "<target>",
             "Migrates a project from one package manager to another and reinstalls deps.",
         ],
-        ["upgrade", null, "Checks for updates."],
-        ["about", null, "Shows info about the app."],
-        ["--version, -v", null, "Shows current version."],
+        [
+            "upgrade",
+            null,
+            "Checks for updates.",
+        ],
+        [
+            "about",
+            null,
+            "Shows info about the app.",
+        ],
+        [
+            "--version, -v",
+            null,
+            "Shows current version.",
+        ],
         [
             "--help, -h",
             "[command]",
@@ -195,6 +207,13 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "Exports a project's FnCPF (an internal file used by us to work with them) so you can see it.\n  Defaults to .yaml format, use '--json' to use JSONC format instead.\n  Add '--cli' to also show the output file in your terminal.",
         ],
     ]);
+    const SETUP_OPTIONS = formatCmd([
+        [
+            "setup",
+            "<project-path> <setup>",
+            "Allows you to 'add a setup' to your project (setup = preset text-config file).\n  For now, .gitignore, tsconfig.json, and of course fknode.yaml setups exist.\n  Run 'setup' with no args to see the list of available options.",
+        ],
+    ]);
     const COMPAT_OPTIONS = formatCmd([
         [
             "compat",
@@ -269,6 +288,10 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             break;
         case "export":
             await LogStuff(EXPORT_OPTIONS);
+            await pathReminder();
+            break;
+        case "setup":
+            await LogStuff(SETUP_OPTIONS);
             await pathReminder();
             break;
         case "upgrade":
