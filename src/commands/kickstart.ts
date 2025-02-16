@@ -51,7 +51,7 @@ async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favoriteEditor"]) {
 export default async function TheKickstarter(params: TheKickstarterConstructedParams) {
     const { gitUrl, path, manager } = params;
 
-    if (!gitUrl) throw new Error("Error: Git URL is required!");
+    if (!StringUtils.validate(gitUrl)) throw new Error("Error: Git URL is required!");
 
     const gitUrlRegex = /^(https?:\/\/.*?\/)([^\/]+)\.git$/;
     const regexMatch = gitUrl.match(gitUrlRegex);
@@ -61,7 +61,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
     if (!projectName) throw new Error(`RegEx Error: Can't spot the project name in ${gitUrl}`);
 
     const cwd = Deno.cwd();
-    const clonePath: string = path ? await ParsePath(path) : await ParsePath(await JoinPaths(cwd, projectName));
+    const clonePath: string = StringUtils.validate(path) ? await ParsePath(path) : await ParsePath(await JoinPaths(cwd, projectName));
 
     const clonePathValidator = await CheckForDir(clonePath);
     if (clonePathValidator === "ValidButNotEmpty") {

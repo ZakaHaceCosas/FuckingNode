@@ -21,8 +21,6 @@ const deprecationNotices = [
 ];
 
 export default async function TheSurrenderer(params: TheSurrendererConstructedParams) {
-    if (!StringUtils.validate(params.project)) throw new Error("You didn't pass a project name!");
-
     const project = await SpotProject(params.project);
 
     if (

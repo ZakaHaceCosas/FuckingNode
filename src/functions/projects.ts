@@ -15,7 +15,7 @@ import { FkNodeInterop } from "../commands/interop/interop.ts";
 import type { tValidColors } from "../types/misc.ts";
 import { Git } from "../utils/git.ts";
 import { internalGolangRequireLikeStringParser } from "../commands/interop/parse-module.ts";
-import { StringUtils } from "@zakahacecosas/string-utils";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 import { RemoveProject } from "../commands/manage.ts";
 
 /**
@@ -697,10 +697,17 @@ export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
  *
  * @export
  * @async
- * @param {string} name Project's name, path, or `--self`.
+ * @param {UnknownString} name Project's name, path, or `--self`.
  * @returns {Promise<string>}
  */
-export async function SpotProject(name: string): Promise<string> {
+export async function SpotProject(name: UnknownString): Promise<string> {
+    if (!StringUtils.validate(name) || !name) {
+        throw new FknError(
+            "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+            `Either didn't provide a project name / path or the CLI failed internally somewhere`,
+        );
+    }
+
     const workingProject = await ParsePath(name);
     const allProjects = await GetAllProjects();
     if (allProjects.includes(workingProject)) {

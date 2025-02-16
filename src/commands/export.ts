@@ -1,4 +1,3 @@
-import { StringUtils } from "@zakahacecosas/string-utils";
 import type { TheExporterConstructedParams } from "./constructors/command.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import { JoinPaths } from "../functions/filesystem.ts";
@@ -8,8 +7,6 @@ import { GetDateNow } from "../functions/date.ts";
 
 export default async function TheExporter(params: TheExporterConstructedParams) {
     const { project } = params;
-
-    if (!StringUtils.validate(project)) throw new Error(`Project not given!`);
 
     const workingProject = await SpotProject(project);
     const env = await GetProjectEnvironment(workingProject);

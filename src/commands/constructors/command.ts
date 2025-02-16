@@ -119,21 +119,21 @@ export interface TheKickstarterConstructedParams {
     /**
      * URL of the Git repository.
      *
-     * @type {string}
+     * @type {UnknownString}
      */
-    gitUrl: string;
+    gitUrl: UnknownString;
     /**
      * Where to clone.
      *
-     * @type {?string}
+     * @type {?UnknownString}
      */
-    path?: string;
+    path?: UnknownString;
     /**
      * Package manager to be used, if you want to override upstream repo's manager.
      *
-     * @type {?string}
+     * @type {?UnknownString}
      */
-    manager?: string;
+    manager?: UnknownString;
 }
 
 /**

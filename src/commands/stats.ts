@@ -1,3 +1,4 @@
+import type { UnknownString } from "@zakahacecosas/string-utils";
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
@@ -18,7 +19,7 @@ function StringifyDependencyRelationship(rel: FnCPF["deps"][0]["rel"]): string {
         : "?Dep";
 }
 
-export default async function TheStatistics(target: string) {
+export default async function TheStatistics(target: UnknownString) {
     const project = await SpotProject(target);
     const env = await GetProjectEnvironment(project);
     const name = await NameProject(project, "all");

@@ -110,8 +110,8 @@ function hasFlag(flag: string, allowShort: boolean, firstOnly: boolean = false):
 }
 
 if (hasFlag("help", true)) {
-    await init();
     try {
+        await init();
         await TheHelper({ query: flags[1] });
         Deno.exit(0);
     } catch (e) {
@@ -140,6 +140,7 @@ if (hasFlag("experimental-audit", false)) {
 }
 
 if (hasFlag("version", true, true) && !flags[1]) {
+    await init();
     await LogStuff(FULL_NAME, "bulb", "bright-green");
     Deno.exit(0);
 }
@@ -207,9 +208,9 @@ async function main(command: string) {
                 break;
             case "kickstart":
                 await TheKickstarter({
-                    gitUrl: flags[1] ?? "",
-                    path: flags[2] ?? "",
-                    manager: flags[3] ?? "",
+                    gitUrl: flags[1],
+                    path: flags[2],
+                    manager: flags[3],
                 });
                 break;
             case "settings":
@@ -282,7 +283,7 @@ async function main(command: string) {
                 });
                 break;
             case "stats":
-                await TheStatistics(flags[1] ?? "");
+                await TheStatistics(flags[1]);
                 break;
             case "documentation":
             case "docs":

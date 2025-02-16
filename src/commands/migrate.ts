@@ -92,10 +92,8 @@ async function handler(
 export default async function TheMigrator(params: TheMigratorConstructedParams): Promise<void> {
     const { projectPath, wantedManager } = params;
 
-    if (!StringUtils.validate(projectPath)) throw new Error("No project (path) specified.");
-    if (!StringUtils.validate(wantedManager)) throw new Error("No target (pnpm, npm, yarn) specified.");
+    if (!StringUtils.validate(wantedManager)) throw new Error("No target (pnpm, npm, yarn, deno, bun) specified.");
 
-    const project = StringUtils.normalize(projectPath);
     const desiredManager = StringUtils.normalize(wantedManager);
 
     const MANAGERS = ["pnpm", "npm", "yarn", "deno", "bun"];
@@ -105,7 +103,7 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
 
     const cwd = Deno.cwd();
 
-    const workingProject = await SpotProject(project);
+    const workingProject = await SpotProject(projectPath);
     const workingEnv = await GetProjectEnvironment(workingProject);
 
     if (!MANAGERS.includes(workingEnv.manager)) {

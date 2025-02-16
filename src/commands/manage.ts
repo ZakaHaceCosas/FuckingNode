@@ -6,7 +6,7 @@ import TheHelper from "./help.ts";
 import { FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
-import { StringUtils } from "@zakahacecosas/string-utils";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 
 /**
  * Adds a new project.
@@ -122,22 +122,15 @@ export async function AddProject(
  * Removes a project.
  *
  * @async
- * @param {string} entry Path to the project.
+ * @param {UnknownString} entry Path to the project.
  * @returns {Promise<void>}
  */
 export async function RemoveProject(
-    entry: string | null,
+    entry: UnknownString,
     silent: boolean = false,
 ): Promise<void> {
-    if (!entry) {
-        throw new FknError(
-            "Manager__ProjectInteractionInvalidCauseNoPathProvided",
-            "You didn't provide a path.",
-        );
-    }
-
     try {
-        const workingEntry = await SpotProject(entry.trim());
+        const workingEntry = await SpotProject(entry);
 
         const list = await GetAllProjects(false);
         const index = list.indexOf(workingEntry);
@@ -175,7 +168,7 @@ export async function RemoveProject(
     } catch (e) {
         if (e instanceof FknError && e.code === "Generic__NonFoundProject") {
             await LogStuff(
-                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${await ParsePath(entry)}`,
+                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${entry} (=> ${entry ? await ParsePath(entry) : "undefined?"})`,
                 "error",
             );
             return;

@@ -76,6 +76,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed how workspaces are shown to the user when found while adding a project.
 - Fixed some minor issues with `clean`.
 - Fixed FknError `Generic__NonFoundProject` not showing the name inputted (showing instead `trim function`-whatever).
+- Fixed FknError `Generic__NonFoundProject` showing up when you pass an empty string as the project (now `Manager__ProjectInteractionInvalidCauseNoPathProvided` shows up instead).
 - Fixed `audit` experiment not properly handling vulnerability-less projects (showing `0.00% risk factor` instead of a "no vulns found" message as it should).
 - Fixed `audit` showing an empty report table when no projects are vulnerable.
 - Fixed `audit` using workspace flags in all npm projects, making workspace-less projects fail.

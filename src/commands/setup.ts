@@ -137,7 +137,7 @@ const visibleSetups = setups.map(({ name, desc, seek }) => ({
 }));
 
 export default async function TheSetuper(params: TheSetuperConstructedParams) {
-    if (!StringUtils.validate(params.setup) || !StringUtils.validate(params.project)) {
+    if (!StringUtils.validate(params.setup)) {
         await LogStuff(StringUtils.table(visibleSetups));
         await LogStuff(
             "You either didn't provide a project / target setup or provided invalid ones, so up here are all possible setups.",
@@ -145,7 +145,7 @@ export default async function TheSetuper(params: TheSetuperConstructedParams) {
         return;
     }
 
-    const project = await SpotProject(StringUtils.normalize(params.project));
+    const project = await SpotProject(params.project);
     const env = await GetProjectEnvironment(project);
     const desiredSetup = StringUtils.normalize(params.setup, true);
     const setupToUse = setups.find((s) => (StringUtils.normalize(s.name, true)) === desiredSetup);
