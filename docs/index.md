@@ -23,7 +23,7 @@ hide:
 
   ---
 
-  Works with any NodeJS package manager. DenoJS and BunJS are partially supported too.
+  Works with any NodeJS, Deno, or BunJS project. Even Go and Rust are partially supported![^1]
 
   [:octicons-arrow-right-24: Cross-platform support](manual/cross-runtime.md)
 
@@ -56,21 +56,24 @@ hide:
 - [x] automated prettying of JS projects
 - [x] automated removal of unneeded files (e.g. dist/, out/...)
 - [x] automated commit of lint / prettify / update changes in your code
-- [x] automated release of npm / jsr packages
+- [x] automated release / update process of npm / jsr packages
+- [x] automated cloning of a repo, installation of dependencies, and opening of your favorite editor for a project
+- [x] automated migration from one package manager to another (e.g. npm -> pnpm) or even from one runtime to another (Node/npm -> Bun)
 
 \- **from a single command.** It's not magic, it's _F\*ckingNode_—and that name is shipping to production.
 
 Plus other features like:
 
-- [x] automated npm / jsr package release process, by running all code maintenance tasks, creating a git tag, committing all changes, bumping version from package file, and publishing to npm / jsr; from a single command
-- [x] automated kickstart of a project, by cloning a repo, installing dependencies, and opening of your favorite editor; from a single command
-- [x] automated migration from one package manager to another (e.g. npm -> pnpm) and dependency installation, from a single command
-- [x] for "storage emergencies", automated removal of entire `node_modules` across all of your projects (you guessed it, from a single command)
+- [x] a security audit assistant that analyzes vulnerabilities and tells you if they _do_ affect your project or can be safely ignored, from a single command
+- [x] addition of a pre-configured `tsconfig.json` or `.gitignore` file for your project, from a single command
+- [x] for "storage emergencies", automated removal of entire `node_modules` across all of your projects, from, you guessed it, single command
 
 And that's it for now.
 
 ## Learn to use this beauty
 
-[Usage manual](manual/index.md){ .md-button .md-button--primary }
+[Get started now!](manual/index.md#tldr-for-getting-started-as-soon-as-possible){ .md-button .md-button--primary }
+[Full usage manual](manual/install.md){ .md-button }
 
-This website is work in progress, some pages are missing and will be done later on.
+[^1]:
+    Platform support may be limited outside of the NodeJS ecosystem. Run `fuckingnode compat` once installed or head to [the compatibility page](learn/cross-runtime-support.md) to learn more.

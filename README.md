@@ -29,7 +29,7 @@ DenoJS, BunJS, and even Golang and Rust are also (partially) supported (_see [Cr
 
 **FuckingNode is a CLI tool** (not a CLI-ish npm package) that automates and simplifies **cleaning**, **linting**, and **prettifying** JS or TS projects, **releasing** npm / jsr **packages**, **destroying generated artifacts & caches**, <!-- **understanding security audits**, --> and also gives you additional tools for better Git committing, project cloning, and more.
 
-All of that thanks to FuckingNode—and that name is shipping to production.
+It's not magic, it's FuckingNode—and that name is shipping to production.
 
 ### Usage
 
