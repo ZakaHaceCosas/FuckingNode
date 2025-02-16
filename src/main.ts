@@ -23,6 +23,7 @@ import type { TheCleanerConstructedParams } from "./commands/constructors/comman
 import { RunScheduledTasks } from "./functions/schedules.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { CleanupProjects } from "./functions/projects.ts";
+import TheSetuper from "./commands/setup.ts";
 
 // error handler for v2 -> v3 migration
 // NOTE: remove when we get to 3.1 or so
@@ -255,6 +256,14 @@ async function main(command: string) {
                     alternative: flags[3],
                     learnMoreUrl: flags[4],
                     isGitHub: hasFlag("github", false) || hasFlag("gh", false),
+                });
+                break;
+            case "setup":
+            case "configure":
+            case "preset":
+                await TheSetuper({
+                    project: flags[1],
+                    setup: flags[2],
                 });
                 break;
             case "export":

@@ -26,6 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - `publish` is allowed as an alias to the command.
 - Added a **new command** `commit (message) [branch] [--push]` to run FuckingNode's maintenance task and any other task of your choice before committing, and making the commit only if those tasks succeed.
 - Added a **new command** `surrender (project) [message] [alternative] [learn-more-url] [--github]` to deprecate a project (automatically add a deprecation notice, update dependencies one last time, commit and push all changes, and once the project's pushed, remove locally).
+- Added a **new command** `setup (project) (template)` to automatically add a template `tsconfig.json` or `.gitignore` file, with more templates to be added. `fknode.yaml` templates exist as well, of course.
 - Added a **new command** `something-fucked-up` to completely reset all internal settings except for your project list.
 - Added a **new command** `compat (feature)` to show overall compatibility, or compatibility of a specific feature if provided, of the CLI across environments (NodeJS, Bun, Go...).
 - Added Bun and Deno support for `migrate` feature.

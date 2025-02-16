@@ -185,7 +185,7 @@ export interface TheExporterConstructedParams {
      */
     project: UnknownString;
     /**
-     * Whether to use JSON or not.
+     * Whether to use JSON or not. If not, YAML is used.
      *
      * @type {boolean}
      */
@@ -280,4 +280,26 @@ export interface TheSurrendererConstructedParams {
      * @type {?boolean}
      */
     isGitHub?: boolean;
+}
+
+/**
+ * The Setuper
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheSetuperConstructedParams
+ */
+export interface TheSetuperConstructedParams {
+    /**
+     * Project to setup.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * Configuration to use.
+     *
+     * @type {UnknownString}
+     */
+    setup: UnknownString;
 }

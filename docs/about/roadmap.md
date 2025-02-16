@@ -15,16 +15,14 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
   - [x] `fuckingnode commit "message"` to automatically run our maintenance task and custom commands before making a Git commit and only committing if they all succeed. With the "Shorter commands" goal, it could be something like `fkcommit "message"`.
   - [x] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).
   - [x] `fuckingnode surrender <project>` to automatically add a generic deprecation message to the README.md file from the project's root (if any), give the project a last maintenance, commit everything, push it, and once pushed, removing the entire project's folder from the filesystem and the project list.
-  - [ ] `fuckingnode setup <project>` to `REDACTED`.
+  - [x] `fuckingnode setup <project> <setup>` to automatically add preset `tsconfig.json`, `.gitignore`, and `fknode.yaml` files to a project.
   - [x] `fuckingnode compat` to show cross-runtime compatibility without the need to open the browser.
-- [ ] Better installer
+- [x] Better installer
   - [x] Revamped `.ps1` based installer for Windows.
   - [x] New `.sh` based installed for mac and Linux.
-- [ ] Better migration feature.
-  - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
-  - [x] Cross-runtime migration.
-    - [x] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
-    - [x] Deno.
+- [x] Cross-runtime migration.
+  - [x] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
+  - [x] Deno.
 - [ ] Stabilize `audit` feature and support it everywhere NodeJS.
   - [ ] Stabilize it
     - [ ] Fix known issues (see TODO.md at repository's `v3` branch).
@@ -44,7 +42,6 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
   - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [x] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [x] Better error handling.
-- [ ] Improve `fknode.yaml`
 - [x] **Cross-platform support!**
   - [x] FnCPF (FuckingNode CommonPackageFile)
     - [x] Internal generation
@@ -62,6 +59,11 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
   - [x] Linter
   - [x] Prettifier
   - [ ] Auditer (this is a bit special, you'll see later on)
+
+### Version 3.1
+
+- [ ] Better migration feature.
+  - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
 
 ---
 
