@@ -1,10 +1,11 @@
 import { APP_NAME, DEFAULT_SCHEDULE_FILE, DEFAULT_SETTINGS, I_LIKE_JS } from "../constants.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { FknError, GenericErrorHandler } from "../utils/error.ts";
-import { CheckForPath, JoinPaths } from "./filesystem.ts";
+import { BulkRemoveFiles, CheckForPath, JoinPaths } from "./filesystem.ts";
 import { parse as parseYaml } from "@std/yaml";
 import { ColorString, LogStuff, StringifyYaml } from "./io.ts";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
+import { format } from "@std/fmt/bytes";
 
 /**
  * Returns file paths for all config files the app uses.
@@ -149,10 +150,19 @@ type setting = keyof CF_FKNODE_SETTINGS;
 
 export const VALID_SETTINGS: setting[] = ["defaultIntensity", "updateFreq", "favEditor", "flushFreq"];
 
+/**
+ * Changes a given user setting to a given value.
+ *
+ * @export
+ * @async
+ * @param {setting} setting Setting to change.
+ * @param {UnknownString} value Value to set it to.
+ * @returns {Promise<void>}
+ */
 export async function ChangeSetting(
     setting: setting,
     value: UnknownString,
-) {
+): Promise<void> {
     const settingsPath = await GetAppPath("SETTINGS");
     const currentSettings = await GetSettings();
 
@@ -243,4 +253,71 @@ export async function DisplaySettings(): Promise<void> {
     ].join("\n");
 
     await LogStuff(`${ColorString("Your current settings are:", "bright-yellow")}\n---\n${formattedSettings}`, "bulb");
+}
+
+/**
+ * Flushes configuration files.
+ *
+ * @export
+ * @async
+ * @param {UnknownString} target What to flush.
+ * @param {boolean} force If true no confirmation prompt will be shown.
+ * @param {boolean} [silent=false] If true no success message will be shown.
+ * @returns {Promise<void>}
+ */
+export async function FlushConfigFiles(target: UnknownString, force: boolean, silent: boolean = false): Promise<void> {
+    if (!StringUtils.validateAgainst(target, ["logs", "projects", "schedules", "errors", "all"])) {
+        await LogStuff(
+            "Specify what to flush. Either 'logs', 'projects', 'schedules', 'errors', or 'all'.",
+            "warn",
+        );
+        return;
+    }
+
+    let file: string[];
+
+    switch (target) {
+        case "logs":
+            file = [await GetAppPath("LOGS")];
+            break;
+        case "projects":
+            file = [await GetAppPath("MOTHERFKRS")];
+            break;
+        case "schedules":
+            file = [await GetAppPath("SCHEDULE")];
+            break;
+        case "errors":
+            file = [await GetAppPath("ERRORS")];
+            break;
+        case "all":
+            file = [
+                await GetAppPath("LOGS"),
+                await GetAppPath("MOTHERFKRS"),
+                await GetAppPath("SCHEDULE"),
+                await GetAppPath("ERRORS"),
+            ];
+            break;
+    }
+
+    const fileSize = typeof file === "string"
+        ? (await Deno.stat(file)).size
+        : (await Promise.all(file.map((item) =>
+            Deno.stat(item).then((s) => {
+                return s.size;
+            })
+        ))).reduce((acc, num) => acc + num, 0);
+
+    if (
+        !force &&
+        !(await LogStuff(
+            `Are you sure you want to clean your ${target} file? You'll recover ${format(fileSize)}.`,
+            "what",
+            undefined,
+            true,
+        ))
+    ) return;
+
+    await BulkRemoveFiles(file);
+    if (!silent) await LogStuff("That worked out!", "tick-clear");
+    return;
 }

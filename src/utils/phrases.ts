@@ -1,14 +1,12 @@
-// i spent my time writing all of this instead of studying
-// bruh
-
 /**
  * This file contains random phrases for the about page. You're not supposed to edit it, however funny additions are always welcome :).
+ * Some of these are the kind of jokes only some people (mostly friends of mine) understand. Others are just really random (but real) phrases. But hey, any funny addition is, as I said, welcome.
+ *
+ * (bruh i spent my time writing all of this instead of studying)
  */
 
 import { APP_NAME, I_LIKE_JS } from "../constants.ts";
 
-// some of these are jokes only me and some people (mostly friends) will get
-// others are just really random (but real) phrases
 const internalJokes = [
     "Dima definitely approves", // indeed he does
     "Sokora Seal of Approval", // and i'm proud of it
@@ -16,7 +14,7 @@ const internalJokes = [
     "(not) powered by Vuelto <https://vuelto.pp.ua/>", // rewrite to Vuelto coming 2026
     "Proudly running on anything but a FireBlitz server", // those who know :skull:
     "not made in germany", // those who know :skull:
-    `(it's called like this because node is ${I_LIKE_JS.FKN} annoying, not because i ${I_LIKE_JS.FK} it)`, // (someone really told me the 2nd one)
+    `(it's named this way because Node is ${I_LIKE_JS.FKN} annoying, not because I ${I_LIKE_JS.FK}ed it)`, // (someone really told me the 2nd one)
     "Proudly made by ZakaHaceCosas (translates to 'ZakaMakesStuff')", // YOO
     "Proudly developed in Spain (the S is silent)", // elections here don't work, i swear
     "i should be studying chemistry and i'm writing random phrases for this thing", // real btw
@@ -31,7 +29,7 @@ const internalQuotes = [
     "THE DAY OF Ws - serge", // that was a good day
     "lmfao - serge", // such a quote is worth a book
     "am jok - serge", // hes jok
-    "pelase dont kil - serge",
+    "please don't kil - serge",
     "shork thinking its smol fish crushes goose!!!! - serge",
     "it's sokover", // from the creators of it's joever (not)
 ];

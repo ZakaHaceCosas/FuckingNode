@@ -1,7 +1,6 @@
-import { Flush } from "../commands/settings.ts";
 import TheUpdater from "../commands/updater.ts";
 import type { CF_FKNODE_SCHEDULE } from "../types/config_files.ts";
-import { GetAppPath, GetSettings } from "./config.ts";
+import { FlushConfigFiles, GetAppPath, GetSettings } from "./config.ts";
 import { GetDateNow, ParseDate } from "./date.ts";
 import { parse as parseYaml } from "@std/yaml";
 import { StringifyYaml } from "./io.ts";
@@ -51,7 +50,7 @@ export async function RunScheduledTasks() {
                 lastFlush: GetDateNow(),
             },
         };
-        await Flush("logs", true, true);
+        await FlushConfigFiles("logs", true, true);
         await Deno.writeTextFile(scheduleFilePath, StringifyYaml(updatedScheduleFile));
     }
 }

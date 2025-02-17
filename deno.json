@@ -52,6 +52,7 @@
     },
     "imports": {
         "@std/datetime": "jsr:@std/datetime@^0.225.3",
+        "@std/fmt": "jsr:@std/fmt@^1.0.5",
         "@std/fs": "jsr:@std/fs@^1.0.13",
         "@std/jsonc": "jsr:@std/jsonc@^1.0.1",
         "@std/path": "jsr:@std/path@^1.0.8",
