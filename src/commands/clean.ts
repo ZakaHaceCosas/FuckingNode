@@ -3,14 +3,7 @@ import { CheckForPath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
-import {
-    PerformCleaning,
-    PerformHardCleanup,
-    PerformMaximCleanup,
-    ResolveLockfiles,
-    ShowReport,
-    ValidateIntensity,
-} from "./toolkit/cleaner.ts";
+import { PerformCleaning, PerformHardCleanup, PerformMaximCleanup, ResolveLockfiles, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { GetElapsedTime } from "../functions/date.ts";
 

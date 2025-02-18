@@ -65,7 +65,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
 
     const clonePathValidator = await CheckForDir(clonePath);
     if (clonePathValidator === "ValidButNotEmpty") {
-        throw new Error(`${clonePath} is not empty! Stuff would break if we tried to kickstart with this path, so choose another one!`);
+        throw new Error(`${clonePath} is not empty! Stuff may break if we kickstart to this path, so choose another one!`);
     }
     if (clonePathValidator === "NotDir") {
         throw new Error(`${path} is not a directory...`);

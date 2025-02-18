@@ -303,3 +303,25 @@ export interface TheSetuperConstructedParams {
      */
     setup: UnknownString;
 }
+
+/**
+ * The Auditer
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheAuditerConstructedParams
+ */
+export interface TheAuditerConstructedParams {
+    /**
+     * Project to audit.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * If true, stricter criteria will be used. Does not affect questions, just the math done for risk calculation.
+     *
+     * @type {boolean}
+     */
+    strict: boolean;
+}

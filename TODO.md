@@ -15,18 +15,13 @@
 - [ ] Cleanup the codebase (it's getting kinda messy ngl).
 - [ ] Finish up CONTRIBUTING.md
   - [ ] Follow my own f\*cking guidelines, there are different ways of coding mixed up in the same project :skull:.
-
-## Random ideas
-
-- [x] macOS and Linux install scripts.
-- [x] A shorthand for the CLI, like "`fknode`", that automatically runs `clean` with the default intensity.
 - [ ] ~~Actually write some f\*cking tests.~~ (not happening)
 
 ## Docs
 
 self-reminders:
 
-1. flagless features require _by design_ specifying a command - e.g., `clean -- --lint` will default to ESLint, but in projects that have `flaglessLint: true` it won't, it'll directly check for `lintCmd` or skip. same applies for other settings. this is because of how `FkNodeYaml` is internally designed.
+~~1. flagless features require _by design_ specifying a command - e.g., `clean -- --lint` will default to ESLint, but in projects that have `flaglessLint: true` it won't, it'll directly check for `lintCmd` or skip. same applies for other settings. this is because of how `FkNodeYaml` is internally designed.~~
 
 ## Known issues
 
@@ -34,3 +29,5 @@ self-reminders:
 - [ ] TMP dir not removed never because it's being used (we gotta schedule it somehow)
 - [ ] Audit tags indirect vulnerabilities as direct (not priority)
   - [ ] Because of this, fixed version of the _vulnerable_ package is sometimes set to the fixed version of a _different_ package (for example, a vulnerability in `body-parser` gets the fixed version of `express` set as _it's own_ fixed version). **Not a problem as of now, but for future (v3) plans I have, this needs to get resolved.**
+- [ ] Most `TODO` comments out there
+- [ ] Whatever the hell happened that made me write [this](#docs) (it makes no sense that flagless features skip defaults? idk if they do that i gotta check)

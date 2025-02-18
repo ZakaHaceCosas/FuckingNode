@@ -7,14 +7,14 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 
 export const Git = {
     /**
-     * Checks if a local repository has uncommitted changes or not. Returns `true` if there ARE uncommitted changes, and `false` if otherwise.
+     * Checks if a local repository has uncommitted changes or not. Returns `true` if you CAN commit (there are no uncommitted changes) and `false` if otherwise.
      *
      * @export
      * @async
      * @param {string} path Path to the repo, or project name.
      * @returns {Promise<boolean>}
      */
-    IsWorkingTreeClean: async (path: string): Promise<boolean> => {
+    CanCommit: async (path: string): Promise<boolean> => {
         try {
             const resolvedPath = await SpotProject(path);
 
@@ -326,7 +326,9 @@ export const Git = {
             const current = getBranchesOutput.stdout.match(/^\* (.+)$/m)![1]!;
             return {
                 current,
-                all: StringUtils.sortAlphabetically(StringUtils.softlyNormalizeArray(getBranchesOutput.stdout.replace("*", "").split("\n"))),
+                all: StringUtils.sortAlphabetically(
+                    StringUtils.softlyNormalizeArray(getBranchesOutput.stdout.replace("*", "").split("\n")),
+                ),
             };
         } catch (e) {
             await LogStuff(

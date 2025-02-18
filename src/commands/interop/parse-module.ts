@@ -19,7 +19,8 @@ export const internalValidators = {
 
     // deno-lint-ignore no-explicit-any
     isPkgFileGolang: (obj: any): obj is GolangPkgFile => {
-        return obj && typeof obj === "object" && obj.module && StringUtils.validate(obj.module) && obj.go && StringUtils.validate(obj.go);
+        return obj && typeof obj === "object" && obj.module && StringUtils.validate(obj.module) && obj.go &&
+            StringUtils.validate(obj.go);
     },
 
     // TODO - JS pkg files can lack name, ver, or even both (deno init only adds a tasks field, which can also be missing)
@@ -309,7 +310,10 @@ export const Parsers = {
 
                 Object.values(parsedContent.imports ?? {}).map((v) => {
                     const t = v.match(denoImportRegex); // Directly use the match result
-                    if (t && t.groups && t.groups["package"] && t.groups["version"] && ["npm", "jsr"].includes(t.groups["source"] ?? "")) {
+                    if (
+                        t && t.groups && t.groups["package"] && t.groups["version"] &&
+                        ["npm", "jsr"].includes(t.groups["source"] ?? "")
+                    ) {
                         deps.push({
                             name: t.groups["package"], // Scope/package
                             ver: t.groups["version"], // Version

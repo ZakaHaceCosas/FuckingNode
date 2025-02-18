@@ -50,7 +50,8 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
     const learnMore = valid(params.learnMoreUrl)
         ? `\n\nYou may find here additional information regarding this project's deprecation: ${params.learnMoreUrl.trim()}`
         : "";
-    const bareMessage = deprecationNotices[Math.floor(Math.random() * deprecationNotices.length)] + note + alternatives + learnMore +
+    const bareMessage = deprecationNotices[Math.floor(Math.random() * deprecationNotices.length)] + note + alternatives +
+        learnMore +
         `\n\n###### This project was _automatically deprecated_ using the ${FULL_NAME} CLI utility (found at [this repo](${APP_URLs.REPO})), and this message was auto-generated based on their input - so if something feels off, it might be because of that. Below proceeds the old README from this project, unedited\n${
             "-".repeat(30)
         }`;
@@ -97,7 +98,7 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
 
     if (commitTwo === 1) throw new Error("Error committing README changes.");
 
-    await FkNodeInterop.Features.Update(env, true, "__USE_DEFAULT");
+    await FkNodeInterop.Features.Update({ env, verbose: true, script: "__USE_DEFAULT" });
 
     const commitThree = await Git.Commit(
         project,
@@ -110,7 +111,9 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
 
     const finalPush = await Git.Push(project, (await Git.GetBranches(project)).current);
 
-    if (finalPush === 1) throw new Error("Error pushing changes (ERROR SHOULD APPEAR ABOVE THIS, OPEN A GITHUB ISSUE OTHERWISE).");
+    if (finalPush === 1) {
+        throw new Error("Error pushing changes (ERROR SHOULD APPEAR ABOVE THIS, OPEN A GITHUB ISSUE OTHERWISE).");
+    }
 
     await LogStuff("Project deprecated successfully, sir.", "comrade", "red");
     const rem = await LogStuff(

@@ -36,7 +36,9 @@ function CompileApp(): void {
     for (const CMD of ALL_COMMANDS) {
         const process = CMD.spawn();
         process.status.then((status) => {
-            console.log(status.success ? `Something went right` : `Something went wrong: ${status.code} / ${status.signal?.toString()}`);
+            console.log(
+                status.success ? `Something went right` : `Something went wrong: ${status.code} / ${status.signal?.toString()}`,
+            );
         });
     }
 }

@@ -200,7 +200,9 @@ export async function ChangeSetting(
         }
         case "favEditor": {
             if (!StringUtils.validateAgainst(value, ["vscode", "sublime", "emacs", "atom", "notepad++", "vscodium"])) {
-                await LogStuff(`${value} is not valid. Enter either:\n'vscode', 'sublime', 'emacs', 'atom', 'notepad++', or 'vscodium'.`);
+                await LogStuff(
+                    `${value} is not valid. Enter either:\n'vscode', 'sublime', 'emacs', 'atom', 'notepad++', or 'vscodium'.`,
+                );
                 return;
             }
             const newSettings: CF_FKNODE_SETTINGS = {

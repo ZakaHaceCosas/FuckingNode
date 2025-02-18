@@ -86,15 +86,20 @@ create_shortcuts() {
     chmod +x "$installDir/fknode"
     echo "Shortcut created successfully at $installDir/fknode"
 
+    # fkn (any args)
+    echo -e "#!/bin/bash\n$installDir/$appName \"\$@\"" > "$installDir/fknode"
+    chmod +x "$installDir/fknode"
+    echo "Shortcut created successfully at $installDir/fkn"
+
     # fkclean (no args)
     echo -e "#!/bin/bash\n$installDir/$appName clean \"\$@\"" > "$installDir/fkclean"
     chmod +x "$installDir/fkclean"
     echo "Shortcut created successfully at $installDir/fkclean"
 
-    # fkclean-v (no args) (verbose)
-    echo -e "#!/bin/bash\n$installDir/$appName clean -- -v" > "$installDir/fkclean-v"
-    chmod +x "$installDir/fkclean-v"
-    echo "Shortcut created successfully at $installDir/fkclean-v"
+    # fkstart (1-3 string args)
+    echo -e "#!/bin/bash\nif [ -z \"\$1\" ]; then echo \"Error: No Git URL provided!\"; exit 1; else $installDir/$appName kickstart \"\$1\" \"\$2\" \"\$3\"; fi" > "$installDir/fkstart"
+    chmod +x "$installDir/fkstart"
+    echo "Shortcut created successfully at $installDir/fkstart"
 
     # fkcommit (1 string arg)
     echo -e "#!/bin/bash\nif [ -z \"\$1\" ]; then echo \"Error: No commit message provided!\"; exit 1; else $installDir/$appName commit \"\$1\"; fi" > "$installDir/fkcommit"

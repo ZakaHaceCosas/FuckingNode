@@ -394,7 +394,8 @@ export function ParseNpmReport(report: string): ParsedNodeReport {
 
     lines.forEach((line) => {
         if (
-            !line.startsWith("#") && (lines[lines.indexOf(line) + 2] || lines[lines.indexOf(line) + 3] || "").includes("severity") &&
+            !line.startsWith("#") &&
+            (lines[lines.indexOf(line) + 2] || lines[lines.indexOf(line) + 3] || "").includes("severity") &&
             (lines[lines.indexOf(line) + 2] || lines[lines.indexOf(line) + 3] || "").includes("fix available")
         ) {
             const match = line.split(" ");
@@ -476,7 +477,10 @@ export function ParsePnpmYarnReport(report: string, target: "pnpm" | "yarn"): Pa
         let advisoryUrl = "";
 
         for (const line of lines) {
-            if (line.startsWith("│ low") || line.startsWith("│ moderate") || line.startsWith("│ high") || line.startsWith("│ critical")) {
+            if (
+                line.startsWith("│ low") || line.startsWith("│ moderate") || line.startsWith("│ high") ||
+                line.startsWith("│ critical")
+            ) {
                 severity = line.split(" ")[1]!.trim();
                 severities.push(StringUtils.normalize(severity));
                 // summary = line.split("│")[2]!.trim();

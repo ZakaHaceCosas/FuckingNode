@@ -23,7 +23,7 @@ async function handler(
 
         await LogStuff("Updating dependencies (1/5)...", "working");
         // TODO - use settings too
-        await FkNodeInterop.Features.Update(env, true, "__USE_DEFAULT");
+        await FkNodeInterop.Features.Update({ env, verbose: true, script: "__USE_DEFAULT" });
 
         await LogStuff("Removing node_modules (2/5)...", "working");
         await Deno.remove(env.hall_of_trash, {
@@ -68,7 +68,10 @@ async function handler(
             // handle case where bun.lockb was replaced with bun.lock
             rename(env.lockfile.path, await JoinPaths(env.root, "bun.lockb.bak"), async (e) => {
                 if (e) throw e;
-                await LogStuff("Your bun.lockb file will be backed up and replaced with a text-based lockfile (bun.lock).", "bruh");
+                await LogStuff(
+                    "Your bun.lockb file will be backed up and replaced with a text-based lockfile (bun.lock).",
+                    "bruh",
+                );
             });
             await Deno.remove(env.lockfile.path);
         } else {
@@ -113,7 +116,9 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
     }
 
     if (!(await CheckForPath(workingEnv.main.path))) {
-        throw new Error("No package.json/deno.json(c) file found, cannot migrate. How will we install your modules without that file?");
+        throw new Error(
+            "No package.json/deno.json(c) file found, cannot migrate. How will we install your modules without that file?",
+        );
     }
 
     if (

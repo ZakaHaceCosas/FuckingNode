@@ -28,11 +28,11 @@ const ProjectCleaningFeatures = {
             "working",
         );
         try {
-            const output = await FkNodeInterop.Features.Update(
+            const output = await FkNodeInterop.Features.Update({
                 env,
                 verbose,
-                settings.updateCmdOverride ?? "__USE_DEFAULT",
-            );
+                script: settings.updateCmdOverride ?? "__USE_DEFAULT",
+            });
             if (output === true) await LogStuff(`Updated dependencies for ${projectName}!`, "tick");
             return;
         } catch (e) {
@@ -77,11 +77,11 @@ const ProjectCleaningFeatures = {
             "working",
         );
         try {
-            const output = await FkNodeInterop.Features.Lint(
+            const output = await FkNodeInterop.Features.Lint({
                 env,
                 verbose,
-                settings.lintCmd ?? "__USE_DEFAULT",
-            );
+                script: settings.lintCmd ?? "__USE_DEFAULT",
+            });
             if (output === true) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
         } catch (e) {
@@ -100,11 +100,11 @@ const ProjectCleaningFeatures = {
             "working",
         );
         try {
-            const output = await FkNodeInterop.Features.Pretty(
+            const output = await FkNodeInterop.Features.Pretty({
                 env,
                 verbose,
-                settings.lintCmd ?? "__USE_DEFAULT",
-            );
+                script: settings.prettyCmd ?? "__USE_DEFAULT",
+            });
             if (output === true) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
         } catch (e) {
@@ -164,12 +164,14 @@ const ProjectCleaningFeatures = {
             await LogStuff("No committing allowed.", "bruh");
             return;
         }
-        if ((await Git.IsWorkingTreeClean(project)) === true) {
+        if (!(await Git.CanCommit(project))) {
             await LogStuff("Tree isn't clean, can't commit", "bruh");
             return;
         }
         const getCommitMessage = () => {
-            if (settings.commitMessage && settings.commitMessage.trim() !== "" && settings.updateCmdOverride !== "__USE_DEFAULT") {
+            if (
+                settings.commitMessage && settings.commitMessage.trim() !== "" && settings.updateCmdOverride !== "__USE_DEFAULT"
+            ) {
                 return settings.commitMessage;
             }
 

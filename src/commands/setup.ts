@@ -98,7 +98,12 @@ const actualSetups: {
     },
 };
 
-const setups: { name: string; desc: string; content: string | FkNodeYaml; seek: "fknode.yaml" | ".gitignore" | "tsconfig.json" }[] = [
+const setups: {
+    name: string;
+    desc: string;
+    content: string | FkNodeYaml;
+    seek: "fknode.yaml" | ".gitignore" | "tsconfig.json";
+}[] = [
     {
         name: "fknode-basic",
         desc: "A very basic fknode.yaml file.",

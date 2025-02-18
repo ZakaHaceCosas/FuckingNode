@@ -59,7 +59,10 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
  * @param {?"name" | "name-colorless" | "path" | "name-ver" | "all"} wanted What to return. `name` returns the name, `path` the file path, `name-ver` a `name@version` string, and `all` returns everything together.
  * @returns {string} The name of the project. If an error happens, it will return the path you provided (that's how we used to name projects anyway).
  */
-export async function NameProject(path: UnknownString, wanted?: "name" | "name-colorless" | "path" | "name-ver" | "all"): Promise<string> {
+export async function NameProject(
+    path: UnknownString,
+    wanted?: "name" | "name-colorless" | "path" | "name-ver" | "all",
+): Promise<string> {
     const workingPath = await ParsePath(path);
     const formattedPath = ColorString(workingPath, "italic", "half-opaque");
 
@@ -325,7 +328,9 @@ export async function GetWorkspaces(path: string): Promise<string[]> {
         const cargoTomlPath = await JoinPaths(workingPath, "cargo.toml");
         if (await CheckForPath(cargoTomlPath)) {
             const cargoToml = parseToml(await Deno.readTextFile(cargoTomlPath)) as unknown as CargoPkgFile;
-            if (cargoToml.workspace && Array.isArray(cargoToml.workspace.members)) workspacePaths.push(...cargoToml.workspace.members);
+            if (cargoToml.workspace && Array.isArray(cargoToml.workspace.members)) {
+                workspacePaths.push(...cargoToml.workspace.members);
+            }
         }
 
         // Check for Golang configuration (go.work)
@@ -443,7 +448,9 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
         pathChecks.node.lockPnpm ||
         pathChecks.node.lockYarn;
 
-    if (!pathChecks.node.json && !pathChecks.deno.json && !pathChecks.bun.toml && !pathChecks.golang.pkg && !pathChecks.rust.pkg) {
+    if (
+        !pathChecks.node.json && !pathChecks.deno.json && !pathChecks.bun.toml && !pathChecks.golang.pkg && !pathChecks.rust.pkg
+    ) {
         throw new FknError(
             "Internal__Projects__CantDetermineEnv",
             `No main file present (package.json, deno.json, cargo.toml...) at ${ColorString(path, "bold")}.`,

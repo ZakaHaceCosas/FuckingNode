@@ -23,8 +23,18 @@ const getDenoDeps = (cpf: FnCPF) => {
     );
 };
 
-export const Generators = {
-    /** Generates an `npm`, `pnpm`, `yarn`, and `bun` compatible `package.json` file string from a FnCPF string. */
+/**
+ * Generates standard package files from a FnCPF.
+ *
+ * TODO - Cargo & Golang
+ */
+export const Generators: {
+    NodeBun: (cpf: FnCPF, additionalParams: object) => NodePkgFile;
+    Deno: (cpf: FnCPF, additionalParams: object) => DenoPkgFile;
+    Golang: () => never;
+    Cargo: () => never;
+} = {
+    /** Generates a `package.json` string from a FnCPF. */
     NodeBun: (cpf: FnCPF, additionalParams: object): NodePkgFile => {
         const generatedPkgFile: NodePkgFile = {
             ...additionalParams,
@@ -38,7 +48,7 @@ export const Generators = {
 
         return generatedPkgFile;
     },
-    /** Generates a `deno` compatible `deno.json` file string from a FnCPF string. */
+    /** Generates a `deno.json` string from a FnCPF. */
     Deno: (cpf: FnCPF, additionalParams: object): DenoPkgFile => {
         const generatedPkgFile: DenoPkgFile = {
             ...additionalParams,

@@ -128,10 +128,10 @@ if (hasFlag("experimental-audit", false)) {
             "warn",
             "bright-yellow",
         );
-        await TheAuditer(
-            flags[1] ?? null,
-            ParseFlag("strict", true).includes(flags[2] ?? ""),
-        );
+        await TheAuditer({
+            project: flags[1] ?? null,
+            strict: ParseFlag("strict", true).includes(flags[2] ?? ""),
+        });
         Deno.exit(0);
     } catch (e) {
         console.error("Critical error", e);

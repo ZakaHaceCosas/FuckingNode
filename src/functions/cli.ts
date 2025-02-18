@@ -31,7 +31,12 @@ export interface CommanderOutput {
  * @param {?boolean} enforce Defaults to false. If true AND showOutput is false, output will be synchronous.
  * @returns {Promise<CommanderOutput>} An object with a boolean telling if it was successful and its output.
  */
-export async function Commander(main: string, stuff: string[], showOutput?: boolean, enforce?: boolean): Promise<CommanderOutput> {
+export async function Commander(
+    main: string,
+    stuff: string[],
+    showOutput?: boolean,
+    enforce?: boolean,
+): Promise<CommanderOutput> {
     if (showOutput === false) {
         const command = new Deno.Command(main, {
             args: stuff,

@@ -3,9 +3,13 @@ import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import { PerformAuditing } from "./toolkit/auditer.ts";
 import type { FkNodeSecurityAudit } from "../types/audit.ts";
+import type { TheAuditerConstructedParams } from "./constructors/command.ts";
+import { StringUtils } from "@zakahacecosas/string-utils";
 
-export default async function TheAuditer(project: string | null, strict: boolean) {
-    const shouldAuditAll = project === null || project.trim() === "" || ParseFlag("all", true).includes(project) || project.trim() === "--";
+export default async function TheAuditer(params: TheAuditerConstructedParams) {
+    const { project, strict } = params;
+
+    const shouldAuditAll = !StringUtils.validate(project) || ParseFlag("all", true).includes(project) || StringUtils.normalize(project) === "--";
 
     if (shouldAuditAll) {
         const projects = await GetAllProjects();
@@ -35,7 +39,7 @@ export default async function TheAuditer(project: string | null, strict: boolean
         if (reportDetails.length > 0) {
             await LogStuff(
                 `Report (${ColorString(strict ? "strict" : "standard", "bold")})\n${reportDetails.join("\n")}${
-                    strict ? "" : "\n" + ColorString("Unsure about the results? Run with --strict (or -s) for stricter criteria", "italic")
+                    strict ? "" : `\n${ColorString("Unsure about the results? Run with --strict (or -s) for stricter criteria", "italic")}\n`
                 }`,
                 "chart",
             );

@@ -56,17 +56,23 @@ Function New-Shortcut {
         Set-Content -Path $batPath -Value $batContent -Encoding ASCII
         Write-Host "Shortcut created successfully at $batPath"
 
+        # fkn (any args)
+        $batContent = "@echo off`n%~dp0$($appName).exe %*"
+        $batPath = Join-Path -Path $installDir -ChildPath "fkn.bat"
+        Set-Content -Path $batPath -Value $batContent -Encoding ASCII
+        Write-Host "Shortcut created successfully at $batPath"
+
         # fkclean (no args)
         $cleanContent = "@echo off`n%~dp0$($appName).exe clean %*"
         $cleanPath = Join-Path -Path $installDir -ChildPath "fkclean.bat"
         Set-Content -Path $cleanPath -Value $cleanContent -Encoding ASCII
         Write-Host "Shortcut created successfully at $cleanPath"
 
-        # fkclean-v (no args) (verbose)
-        $cleanVContent = "@echo off`n%~dp0$($appName).exe clean -- -- -v"
-        $cleanVPath = Join-Path -Path $installDir -ChildPath "fkclean-v.bat"
-        Set-Content -Path $cleanVPath -Value $cleanVContent -Encoding ASCII
-        Write-Host "Shortcut created successfully at $cleanVPath"
+        # fkstart (1-3 string args)
+        $kickstartContent = "@echo off`nif ""%~1""=="""" (echo Error: No Git URL provided! & exit /b) else ( %~dp0$($appName).exe kickstart ""%~1"" ""%~2"" ""%~3"" )"
+        $kickstartPath = Join-Path -Path $installDir -ChildPath "fkstart.bat"
+        Set-Content -Path $kickstartPath -Value $kickstartContent -Encoding ASCII
+        Write-Host "Shortcut created successfully at $kickstartPath"
 
         # fkcommit (1 string arg)
         $commitContent = "@echo off`nif ""%~1""=="""" (echo Error: No commit message provided! & exit /b) else ( %~dp0$($appName).exe commit ""%~1"" )"

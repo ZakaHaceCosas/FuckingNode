@@ -5,16 +5,26 @@ import type { ProjectEnvironment } from "../../types/platform.ts";
 import { FknError } from "../../utils/error.ts";
 import { FkNodeInterop } from "./interop.ts";
 
+interface InteropedFeatureParams {
+    /** Project's environment. */
+    env: ProjectEnvironment;
+    /** If given, a custom script to be used, or `__USE_DEFAULT` otherwise. */
+    script: string | "__USE_DEFAULT";
+    /** Whether to use verbose logging for this or not. */
+    verbose: boolean;
+}
+
+/**
+ * Cross-runtime compatible tasks. Currently supports linting, prettifying, and updating (dependencies).
+ */
 export const InteropedFeatures = {
-    Lint: async (
-        env: ProjectEnvironment,
-        verbose: boolean,
-        linter: string | "__USE_DEFAULT",
-    ): Promise<boolean> => {
+    Lint: async (params: InteropedFeatureParams): Promise<boolean> => {
+        const { env, verbose, script } = params;
+
         switch (env.runtime) {
             case "bun":
             case "node":
-                if (linter === "__USE_DEFAULT") {
+                if (script === "__USE_DEFAULT") {
                     if (FkNodeInterop.PackageFileUtils.SpotDependency("eslint", env.main.cpfContent.deps) === undefined) {
                         await LogStuff(
                             "No linter was given (via fknode.yaml > lintCmd), hence defaulted to ESLint - but ESLint is not installed!",
@@ -54,7 +64,7 @@ export const InteropedFeatures = {
                 } else {
                     const output = await Commander(
                         env.commands.run[0],
-                        [env.commands.run[1], linter],
+                        [env.commands.run[1], script],
                         verbose,
                     );
 
@@ -99,15 +109,13 @@ export const InteropedFeatures = {
             }
         }
     },
-    Pretty: async (
-        env: ProjectEnvironment,
-        verbose: boolean,
-        prettifier: string | "__USE_DEFAULT",
-    ): Promise<boolean> => {
+    Pretty: async (params: InteropedFeatureParams): Promise<boolean> => {
+        const { env, verbose, script } = params;
+
         switch (env.runtime) {
             case "bun":
             case "node":
-                if (prettifier === "__USE_DEFAULT") {
+                if (script === "__USE_DEFAULT") {
                     if (FkNodeInterop.PackageFileUtils.SpotDependency("prettier", env.main.cpfContent.deps) === undefined) {
                         await LogStuff(
                             "No prettifier was given (via fknode.yaml > prettyCmd), hence defaulted to Prettier - but Prettier is not installed!",
@@ -147,7 +155,7 @@ export const InteropedFeatures = {
                 } else {
                     const output = await Commander(
                         env.commands.run[0],
-                        [env.commands.run[1], prettifier],
+                        [env.commands.run[1], script],
                         verbose,
                     );
 
@@ -188,14 +196,10 @@ export const InteropedFeatures = {
             }
         }
     },
-    Update: async (
-        env: ProjectEnvironment,
-        verbose: boolean,
-        updater: string | "__USE_DEFAULT",
-    ): Promise<boolean> => {
-        /*         if (!validateScript(updater)) return false;
- */
-        if (updater === "__USE_DEFAULT") {
+    Update: async (params: InteropedFeatureParams): Promise<boolean> => {
+        const { env, verbose, script } = params;
+
+        if (script === "__USE_DEFAULT") {
             const output = await Commander(
                 env.commands.base,
                 env.commands.update,
@@ -220,14 +224,14 @@ export const InteropedFeatures = {
             case "golang":
                 throw new FknError(
                     "Interop__CannotRunJsLike",
-                    `${env.manager} does not support JavaScript-like "run" commands, however you've set updateCmdOverride in your fknode.yaml to ${updater}. Since we don't know what you're doing, update task wont proceed for this project.`,
+                    `${env.manager} does not support JavaScript-like "run" commands, however you've set updateCmdOverride in your fknode.yaml to ${script}. Since we don't know what you're doing, update task wont proceed for this project.`,
                 );
             case "bun":
             case "deno":
             case "node": {
                 const output = await Commander(
                     env.commands.run[0],
-                    [env.commands.run[1], updater],
+                    [env.commands.run[1], script],
                     verbose,
                 );
 
