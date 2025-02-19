@@ -121,8 +121,8 @@ if (hasFlag("help", true)) {
 }
 
 if (hasFlag("experimental-audit", false)) {
-    await init();
     try {
+        await init();
         await LogStuff(
             "Beware that as an experimental feature, errors are likely to happen. Report issues, suggestions, or feedback on GitHub.",
             "warn",
@@ -146,6 +146,12 @@ if (hasFlag("version", true, true) && !flags[1]) {
 }
 
 async function main(command: string) {
+    try {
+        await init();
+    } catch (e) {
+        HandleErr(e);
+    }
+
     /* this is a bit unreadable, i admit */
     const projectArg = (
             flags[1] &&
@@ -176,8 +182,6 @@ async function main(command: string) {
     };
 
     try {
-        await init();
-
         switch (StringUtils.normalize(command, false, true)) {
             case "clean":
                 await TheCleaner(cleanerArgs);

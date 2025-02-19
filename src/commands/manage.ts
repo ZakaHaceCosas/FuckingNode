@@ -127,7 +127,7 @@ export async function AddProject(
  */
 export async function RemoveProject(
     entry: UnknownString,
-    silent: boolean = false,
+    showOutput: boolean = true,
 ): Promise<void> {
     try {
         const workingEntry = await SpotProject(entry);
@@ -146,7 +146,7 @@ export async function RemoveProject(
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
 
-        if (list.length > 0 && silent === true) {
+        if (list.length > 0 && showOutput === true) {
             await LogStuff(
                 `I'll guess: ${await NameProject(
                     workingEntry,
@@ -155,7 +155,7 @@ export async function RemoveProject(
                 "tick-clear",
             );
         } else {
-            if (silent === true) {
+            if (showOutput === true) {
                 await LogStuff(
                     `Removed ${await NameProject(
                         workingEntry,

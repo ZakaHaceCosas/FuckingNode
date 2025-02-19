@@ -1,5 +1,7 @@
 # Stats command
 
+> `fuckingnode stats <project>`
+
 This is the simplest thing ever. Just run `fuckingnode stats *`, replacing `*` with the name of a project (from the `package.json`'s `"name"` field) or the path to the project's root, and something like this will be shown to you (using CLI colors and stuff):
 
 ```txt

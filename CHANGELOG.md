@@ -39,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Added a new `errors.log` file, stored with all of our config files. Some errors will now dump more detailed info in there.
 - Added support for `pnpm` and `yarn` for the audit experiment.
 - Added the ability for the CLI to auto-clean invalid entries from your project list, removing the need to do it for yourself.
+- Added a "recommended community standards" sort of thing for NodeJS projects in `fuckingnode stats`.
 
 ### Changed
 
@@ -87,6 +88,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed Git-related commands sometimes not working because of output handling.
   - As as side effect, you now don't get to see Git's output live.
 - Fixed the CLI not being able to handle projects that were missing the `name` or `version` field in a `package.json`/`deno.json` file.
+- Fixed an edge case where the CLI wouldn't work because it fetched configuration _right before_ having it setup.
 
 ### Removed
 

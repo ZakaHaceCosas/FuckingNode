@@ -38,8 +38,8 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
   - [x] Shorthands, for example, `fkclean` instead of `fuckingnode clean`, which together with `defaultCleanerIntensity` setting and flagless features should handle everything.
     - [x] :fontawesome-brands-windows: Windows support
     - [x] :simple-apple: macOS and :simple-linux: Linux support
-- [ ] Make `fuckingnode stats` actually useful
-  - [ ] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
+- [x] Make `fuckingnode stats` actually useful
+  - [x] Similar to GitHub's community standards (any repo -> insights -> community standards), compare a project to a set of quality standards.
 - [x] Make `maxim` intensity behave like `hard` intensity, doing first what lower levels do. `maxim-only` would be added too, to keep the current behavior available.
 - [x] Better error handling.
 - [x] **Cross-platform support!**

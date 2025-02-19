@@ -774,7 +774,7 @@ export async function CleanupProjects(): Promise<0 | 1> {
 
     if (result.length === 0) return 1;
 
-    for (const target of result) await RemoveProject(target.project, true);
+    for (const target of result) await RemoveProject(target.project, false);
 
     return 0;
 }
