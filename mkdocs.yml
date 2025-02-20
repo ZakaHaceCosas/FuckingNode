@@ -62,12 +62,15 @@ extra:
         - icon: fontawesome/brands/youtube
           link: https://youtube.com/watch?v=_lppvGYUXNk
           name: See us on YouTube!
+        - icon: fontawesome/brands/twitter
+          link: https://x.com/FuckingNode
+          name: Read us on Twitter
         - icon: fontawesome/brands/bluesky
           link: https://bsky.app/profile/fknode.bsky.social
-          name: Read us on Bluesky!
+          name: Read us on Bluesky
         - icon: fontawesome/brands/discord
           link: https://discord.gg/AA2jYAFNmq
-          name: Chat us on Discord!
+          name: Chat us on Discord
 
 plugins:
     - social
