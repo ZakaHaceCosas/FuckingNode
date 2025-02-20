@@ -1,8 +1,9 @@
-import { FkNodeInterop } from "../../src/commands/interop/interop.ts";
-import { assertEquals } from "@std/testing";
-import { VERSIONING } from "../../src/constants.ts";
-import { CONSTANTS } from "../constants.ts";
-import { JoinPaths } from "../../src/functions/filesystem.ts";
+import { FkNodeInterop } from "../src/commands/interop/interop.ts";
+import { assertEquals } from "@std/assert";
+import { VERSIONING } from "../src/constants.ts";
+import { CONSTANTS } from "./constants.ts";
+import { JoinPaths } from "../src/functions/filesystem.ts";
+import type { FnCPF } from "../src/types/platform.ts";
 
 Deno.test({
     name: "interop layer manages cargo pkg file",
@@ -192,6 +193,109 @@ Deno.test({
                     fknode: VERSIONING.APP,
                     fknodeCpf: "1.0.0",
                     fknodeIol: "1.0.0",
+                },
+            },
+        );
+    },
+});
+
+const PKGGEN_TEST_FNCPF: FnCPF = {
+    name: "test",
+    version: "0.59.123",
+    rm: "npm",
+    deps: [
+        {
+            name: "eslint",
+            ver: "^7.32.0",
+            rel: "univ:dep",
+            src: "npm",
+        },
+        {
+            name: "typescript",
+            ver: "^4.4.3",
+            rel: "univ:devD",
+            src: "npm",
+        },
+    ],
+    ws: [],
+    internal: {
+        fknode: VERSIONING.APP,
+        fknodeCpf: VERSIONING.CPF,
+        fknodeIol: VERSIONING.IOL,
+    },
+};
+
+Deno.test({
+    name: "pkggen module generates node/bun pkg file",
+    fn: () => {
+        assertEquals(
+            FkNodeInterop.Generators.NodeBun(PKGGEN_TEST_FNCPF, {
+                author: "me",
+                license: "MIT",
+            }),
+            {
+                name: "test",
+                version: "0.59.123",
+                author: "me",
+                license: "MIT",
+                dependencies: {
+                    eslint: "^7.32.0",
+                },
+                devDependencies: {
+                    typescript: "^4.4.3",
+                },
+                peerDependencies: {},
+                workspaces: [],
+            },
+        );
+    },
+});
+
+Deno.test({
+    name: "pkggen module generates deno pkg file",
+    fn: () => {
+        assertEquals(
+            FkNodeInterop.Generators.Deno(PKGGEN_TEST_FNCPF, {
+                "lock": true,
+            }),
+            {
+                name: "test",
+                lock: true,
+                version: "0.59.123",
+                imports: {
+                    eslint: "npm:eslint@^7.32.0",
+                },
+                workspaces: [],
+            },
+        );
+    },
+});
+
+Deno.test({
+    name: "pkggen module generates cargo pkg file",
+    fn: () => {
+        assertEquals(
+            FkNodeInterop.Generators.Cargo(PKGGEN_TEST_FNCPF, {
+                package: {
+                    edition: "2021",
+                },
+            }),
+            {
+                package: {
+                    name: "test",
+                    version: "0.59.123",
+                    edition: "2021",
+                },
+                "build-dependencies": {},
+                // now this is fun, a rust project depending on typescript 4.4.3
+                "dev-dependencies": {
+                    typescript: "^4.4.3",
+                },
+                dependencies: {
+                    eslint: "^7.32.0",
+                },
+                workspace: {
+                    members: [],
                 },
             },
         );

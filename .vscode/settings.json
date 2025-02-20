@@ -53,6 +53,7 @@
         "MOTHERFKRS",
         "msvc",
         "nvim",
+        "pkggen",
         "pymdownx",
         "Roblox",
         "Runtimes",
@@ -73,6 +74,7 @@
         "Vuelto",
         "vulns",
         "weeb",
+        "fncpf",
         "zakahacecosas"
     ],
     "deno.enable": true,

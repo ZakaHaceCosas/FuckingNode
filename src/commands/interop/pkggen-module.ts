@@ -1,4 +1,5 @@
-import type { DenoPkgFile, FnCPF, NodePkgFile } from "../../types/platform.ts";
+import { deepMerge } from "../../functions/projects.ts";
+import type { CargoDependency, CargoPkgFile, DenoPkgFile, FnCPF, NodePkgFile } from "../../types/platform.ts";
 
 const getNodeBunDeps = (cpf: FnCPF, desiredRel: FnCPF["deps"][0]["rel"]) => {
     return Object.fromEntries(
@@ -23,21 +24,32 @@ const getDenoDeps = (cpf: FnCPF) => {
     );
 };
 
+// warning: this does not preserve additional data
+const getCargoDeps = (cpf: FnCPF, desiredRel: FnCPF["deps"][0]["rel"]): Record<string, CargoDependency> => {
+    return Object.fromEntries(
+        cpf.deps.map((d) => {
+            if (d.rel !== desiredRel) return "__REM";
+            return [d.name, d.ver];
+        }).filter((d) => d !== "__REM"),
+    );
+};
+
+type ExtraProps<T> = T & Record<string, unknown>;
+
 /**
  * Generates standard package files from a FnCPF.
  *
- * TODO - Cargo & Golang
+ * TODO - Golang
  */
 export const Generators: {
-    NodeBun: (cpf: FnCPF, additionalParams: object) => NodePkgFile;
-    Deno: (cpf: FnCPF, additionalParams: object) => DenoPkgFile;
+    NodeBun: (cpf: FnCPF, additionalParams?: object) => ExtraProps<NodePkgFile>;
+    Deno: (cpf: FnCPF, additionalParams?: object) => ExtraProps<DenoPkgFile>;
     Golang: () => never;
-    Cargo: () => never;
+    Cargo: (cpf: FnCPF, additionalParams?: object) => ExtraProps<CargoPkgFile>;
 } = {
-    /** Generates a `package.json` string from a FnCPF. */
-    NodeBun: (cpf: FnCPF, additionalParams: object): NodePkgFile => {
-        const generatedPkgFile: NodePkgFile = {
-            ...additionalParams,
+    /** Generates a `package.json` from a FnCPF. */
+    NodeBun: (cpf: FnCPF, additionalParams?: object): ExtraProps<NodePkgFile> => {
+        const generatedPkgFile: ExtraProps<NodePkgFile> = {
             name: cpf.name,
             version: cpf.version,
             dependencies: getNodeBunDeps(cpf, "univ:dep"),
@@ -46,24 +58,36 @@ export const Generators: {
             workspaces: cpf.ws,
         };
 
-        return generatedPkgFile;
+        return deepMerge(generatedPkgFile, additionalParams);
     },
-    /** Generates a `deno.json` string from a FnCPF. */
-    Deno: (cpf: FnCPF, additionalParams: object): DenoPkgFile => {
-        const generatedPkgFile: DenoPkgFile = {
-            ...additionalParams,
+    /** Generates a `deno.json` from a FnCPF. */
+    Deno: (cpf: FnCPF, additionalParams?: object): ExtraProps<DenoPkgFile> => {
+        const generatedPkgFile: ExtraProps<DenoPkgFile> = {
             name: cpf.name,
             version: cpf.version,
             imports: getDenoDeps(cpf),
             workspaces: cpf.ws,
         };
 
-        return generatedPkgFile;
+        return deepMerge(generatedPkgFile, additionalParams);
     },
     Golang: () => {
         throw new Error("Not done yet! (interop/pkg-gen/golang)");
     },
-    Cargo: () => {
-        throw new Error("Not done yet! (interop/pkg-gen/cargo)");
+    /** Generates a `cargo.toml` from a FnCPF. */
+    Cargo: (cpf: FnCPF, additionalParams?: object): ExtraProps<CargoPkgFile> => {
+        const generatedPkgFile: ExtraProps<CargoPkgFile> = {
+            package: {
+                name: cpf.name,
+                version: cpf.version,
+                // TODO - edition
+            },
+            dependencies: getCargoDeps(cpf, "univ:dep"),
+            "dev-dependencies": getCargoDeps(cpf, "univ:devD"),
+            "build-dependencies": getCargoDeps(cpf, "rst:buildD"),
+            workspace: { members: cpf.ws },
+        };
+
+        return deepMerge(generatedPkgFile, additionalParams);
     },
 };

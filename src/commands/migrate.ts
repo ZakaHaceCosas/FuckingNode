@@ -22,8 +22,7 @@ async function handler(
         await LogStuff("Please wait (this will take a while)...", "working");
 
         await LogStuff("Updating dependencies (1/5)...", "working");
-        // TODO - use settings too
-        await FkNodeInterop.Features.Update({ env, verbose: true, script: "__USE_DEFAULT" });
+        await FkNodeInterop.Features.Update({ env, verbose: true, script: env.settings.updateCmdOverride });
 
         await LogStuff("Removing node_modules (2/5)...", "working");
         await Deno.remove(env.hall_of_trash, {

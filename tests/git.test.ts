@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/testing";
+import { assertEquals } from "@std/assert";
 import { Git } from "../src/utils/git.ts";
 import { APP_NAME } from "../src/constants.ts";
 

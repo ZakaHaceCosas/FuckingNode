@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/testing";
+import { assertEquals } from "@std/assert";
 import { ParseNpmReport, ParsePnpmYarnReport } from "../src/commands/toolkit/auditer.ts";
 import type { ParsedNodeReport } from "../src/types/audit.ts";
 import { JoinPaths } from "../src/functions/filesystem.ts";

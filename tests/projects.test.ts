@@ -1,5 +1,5 @@
 import { GetAllProjects, GetProjectEnvironment, NameProject, SpotProject } from "../src/functions/projects.ts";
-import { assertEquals } from "@std/testing";
+import { assertEquals } from "@std/assert";
 import { TEST_ONE } from "./constants.ts";
 import { mocks } from "./mocks.ts";
 import { ColorString } from "../src/functions/io.ts";

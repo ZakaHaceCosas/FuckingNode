@@ -170,7 +170,8 @@ export const DEFAULT_FKNODE_YAML: FullFkNodeYaml = {
     destroy: {
         intensities: ["maxim"],
         targets: [
-            "node_modules",
+            "dist/",
+            "out/",
         ],
     },
     commitActions: false,
