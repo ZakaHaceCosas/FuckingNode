@@ -39,6 +39,8 @@ const ACTUAL_SETUPS: {
     gitignoreJs: string;
     gitignoreJsNoLock: string;
     tsStrictest: object;
+    tsLibrary: object;
+    editorConfigDefault: string;
 } = {
     fknodeBasic: {
         destroy: {
@@ -66,34 +68,61 @@ const ACTUAL_SETUPS: {
     tsStrictest: {
         compilerOptions: {
             "strict": true,
+            "strictNullChecks": true,
+            "strictBindCallApply": true,
+            "strictFunctionTypes": true,
+            "strictBuiltinIteratorReturn": true,
+            "strictPropertyInitialization": true,
             "noImplicitAny": true,
             "noImplicitOverride": true,
-            "strictNullChecks": true,
             "noUnusedLocals": true,
             "noUnusedParameters": true,
-            "incremental": true,
-            "esModuleInterop": true,
-            "forceConsistentCasingInFileNames": true,
-            "allowSyntheticDefaultImports": true,
-            "strictFunctionTypes": true,
-            "alwaysStrict": true,
-            "strictPropertyInitialization": true,
-            "noStrictGenericChecks": false,
+            "noPropertyAccessFromIndexSignature": true,
+            "noUncheckedIndexedAccess": true,
+            "noUncheckedSideEffectImports": true,
             "noImplicitThis": true,
             "noImplicitReturns": true,
             "noFallthroughCasesInSwitch": true,
+            "forceConsistentCasingInFileNames": true,
             "exactOptionalPropertyTypes": true,
-            "strictBindCallApply": true,
             "useUnknownInCatchVariables": true,
         },
     },
+    tsLibrary: {
+        "compilerOptions": {
+            "target": "ES2022",
+            "module": "ESNext",
+            "declaration": true,
+            "outDir": "dist",
+            "strict": true,
+            "moduleResolution": "nodenext",
+            "esModuleInterop": true,
+            "skipLibCheck": true,
+        },
+        "include": ["src"],
+    },
+    editorConfigDefault: [
+        "root = true",
+        "",
+        "[*]",
+        "indent_style = space",
+        "indent_size = 4",
+        "end_of_line = lf",
+        " charset = utf-8 ",
+        "trim_trailing_whitespace = true",
+        " insert_final_newline = true",
+        "",
+
+        "[*.md]",
+        "trim_trailing_whitespace = false",
+    ].join("\n"),
 };
 
 export const SETUPS: {
     name: string;
     desc: string;
     content: string | FkNodeYaml;
-    seek: "fknode.yaml" | ".gitignore" | "tsconfig.json";
+    seek: "fknode.yaml" | ".gitignore" | "tsconfig.json" | ".editorconfig";
 }[] = [
     {
         name: "fknode-basic",
@@ -125,9 +154,24 @@ export const SETUPS: {
         content: ACTUAL_SETUPS.tsStrictest,
         seek: "tsconfig.json",
     },
+    {
+        name: "ts-library",
+        desc: "Recommended config for libraries.",
+        content: ACTUAL_SETUPS.tsLibrary,
+        seek: "tsconfig.json",
+    },
+    {
+        name: "editorconfig-default",
+        desc: "A basic .editorconfig file that works for everyone.",
+        content: ACTUAL_SETUPS.editorConfigDefault,
+        seek: ".editorconfig",
+    },
 ];
 
 export const VISIBLE_SETUPS = SETUPS.map(({ name, desc, seek }) => ({
-    Name: ColorString(name, seek === "fknode.yaml" ? "red" : seek === "tsconfig.json" ? "bright-blue" : "orange"),
+    Name: ColorString(
+        name,
+        seek === "fknode.yaml" ? "red" : seek === "tsconfig.json" ? "bright-blue" : seek === ".editorconfig" ? "cyan" : "orange",
+    ),
     Description: ColorString(desc, "bold"),
 }));

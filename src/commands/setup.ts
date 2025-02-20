@@ -37,9 +37,7 @@ export default async function TheSetuper(params: TheSetuperConstructedParams) {
                 exists
                     ? setupToUse.seek === "tsconfig.json"
                         ? "\nNote: Your existing tsconfig.json will be merged with this template. Comments won't be preserved!"
-                        : setupToUse.seek === "fknode.yaml"
-                        ? "\nNote: Your existing fknode.yaml will be overwritten by this template."
-                        : "\nNote: Your existing .gitignore will be merged with this template."
+                        : `\nNote: Your existing ${setupToUse.seek} will be merged with this template. Duplications may happen.`
                     : ""
             }`,
             "what",
@@ -55,22 +53,22 @@ export default async function TheSetuper(params: TheSetuperConstructedParams) {
 
     if (exists) {
         const fileContent = await Deno.readTextFile(path);
-        if (setupToUse.seek === ".gitignore") {
-            finalContent = `${fileContent}\n${setupToUse.content}`;
+        if (setupToUse.seek === "tsconfig.json") {
+            const parsedContent = parseJsonc(fileContent);
+            finalContent = JSON.stringify(deepMerge(setupToUse.content, parsedContent), undefined, 4);
         } else if (setupToUse.seek === "fknode.yaml") {
             const parsedContent = parseYaml(fileContent);
             finalContent = StringifyYaml(deepMerge(setupToUse.content, parsedContent));
         } else {
-            // (ts)
-            const parsedContent = parseJsonc(fileContent);
-            finalContent = JSON.stringify(deepMerge(setupToUse.content, parsedContent), undefined, 4);
+            // (gitignore or editorconfig)
+            finalContent = `${fileContent}\n${setupToUse.content}`;
         }
     } else {
         finalContent = setupToUse.seek === "fknode.yaml"
             ? StringifyYaml(setupToUse.content)
             : setupToUse.seek === "tsconfig.json"
             ? JSON.stringify(setupToUse.content, undefined, 4)
-            : setupToUse.content as string;
+            : setupToUse.content.toString();
     }
 
     await Deno.writeTextFile(
