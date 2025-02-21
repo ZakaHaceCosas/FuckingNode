@@ -36,7 +36,9 @@ function CompileApp(): void {
     for (const CMD of ALL_COMMANDS) {
         const process = CMD.spawn();
         process.status.then((status) => {
-            console.log(status.success ? `Something went right` : `Something went wrong: ${status.code} / ${status.signal?.toString()}`);
+            console.log(
+                status.success ? `Something went right` : `Something went wrong: ${status.code} / ${status.signal?.toString()}`,
+            );
         });
     }
 }
@@ -55,4 +57,4 @@ Deno.mkdir("./dist/");
 CompileApp();
 
 // for nix, get into WSL and run:
-// nix-prefetch-url https://github.com/ZakaHaceCosas/FuckingNode/releases/download/LATEST_TAG_HERE_BRO/FuckingNode-linux_x86_64
+// nix-prefetch-url URL_TO_LATEST_LINUX_64_86_EXE

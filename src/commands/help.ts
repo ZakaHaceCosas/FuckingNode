@@ -20,6 +20,14 @@ function formatCmd(obj: helpThing): string {
     return strings.join("\n----\n");
 }
 
+async function pathReminder() {
+    await LogStuff(
+        `---\nNote: <project-path> refers to either a file path (../somewhere or/home/users/me/somewhere), OR the "--self" flag which uses the Current Working Directory. For example, 'manager add --self' here equals 'manager add ${Deno.cwd()}'.\n\nAdditionally, in some places (like clean or manager) where we assume the project already exists, you can pass the project's name as it appears in your package file's 'name' field and it should work as well.`,
+        undefined,
+        "italic",
+    );
+}
+
 export default async function TheHelper(params: TheHelperConstructedParams) {
     const { query } = params;
 
@@ -31,13 +39,13 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
         [
             "manager",
-            "add <path> | remove <path> | list | cleanup",
+            "add <project path> | remove <project path> | list",
             "Manages your projects.",
         ],
         [
             "kickstart",
             "<git-url> [path] [npm | pnpm | yarn | deno | bun]",
-            `Quickly clones a repo, installs deps, setups ${APP_NAME.CASED}, and opens your favorite editor.`,
+            `Quickly clones a repo inside of [path] (or current working directory/<repo-name> by default), installs deps, setups ${APP_NAME.CASED}, and launches your favorite editor.`,
         ],
         [
             "settings",
@@ -49,9 +57,21 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "<target>",
             "Migrates a project from one package manager to another and reinstalls deps.",
         ],
-        ["upgrade", null, "Checks for updates."],
-        ["about", null, "Shows info about the app."],
-        ["--version, -v", null, "Shows current version."],
+        [
+            "upgrade",
+            null,
+            "Checks for updates.",
+        ],
+        [
+            "about",
+            null,
+            "Shows info about the app.",
+        ],
+        [
+            "--version, -v",
+            null,
+            "Shows current version.",
+        ],
         [
             "--help, -h",
             "[command]",
@@ -73,37 +93,36 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     const MANAGER_OPTIONS = formatCmd([
         [
             "manager",
-            "add <path>",
+            "add <project-path>",
             "Adds a project to your list.",
         ],
         [
             "manager",
-            "remove <path>",
+            "remove <project-path>",
             "Removes a project from your list.",
         ],
         [
             "manager",
             "list [--ignored / --alive]",
-            "Lists all of your added projects. You can use --ignored or --alive to filter ignored projects.",
-        ],
-        [
-            "manager",
-            "cleanup",
-            "Shows invalid (invalid path, duplicates...) and lets you remove them.",
+            "Lists all of your added projects. You can use --ignored or --alive to filter ignored projects (with --alive, only NOT ignored projects are shown, with --ignore, vice versa).",
         ],
     ]);
     const CLEAN_OPTIONS = formatCmd([
         [
             "clean",
-            "<intensity> [...flags]",
-            "'normal' | 'hard' | 'hard-only' | 'maxim' - The higher, the deeper (but more time-consuming) the cleaning will be.",
+            "<project-path | --> <intensity | -->",
+            "Where the project equals a <project-path> and intensity is either 'normal' | 'hard' | 'hard-only' | 'maxim' | 'maxim-only'.\n  The higher the intensity, the deeper (but more time-consuming) the cleaning will be.\n  Use '--' as a project to clean all your projects at once, and as the intensity to use your default one.\n  You can also just run 'clean' without flags to clean everything.",
         ],
         [
             "--update",
             null,
             "Update all your projects before cleaning them.",
         ],
-        ["--verbose", null, "Show more detailed ('verbose') logs."],
+        [
+            "--verbose",
+            null,
+            "Show more detailed ('verbose') logs. This includes timestamps and a report.",
+        ],
         [
             "--lint",
             null,
@@ -149,15 +168,57 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     const KICKSTART_OPTIONS = formatCmd([
         [
             "kickstart",
-            "<git-url> [path] [manager]",
-            "Clones <git-url> to [path] (or ./<repo-name> by default), installs deps with [manager] (or default (pnpm, bun, or deno) if not given), opens your editor (VSCode by default, change from settings), and adds the project to your list.",
+            "<git-url> [project-path] [manager]",
+            "Clones <git-url> to [project-path] (or ./<repo-name> by default), installs deps with [manager] (or default (pnpm, bun, or deno) if not given), opens your editor (VSCode by default, change from settings), and adds the project to your list.",
+        ],
+    ]);
+    const AUDIT_OPTIONS = formatCmd([
+        [
+            "audit",
+            "[project-path | --] [--strict, -s]",
+            "Runs your package manager's audit command, then asks you questions to tell if found vulnerabilities affect your project.\n  Run without a project or with '--' to audit all projects.\n  Learn more about it at https://zakahacecosas.github.io/FuckingNode/learn/audit/",
         ],
     ]);
     const MIGRATE_OPTIONS = formatCmd([
         [
             "migrate",
-            "<project> <target>",
-            "Automatically migrates a given <project> to a given <target> package manager (npm, pnpm, and yarn). Does not support cross-runtime migration, and relies on each manager's ability to understand the other one's package manager formats.",
+            "<project-path> <target>",
+            "Automatically migrates a given <project-path> to a given <target> package manager (npm, pnpm, yarn, deno, or bun).\n  Relies as of now on each manager's ability to understand the other one's package manager formats.",
+        ],
+    ]);
+    const COMMIT_OPTIONS = formatCmd([
+        [
+            "commit",
+            "<message> [branch] [--push]",
+            "Runs our maintenance task and a script specified by you (if any) and commit only if they succeed.\n  Just like git commit, uses the CWD as the path to the project.\n  Run with --push to push the commit.\n  Pass a branch name as the 2nd argument to commit there.",
+        ],
+    ]);
+    const RELEASE_OPTIONS = formatCmd([
+        [
+            "commit",
+            "<project-path> <version> [--push] [--dry]",
+            "Runs our maintenance task and a script specified by you (if any).\n  Then bumps version in your package file to given <version> and commits that.\n  If these tasks succeed, releases the project as an npm / jsr package (autodetected).\n  Run with --push to push commit as well.\n  Use '--dry' to make everything (commit, push, run script) but without publishing to npm / jsr.",
+        ],
+    ]);
+    const EXPORT_OPTIONS = formatCmd([
+        [
+            "export",
+            "<project-path> [--json] [--cli]",
+            "Exports a project's FnCPF (an internal file used by us to work with them) so you can see it.\n  Defaults to .yaml format, use '--json' to use JSONC format instead.\n  Add '--cli' to also show the output file in your terminal.",
+        ],
+    ]);
+    const SETUP_OPTIONS = formatCmd([
+        [
+            "setup",
+            "<project-path> <setup>",
+            "Allows you to 'add a setup' to your project (setup = preset text-config file).\n  For now, .gitignore, tsconfig.json, and of course fknode.yaml setups exist.\n  Run 'setup' with no args to see the list of available options.",
+        ],
+    ]);
+    const COMPAT_OPTIONS = formatCmd([
+        [
+            "compat",
+            "[feature]",
+            "Shows info about this CLI's cross-runtime & cross-platform support for the given feature,\n  or an overall summary if none given.",
         ],
     ]);
     const UPGRADE_OPTIONS = formatCmd([
@@ -171,7 +232,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "about",
             null,
-            "Shows a simple (but cool looking!) about screen. No params taken. Includes random sentences below the logo.",
+            "Shows a simple (but cool looking!) about screen. Includes random quotes below the logo.",
         ],
     ]);
     const HELP_OPTIONS = formatCmd([
@@ -182,16 +243,18 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
     ]);
 
-    switch ((query ?? "").trim().toLowerCase()) {
+    switch (StringUtils.normalize(query ?? "", true)) {
         case "clean":
             await LogStuff(
                 `'clean' will clean your added projects. Options and flags:\n${CLEAN_OPTIONS}`,
             );
+            await pathReminder();
             break;
         case "manager":
             await LogStuff(
                 `'manager' will let you manage projects. Options:\n${MANAGER_OPTIONS}`,
             );
+            await pathReminder();
             break;
         case "settings":
             await LogStuff(
@@ -202,9 +265,34 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             await LogStuff(
                 `'kickstart' allows you to kickstart a repo easily. Options:\n${KICKSTART_OPTIONS}`,
             );
+            await pathReminder();
             break;
         case "migrate":
             await LogStuff(MIGRATE_OPTIONS);
+            await pathReminder();
+            break;
+        case "audit":
+            await LogStuff(AUDIT_OPTIONS);
+            await pathReminder();
+            break;
+        case "compat":
+            await LogStuff(COMPAT_OPTIONS);
+            break;
+        case "commit":
+            await LogStuff(COMMIT_OPTIONS);
+            break;
+        case "release":
+        case "publish":
+            await LogStuff(RELEASE_OPTIONS);
+            await pathReminder();
+            break;
+        case "export":
+            await LogStuff(EXPORT_OPTIONS);
+            await pathReminder();
+            break;
+        case "setup":
+            await LogStuff(SETUP_OPTIONS);
+            await pathReminder();
             break;
         case "upgrade":
             await LogStuff(UPGRADE_OPTIONS);
@@ -215,11 +303,6 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         case "help":
             await LogStuff(HELP_OPTIONS);
             break;
-        case "audit":
-            await LogStuff("Audit is an experimental command subject to changes; thus it's not yet documented.");
-            break;
-        case undefined:
-        case "":
         default:
             await NoParamProvided();
             break;

@@ -1,16 +1,4 @@
 /**
- * Date in a YEAR-MONTH-DAY HOUR:MINUTE format.
- *
- * @export
- */
-export type RIGHT_NOW_DATE = `${number}-${string}-${string} ${string}:${string}`;
-
-/**
- * RegEx for RIGHT_NOW_DATE
- */
-export const RIGHT_NOW_DATE_REGEX: RegExp = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/;
-
-/**
  * Valid emojis
  *
  * @export
@@ -31,7 +19,9 @@ export type SUPPORTED_EMOJIS =
     | "warn"
     | "package"
     | "trash"
-    | "chart";
+    | "chart"
+    | "wink"
+    | "comrade";
 
 /**
  * A GitHub release asset.

@@ -15,11 +15,17 @@ nav:
     - Manual:
           - Home: "manual/index.md"
           - Installation: "manual/install.md"
-          - Setup and configuration: "manual/setup.md"
+          - Configuration: "manual/configuration.md"
           - Main usage guide: "manual/usage.md"
-          - Kickstart a project: "manual/kickstart.md"
-          - Stats: "manual/stats.md"
-          - Cross-runtime support: "manual/cross-runtime.md"
+          - Individual project configuration: "manual/fknode-yaml.md"
+          - Extra - Kickstart: "manual/kickstart.md"
+          - Extra - Commit: "manual/stats.md"
+          - Extra - Release: "manual/release.md"
+          - Extra - Setup: "manual/setup.md"
+          - Extra - Stats: "manual/stats.md"
+          - Extra - Surrender: "manual/surrender.md"
+          - Learn - Cross-runtime support: "learn/cross-runtime.md"
+          - "What's next?": "manual/whats-next.md"
 
     - Learn:
           - Home: "learn/index.md"
@@ -38,14 +44,14 @@ theme:
     # favicon: /path/to/logo.png (when we have it)
 
     features:
-        # - navigation.path
-        # - navigation.tabs
-        # - navigation.sections
-        # - navigation.top
-        # - navigation.tracking
-        # - toc.follow
-        # - toc.integrate
-        # - navigation.expand
+        - navigation.path
+        - navigation.tabs
+        - navigation.sections
+        - navigation.top
+        - navigation.tracking
+        - toc.follow
+        - toc.integrate
+        - navigation.expand
         - content.code.copy
         - navigation.footer
 
@@ -62,6 +68,15 @@ extra:
         - icon: fontawesome/brands/youtube
           link: https://youtube.com/watch?v=_lppvGYUXNk
           name: See us on YouTube!
+        - icon: fontawesome/brands/twitter
+          link: https://x.com/FuckingNode
+          name: Read us on Twitter
+        - icon: fontawesome/brands/bluesky
+          link: https://bsky.app/profile/fknode.bsky.social
+          name: Read us on Bluesky
+        - icon: fontawesome/brands/discord
+          link: https://discord.gg/AA2jYAFNmq
+          name: Chat us on Discord
 
 plugins:
     - social
@@ -70,6 +85,11 @@ plugins:
               "about.md": "about/roadmap.md"
               "repo.md": "https://github.com/ZakaHaceCosas/FuckingNode"
               "roadmap.md": "about/roadmap.md"
+              "cross-runtime.md": "learn/cross-runtime-support.md"
+              "cross-platform.md": "learn/cross-runtime-support.md"
+              "crossruntime.md": "learn/cross-runtime-support.md"
+              "crossplatform.md": "learn/cross-runtime-support.md"
+              "follow-us.md": "about/social.md"
 
 markdown_extensions:
     - abbr

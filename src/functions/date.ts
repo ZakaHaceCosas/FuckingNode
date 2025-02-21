@@ -1,56 +1,40 @@
-import { type RIGHT_NOW_DATE, RIGHT_NOW_DATE_REGEX } from "../types/misc.ts";
+import { difference, format, parse } from "@std/datetime";
+
+const DATE_FMT = "dd-MM-yyyy HH:mm:ss";
 
 /**
- * Gets the current date (at the moment the function is called) and returns it as a `RIGHT_NOW_DATE`.
+ * Gets the current date (at the moment the function is called) and returns it as a string.
  *
  * @export
- * @returns {RIGHT_NOW_DATE}
+ * @returns {string}
  */
-export function GetDateNow(): RIGHT_NOW_DATE {
+export function GetDateNow(): string {
     const now = new Date();
     const timezoneOffset = now.getTimezoneOffset();
     const localDate = new Date(now.getTime() - timezoneOffset * 60 * 1000);
 
-    const formattedDate = localDate.toISOString().slice(0, 16).replace("T", " ");
-    return formattedDate as RIGHT_NOW_DATE;
+    return format(localDate, DATE_FMT);
 }
 
 /**
- * Takes a `RIGHT_NOW_DATE` and turns it into a JS `Date()` so code can interact with it.
+ * Takes a date string and turns it into a JS `Date()` so code can interact with it.
  *
- * @param {RIGHT_NOW_DATE} date The date string you want to make standard.
+ * @param {string} date The date string you want to make standard.
  * @returns {Date}
  */
-export function MakeRightNowDateStandard(date: RIGHT_NOW_DATE): Date {
-    if (!RIGHT_NOW_DATE_REGEX.test(date)) throw new TypeError("Provided dateString doesn't match RIGHT_NOW_DATE Regular Expression.");
-
-    const [datePart, timePart] = date.split(" ");
-
-    if (!datePart) throw new Error("undefined datePart");
-    if (!timePart) throw new Error("undefined timePart");
-
-    const [year, month, day] = datePart.split("-").map(Number);
-    const [hours, minutes] = timePart.split(":").map(Number);
-
-    if (!year) throw new Error("undefined year");
-    if (!month) throw new Error("undefined month");
-
-    return new Date(year, month - 1, day, hours, minutes);
+export function ParseDate(date: string): Date {
+    return parse(date, DATE_FMT);
 }
 
 /**
- * Gets the amount of time passed between `date1` and the current date.
+ * Gets the amount of time passed between `date` and the current date.
  *
  * @export
- * @param {Date} date1
+ * @param {Date} date Date to count from. It should be earlier from now, e.g. if now it's 13:30 and passed `date` is 13:20, elapsed time is of 10 minutes.
  * @returns {string}
  */
-export function GetElapsedTime(date1: Date): string {
-    const diffInMs = (new Date()).getTime() - date1.getTime();
+export function GetElapsedTime(date: Date): string {
+    const diff = difference(date, new Date());
 
-    const seconds = Math.floor(diffInMs / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-
-    return `${minutes}m ${remainingSeconds}s`;
+    return `${diff.minutes}m ${diff.seconds}s`;
 }

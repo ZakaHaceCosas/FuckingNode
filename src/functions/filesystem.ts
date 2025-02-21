@@ -1,6 +1,5 @@
-import { join } from "@std/path";
-import { StringUtils } from "@zakahacecosas/string-utils";
-import { normalize } from "node:path";
+import { join, normalize } from "@std/path";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 
 /**
  * Returns `true` if a given path exists, `false` if otherwise.
@@ -50,14 +49,13 @@ export async function CheckForDir(path: string): Promise<
  * Parses a string path, to ensure string cleanness and handle things like relative paths or `--self`.
  *
  * @export
- * @param {string} target The string to parse.
- * @returns {(string)} A string with the parsed path.
+ * @async Because of stuff like `realPath`.
+ * @param {UnknownString} target The string to parse.
+ * @returns {Promise<string>} A string with the parsed path.
  */
-export async function ParsePath(target: string): Promise<string> {
+export async function ParsePath(target: UnknownString): Promise<string> {
     try {
-        if (typeof target !== "string") {
-            throw new Error("Target must be (obviously) a string.");
-        }
+        if (!StringUtils.validate(target)) throw new Error("Target must be (obviously) a string.");
 
         let workingTarget = target.trim();
         if (workingTarget.toLowerCase() === "--self") {
@@ -66,7 +64,7 @@ export async function ParsePath(target: string): Promise<string> {
             try {
                 workingTarget = await Deno.realPath(workingTarget);
             } catch {
-                workingTarget;
+                // this NEEDS to be here for it to work
             }
         }
 
@@ -120,36 +118,6 @@ export async function JoinPaths(pathA: string, pathB: string): Promise<string> {
     } catch {
         return join(pathA, pathB);
     }
-}
-
-/**
- * Converts bytes to MB (or KB).
- *
- * @export
- * @param {(number | number[])} size Either one or many byte values.
- * @param {(boolean | "force")} useKbIfLow If false, MB are used, if "force" KB is used. If true, MB are used unless MB value is lower than 0.5, using KB instead.
- * @param {?number} [precision] Optional, what the `parseFloat(N)` _N_ should be. Defaults to two.
- * @returns {number}
- */
-export function ConvertBytesToMegaBytes(size: number | number[], useKbIfLow: boolean | "force", precision?: number): number {
-    const realPrecision = precision || 2;
-    let totalVal: number = 0;
-
-    if (typeof size === "number") {
-        totalVal = size;
-    } else {
-        size.forEach((val) => {
-            totalVal += val;
-        });
-    }
-
-    const sizeInMB = totalVal / (1024 * 1024); // Convert to MB
-
-    if (((useKbIfLow === true) && sizeInMB < 0.5) || useKbIfLow === "force") {
-        return parseFloat((sizeInMB * 1024).toFixed(realPrecision)); // Convert to KB
-    }
-
-    return parseFloat(sizeInMB.toFixed(realPrecision)); // Return in MB
 }
 
 /**

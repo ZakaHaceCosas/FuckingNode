@@ -1,9 +1,11 @@
 import type { tURL } from "./types/misc.ts";
 import type { SemVer } from "@std/semver/types";
 import { format, parse } from "@std/semver";
-import type { CF_FKNODE_SCHEDULE, CF_FKNODE_SETTINGS, FkNodeYaml } from "./types/config_files.ts";
+import type { CF_FKNODE_SCHEDULE, CF_FKNODE_SETTINGS, FullFkNodeYaml } from "./types/config_files.ts";
 import * as DenoJson from "../deno.json" with { type: "json" };
 import { GetDateNow } from "./functions/date.ts";
+import type { FnCPF } from "./types/platform.ts";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 
 /**
  * Current app version as a SemVer object. **Change it from `deno.json`.**
@@ -17,17 +19,45 @@ const _SV_VER: SemVer = parse(DenoJson.default.version);
  *
  * @type {string}
  */
-export const VERSION: string = format(_SV_VER);
+export const VERSIONING: { APP: string; CPF: string; IOL: string } = {
+    /** App itself */
+    APP: format(_SV_VER),
+    /** Common Package File */
+    CPF: "1.0.0",
+    /** InterOp Layer */
+    IOL: "1.0.0",
+};
+
+/**
+ * Internal field for FnCPF files.
+ *
+ * @type {FnCPF["internal"]}
+ */
+export const FnCPFInternal: FnCPF["internal"] = {
+    fknode: VERSIONING.APP,
+    fknodeCpf: VERSIONING.CPF,
+    fknodeIol: VERSIONING.IOL,
+};
 
 /**
  * Best CLI app ever (it's name, so you don't, for example, miss-capitalize it).
  *
- * @type {{CASED: string, CLI: string, STYLED: string}}
+ * @type {{CASED: string, CLI: string, STYLED: string, SCOPE: string}}
  */
-export const APP_NAME: { CASED: string; CLI: string; STYLED: string } = {
+export const APP_NAME: { CASED: string; CLI: string; STYLED: string; SCOPE: string } = {
     CASED: "FuckingNode",
     CLI: "fuckingnode",
     STYLED: "F\*ckingNode",
+    SCOPE: "@zakahacecosas/fuckingnode",
+};
+
+/** Full, cased name of the app in NAME vVERSION format. */
+export const FULL_NAME: string = `${APP_NAME.CASED} v${VERSIONING.APP}`;
+
+/** URLs have trailing slash/ */
+export const APP_URLs = {
+    REPO: "https://github.com/ZakaHaceCosas/FuckingNode/",
+    WEBSITE: "https://zakahacecosas.github.io/FuckingNode/",
 };
 
 /**
@@ -89,13 +119,6 @@ export const I_LIKE_JS: HE_LIKES_JS = {
 };
 
 /**
- * Name of the ignore file.
- *
- * @type {string}
- */
-export const IGNORE_FILE: string = "fknode.yaml";
-
-/**
  * GitHub REST API URL from where releases are obtained.
  *
  * @type {tURL}
@@ -109,9 +132,9 @@ export const RELEASE_URL: tURL = `https://api.github.com/repos/ZakaHaceCosas/${A
  */
 export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
     updateFreq: 5,
-    logFlushFreq: 14,
-    defaultCleanerIntensity: "normal",
-    favoriteEditor: "vscode",
+    flushFreq: 14,
+    defaultIntensity: "normal",
+    favEditor: "vscode",
 };
 
 /**
@@ -121,7 +144,7 @@ export const DEFAULT_SETTINGS: CF_FKNODE_SETTINGS = {
  */
 export const DEFAULT_SCHEDULE_FILE: CF_FKNODE_SCHEDULE = {
     updater: {
-        latestVer: VERSION,
+        latestVer: VERSIONING.APP,
         lastCheck: GetDateNow(),
     },
     flusher: {
@@ -132,20 +155,22 @@ export const DEFAULT_SCHEDULE_FILE: CF_FKNODE_SCHEDULE = {
 /**
  * Default project settings.
  *
- * @type {FkNodeYaml}
+ * @type {FullFkNodeYaml}
  */
-export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
+export const DEFAULT_FKNODE_YAML: FullFkNodeYaml = {
     divineProtection: "disabled",
-    lintCmd: "__ESLINT",
-    prettyCmd: "__PRETTIER",
+    lintCmd: "__USE_DEFAULT",
+    prettyCmd: "__USE_DEFAULT",
     destroy: {
         intensities: ["maxim"],
         targets: [
-            "node_modules",
+            "dist/",
+            "out/",
         ],
     },
     commitActions: false,
     commitMessage: "__USE_DEFAULT",
+    commitCmd: "__DISABLE",
     updateCmdOverride: "__USE_DEFAULT",
     flagless: {
         flaglessUpdate: false,
@@ -154,4 +179,16 @@ export const DEFAULT_FKNODE_YAML: FkNodeYaml = {
         flaglessDestroy: false,
         flaglessCommit: false,
     },
+    releaseAlwaysDry: false,
+    releaseCmd: "__DISABLE",
 };
+
+/** Checks if a given command is __USE_DEFAULT */
+export function isDef(str: UnknownString): boolean {
+    return StringUtils.normalize(str ?? "", true, true) === "usedefault";
+}
+
+/** Checks if a given command is __DISABLE */
+export function isDis(str: UnknownString): boolean {
+    return StringUtils.normalize(str ?? "", true, true) === "disable";
+}

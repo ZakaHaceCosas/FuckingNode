@@ -1,5 +1,8 @@
 <!-- markdownlint-disable md010 md046 md033 -->
-# Using F\*ckingNode: cleanup
+
+# Using F*ckingNode: the most important command
+
+> `fuckingnode clean [...many optional arguments]`, or `fkclean [...many optional arguments]`
 
 The core idea of F\*ckingNode is to automate cleanup of your NodeJS projects. On top of that base, additional maintenance features and [cross-runtime support](cross-runtime.md) exist as well.
 
@@ -8,20 +11,20 @@ The core idea of F\*ckingNode is to automate cleanup of your NodeJS projects. On
 The `fuckingnode clean` command is the base utility of the app. It accepts the following (all optional) arguments:
 
 ```bash
-fuckingnode clean < INTENSITY > [--update] [--lint] [--pretty] [--destroy] [--verbose] [--commit]
+fuckingnode clean < PROJECT | -- > < INTENSITY | -- > [--update] [--lint] [--pretty] [--destroy] [--verbose] [--commit]
 ```
 
-When executed with no arguments, it'll do a cleanup using the default intensity (which is `normal` and can be changed from the [settings](setup.md#settings)).
+When executed with no arguments, it'll do a cleanup using the default intensity (which is `normal` and can be changed from the [settings](configuration.md#settings)) across all of your projects.
 
 ## Cleaner intensities, explained
 
-There are four (well, three in reality) intensities available:
+There are five (well, three in reality) intensities available:
 
 - `normal`
 - `hard`
 - `maxim`
 
-and an additional `hard-only` level.
+and additional `hard-only` and `maxim-only` levels.
 
 This graph demonstrates what does each level do.
 
@@ -31,16 +34,20 @@ graph LR
     B[HARD]
     C[HARD-ONLY]
     D[MAXIM]
+    I[MAXIM-ONLY]
 
-	E[Per-project cleanup]
-	F[Global cleanup]
+	E[Per-project cleanup (dedupe, prune...)]
+	F[Global cleanup (cache clean...)]
 	G[Removal of node_modules]
 
 	A-->E
 	B-->E
 	B-->F
 	C-->F
+    D-->E
+	D-->F
 	D-->G
+    I-->G
 ```
 
 The `normal` level recursively "cleans" each of your project. We define "cleaning" by automatically running all the features your package manager provides for this task (you might not even know about commands like `npm dedupe`, right?).
@@ -48,61 +55,77 @@ The `normal` level recursively "cleans" each of your project. We define "cleanin
 The `hard` level does the previous (unless using `hard-only`), plus cleans global caches. This will make the most sense for `pnpm` user, which is known for it's global module cache, however cleaning is made for all package managers.
 
 !!! warning
-    As `npm` itself warns you when cache cleaning manually, it will make `npm` even slower than what it already is next time you use it.
-    Our recommendation is simple: to use `pnpm` as your default package manager. Don't remove `npm`, though, as compatibility issues may appear.
+    As `npm` itself warns you when cache cleaning manually, it will make `npm` even slower than what it already is next time you use it. Our recommendation is simple: to use `pnpm` as your default package manager. Don't remove `npm`, though, as compatibility issues may appear.
 
 We recommend running `normal` cleanups in a mid-frequent basis, and `hard` cleanups two or three times a month. That's our recommendation, of course. Do whatever you please with your PC.
 
-The `maxim` level does not execute any of the above, it simply removes `node_modules` from every single project you've added (forcing you to reinstall dependencies next time you use them). For average use, it is discouraged.
+The `maxim` level does what the previous levels do (unless using `hard-only`), and also the removes `node_modules` directory (forcing you to reinstall dependencies next time you want to code).
 
-However, in some cases, it can be useful, as our registered record is of **11 recovered gigabytes storage after using this cleanup** (yes, eleven). So, for example, if you needed to download a particularly big file and completely forgot your drive is almost full, this command will free up a particularly big chunk of your hard drive.
+!!! tip Why does maxim even exist?
+    For average use, it is discouraged. However, in some cases, it can be useful, as our registered record is of **11 recovered gigabytes storage after using this cleanup** (yes, eleven). So, for example, if you needed to download a particularly big file and completely forgot your drive is almost full, this command will free up a particularly big chunk of your hard drive.
 
 ---
 
 Now that we know this, we can choose whatever fits our needs each time we run a cleanup
 
 ```bash
-fuckingnode clean normal
-fuckingnode clean hard
-fuckingnode clean hard-only
-fuckingnode clean maxim
+fuckingnode clean -- normal
+fuckingnode clean -- hard
+fuckingnode clean -- hard-only
+fuckingnode clean -- maxim
+fuckingnode clean -- maxim-only
 ```
 
-Running without an intensity will use the **default intensity**. On a fresh install, it's always `normal`, however [that can be changed to your linking from the settings command](setup.md#settings).
+Running without an intensity will use the **default intensity**. On a fresh install, it's always `normal`, however [that can be changed to your linking from the settings command](configuration.md#settings).
+
+Notice the `--`. `clean` takes a project path / name as a first optional argument. If given (and different from `--`), that specific project will be cleaned (and global caches when `hard` cleanup). If not given, or `--` given, every single project from your list will be cleaned one by one, saving you even more time.
 
 ## Configuring a project's behavior
 
-Before advancing into the additional feature section, something you should know about is `fknode.yaml`. It's a simple config file, similar to what you're used to (`.prettierrc`, `.eslintrc.js`...) that lives in the root of the repo.
+Before continuing, something you should know about is `fknode.yaml`. It's our own text-config file, similar to other config files you're likely used to (`.prettierrc`, `.eslintrc.js`...).
 
-It's completely opt-in and not required whatsoever. However, it can be really useful (and some additional features do require specific configuration from this file).
-
-Instead of a boring reference-like explanation here, we got a fully documented, easy to follow file example at our repository. [Click here to go over there.](https://github.com/ZakaHaceCosas/FuckingNode/blob/master/fknode.example.yaml)
+It's completely opt-in and not required whatsoever. However, it can be really useful (and some additional features do require specific configuration from this file). [Click here to learn about it.](fknode-yaml.md).
 
 ## Using additional features
 
-By default, `fuckingnode clean (intensity)` only performs a cleanup of the desired level. Features we promised you (automated updating, linting, prettifying, destroying, and committing) are opt-in features.
+By default, `fuckingnode clean (project) (intensity)` only performs a cleanup of the desired level. Features we promised you (automated updating, linting, prettifying, destroying, and committing) are opt-in features.
 
-Simply pass them as a flag to use them. No args are required for any of them.
+There are two ways of activating them:
+
+**1 /** Simply pass them as a flag to use them. No args are required for any of them.
 
 ```bash
-fuckingnode clean -- --update --lint --pretty --destroy --commit
+fuckingnode clean -- -- --update --lint --pretty --destroy --commit
+# or
+fuckingnode clean -- -- -u -l -p -d -c
+# or even shorter
+fkclean -- -- -u -l -p -d -c
+```
+
+**2 /** For a specific project to automatically use some features without the need of the `clean` command having the flag specified, use `flagless` in the `fknode.yaml` file:
+
+```yaml title="fknode.yaml" linenums="17"
+flagless:
+    flaglessLint: true
+    flaglessPretty: true
+    # etc etc...
 ```
 
 Available flags are:
 
-| Flag | Why does this exist |
-| :--- | ---: |
-| `--lint` | does the obvious (lints)|
-| `--pretty` | does the obvious (prettifies)|
-| `--destroy`| does the obvious (destroys*) |
-| `--commit`| does the obvious (commits)|
-| `--update` | does the obvious (updates)|
+| Flag          |           Why does this exist |
+| :------------ | ----------------------------: |
+| `--lint`      |      does the obvious (lints) |
+| `--pretty`    | does the obvious (prettifies) |
+| `--destroy`\* |  does the obvious (destroys*) |
+| `--commit`    |    does the obvious (commits) |
+| `--update`    |    does the obvious (updates) |
 
 \* if not obvious enough, removes files and directories you specify, such as `.react`, `out/`, `dist/`, or anything you'd like to do away with.
 
 !!! abstract "Cross-runtime support notice"
 
-    Advanced features might not work everywhere. See [cross-runtime support](../manual/cross-runtime.md) for more info.
+    Some advanced features won't work everywhere. See [cross-runtime support](../learn/cross-runtime-support.md) for more info.
 
 Some of these features depend on `fknode.yaml` configuration, [as noted above](#configuring-a-projects-behavior).
 
@@ -224,4 +247,10 @@ There's a `--verbose` flag that can be passed to `fuckingnode clean`. It'll show
 
 ---
 
-[Next: Extra - Kickstart a project](kickstart.md)
+You've now learn how to use the base cleaner ends here.
+
+Next: Kickstart - Now proceed a bunch of extra features from the CLI to enhance productivity; kickstart is the first one.
+
+---
+
+[Next: Extra - Kickstart](kickstart.md)

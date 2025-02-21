@@ -28,9 +28,15 @@ export interface CommanderOutput {
  * @param {string} main Main command.
  * @param {string[]} stuff Additional args for the command.
  * @param {?boolean} showOutput Defaults to true. If false, the output of the command won't be shown and it'll be returned in the `CommanderOutput` promise instead.
+ * @param {?boolean} enforce Defaults to false. If true AND showOutput is false, output will be synchronous.
  * @returns {Promise<CommanderOutput>} An object with a boolean telling if it was successful and its output.
  */
-export async function Commander(main: string, stuff: string[], showOutput?: boolean): Promise<CommanderOutput> {
+export async function Commander(
+    main: string,
+    stuff: string[],
+    showOutput?: boolean,
+    enforce?: boolean,
+): Promise<CommanderOutput> {
     if (showOutput === false) {
         const command = new Deno.Command(main, {
             args: stuff,
@@ -38,11 +44,11 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
             stderr: "piped",
         });
 
-        const process = await command.output();
+        const process = enforce ? command.outputSync() : await command.output();
 
         const result: CommanderOutput = {
             success: process.success,
-            stdout: `${new TextDecoder().decode(process.stdout)}\n${new TextDecoder().decode(process.stderr)}`,
+            stdout: `${new TextDecoder().decode(process.stdout)}${process.stderr ? "\n" + new TextDecoder().decode(process.stderr) : ""}`,
         };
 
         return result;
@@ -55,32 +61,43 @@ export async function Commander(main: string, stuff: string[], showOutput?: bool
         stdin: "inherit",
     });
 
-    const process = command.spawn();
+    const process = await command.output();
 
     const result: CommanderOutput = {
-        success: (await process.status).success,
+        success: process.code === 0,
+        // (doesn't work) stdout: `${new TextDecoder().decode((await process.output()).stdout)}\n${new TextDecoder().decode((await process.output()).stdout)}`,
     };
 
     return result;
 }
 
 /**
- * Validates if a command exists. Useful to check if the user has some tool installed before running anything. Uses `-v` as an arg to whatever command you pass.
+ * Validates if a command exists. Useful to check if the user has some tool installed before running anything. Uses `-v` and `--version` as an arg to whatever command you pass.
  *
  * @export
- * @async
  * @param {string} cmd
- * @returns {Promise<boolean>}
+ * @returns {boolean}
  */
-export async function CommandExists(cmd: string): Promise<boolean> {
+export function CommandExists(cmd: string): boolean {
     try {
         const process = new Deno.Command(cmd, {
             args: ["-v"], // this single line fixed a bug that has been present for at least two months 😭
             stdout: "null",
             stderr: "null",
         });
+        const processTwo = new Deno.Command(cmd, {
+            args: ["--version"],
+            stdout: "null",
+            stderr: "null",
+        });
+        const processThree = new Deno.Command(cmd, {
+            args: ["help"], // platform-specific fix (go)
+            stdout: "null",
+            stderr: "null",
+        });
 
-        return (await process.output()).success;
+        // sync on purpose so we pause execution until we 100% know if command exists or not
+        return (process.outputSync()).success || (processTwo.outputSync()).success || (processThree.outputSync()).success;
     } catch {
         // error = false
         return false;

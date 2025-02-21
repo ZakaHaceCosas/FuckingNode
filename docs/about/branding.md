@@ -1,4 +1,5 @@
 <!-- markdownlint-disable md033 -->
+
 # F*ckingNode branding guidelines
 
 Just in case you wanted to write an article or make a video about us ;) (thank you!). We're not Nintendo, of course we won't sue you if you don't follow this _rules_ whatsoever. They're here just in case you don't know how to represent the branding of a logo-less project (a logo is WIP btw :eyes:) or simply wanted to ensure you stick to our ideals (thank you for that too).
@@ -17,7 +18,7 @@ There isn't any preference towards font families to be used. We recommend a `mon
 
 ## Can acronyms or abbreviations be used?
 
-They are all discouraged. If you're really going to use an acronym in a case where it's objectively better, `FkNode` should be used. Neither `FNode` nor `FN` nor `FkngNode` are recommended.
+`FkNode` is the only valid abbreviation. We encourage to use the full name instead, though.
 
 ## Colors?
 

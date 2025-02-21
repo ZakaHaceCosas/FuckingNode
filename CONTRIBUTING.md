@@ -66,6 +66,6 @@ async function StartUp() {
 
 Got the idea? Use any method you can think of to ensure your code can be read like a normal text, with the least nesting possible.
 
-> (TODO: add more instructions. until then, as long as your code doesn't suck, anything works)
+> Other than that, as long as your code doesn't suck, anything will do.
 
 Thank you so much for contributing. Happy coding!

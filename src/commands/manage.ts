@@ -1,13 +1,12 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
-import { GetAllProjects, GetProjectSettings, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
+import { GetAllProjects, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
-import GenericErrorHandler, { FknError } from "../utils/error.ts";
+import { FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
-import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
-import { StringUtils } from "@zakahacecosas/string-utils";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 
 /**
  * Adds a new project.
@@ -82,13 +81,15 @@ export async function AddProject(
         return;
     }
 
+    const workspaceString: string[] = [];
+
+    for (const ws of workspaces) {
+        workspaceString.push(await NameProject(ws, "all"));
+    }
+
     const addWorkspaces = await LogStuff(
-        `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these Node workspaces:\n\n${
-            workspaces.map(
-                async (thingy) => {
-                    return await NameProject(thingy, "all");
-                },
-            )
+        `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these workspaces:\n\n${
+            workspaceString.join("\n")
         }.\n\nShould we add them to your list as well, so they're all cleaned?`,
         "bulb",
         undefined,
@@ -121,21 +122,15 @@ export async function AddProject(
  * Removes a project.
  *
  * @async
- * @param {string} entry Path to the project.
+ * @param {UnknownString} entry Path to the project.
  * @returns {Promise<void>}
  */
 export async function RemoveProject(
-    entry: string | null,
+    entry: UnknownString,
+    showOutput: boolean = true,
 ): Promise<void> {
-    if (!entry) {
-        throw new FknError(
-            "Manager__ProjectInteractionInvalidCauseNoPathProvided",
-            "You didn't provide a path.",
-        );
-    }
-
     try {
-        const workingEntry = await SpotProject(entry.trim());
+        const workingEntry = await SpotProject(entry);
 
         const list = await GetAllProjects(false);
         const index = list.indexOf(workingEntry);
@@ -151,27 +146,29 @@ export async function RemoveProject(
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
         await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
 
-        if (list.length > 0) {
+        if (list.length > 0 && showOutput === true) {
             await LogStuff(
-                `Let me guess: ${await NameProject(
+                `I'll guess: ${await NameProject(
                     workingEntry,
                     "name",
                 )} was another "revolutionary cutting edge project" that's now gone, right?`,
                 "tick-clear",
             );
         } else {
-            await LogStuff(
-                `Removed ${await NameProject(
-                    workingEntry,
-                    "name",
-                )}. That was your last project, the list is now empty.`,
-                "moon-face",
-            );
+            if (showOutput === true) {
+                await LogStuff(
+                    `Removed ${await NameProject(
+                        workingEntry,
+                        "name",
+                    )}. That was your last project, the list is now empty.`,
+                    "moon-face",
+                );
+            }
         }
     } catch (e) {
         if (e instanceof FknError && e.code === "Generic__NonFoundProject") {
             await LogStuff(
-                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${await ParsePath(entry)}`,
+                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${entry} (=> ${entry ? await ParsePath(entry) : "undefined?"})`,
                 "error",
             );
             return;
@@ -179,66 +176,6 @@ export async function RemoveProject(
             throw e;
         }
     }
-}
-
-/**
- * Cleans up projects that are invalid and probably we won't be able to clean.
- *
- * @async
- * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, 2 if the user doesn't remove them.
- */
-async function CleanupProjects(): Promise<0 | 1 | 2> {
-    const listOfRemovals: { project: string; issue: PROJECT_ERROR_CODES }[] = [];
-
-    for (const project of (await GetAllProjects())) {
-        const validation = await ValidateProject(project, true);
-        if (validation !== true) listOfRemovals.push({ project: project, issue: validation });
-    }
-
-    // remove duplicates
-    const result = Array.from(
-        new Map(
-            listOfRemovals.map((item) => [JSON.stringify(item), item]), // make it a string so we can actually compare it's values
-        ).values(),
-    );
-
-    if (result.length === 0) {
-        await LogStuff(
-            `You're on the clear! Your list doesn't have any wrong ${I_LIKE_JS.MF}`,
-            "tick",
-        );
-        return 1;
-    }
-    await LogStuff(
-        `We've found issues! We're talking about getting rid of:\n`,
-        "bulb",
-    );
-    // doesn't use NameProject as it's likely to point to an invalid path
-    for (const idiot of result) {
-        await LogStuff(
-            `${idiot.project} ${ColorString(`Code: ${idiot.issue}`, "half-opaque")}`,
-            "trash",
-        );
-    }
-    console.log(""); // glue fix
-    const del = await LogStuff(
-        `Remove all of these ${I_LIKE_JS.MFS}?`,
-        "what",
-        undefined,
-        true,
-    );
-    if (!del) {
-        await LogStuff(
-            `I don't know why you'd keep those wrong projects, but okay...`,
-            "bruh",
-        );
-        return 2;
-    }
-    for (const target of result) {
-        await RemoveProject(target.project);
-    }
-    await LogStuff(`That worked out!`, "tick");
-    return 0;
 }
 
 /**
@@ -251,71 +188,69 @@ async function CleanupProjects(): Promise<0 | 1 | 2> {
 async function ListProjects(
     ignore: "limit" | "exclude" | false,
 ): Promise<void> {
-    try {
-        const list = await GetAllProjects(ignore);
+    const list = await GetAllProjects(ignore);
 
-        if (list.length === 0) {
-            if (ignore === "limit") {
-                await LogStuff(
-                    "Huh, you didn't ignore anything! Good to see you care about all your projects (not for long, I can bet).",
-                    "moon-face",
-                );
-                return;
-            } else {
-                await LogStuff(
-                    "Bruh, your mfs list is empty! Ain't nobody here!",
-                    "moon-face",
-                );
-                return;
-            }
-        }
-
-        const toPrint: string[] = [];
-        let message: string;
-
+    if (list.length === 0) {
         if (ignore === "limit") {
-            message = `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`;
-            for (const entry of list) {
-                const protection = (await GetProjectSettings(entry)).divineProtection; // array
-                let protectionString: string;
-                if (!(Array.isArray(protection))) {
-                    protectionString = "ERROR: CANNOT READ SETTINGS, CHECK YOUR FKNODE.YAML!";
-                } else {
-                    protectionString = protection.join(" and ");
-                }
-
-                toPrint.push(
-                    `${await NameProject(entry, "all")} (${
-                        ColorString(
-                            protectionString,
-                            "bold",
-                        )
-                    })\n`,
-                );
-            }
+            await LogStuff(
+                "Huh, you didn't ignore anything! Good to see you care about all your projects (not for long, I can bet).",
+                "moon-face",
+            );
+            return;
         } else if (ignore === "exclude") {
-            message = `Here are the ${I_LIKE_JS.MFS} you added (and haven't ignored) so far:\n`;
-            for (const entry of list) {
-                toPrint.push(await NameProject(entry, "all"));
-            }
+            await LogStuff(
+                "Huh, you ignored all of your projects! What did you download this CLI for?",
+                "moon-face",
+            );
+            return;
         } else {
-            message = `Here are the ${I_LIKE_JS.MFS} you added so far:\n`;
-            for (const entry of list) {
-                toPrint.push(await NameProject(entry, "all"));
-            }
+            await LogStuff(
+                "Man, your mfs list is empty! Ain't nobody here!",
+                "moon-face",
+            );
+            return;
         }
-
-        await LogStuff(
-            message,
-            "bulb",
-        );
-        for (const entry of StringUtils.sortAlphabetically(toPrint)) {
-            await LogStuff(entry);
-        }
-        return;
-    } catch (e) {
-        await GenericErrorHandler(e);
     }
+
+    const toPrint: string[] = [];
+    let message: string;
+
+    if (ignore === "limit") {
+        message = `Here are the ${I_LIKE_JS.MFS} you added (and ignored) so far:\n`;
+        for (const entry of list) {
+            const protection = (await GetProjectEnvironment(entry)).settings.divineProtection; // array
+            let protectionString: string;
+            if (!(Array.isArray(protection))) {
+                protectionString = "ERROR: CANNOT READ SETTINGS, CHECK YOUR FKNODE.YAML!";
+            } else {
+                protectionString = protection.join(" and ");
+            }
+
+            toPrint.push(
+                `${await NameProject(entry, "all")} (${
+                    ColorString(
+                        protectionString,
+                        "bold",
+                    )
+                })\n`,
+            );
+        }
+    } else if (ignore === "exclude") {
+        message = `Here are the ${I_LIKE_JS.MFS} you added (and haven't ignored) so far:\n`;
+        for (const entry of list) {
+            toPrint.push(await NameProject(entry, "all"));
+        }
+    } else {
+        message = `Here are the ${I_LIKE_JS.MFS} you added so far:\n`;
+        for (const entry of list) {
+            toPrint.push(await NameProject(entry, "all"));
+        }
+    }
+
+    await LogStuff(message, "bulb");
+    for (const entry of StringUtils.sortAlphabetically(toPrint)) await LogStuff(entry);
+
+    return;
 }
 
 export default async function TheManager(args: string[]) {
@@ -357,7 +292,10 @@ export default async function TheManager(args: string[]) {
             }
             break;
         case "cleanup":
-            await CleanupProjects();
+            await LogStuff(
+                "We removed the need to manually cleanup your projects - each time you run the CLI we auto-clean them for you.\nEnjoy!",
+                "comrade",
+            );
             break;
         default:
             await TheHelper({ query: "manager" });

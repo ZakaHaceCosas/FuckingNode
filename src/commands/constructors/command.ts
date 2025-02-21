@@ -68,15 +68,15 @@ export interface TheMigratorConstructedParams {
     /**
      * Project to be migrated.
      *
-     * @type {(string | undefined)}
+     * @type {UnknownString}
      */
-    project: string | undefined;
+    projectPath: UnknownString;
     /**
      * The manager to migrate to.
      *
-     * @type {(string | undefined)}
+     * @type {UnknownString}
      */
-    desiredManager: string | undefined;
+    wantedManager: UnknownString;
 }
 
 /**
@@ -119,21 +119,21 @@ export interface TheKickstarterConstructedParams {
     /**
      * URL of the Git repository.
      *
-     * @type {string}
+     * @type {UnknownString}
      */
-    gitUrl: string;
+    gitUrl: UnknownString;
     /**
      * Where to clone.
      *
-     * @type {?string}
+     * @type {?UnknownString}
      */
-    path?: string;
+    path?: UnknownString;
     /**
      * Package manager to be used, if you want to override upstream repo's manager.
      *
-     * @type {?string}
+     * @type {?UnknownString}
      */
-    manager?: string;
+    manager?: UnknownString;
 }
 
 /**
@@ -168,4 +168,160 @@ export interface TheReleaserConstructedParams {
      * @type {boolean}
      */
     dry: boolean;
+}
+
+/**
+ * The Exporter
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheExporterConstructedParams
+ */
+export interface TheExporterConstructedParams {
+    /**
+     * Project to generate FnCPF for.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * Whether to use JSON or not. If not, YAML is used.
+     *
+     * @type {boolean}
+     */
+    json: boolean;
+    /**
+     * Whether to output the file to the CLI too.
+     *
+     * @type {boolean}
+     */
+    cli: boolean;
+}
+
+/**
+ * The Compater
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheCompaterConstructedParams
+ */
+export interface TheCompaterConstructedParams {
+    /**
+     * Feature to fetch compat for.
+     *
+     * @type {?UnknownString}
+     */
+    target?: UnknownString;
+}
+
+/**
+ * The Committer
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheCommitterConstructedParams
+ */
+export interface TheCommitterConstructedParams {
+    /**
+     * Commit message.
+     *
+     * @type {UnknownString}
+     */
+    message: UnknownString;
+    /**
+     * Whether to push changes to remote or not.
+     *
+     * @type {boolean}
+     */
+    push: boolean;
+    /**
+     * Branch to commit to. Optional.
+     *
+     * @type {?UnknownString}
+     */
+    branch?: UnknownString;
+}
+
+/**
+ * The Surrenderer
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheSurrendererConstructedParams
+ */
+export interface TheSurrendererConstructedParams {
+    /**
+     * Project to be deprecated.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * An optional deprecation message.
+     *
+     * @type {UnknownString}
+     */
+    message: UnknownString;
+    /**
+     * An optional name or URL to an alternative to this package.
+     *
+     * @type {UnknownString}
+     */
+    alternative: UnknownString;
+    /**
+     * An optional URL to somewhere you can learn more about this deprecation.
+     *
+     * @type {UnknownString}
+     */
+    learnMoreUrl: UnknownString;
+    /**
+     * Is it a GitHub repository? If true, GitHub's `> [!TAGS]` will be used for a prettier string.
+     *
+     * @type {?boolean}
+     */
+    isGitHub?: boolean;
+}
+
+/**
+ * The Setuper
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheSetuperConstructedParams
+ */
+export interface TheSetuperConstructedParams {
+    /**
+     * Project to setup.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * Configuration to use.
+     *
+     * @type {UnknownString}
+     */
+    setup: UnknownString;
+}
+
+/**
+ * The Auditer
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheAuditerConstructedParams
+ */
+export interface TheAuditerConstructedParams {
+    /**
+     * Project to audit.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+    /**
+     * If true, stricter criteria will be used. Does not affect questions, just the math done for risk calculation.
+     *
+     * @type {boolean}
+     */
+    strict: boolean;
 }

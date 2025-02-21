@@ -1,4 +1,4 @@
-# (this is my real config for this repo)
+# this is the real config for this repo
 # for an example file with everything explained open "fknode.example.yaml" instead
 divineProtection: ["prettifier", "linter"]
 destroy:
@@ -7,3 +7,4 @@ destroy:
         - "dist"
 commitActions: true
 commitMessage: "Maintenance tasks (automated by FuckingNode itself)" # lol
+commitCmd: "test"

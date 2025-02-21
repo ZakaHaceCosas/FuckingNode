@@ -1,0 +1,13 @@
+{
+    "name": "test",
+    "version": "0.59.123",
+    "dependencies": {
+        "eslint": "^7.32.0"
+    },
+    "devDependencies": {
+        "typescript": "^4.4.3"
+    },
+    "peerDependencies": {
+        "react": "^17.0.2"
+    }
+}

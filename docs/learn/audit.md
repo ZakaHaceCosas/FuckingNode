@@ -5,6 +5,9 @@ An attempt to make security reports easier.
 !!! danger "Work in Progress feature"
     This is an **experimental** feature. It's subject to changes, full rewrites, or even removals.
 
+!!! danger Outdated
+    This section has not been updated for V3 yet.
+
 ## Abstract
 
 I'll give you a real life example - I, the guy who's documenting this, have got other projects besides F\*ckingNode, including a mobile React Native app, which recently became affected by a `low` severity vulnerability, which related to cookies. The thing is, fixing that implied breaking changes (as `expo-router` had a dependency that had a dependency that had a... until one that depended on the vulnerable version).
@@ -75,25 +78,25 @@ Your questions are evaluated using a straightforward positive-negative system: r
 These counts are used to compute the RF, based on the following formula:
 
 ```typescript
-(positives / (positives + negatives)) * 100
+(positives / (positives + negatives)) * 100;
 ```
 
 There's a `--strict` flag that can be passed to the audit command that adds an additional **risk bump**, based on the severity of the most-severe identified vulnerability, as follows:
 
 ```typescript
-(RF + (RB * 100)) / 2
+(RF + (RB * 100)) / 2;
 // RF = Risk Factor
 // RB = Risk Bump
 ```
 
 RB values are as follows:
 
-| Severity | RB |
-| :---- | ----: |
-| critical | 1 |
-| high | 0.75 |
-| moderate | 0.5 |
-| low | 0.25 |
+| Severity |   RB |
+| :------- | ---: |
+| critical |    1 |
+| high     | 0.75 |
+| moderate |  0.5 |
+| low      | 0.25 |
 
 ---
 
@@ -107,9 +110,9 @@ F\*ckingNode audit should not be allowed to have the final say over whether brea
 
 Where `EXP` indicates experimental, `CAVEAT` indicates partial support / support with known flaws, and `YES` and `NO` indicate the obvious.
 
-| Support | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
-| :-- | -- | -- | -- | -- | -- |
-| **v2.1.0** | EXP | NO | NO | NO | NO |
+| Support    | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
+| :--------- | ---------- | ----------- | ----------- | ---- | --- |
+| **v2.1.0** | EXP        | NO          | NO          | NO   | NO  |
 
 *[RF]: Risk Factor; a percentage computed by us to estimate the joint impact of all vulnerabilities of a NodeJS project.
 *[RB]: Risk Bump; a 0.25-1 number that's used to bump the RF based on the highest severity (as in low/moderate/high/critical) of a found vulnerability within a project.

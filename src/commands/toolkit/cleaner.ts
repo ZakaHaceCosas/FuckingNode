@@ -1,16 +1,16 @@
-import { I_LIKE_JS, VERSION } from "../../constants.ts";
+import { FULL_NAME, I_LIKE_JS, isDef } from "../../constants.ts";
 import { Commander, CommandExists } from "../../functions/cli.ts";
 import { GetSettings } from "../../functions/config.ts";
 import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
-import { GetProjectEnvironment, GetProjectSettings, NameProject, SpotProject } from "../../functions/projects.ts";
+import { GetProjectEnvironment, NameProject, SpotProject, UnderstandProjectProtection } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
-import type { JsProjectEnvironment, NodePkgJson, SUPPORTED_JAVASCRIPT_LOCKFILE } from "../../types/platform.ts";
-import { FknError } from "../../utils/error.ts";
+import type { ProjectEnvironment, SUPPORTED_GLOBAL_LOCKFILE } from "../../types/platform.ts";
+import { DEBUG_LOG, FknError } from "../../utils/error.ts";
 import { Git } from "../../utils/git.ts";
 import type { tRESULT } from "../clean.ts";
-import type { FkNodeYaml } from "../../types/config_files.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
+import { FkNodeInterop } from "../interop/interop.ts";
 
 /**
  * All project cleaning features.
@@ -18,41 +18,29 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 const ProjectCleaningFeatures = {
     Update: async (
         projectName: string,
-        env: JsProjectEnvironment,
-        settings: FkNodeYaml,
+        env: ProjectEnvironment,
         verbose: boolean,
     ) => {
-        const { commands } = env;
         await LogStuff(
-            `Updating ${projectName}.`,
+            `Updating dependencies for ${projectName}.`,
             "working",
         );
-        if (
-            settings.updateCmdOverride && settings.updateCmdOverride.trim() !== "" &&
-            settings.updateCmdOverride !== "__USE_DEFAULT"
-        ) {
-            await LogStuff(`${commands.run.join(" ")} ${settings.updateCmdOverride}`, "wip");
-            const output = await Commander(
-                commands.run[0],
-                [commands.run[1], settings.updateCmdOverride],
+        try {
+            const output = await FkNodeInterop.Features.Update({
+                env,
                 verbose,
-            );
-            if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
+                script: env.settings.updateCmdOverride,
+            });
+            if (output === true) await LogStuff(`Updated dependencies for ${projectName}!`, "tick");
             return;
-        } else {
-            await LogStuff(`${commands.base} ${commands.update}`, "wip");
-            const output = await Commander(
-                commands.base,
-                commands.update,
-                verbose,
-            );
-            if (output.success) await LogStuff(`Updated ${projectName}!`, "tick");
+        } catch (e) {
+            await LogStuff(`Failed to update deps for ${projectName}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },
     Clean: async (
         projectName: string,
-        env: JsProjectEnvironment,
+        env: ProjectEnvironment,
         verbose: boolean,
     ) => {
         const { commands } = env;
@@ -78,180 +66,115 @@ const ProjectCleaningFeatures = {
     },
     Lint: async (
         projectName: string,
-        env: JsProjectEnvironment,
-        settings: FkNodeYaml,
+        env: ProjectEnvironment,
         verbose: boolean,
     ) => {
-        const { commands } = env;
-        if (env.manager === "deno") return; // unsupported
-        if (!settings.lintCmd || settings.lintCmd.trim() === "") return;
         await LogStuff(
             `Linting ${projectName}.`,
             "working",
         );
-        if (settings.lintCmd === "__ESLINT") {
-            const dependencies = (env.main.content as NodePkgJson).dependencies;
-            if (!dependencies || !dependencies["eslint"]) {
-                await LogStuff(
-                    `Can't lint ${projectName}. No lint command was specified and ESLint is not installed.`,
-                    "bruh",
-                );
-                return;
-            }
-            const output = await Commander(
-                commands.exec[0],
-                commands.exec.length === 1
-                    ? [
-                        "eslint",
-                        "--fix",
-                        ".",
-                    ]
-                    : [
-                        commands.exec[1],
-                        "eslint",
-                        "--fix",
-                        ".",
-                    ],
+        try {
+            const output = await FkNodeInterop.Features.Lint({
+                env,
                 verbose,
-            );
-            if (output.success) await LogStuff(`Linted ${projectName}!`, "tick");
+                script: env.settings.lintCmd,
+            });
+            if (output === true) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
-        } else {
-            const output = await Commander(
-                commands.base,
-                ["run", settings.lintCmd],
-                verbose,
-            );
-            if (output.success) await LogStuff(`Linted ${projectName}!`, "tick");
+        } catch (e) {
+            await LogStuff(`Failed to lint ${projectName}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },
-    Prettify: async (
+    Pretty: async (
         projectName: string,
-        env: JsProjectEnvironment,
-        settings: FkNodeYaml,
+        env: ProjectEnvironment,
         verbose: boolean,
     ) => {
-        const { commands } = env;
         await LogStuff(
             `Prettifying ${projectName}.`,
             "working",
         );
-        if (commands.base === "deno") {
-            const output = await Commander(
-                "deno",
-                [
-                    "fmt",
-                ],
+        try {
+            const output = await FkNodeInterop.Features.Pretty({
+                env,
                 verbose,
-            ); // customization unsupported - it should work from deno.json, tho
-            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
+                script: env.settings.prettyCmd,
+            });
+            if (output === true) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;
-        }
-        if (!settings.prettyCmd || settings.prettyCmd.trim() === "") {
-            await LogStuff(
-                `Can't prettify ${projectName}. No prettify command was specified.`,
-                "bruh",
-            );
-            return;
-        }
-        if (settings.prettyCmd === "__PRETTIER") {
-            const dependencies = (env.main.content as NodePkgJson).dependencies;
-            if (!dependencies || !dependencies["prettier"]) {
-                await LogStuff(
-                    `Can't prettify ${projectName}. No prettify command was specified and Prettier is not installed.`,
-                    "bruh",
-                );
-                return;
-            }
-            const output = await Commander(
-                commands.exec[0],
-                commands.exec.length === 1
-                    ? [
-                        "prettier",
-                        "--w",
-                        ".",
-                    ]
-                    : [
-                        commands.exec[1],
-                        "eslint",
-                        "--w",
-                        ".",
-                    ],
-                verbose,
-            );
-            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
-            return;
-        } else {
-            const output = await Commander(
-                commands.base,
-                ["run", settings.prettyCmd],
-                verbose,
-            );
-            if (output.success) await LogStuff(`Prettified ${projectName}!`, "tick");
+        } catch (e) {
+            await LogStuff(`Failed to pretty ${projectName}: ${e}`, "warn", "bright-yellow");
             return;
         }
     },
     Destroy: async (
-        settings: FkNodeYaml,
-        project: string,
+        projectName: string,
+        env: ProjectEnvironment,
         intensity: CleanerIntensity,
         verbose: boolean,
     ) => {
-        if (!settings.destroy) return;
-        if (
-            !settings.destroy.intensities.includes(intensity) &&
-            !settings.destroy.intensities.includes("*")
-        ) return;
-        if (settings.destroy.targets.length === 0) return;
-        for (const target of settings.destroy.targets) {
-            if (target === "node_modules" && intensity === "maxim") continue; // avoid removing this thingy twice
-            const path = await ParsePath(await JoinPaths(project, target));
-            try {
-                await Deno.remove(path, {
-                    recursive: true,
-                });
-                await LogStuff(`Destroyed ${path} successfully`, "tick");
-                continue;
-            } catch (e) {
-                if (String(e).includes("os error 2")) {
-                    await LogStuff(
-                        `Didn't destroy ${ColorString(path, "bold")}: it does not exist!`,
-                        "warn",
-                        "bright-yellow",
-                        undefined,
-                        verbose,
-                    );
+        try {
+            if (!env.settings.destroy) return;
+            if (
+                !env.settings.destroy.intensities.includes(intensity) &&
+                !env.settings.destroy.intensities.includes("*")
+            ) return;
+            if (env.settings.destroy.targets.length === 0) return;
+            for (const target of env.settings.destroy.targets) {
+                if (target === "node_modules" && intensity === "maxim") continue; // avoid removing this thingy twice
+                const path = await ParsePath(await JoinPaths(env.root, target));
+                try {
+                    await Deno.remove(path, {
+                        recursive: true,
+                    });
+                    await LogStuff(`Destroyed ${path} successfully`, "tick");
+                    continue;
+                } catch (e) {
+                    if (String(e).includes("os error 2")) {
+                        await LogStuff(
+                            `Didn't destroy ${ColorString(path, "bold")}: it does not exist!`,
+                            "warn",
+                            "bright-yellow",
+                            undefined,
+                            verbose,
+                        );
+                        continue;
+                    }
+                    await LogStuff(`Error destroying ${path}: ${e}`, "error", "red", undefined, verbose);
                     continue;
                 }
-                await LogStuff(`Error destroying ${path}: ${e}`, "error", "red", undefined, verbose);
-                continue;
             }
+            await LogStuff(`Destroyed stuff at ${projectName}!`, "tick");
+            return;
+        } catch (e) {
+            await LogStuff(`Failed to destroy stuff at ${projectName}: ${e}`, "warn", "bright-yellow");
+            return;
         }
     },
     Commit: async (
-        settings: FkNodeYaml,
-        project: string,
+        env: ProjectEnvironment,
         shouldUpdate: boolean,
         shouldLint: boolean,
         shouldPrettify: boolean,
-        verbose: boolean,
     ) => {
         if (!shouldUpdate && !shouldLint && !shouldPrettify) {
             await LogStuff("No actions to be committed.", "bruh");
             return;
         }
-        if (settings.commitActions === false) {
+        if (env.settings.commitActions === false) {
             await LogStuff("No committing allowed.", "bruh");
             return;
         }
-        if ((await Git.IsWorkingTreeClean(project)) === true) {
+        if (!(await Git.CanCommit(env.root))) {
             await LogStuff("Tree isn't clean, can't commit", "bruh");
             return;
         }
         const getCommitMessage = () => {
-            if (settings.commitMessage && settings.commitMessage.trim() !== "" && settings.updateCmdOverride !== "__USE_DEFAULT") {
-                return settings.commitMessage;
+            if (
+                StringUtils.validate(env.settings.commitMessage) && !(isDef(env.settings.commitMessage))
+            ) {
+                return env.settings.commitMessage;
             }
 
             const tasks: string[] = [];
@@ -261,13 +184,13 @@ const ProjectCleaningFeatures = {
             if (shouldPrettify) tasks.push("prettifying");
 
             const taskString = tasks.join(" and ");
-            return `Code ${taskString} tasks (Auto-generated by F*ckingNode v${VERSION})`;
+            return `Code ${taskString} tasks (Auto-generated by ${FULL_NAME})`;
         };
 
-        await Git.Commit(await ParsePath(project), getCommitMessage(), [], verbose).then(
+        await Git.Commit(await ParsePath(env.root), getCommitMessage(), "all", []).then(
             async (success) => {
                 if (success === 1) {
-                    await LogStuff(`Committed your changes to ${await NameProject(project, "name")}!`, "tick");
+                    await LogStuff(`Committed your changes to ${await NameProject(env.root, "name")}!`, "tick");
                 }
             },
         );
@@ -282,96 +205,95 @@ const ProjectCleaningFeatures = {
  * @async
  * @param {string} projectInQuestion
  * @param {boolean} shouldUpdate
- * @param {boolean} shouldClean
  * @param {boolean} shouldLint
  * @param {boolean} shouldPrettify
  * @param {boolean} shouldDestroy
  * @param {boolean} shouldCommit
  * @param {("normal" | "hard" | "maxim")} intensity
  * @param {boolean} verboseLogging
- * @returns {Promise<void>}
+ * @returns {Promise<boolean>}
  */
-export async function PerformCleaning(
+export async function PerformCleanup(
     projectInQuestion: string,
     shouldUpdate: boolean,
-    shouldClean: boolean,
     shouldLint: boolean,
     shouldPrettify: boolean,
     shouldDestroy: boolean,
     shouldCommit: boolean,
     intensity: "normal" | "hard" | "maxim",
     verboseLogging: boolean,
-): Promise<void> {
-    try {
-        const motherfuckerInQuestion = await ParsePath(projectInQuestion);
-        const projectName = await NameProject(motherfuckerInQuestion, "name");
-        const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
-        const settings = await GetProjectSettings(motherfuckerInQuestion);
+): Promise<boolean> {
+    const motherfuckerInQuestion = await ParsePath(projectInQuestion);
+    const projectName = ColorString(await NameProject(motherfuckerInQuestion, "name"), "bold");
+    const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
 
-        /* "what should we do with the drunken sailor..." */
-        const whatShouldWeDo: Record<
-            "update" | "lint" | "pretty" | "destroy" | "commit",
-            boolean
-        > = {
-            update: shouldUpdate || (settings.flagless?.flaglessUpdate === true),
-            lint: shouldLint || (settings.flagless?.flaglessLint === true),
-            pretty: shouldPrettify || (settings.flagless?.flaglessPretty === true),
-            destroy: shouldDestroy || (settings.flagless?.flaglessDestroy === true),
-            commit: shouldCommit || (settings.flagless?.flaglessCommit === true),
-        };
+    DEBUG_LOG("ENV @@ PERFORMCLEANUP", workingEnv);
 
-        if (shouldClean) {
-            await ProjectCleaningFeatures.Clean(
-                projectName,
-                workingEnv,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["update"]) {
-            await ProjectCleaningFeatures.Update(
-                projectName,
-                workingEnv,
-                settings,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["lint"]) {
-            await ProjectCleaningFeatures.Lint(
-                projectName,
-                workingEnv,
-                settings,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["pretty"]) {
-            await ProjectCleaningFeatures.Prettify(
-                projectName,
-                workingEnv,
-                settings,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["destroy"]) {
-            await ProjectCleaningFeatures.Destroy(
-                settings,
-                motherfuckerInQuestion,
-                intensity,
-                verboseLogging,
-            );
-        }
-        if (whatShouldWeDo["commit"]) {
-            await ProjectCleaningFeatures.Commit(
-                settings,
-                motherfuckerInQuestion,
-                whatShouldWeDo["update"],
-                whatShouldWeDo["lint"],
-                whatShouldWeDo["pretty"],
-                verboseLogging,
-            );
-        }
-    } catch (e) {
-        throw e;
+    const { doClean, doDestroy, doLint, doPrettify, doUpdate } = UnderstandProjectProtection(workingEnv.settings, {
+        update: shouldUpdate,
+        prettify: shouldPrettify,
+        destroy: shouldDestroy,
+        lint: shouldLint,
+    });
+
+    /* "what should we do with the drunken sailor..." */
+    const whatShouldWeDo: Record<
+        "update" | "lint" | "pretty" | "destroy" | "commit",
+        boolean
+    > = {
+        update: doUpdate || (workingEnv.settings.flagless?.flaglessUpdate === true),
+        lint: doPrettify || (workingEnv.settings.flagless?.flaglessLint === true),
+        pretty: doLint || (workingEnv.settings.flagless?.flaglessPretty === true),
+        destroy: doDestroy || (workingEnv.settings.flagless?.flaglessDestroy === true),
+        commit: shouldCommit || (workingEnv.settings.flagless?.flaglessCommit === true),
+    };
+
+    if (doClean) {
+        await ProjectCleaningFeatures.Clean(
+            projectName,
+            workingEnv,
+            verboseLogging,
+        );
     }
+    if (whatShouldWeDo["update"]) {
+        await ProjectCleaningFeatures.Update(
+            projectName,
+            workingEnv,
+            verboseLogging,
+        );
+    }
+    if (whatShouldWeDo["lint"]) {
+        await ProjectCleaningFeatures.Lint(
+            projectName,
+            workingEnv,
+            verboseLogging,
+        );
+    }
+    if (whatShouldWeDo["pretty"]) {
+        await ProjectCleaningFeatures.Pretty(
+            projectName,
+            workingEnv,
+            verboseLogging,
+        );
+    }
+    if (whatShouldWeDo["destroy"]) {
+        await ProjectCleaningFeatures.Destroy(
+            projectName,
+            workingEnv,
+            intensity,
+            verboseLogging,
+        );
+    }
+    if (whatShouldWeDo["commit"]) {
+        await ProjectCleaningFeatures.Commit(
+            workingEnv,
+            whatShouldWeDo["update"],
+            whatShouldWeDo["lint"],
+            whatShouldWeDo["pretty"],
+        );
+    }
+
+    return true;
 }
 
 // cache cleaning is global, so doing these for every project like we used to do
@@ -381,9 +303,12 @@ export async function PerformCleaning(
  *
  * @export
  * @async
+ * @param {boolean} verboseLogging
  * @returns {Promise<void>}
  */
-export async function PerformHardCleanup(): Promise<void> {
+export async function PerformHardCleanup(
+    verboseLogging: boolean,
+): Promise<void> {
     await LogStuff(
         `Time for hard-pruning! ${ColorString("Wait patiently, please (caches will take a while to clean).", "italic")}`,
         "working",
@@ -405,45 +330,53 @@ export async function PerformHardCleanup(): Promise<void> {
     const bunHardPruneArgs: string[] = ["pm", "cache", "rm"];
     // const denoHardPruneArgs: string[] = ["clean"];
 
-    if (await CommandExists("npm")) {
+    if (CommandExists("npm")) {
         await LogStuff(
             "NPM",
             "package",
             "red",
+            undefined,
+            verboseLogging,
         );
-        await Commander("npm", npmHardPruneArgs, true);
-        await LogStuff("Done", "tick");
+        await Commander("npm", npmHardPruneArgs, verboseLogging);
+        await LogStuff("Done", "tick", undefined, undefined, verboseLogging);
     }
-    if (await CommandExists("pnpm")) {
+    if (CommandExists("pnpm")) {
         await LogStuff(
             "PNPM",
             "package",
             "bright-yellow",
+            undefined,
+            verboseLogging,
         );
         await Commander("pnpm", pnpmHardPruneArgs, true);
-        await LogStuff("Done", "tick");
+        await LogStuff("Done", "tick", undefined, undefined, verboseLogging);
     }
-    if (await CommandExists("yarn")) {
+    if (CommandExists("yarn")) {
         await LogStuff(
             "YARN",
             "package",
             "purple",
+            undefined,
+            verboseLogging,
         );
         await Commander("yarn", yarnHardPruneArgs, true);
-        await LogStuff("Done", "tick");
+        await LogStuff("Done", "tick", undefined, undefined, verboseLogging);
     }
 
-    if (await CommandExists("bun")) {
+    if (CommandExists("bun")) {
         await LogStuff(
             "BUN",
             "package",
             "pink",
+            undefined,
+            verboseLogging,
         );
-        await Commander("bun", ["init", "-y"], false); // placebo
-        await Commander("bun", bunHardPruneArgs, true);
-        await LogStuff("Done", "tick");
+        await Commander("bun", ["init", "-y"], verboseLogging); // placebo
+        await Commander("bun", bunHardPruneArgs, verboseLogging);
+        await LogStuff("Done", "tick", undefined, verboseLogging);
     }
-    /* if (await CommandExists("deno")) {
+    /* if (CommandExists("deno")) {
         await Commander("deno", ["init"], false); // placebo 2
         await Commander("deno", denoHardPruneArgs, true);
     } */
@@ -453,7 +386,7 @@ export async function PerformHardCleanup(): Promise<void> {
     // using a program thats written in deno
     // and it throws an error and exits the CLI
     // epic.
-    if (await CommandExists("deno")) {
+    if (CommandExists("deno")) {
         try {
             const denoDir: string | undefined = Deno.env.get("DENO_DIR");
             if (!denoDir) throw "lmao";
@@ -461,9 +394,11 @@ export async function PerformHardCleanup(): Promise<void> {
                 "DENO",
                 "package",
                 "bright-blue",
+                undefined,
+                verboseLogging,
             );
             await Deno.remove(denoDir);
-            await LogStuff("Done", "tick");
+            await LogStuff("Done", "tick", undefined, undefined, verboseLogging);
             // the CLI calls this kind of behaviors "maxim" cleanup
             // yet we're doing from the "hard" preset and not the
             // "maxim" one
@@ -506,6 +441,8 @@ export async function PerformMaximCleanup(projects: string[]): Promise<void> {
         const name = await NameProject(workingProject, "name");
         const env = await GetProjectEnvironment(workingProject);
 
+        if (env.runtime === "rust" || env.runtime === "golang") continue;
+
         await LogStuff(
             `Maxim pruning for ${name}`,
             "trash",
@@ -544,7 +481,7 @@ export async function ValidateIntensity(intensity: string): Promise<CleanerInten
     }
 
     const workingIntensity = cleanedIntensity as CleanerIntensity | "--";
-    const defaultIntensity = (await GetSettings()).defaultCleanerIntensity;
+    const defaultIntensity = (await GetSettings()).defaultIntensity;
 
     if (workingIntensity === "--") {
         return defaultIntensity;
@@ -610,17 +547,19 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
  * @export
  * @async
  * @param {string} path
- * @returns {Promise<SUPPORTED_JAVASCRIPT_LOCKFILE[]>} All lockfiles
+ * @returns {Promise<SUPPORTED_GLOBAL_LOCKFILE[]>} All lockfiles
  */
-export async function ResolveLockfiles(path: string): Promise<SUPPORTED_JAVASCRIPT_LOCKFILE[]> {
-    const lockfiles: SUPPORTED_JAVASCRIPT_LOCKFILE[] = [];
-    const possibleLockfiles: SUPPORTED_JAVASCRIPT_LOCKFILE[] = [
+export async function ResolveLockfiles(path: string): Promise<SUPPORTED_GLOBAL_LOCKFILE[]> {
+    const lockfiles: SUPPORTED_GLOBAL_LOCKFILE[] = [];
+    const possibleLockfiles: SUPPORTED_GLOBAL_LOCKFILE[] = [
         "pnpm-lock.yaml",
         "package-lock.json",
         "yarn.lock",
         "bun.lockb",
         "bun.lock",
         "deno.lock",
+        "go.sum",
+        "cargo.lock",
     ];
     for (const lockfile of possibleLockfiles) {
         if (await CheckForPath(await JoinPaths(path, lockfile))) {
@@ -628,4 +567,32 @@ export async function ResolveLockfiles(path: string): Promise<SUPPORTED_JAVASCRI
         }
     }
     return lockfiles;
+}
+
+/**
+ * Names a lockfile using a manager name.
+ *
+ * @export
+ * @param {("npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo")} manager Manager to name
+ * @returns {("package-lock.json" | "pnpm-lock.yaml" | "yarn.lock" | "bun.lock" | "deno.lock" | "go.sum" | "cargo.lock")} Lockfile name
+ */
+export function NameLockfile(
+    manager: "npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo",
+): "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock" | "bun.lock" | "deno.lock" | "go.sum" | "cargo.lock" {
+    switch (manager) {
+        case "npm":
+            return "package-lock.json";
+        case "pnpm":
+            return "pnpm-lock.yaml";
+        case "yarn":
+            return "yarn.lock";
+        case "bun":
+            return "bun.lock";
+        case "deno":
+            return "deno.lock";
+        case "go":
+            return "go.sum";
+        case "cargo":
+            return "cargo.lock";
+    }
 }
