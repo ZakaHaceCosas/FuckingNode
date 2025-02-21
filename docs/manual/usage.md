@@ -250,7 +250,3 @@ There's a `--verbose` flag that can be passed to `fuckingnode clean`. It'll show
 You've now learn how to use the base cleaner ends here.
 
 Next: Kickstart - Now proceed a bunch of extra features from the CLI to enhance productivity; kickstart is the first one.
-
----
-
-[Next: Extra - Kickstart](kickstart.md)

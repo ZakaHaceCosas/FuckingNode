@@ -49,7 +49,3 @@ Only the package file is added to Git, to avoid committing files you did not int
 You've now learnt how to speed up package releases.
 
 Next: Setup - How to speed up text-config files?
-
----
-
-[Next: Extra - setup](setup.md)

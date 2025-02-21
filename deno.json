@@ -21,7 +21,7 @@
         "compile": {
             "description": "Compiles the CLI",
             "command": "deno -A tasks/compile.ts",
-            "dependencies": ["test", "good"]
+            "dependencies": ["good"]
         },
         "test": {
             "description": "Runs all tests",

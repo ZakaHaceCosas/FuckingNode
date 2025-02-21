@@ -47,7 +47,3 @@ No files are added to Git, so just as you would normally do, run `git add (whate
 You've now learnt how to speed up commits.
 
 Next: Setup - How to speed up release of npm / jsr packages?
-
----
-
-[Next: Extra - release](release.md)

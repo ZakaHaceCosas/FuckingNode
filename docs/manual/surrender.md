@@ -47,7 +47,3 @@ This feature might seem a joke, but in reality, regardless of it being a project
 ---
 
 You've now learnt everything about F\*ckingNode.
-
----
-
-[What's next?](whats-next.md)

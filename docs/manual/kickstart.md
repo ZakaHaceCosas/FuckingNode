@@ -28,7 +28,3 @@ fuckingnode kickstart < REPO-URL > [PATH] [PKG MANAGER]
 You've now learnt how to get stuff from Git the F\*ckingNode way.
 
 Next: Commit - Committing stuff the F\*ckingNode way.
-
----
-
-[Next: Extra - commit](commit.md)
