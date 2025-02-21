@@ -34,7 +34,7 @@ First one is obvious, second one overrides the default location the repo will be
 
 ### Process
 
-It's really simple, we'll execute all commands in order - git clone, then the install command, and then we'll launch your favorite editor (defined from the [settings](../manual/configure.md#settings)). The project will be added _directly_ to the project list _instead of_ running the _actual_ CLI command (to avoid some issues that would occur with non-NodeJS projects).
+It's really simple, we'll execute all commands in order - git clone, then the install command, and then we'll launch your favorite editor (defined from the [settings](../manual/configuration.md#settings)). The project will be added _directly_ to the project list _instead of_ running the _actual_ CLI command (to avoid some issues that would occur with non-NodeJS projects).
 
 If everything went alright, we'll exit with code `0`.
 

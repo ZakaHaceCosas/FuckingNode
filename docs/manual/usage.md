@@ -1,6 +1,6 @@
 <!-- markdownlint-disable md010 md046 md033 -->
 
-# Using F\*ckingNode: cleanup
+# Using F*ckingNode: the most important command
 
 > `fuckingnode clean [...many optional arguments]`, or `fkclean [...many optional arguments]`
 
@@ -82,11 +82,9 @@ Notice the `--`. `clean` takes a project path / name as a first optional argumen
 
 ## Configuring a project's behavior
 
-Before advancing into the additional feature section, something you should know about is `fknode.yaml`. It's a simple config file, similar to what you're used to (`.prettierrc`, `.eslintrc.js`...) that lives in the root of the repo.
+Before continuing, something you should know about is `fknode.yaml`. It's our own text-config file, similar to other config files you're likely used to (`.prettierrc`, `.eslintrc.js`...).
 
-It's completely opt-in and not required whatsoever. However, it can be really useful (and some additional features do require specific configuration from this file).
-
-Instead of a boring reference-like explanation here, we got a fully documented, easy to follow file example at our repository. [Click here to go over there.](https://github.com/ZakaHaceCosas/FuckingNode/blob/master/fknode.example.yaml)
+It's completely opt-in and not required whatsoever. However, it can be really useful (and some additional features do require specific configuration from this file). [Click here to learn about it.](fknode-yaml.md).
 
 ## Using additional features
 
@@ -249,8 +247,10 @@ There's a `--verbose` flag that can be passed to `fuckingnode clean`. It'll show
 
 ---
 
-The base cleaner ends here. Now proceed a bunch of extra features to enhance productivity.
+You've now learn how to use the base cleaner ends here.
+
+Next: Kickstart - Now proceed a bunch of extra features from the CLI to enhance productivity; kickstart is the first one.
 
 ---
 
-[Next: Extra - Kickstart a project](kickstart.md)
+[Next: Extra - Kickstart](kickstart.md)

@@ -50,4 +50,10 @@ You can now either:
 
 ---
 
-[Next step: Setup](configuration.md)
+You've now learnt how to install the CLI.
+
+Next: Configure the CLI - Get the CLI ready for usage.
+
+---
+
+[Configure the CLI](configuration.md)

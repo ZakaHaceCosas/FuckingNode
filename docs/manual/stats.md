@@ -1,8 +1,10 @@
-# Stats command
+# Using F*ckingNode: `stats`
 
 > `fuckingnode stats <project>`
 
-This is the simplest thing ever. Just run `fuckingnode stats *`, replacing `*` with the name of a project (from the `package.json`'s `"name"` field) or the path to the project's root, and something like this will be shown to you (using CLI colors and stuff):
+This is the simplest thing ever. Just run `fuckingnode stats *`, replacing `*` with the name of a project (from the `package.json`'s `"name"` field) or the path to the project's root, and you will see two things.
+
+## Project outline
 
 ```txt
 @zakahacecosas/fuckingnode@3.0.0-alpha.3 C:\Users\Zaka\FuckingNode
@@ -22,26 +24,73 @@ Depends on 8 m*therf*ckers:
 a) A Deno project can have `> jsr` or `> npm` dependencies
 b) Any JavaScript project can have `# Dependencies`, `# Dev Dependencies`, or `# Build Dependencies`
 
-We are thinking of a valid use case that we can give to this command. Most likely, an "audit" similar to GitHub's "_This is how your repo compares to the recommended community standards..._". Until then this is honestly useless, unless you need to count your project's dependencies.
+And that's it. We're thinking of what else we could show here that may interest you.
+
+## Recommended Community Standards
+
+Here's where the command gets a bit useful. This is currently only supported for NodeJS.
+
+Similarly to the Recommended Community Standards tab of a GitHub repository, this will check if all the recommended fields of a `package.json` file are fulfilled.
+
+For example, a project with the following package.json:
+
+```json
+{
+    "name": "some-astro-website",
+    "type": "module",
+    "version": "0.1.0",
+    "scripts": {
+        "dev": "astro dev",
+        "start": "astro dev",
+        "build": "astro check && astro build",
+        "preview": "astro preview",
+        "astro": "astro"
+    },
+    "dependencies": {
+        "@astrojs/check": "^0.9.4",
+        "@astrojs/mdx": "^4.0.8",
+        "@astrojs/vercel": "^8.0.7",
+        "@vercel/speed-insights": "^1.2.0",
+        "astro": "^5.3.0",
+        "sharp": "^0.33.5",
+        "typescript": "^5.7.3"
+    },
+}
+```
+
+will return this:
+
+```txt
+❌ No license found. You should specify it!
+❌ No author found. Who made this 'great' code?
+😐 No contributors found. If none, that's fine, but if someone helps, mention them.
+❌ No description found. What does your code even do?
+❌ You didn't specify a repository, why?
+❌ You didn't specify where to report bugs. Don't be lazy and accept feedback!
+✅ This is an ESM project, lovely.
+```
+
+For everything to turn `✅ correct`, we would need to either:
+
+Add:
+
+- `license`
+- `author`
+- `contributors`
+- `description`
+- `repository`
+- `bugs`
+
+Or:
+
+Set `private` to true, so the project is considered _not_ an npm package and thus package-related checks like `repository` are omitted.
+
+_This feature is still very basic to be honest. We'll improve it over time._
 
 ---
 
-You've reached the end of the manual. Congratulations.
-
-We hope F\*ckingNode made your JavaScript developer journey a bit less of a f\*cking headache. Note "we" should actually be "I", this is maintained by a single developer (open to contributions, as always). Any suggestion and/or feedback is appreciated.
+You've now learnt everything about F\*ckingNode.
 
 ---
 
-Here you got, a bunch of links you might find interesting or useful.
-
-[Go to the beginning?](index.md)
-
-[Our low-budget action trailer on YouTube (less than two minutes and _kinda_ worth watching)](https://youtube.com/watch?v=_lppvGYUXNk)
-
-[Roadmap and future plans](../about/roadmap.md)
-
-[Learn how does F*ckingNode work from the inside](../learn/index.md)
-
-[Branding guidelines? (yes we have them)](../about/branding.md)
-
-[GitHub](https://github.com/ZakaHaceCosas/FuckingNode)
+[What's next?](whats-next.md)

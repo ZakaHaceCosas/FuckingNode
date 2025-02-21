@@ -26,7 +26,9 @@ If not specified, we simply run the default `clean` task (which also runs when y
 
 ---
 
-Okay, now we know how to speed up commits. But how to speed up text-config files?
+You've now learnt how to speed up commits.
+
+Next: Setup - How to speed up text-config files?
 
 ---
 

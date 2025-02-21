@@ -1,4 +1,4 @@
-# F\*ckingNode full manual
+# F*ckingNode user manual
 
 Everything, from the basic to the complex, is documented here step by step.
 
@@ -7,10 +7,13 @@ Everything, from the basic to the complex, is documented here step by step.
 These are links to individual pages. For the full manual, click the first one, then keep reading. For a faster, one page guide to quickly get started, [skip here](#tldr-for-getting-started-as-soon-as-possible).
 
 - [Install the CLI](install.md)
-- [Setup and configuration](setup.md)
+- [Configuration](configuration.md)
 - [Main usage guide](usage.md)
+- [Individual project config](fknode-yaml.md)
 - [Extra - Kickstart](kickstart.md)
+- [Extra - Commit](commit.md)
 - [Extra - Stats](stats.md)
+- [What's next?](whats-next.md)
 
 For further learning:
 
@@ -44,7 +47,17 @@ fuckingnode clean
 
 It's simple, and while it doesn't recover gigabytes, it's fast and it gets the job done. Additional flags can be passed for using more advanced features.
 
-Keep in mind it's a global command; it'll do the same cleanup, with the same flags if passed, across all the projects you've added. A config file `fknode.yaml` can be created at the root of an added project to override this behavior.
+Keep in mind it's a global command; it'll run the cleanup (with the same flags if passed) across all the projects you've added, saving you time.
+
+A config file `fknode.yaml` can be created at the root of an added project to override this some behaviors.
+
+You can also clean a specific project providing it's path, or it's name from the `package.json`.
+
+```bash
+fuckingnode clean ../project1 # only clean /home/users/me/project1, for example
+# or
+fuckingnode clean my-framework # only clean the project with "my-framework" in the "name" field
+```
 
 ### Step 3
 
@@ -60,13 +73,15 @@ If you only wish to clear global caches without waiting for individual cleanup o
 
 ### Step 4
 
-For the best experience, you can pass `--`flags to the clean command for using additional features. Detailed explanations are available at the [usage manual](../manual/usage.md), here we'll just TL;DR them:
+For the best experience, you can pass flags to the clean command for using additional features. Detailed explanations are available at the [usage manual](../manual/usage.md), but basically:
 
 - `--lint` runs ESLint (or desired linter)
 - `--pretty` runs Prettier (or desired prettifier)
 - `--destroy` removes unneeded files (e.g. `dist/`)
 - `--update` updates dependencies
 - `--commit` commits changes made by us (e.g. changes to your lockfile because of updating)
+
+Each flag can be invoked with the 1st letter for faster typing (`-l` = `--lint`, `-p` = `--pretty`...)
 
 As outlined [before](#step-2) cleaning is global. When running with `--lint` all your projects will be automatically linted (unless overridden, as said), greatly increasing your productivity.
 

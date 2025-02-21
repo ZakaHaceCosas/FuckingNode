@@ -1,4 +1,4 @@
-# Kickstart a project
+# Using FuckingNode: Kickstart a project
 
 > `fuckingnode kickstart <repo-url> [file-path] [package manager]`
 
@@ -25,7 +25,9 @@ fuckingnode kickstart < REPO-URL > [PATH] [PKG MANAGER]
 
 ---
 
-Okay, now that we know how to get stuff from Git the FkNode way, lets commit stuff back the FkNode way.
+You've now learnt how to get stuff from Git the F\*ckingNode way.
+
+Next: Commit - Committing stuff the F\*ckingNode way.
 
 ---
 

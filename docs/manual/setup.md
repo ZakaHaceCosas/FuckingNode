@@ -1,4 +1,4 @@
-# Setup a project
+# Using F*ckingNode: Setup a project
 
 !!! question Don't mess terms up
     It's not the same to _setup FuckingNode_ ([configure the CLI first time](configuration.md)) than to use _fuckingnode setup_ (here)
@@ -25,7 +25,9 @@ fuckingnode setup <project-path> [setup]
 
 ---
 
-Okay, now we know how to quickly get our text-config files ready. Now, stats (can't think of a description for this one).
+You've now learnt how to quickly get your text-config files ready.
+
+Next: Stats (can't think of a description for this one).
 
 ---
 
