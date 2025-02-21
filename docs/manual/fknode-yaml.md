@@ -1,4 +1,4 @@
-# Using F*ckingNode: The fknode.yaml file
+# Using FuckingNode: The fknode.yaml file
 
 The `fknode.yaml` file is used to configure extra settings for individual projects. It is completely opt-in and not required whatsoever. Some settings do however require specific config from here.
 

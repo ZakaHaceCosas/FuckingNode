@@ -5,7 +5,7 @@ An attempt to make security reports easier.
 !!! danger "Work in Progress feature"
     This is an **experimental** feature. It's subject to changes, full rewrites, or even removals.
 
-!!! danger Outdated
+!!! danger "Outdated"
     This section has not been updated for V3 yet.
 
 ## Abstract

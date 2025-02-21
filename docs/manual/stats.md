@@ -1,4 +1,4 @@
-# Using F*ckingNode: `stats`
+# Using FuckingNode: `stats`
 
 > `fuckingnode stats <project>`
 

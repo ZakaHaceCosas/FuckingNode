@@ -1,7 +1,4 @@
-<!-- ---
-hide:
-  - navigation
---- -->
+<!-- markdownlint-disable md030 -->
 
 # The f*cking chaos ends here
 
@@ -15,37 +12,37 @@ hide:
 
 <div class="grid cards" markdown>
 
-- :simple-googlecloudstorage:{ .lg .middle } **Save up storage**
+-   :simple-googlecloudstorage:{ .lg .middle } **Save up storage**
 
-  ---
+    ---
 
-  Automate cleanup of all your projects & runtime caches with a single command.
+    Automate cleanup of all your projects & runtime caches with a single command.
 
-  [:octicons-arrow-right-24: Getting started](manual/usage.md#the-clean-command)
+    [:octicons-arrow-right-24: Getting started](manual/usage.md#the-clean-command)
 
-- :material-connection:{ .lg .middle } **Use it everywhere**
+-   :material-connection:{ .lg .middle } **Use it everywhere**
 
-  ---
+    ---
 
-  Works with any NodeJS, Deno, or BunJS project. Even Go and Rust are partially supported![^1]
+    Works with any NodeJS, Deno, or BunJS project. Even Go and Rust are partially supported![^1]
 
-  [:octicons-arrow-right-24: Cross-platform support](manual/cross-runtime.md)
+    [:octicons-arrow-right-24: Cross-platform support](learn/cross-runtime-support.md)
 
-- :material-speedometer:{ .lg .middle } **Speed up your workflow**
+-   :material-speedometer:{ .lg .middle } **Speed up your workflow**
 
-  ---
+    ---
 
-  Automate linting, prettifying, updating, and even releasing your projects.
+    Automate linting, prettifying, updating, and even releasing your projects.
 
-  [:octicons-arrow-right-24: Advanced features](manual/index.md#fckingnode-full-manual)
+    [:octicons-arrow-right-24: Advanced features](manual/index.md#fckingnode-full-manual)
 
-- :material-arm-flex:{ .lg .middle } **Flex about it**
+-   :material-arm-flex:{ .lg .middle } **Flex about it**
 
-  ---
+    ---
 
-  Your friends spend a lot of time manually maintaining JS projects they ain't even releasing. Show 'em the way of the _f*cking_ Gods.
+    Your friends spend a lot of time manually maintaining JS projects they ain't even releasing. Show 'em the F\*ckingNode way.
 
-  [:octicons-arrow-right-24: Download now](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest)
+    [:octicons-arrow-right-24: Download now](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest)
 
 </div>
 

@@ -1,6 +1,6 @@
 <!-- markdownlint-disable md010 md046 md033 -->
 
-# Using F*ckingNode: the most important command
+# Using FuckingNode: the most important command
 
 > `fuckingnode clean [...many optional arguments]`, or `fkclean [...many optional arguments]`
 
@@ -54,14 +54,14 @@ The `normal` level recursively "cleans" each of your project. We define "cleanin
 
 The `hard` level does the previous (unless using `hard-only`), plus cleans global caches. This will make the most sense for `pnpm` user, which is known for it's global module cache, however cleaning is made for all package managers.
 
-!!! warning
+!!! warning "Regarding npm's cache"
     As `npm` itself warns you when cache cleaning manually, it will make `npm` even slower than what it already is next time you use it. Our recommendation is simple: to use `pnpm` as your default package manager. Don't remove `npm`, though, as compatibility issues may appear.
 
 We recommend running `normal` cleanups in a mid-frequent basis, and `hard` cleanups two or three times a month. That's our recommendation, of course. Do whatever you please with your PC.
 
 The `maxim` level does what the previous levels do (unless using `hard-only`), and also the removes `node_modules` directory (forcing you to reinstall dependencies next time you want to code).
 
-!!! tip Why does maxim even exist?
+!!! tip "Why does maxim even exist?"
     For average use, it is discouraged. However, in some cases, it can be useful, as our registered record is of **11 recovered gigabytes storage after using this cleanup** (yes, eleven). So, for example, if you needed to download a particularly big file and completely forgot your drive is almost full, this command will free up a particularly big chunk of your hard drive.
 
 ---
