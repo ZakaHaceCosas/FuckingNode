@@ -15,6 +15,7 @@ These are links to individual pages. For the full manual, click the first one, t
 - [Extra - Release](release.md)
 - [Extra - Setup](setup.md)
 - [Extra - Stats](stats.md)
+- [Extra - Stats](surrender.md)
 - [What's next?](whats-next.md)
 
 For further learning:

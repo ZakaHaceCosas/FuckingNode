@@ -87,10 +87,8 @@ Set `private` to true, so the project is considered _not_ an npm package and thu
 
 _This feature is still very basic to be honest. We'll improve it over time._
 
----
-
-You've now learnt everything about F\*ckingNode.
+Next: Surrender - how to speed up a JavaScript's projects natural cycle.
 
 ---
 
-[What's next?](whats-next.md)
+[Extra - Surrender](surrender.md)
