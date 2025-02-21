@@ -5,6 +5,9 @@ An attempt to make security reports easier.
 !!! danger "Work in Progress feature"
     This is an **experimental** feature. It's subject to changes, full rewrites, or even removals.
 
+!!! danger Outdated
+    This section has not been updated for V3 yet.
+
 ## Abstract
 
 I'll give you a real life example - I, the guy who's documenting this, have got other projects besides F\*ckingNode, including a mobile React Native app, which recently became affected by a `low` severity vulnerability, which related to cookies. The thing is, fixing that implied breaking changes (as `expo-router` had a dependency that had a dependency that had a... until one that depended on the vulnerable version).
