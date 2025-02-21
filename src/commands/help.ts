@@ -48,6 +48,21 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             `Quickly clones a repo inside of [path] (or current working directory/<repo-name> by default), installs deps, setups ${APP_NAME.CASED}, and launches your favorite editor.`,
         ],
         [
+            "commit",
+            "<message> [branch] [--push]",
+            `Makes a <commit> with the given message, optionally to the given [branch], only if a specified task succeeds.`,
+        ],
+        [
+            "release",
+            "<project> <version> [--push] [--dry]",
+            `Releases a new <version> of the given <project> as an npm or jsr package, only if a specified task succeeds.`,
+        ],
+        [
+            "surrender",
+            "<project> [message] [alternative] [learn-more-url] [--github]",
+            `Deprecates a <project>, optional leaving a [message], an [alternative], and a [learn-more-url].`,
+        ],
+        [
             "settings",
             "[setting] [extra parameters]",
             "Allows to change the CLIs setting. Run it without args to see current settings.",
@@ -161,8 +176,8 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
         [
             "change",
-            "<update-freq | default-int | fav-editor> <value>",
-            "Allows to change chosen settings.",
+            "<setting> <value>",
+            "Allows to change chosen <setting> to given <value>. See documentation for more info.",
         ],
     ]);
     const KICKSTART_OPTIONS = formatCmd([
@@ -170,6 +185,13 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             "kickstart",
             "<git-url> [project-path] [manager]",
             "Clones <git-url> to [project-path] (or ./<repo-name> by default), installs deps with [manager] (or default (pnpm, bun, or deno) if not given), opens your editor (VSCode by default, change from settings), and adds the project to your list.",
+        ],
+    ]);
+    const SURRENDER_OPTIONS = formatCmd([
+        [
+            "surrender",
+            "<project> [message] [alternative] [learn-more-url] [--github]",
+            "Takes a <project>, runs a last maintenance task, then edits its README file to add a deprecation notice, and optionally, a [message], an [alternative] to your project, and a URL to learn more ([learn-more-url]). If [--github] is passed, GitHub flavored MarkDown is used.\n\nAll these changes will be committed and pushed to the repo, and after that the code will be removed from your local machine.",
         ],
     ]);
     const AUDIT_OPTIONS = formatCmd([
@@ -195,7 +217,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
     ]);
     const RELEASE_OPTIONS = formatCmd([
         [
-            "commit",
+            "release",
             "<project-path> <version> [--push] [--dry]",
             "Runs our maintenance task and a script specified by you (if any).\n  Then bumps version in your package file to given <version> and commits that.\n  If these tasks succeed, releases the project as an npm / jsr package (autodetected).\n  Run with --push to push commit as well.\n  Use '--dry' to make everything (commit, push, run script) but without publishing to npm / jsr.",
         ],
@@ -273,6 +295,12 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
             break;
         case "audit":
             await LogStuff(AUDIT_OPTIONS);
+            await pathReminder();
+            break;
+        case "surrender":
+            await LogStuff(
+                `'surrender' allows you to deprecate a project easily. Options:\n${SURRENDER_OPTIONS}`,
+            );
             await pathReminder();
             break;
         case "compat":

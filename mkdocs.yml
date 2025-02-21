@@ -19,7 +19,7 @@ nav:
           - Main usage guide: "manual/usage.md"
           - Individual project configuration: "manual/fknode-yaml.md"
           - Extra - Kickstart: "manual/kickstart.md"
-          - Extra - Commit: "manual/stats.md"
+          - Extra - Commit: "manual/commit.md"
           - Extra - Release: "manual/release.md"
           - Extra - Setup: "manual/setup.md"
           - Extra - Stats: "manual/stats.md"

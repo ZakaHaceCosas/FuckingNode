@@ -1,7 +1,7 @@
 import { FULL_NAME, I_LIKE_JS, isDef } from "../../constants.ts";
 import { Commander, CommandExists } from "../../functions/cli.ts";
 import { GetSettings } from "../../functions/config.ts";
-import { CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
+import { BulkRemoveFiles, CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject, UnderstandProjectProtection } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
@@ -227,7 +227,7 @@ export async function PerformCleanup(
     const projectName = ColorString(await NameProject(motherfuckerInQuestion, "name"), "bold");
     const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
 
-    DEBUG_LOG("ENV @@ PERFORMCLEANUP", workingEnv);
+    DEBUG_LOG("ENV @@ PerformCleanup", workingEnv);
 
     const { doClean, doDestroy, doLint, doPrettify, doUpdate } = UnderstandProjectProtection(workingEnv.settings, {
         update: shouldUpdate,
@@ -329,39 +329,35 @@ export async function PerformHardCleanup(
     // now F*kingNode is F*ckingJavascriptRuntimes :]
     const bunHardPruneArgs: string[] = ["pm", "cache", "rm"];
     // const denoHardPruneArgs: string[] = ["clean"];
+    // cross platform!!
+    const golangHardPruneArgs: string[] = ["clean", "-modcache"];
 
     if (CommandExists("npm")) {
         await LogStuff(
             "NPM",
             "package",
             "red",
-            undefined,
-            verboseLogging,
         );
         await Commander("npm", npmHardPruneArgs, verboseLogging);
-        await LogStuff("Done", "tick", undefined, undefined, verboseLogging);
+        await LogStuff("Done", "tick");
     }
     if (CommandExists("pnpm")) {
         await LogStuff(
             "PNPM",
             "package",
             "bright-yellow",
-            undefined,
-            verboseLogging,
         );
         await Commander("pnpm", pnpmHardPruneArgs, true);
-        await LogStuff("Done", "tick", undefined, undefined, verboseLogging);
+        await LogStuff("Done", "tick");
     }
     if (CommandExists("yarn")) {
         await LogStuff(
             "YARN",
             "package",
             "purple",
-            undefined,
-            verboseLogging,
         );
         await Commander("yarn", yarnHardPruneArgs, true);
-        await LogStuff("Done", "tick", undefined, undefined, verboseLogging);
+        await LogStuff("Done", "tick");
     }
 
     if (CommandExists("bun")) {
@@ -369,12 +365,20 @@ export async function PerformHardCleanup(
             "BUN",
             "package",
             "pink",
-            undefined,
-            verboseLogging,
         );
         await Commander("bun", ["init", "-y"], verboseLogging); // placebo
         await Commander("bun", bunHardPruneArgs, verboseLogging);
-        await LogStuff("Done", "tick", undefined, verboseLogging);
+        await LogStuff("Done", "tick");
+    }
+
+    if (CommandExists("go")) {
+        await LogStuff(
+            "GOLANG",
+            "package",
+            "cyan",
+        );
+        await Commander("go", golangHardPruneArgs, verboseLogging);
+        await LogStuff("Done", "tick");
     }
     /* if (CommandExists("deno")) {
         await Commander("deno", ["init"], false); // placebo 2
@@ -394,15 +398,44 @@ export async function PerformHardCleanup(
                 "DENO",
                 "package",
                 "bright-blue",
-                undefined,
-                verboseLogging,
             );
             await Deno.remove(denoDir);
-            await LogStuff("Done", "tick", undefined, undefined, verboseLogging);
+            await LogStuff("Done", "tick");
             // the CLI calls this kind of behaviors "maxim" cleanup
             // yet we're doing from the "hard" preset and not the
             // "maxim" one
             // epic.
+        } catch {
+            // nothing happened.
+        }
+    }
+
+    // rust requires a gluefix too
+    if (CommandExists("cargo")) {
+        try {
+            const paths: string[] = [];
+            if (Deno.build.os === "windows") {
+                const envPath = Deno.env.get("USERPROFILE");
+                if (!envPath) throw "lmao";
+                paths.push(
+                    await JoinPaths(envPath, ".cargo/registry"),
+                    await JoinPaths(envPath, ".cargo/git"),
+                    await JoinPaths(envPath, ".cargo/bin"),
+                );
+            } else {
+                paths.push(
+                    await ParsePath("~/.cargo/registry"),
+                    await ParsePath("~/.cargo/git"),
+                    await ParsePath("~/.cargo/bin"),
+                );
+            }
+            await LogStuff(
+                "CARGO",
+                "package",
+                "orange",
+            );
+            await BulkRemoveFiles(paths);
+            await LogStuff("Done", "tick");
         } catch {
             // nothing happened.
         }

@@ -40,7 +40,7 @@
 
     ---
 
-    Your friends spend a lot of time manually maintaining JS projects they ain't even releasing. Show 'em the F\*ckingNode way.
+    Your friends spend a lot of time manually maintaining JS projects they'll never release. Show 'em the F\*ckingNode way.
 
     [:octicons-arrow-right-24: Download now](https://github.com/ZakaHaceCosas/FuckingNode/releases/latest)
 
