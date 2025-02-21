@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased (upcoming major release)
 
+V3 has not received yet a stable release. However, an unstable release candidate including all of these changes (and some known issues) exists. See the Releases tab at this repository for more info.
+
 ### Breaking changes for v3
 
 - **Schedule and update files won't work:** We now use a different date format.
