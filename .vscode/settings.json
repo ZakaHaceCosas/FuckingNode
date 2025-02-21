@@ -30,8 +30,10 @@
         "fkcommit",
         "FKNODE",
         "fknodeignore",
+        "fkrelease",
         "fkrem",
         "fkstart",
+        "fncpf",
         "fontawesome",
         "fuckingnode",
         "gluefix",
@@ -74,7 +76,6 @@
         "Vuelto",
         "vulns",
         "weeb",
-        "fncpf",
         "zakahacecosas"
     ],
     "deno.enable": true,

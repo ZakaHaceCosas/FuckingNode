@@ -12,6 +12,8 @@ These are links to individual pages. For the full manual, click the first one, t
 - [Individual project config](fknode-yaml.md)
 - [Extra - Kickstart](kickstart.md)
 - [Extra - Commit](commit.md)
+- [Extra - Release](release.md)
+- [Extra - Setup](setup.md)
 - [Extra - Stats](stats.md)
 - [What's next?](whats-next.md)
 

@@ -1,4 +1,4 @@
-# Make a commit
+# Using FuckingNode: Make a commit
 
 > `fuckingnode commit <message> [branch] [--push]`, or `fkcommit <message>`
 
@@ -16,20 +16,38 @@ fuckingnode commit <MESSAGE> [BRANCH] [--push]
 
 ### Configuring the task to be executed
 
-As said, you can add a task (for example your test suite) and have it run before committing. The commit will only be made if this task succeeds (exits with code 0). Specify the task by using the `commitCmd` key in your `fknode.yaml` and specifying a SCRIPT to be executed (we explained this [when speaking of cleaner features](usage.md#linting-your-code---lint)).
+As said, you can add a task (for example your test suite) and have it run before committing. The commit will only be made if this task succeeds (exits with code 0). Specify the task by setting the `commitCmd` key in your `fknode.yaml` to a script to be executed (see [fknode.yaml docs](fknode-yaml.md)).
 
 ```yaml
 commitCmd: "test" # "npm run test" / "deno task test" / ...
 ```
 
-If not specified, we simply run the default `clean` task (which also runs when you _do_ specify this key).
+If absent, no custom task will be executed. Keep in mind our `clean` task will always run regardless of `commitCmd`, and commit will always abort if this task fails.
+
+### What to expect
+
+You'll see a confirmation like this one, showing what will be made:
+
+```txt
+🚨 Heads up! We're about to take the following actions:
+Run our standard clean command with everything enabled
+Run deno task test
+If everything above went alright, commit 0 file(s) to branch v3 with message "test"
+
+- all of this at @zakahacecosas/fuckingnode@3.0.0-alpha.3 C:\Users\Zaka\FuckingNode
+Confirm? [y/N]
+```
+
+If you input `y`, all tasks will run, and unless they fail, a commit will be made (and pushed if enabled, which would have shown up in the shown above list).
+
+No files are added to Git, so just as you would normally do, run `git add (whatever)` before running our commit command.
 
 ---
 
 You've now learnt how to speed up commits.
 
-Next: Setup - How to speed up text-config files?
+Next: Setup - How to speed up release of npm / jsr packages?
 
 ---
 
-[Next: Extra - setup](setup.md)
+[Next: Extra - release](release.md)

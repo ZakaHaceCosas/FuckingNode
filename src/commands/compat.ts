@@ -32,6 +32,10 @@ const kickstartCompatibility = [
     { NodeJS: labels.y, Deno: labels.y, Bun: labels.y, Go: labels.y, Cargo: labels.y },
 ];
 
+const commitCompatibility = [
+    { NodeJS: labels.y, Deno: labels.y, Bun: labels.y, Go: labels.p, Cargo: labels.p },
+];
+
 const releaseCompatibility = [
     { NodeJS: labels.npm, Deno: labels.jsr, Bun: labels.npm, Go: labels.n, Cargo: labels.n },
 ];
@@ -50,7 +54,7 @@ const migrateCompatibility = [
 const overallSupport = async () => {
     await LogStuff("OVERALL SUPPORT ---");
     await LogStuff(StringUtils.table(featureCompatibility));
-    await LogStuff("For specific compatibility details, run 'compat' followed by any of these: cleaner, kickstart, migrate.");
+    await LogStuff("For specific compatibility details, run 'compat' followed by any of these: cleaner, kickstart, release, migrate, commit.");
     return;
 };
 
@@ -80,6 +84,11 @@ export default async function TheCompater(params: TheCompaterConstructedParams) 
             await LogStuff(StringUtils.table([
                 { "Supported IDEs": ["VSCode", "VSCodium", "Notepad++", "Sublime", "Emacs", "Atom"] },
             ]));
+            return;
+        case "commit":
+            await LogStuff("COMMIT FEATURE SUPPORT ---");
+            await LogStuff(StringUtils.table(commitCompatibility));
+
             return;
         case "migrate":
             await LogStuff("MIGRATE FEATURE SUPPORT ---");

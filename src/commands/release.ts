@@ -133,7 +133,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     await Git.Commit(
         project,
         `Release v${format(parsedVersion)} (automated by F*ckingNode)`,
-        "all",
+        [env.main.path],
         [],
     );
 
