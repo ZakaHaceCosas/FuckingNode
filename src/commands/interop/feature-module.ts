@@ -4,6 +4,7 @@ import { LogStuff } from "../../functions/io.ts";
 import type { ProjectEnvironment } from "../../types/platform.ts";
 import { FknError } from "../../utils/error.ts";
 import { FkNodeInterop } from "./interop.ts";
+import { isDef } from "../../constants.ts";
 
 interface InteropedFeatureParams {
     /** Project's environment. */
@@ -15,7 +16,7 @@ interface InteropedFeatureParams {
 }
 
 /**
- * Cross-runtime compatible tasks. Currently supports linting, prettifying, and updating (dependencies).
+ * Cross-runtime compatible tasks. Supports linting, prettifying, and updating dependencies.
  */
 export const InteropedFeatures = {
     Lint: async (params: InteropedFeatureParams): Promise<boolean> => {
@@ -24,7 +25,7 @@ export const InteropedFeatures = {
         switch (env.runtime) {
             case "bun":
             case "node":
-                if (script === "__USE_DEFAULT") {
+                if (isDef(script)) {
                     if (FkNodeInterop.PackageFileUtils.SpotDependency("eslint", env.main.cpfContent.deps) === undefined) {
                         await LogStuff(
                             "No linter was given (via fknode.yaml > lintCmd), hence defaulted to ESLint - but ESLint is not installed!",
@@ -115,7 +116,7 @@ export const InteropedFeatures = {
         switch (env.runtime) {
             case "bun":
             case "node":
-                if (script === "__USE_DEFAULT") {
+                if (isDef(script)) {
                     if (FkNodeInterop.PackageFileUtils.SpotDependency("prettier", env.main.cpfContent.deps) === undefined) {
                         await LogStuff(
                             "No prettifier was given (via fknode.yaml > prettyCmd), hence defaulted to Prettier - but Prettier is not installed!",
@@ -178,7 +179,7 @@ export const InteropedFeatures = {
                 // deno fmt settings should work from deno.json, tho
                 const output = await Commander(
                     env.commands.base,
-                    env.runtime === "rust" ? ["fmt", "./..."] : env.runtime === "golang" ? ["fmt", "./..."] : ["fmt"],
+                    env.runtime === "deno" ? ["fmt"] : ["fmt", "./..."],
                     verbose,
                 );
 
@@ -199,7 +200,7 @@ export const InteropedFeatures = {
     Update: async (params: InteropedFeatureParams): Promise<boolean> => {
         const { env, verbose, script } = params;
 
-        if (script === "__USE_DEFAULT") {
+        if (isDef(script)) {
             const output = await Commander(
                 env.commands.base,
                 env.commands.update,

@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased (upcoming major release)
 
-### Breaking changes
+### Breaking changes for v3
 
 - **Schedule and update files won't work:** We now use a different date format.
 - **Order of `clean` arguments swapped:** It's now `clean <project | "--"> <intensity | "--"> [...flags]` instead of `clean <intensity | "--"> <project | "--"> [...flags]`. This was made so the command makes more sense. E.g., `clean my-project hard`.
@@ -54,7 +54,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Now error handling is more consistent (and also uses less `try-catch` code). (I just learnt that JS errors propagate up to the caller, that's why there we so many damn `catch (e) { throw e }` lines, sorry mb).
 - Now when the cleaner's done it says "cleaned all your **JavaScript** projects" instead of "Node" projects. I admit it looks nice as an "easter egg" or something referencing where we come from, but it was not intended to be that, I just forgot to change it.
 - Now `settings change <key>` uses the same keys as the config file itself, so everything makes more sense.
-  - Saw breaking changes above? One of the reasons for the config reset is that some keys were renamed so you don't type a lot in the CLI because of this change.
+  - Saw [breaking changes](#breaking-changes-for-v3) above? One of the reasons for the config reset is that some keys were renamed so you don't type a lot in the CLI because of this change.
+- Now you can pass the `--fkn-dbg` flag to enable debug mode. It will output (in some places only) debug logs meant for developers.
 
 ### Fixed
 
@@ -89,6 +90,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - As as side effect, you now don't get to see Git's output live.
 - Fixed the CLI not being able to handle projects that were missing the `name` or `version` field in a `package.json`/`deno.json` file.
 - Fixed an edge case where the CLI wouldn't work because it fetched configuration _right before_ having it setup.
+- Fixed hard cleanup not respecting verbose logging setting.
 
 ### Removed
 

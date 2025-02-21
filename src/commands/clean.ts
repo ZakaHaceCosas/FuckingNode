@@ -3,7 +3,7 @@ import { CheckForPath } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheCleanerConstructedParams } from "./constructors/command.ts";
-import { PerformCleaning, PerformHardCleanup, PerformMaximCleanup, ResolveLockfiles, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
+import { PerformCleanup, PerformHardCleanup, PerformMaximCleanup, ResolveLockfiles, ShowReport, ValidateIntensity } from "./toolkit/cleaner.ts";
 import type { CleanerIntensity } from "../types/config_params.ts";
 import { GetElapsedTime } from "../functions/date.ts";
 
@@ -19,7 +19,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
     const realIntensity: CleanerIntensity = await ValidateIntensity(intensity);
 
     if (realIntensity === "hard-only") {
-        await PerformHardCleanup();
+        await PerformHardCleanup(verbose);
         return;
     }
 
@@ -82,7 +82,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                         `Cleaning the ${await NameProject(project)} ${I_LIKE_JS.MF}...`,
                         "package",
                     );
-                    await PerformCleaning(
+                    await PerformCleanup(
                         project,
                         update,
                         lint,
@@ -151,7 +151,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         }
     }
 
-    if (realIntensity === "hard") await PerformHardCleanup();
+    if (realIntensity === "hard") await PerformHardCleanup(verbose);
     if (realIntensity === "maxim") await PerformMaximCleanup(workingProjects);
 
     // go back home

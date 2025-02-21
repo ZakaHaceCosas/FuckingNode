@@ -4,10 +4,10 @@ import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/pr
 import type { TheReleaserConstructedParams } from "./constructors/command.ts";
 import type { DenoPkgFile, NodePkgFile } from "../types/platform.ts";
 import { Commander } from "../functions/cli.ts";
-import { PerformCleaning } from "./toolkit/cleaner.ts";
+import { PerformCleanup } from "./toolkit/cleaner.ts";
 import { Git } from "../utils/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { APP_NAME } from "../constants.ts";
+import { APP_NAME, isDis } from "../constants.ts";
 
 export default async function TheReleaser(params: TheReleaserConstructedParams) {
     if (!StringUtils.validate(params.version)) {
@@ -34,7 +34,9 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         throw new Error(`Platform ${env.runtime} doesn't support publishing. Aborting.`);
     }
 
-    const releaseCmd = StringUtils.validate(settings.releaseCmd) ? StringUtils.normalize(settings.releaseCmd) : "__disable";
+    const releaseCmd = (StringUtils.validate(env.settings.releaseCmd) && !isDis(env.settings.releaseCmd))
+        ? StringUtils.normalize(env.settings.releaseCmd)
+        : "disable";
 
     // bump version from pkg json first
     const newPackageFile: NodePkgFile | DenoPkgFile = {
@@ -48,7 +50,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         `Update your ${env.main.name}'s "version" field`,
         `Create a ${ColorString(`${env.main.name}.bak`, "bold")} file, and add it to .gitignore`,
     ];
-    if (releaseCmd !== "__disable") {
+    if (releaseCmd !== "disable") {
         actions.push(
             `Run ${
                 ColorString(
@@ -91,7 +93,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     }
 
     // run their releaseCmd
-    if (releaseCmd.toLowerCase().trim() !== "__disable") {
+    if (releaseCmd !== "disable") {
         const releaseOutput = await Commander(
             env.commands.run[0],
             [env.commands.run[1], releaseCmd],
@@ -106,7 +108,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
 
     // run our maintenance task
     try {
-        const output = await PerformCleaning(
+        const output = await PerformCleanup(
             project,
             true,
             true,

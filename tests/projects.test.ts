@@ -31,15 +31,15 @@ Deno.test({
 Deno.test({
     name: "names projects accordingly",
     fn: async () => {
-        const toName = await SpotProject(TEST_ONE.root);
+        const toName = await SpotProject("@zakahacecosas/fuckingnode");
 
         assertEquals(
             await NameProject(toName, "name-colorless"),
-            TEST_ONE.main.cpfContent.name,
+            "@zakahacecosas/fuckingnode",
         );
         assertEquals(
             await NameProject(toName, "name"),
-            ColorString(TEST_ONE.main.cpfContent.name, "bold"),
+            ColorString("@zakahacecosas/fuckingnode", "bold"),
         );
     },
 });

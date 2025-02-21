@@ -5,8 +5,8 @@ import { Commander } from "../functions/cli.ts";
 import { Git } from "../utils/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { FknError } from "../utils/error.ts";
-import { PerformCleaning } from "./toolkit/cleaner.ts";
-import { APP_NAME } from "../constants.ts";
+import { PerformCleanup } from "./toolkit/cleaner.ts";
+import { APP_NAME, isDis } from "../constants.ts";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
     if (!StringUtils.validate(params.message)) throw new Error("No commit message specified!");
@@ -14,11 +14,12 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
     const CWD = Deno.cwd();
     const project = await SpotProject(CWD);
     const env = await GetProjectEnvironment(project);
-    const { settings } = env;
 
-    const commitCmd = StringUtils.validate(settings.commitCmd) ? StringUtils.normalize(settings.commitCmd) : "__DISABLE";
+    const commitCmd = (StringUtils.validate(env.settings.commitCmd) && !isDis(env.settings.commitCmd))
+        ? StringUtils.normalize(env.settings.commitCmd)
+        : "disable";
 
-    if (commitCmd !== "__DISABLE" && env.commands.run === "__UNSUPPORTED") {
+    if (commitCmd !== "disable" && env.commands.run === "__UNSUPPORTED") {
         throw new FknError(
             "Interop__CannotRunJsLike",
             `Your fknode.yaml file has a commitCmd key, but ${env.manager} doesn't support JS-like "run" tasks, so we can't execute that task. To avoid undesired behavior, we stopped execution. Please remove the commitCmd key from this fknode.yaml. Sorry!`,
@@ -48,7 +49,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
         `${ColorString(`Run our standard clean command with everything enabled`, "white")}`,
     ];
 
-    if (commitCmd !== "__DISABLE") {
+    if (commitCmd !== "disable") {
         // otherwise TS shows TypeError for whatever reason
         const typed: string[] = env.commands.run as string[];
 
@@ -88,7 +89,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
 
     // run our maintenance task
     try {
-        const output = await PerformCleaning(
+        const output = await PerformCleanup(
             project,
             true,
             true,
@@ -104,7 +105,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
     }
 
     // run their commitCmd
-    if (commitCmd !== "__DISABLE") {
+    if (commitCmd !== "disable") {
         const commitCmdOutput = await Commander(
             env.commands.run[0],
             [env.commands.run[1], commitCmd],
@@ -115,7 +116,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
             throw new FknError(
                 "Commit__Fail__CommitCmd",
                 `Commit command (${commitCmd}) exited with a non-0 exit code. Check what's up!`,
-            ).debug(StringUtils.stripCliColors(commitCmdOutput.stdout ?? "UNKNOWN OUTPUT"));
+            ).debug(commitCmdOutput.stdout);
         }
     }
 

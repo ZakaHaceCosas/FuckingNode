@@ -92,6 +92,8 @@ async function init() {
 /** Normalized Deno.args */
 const flags = Deno.args.map((arg) => StringUtils.normalize(arg));
 
+export const __FKNODE_SHALL_WE_DEBUG = hasFlag("FKN-DBG", true) ? true : false;
+
 if (!StringUtils.validate(flags[0])) {
     try {
         await init();

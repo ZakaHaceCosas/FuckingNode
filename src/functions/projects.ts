@@ -2,11 +2,11 @@ import { parse as parseYaml } from "@std/yaml";
 import { parse as parseToml } from "@std/toml";
 import { parse as parseJsonc } from "@std/jsonc";
 import { expandGlob } from "@std/fs";
-import { APP_NAME, APP_URLs, DEFAULT_FKNODE_YAML, I_LIKE_JS, IGNORE_FILE } from "../constants.ts";
+import { APP_NAME, APP_URLs, DEFAULT_FKNODE_YAML, I_LIKE_JS } from "../constants.ts";
 import type { CargoPkgFile, NodePkgFile, ProjectEnvironment, UnderstoodProjectProtection } from "../types/platform.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
-import { FknError } from "../utils/error.ts";
+import { DEBUG_LOG, FknError } from "../utils/error.ts";
 import { type FkNodeYaml, type FullFkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import { GetAppPath } from "./config.ts";
 import { GetDateNow } from "./date.ts";
@@ -170,13 +170,18 @@ async function GetProjectSettings(
     path: UnknownString,
 ): Promise<FullFkNodeYaml> {
     const workingPath = await ParsePath(path);
-    const pathToDivineFile = await JoinPaths(workingPath, IGNORE_FILE);
+    DEBUG_LOG("FETCHING FROM", workingPath);
+    const pathToDivineFile = await JoinPaths(workingPath, "fknode.yaml");
+    DEBUG_LOG("CONCRETELY FROM", pathToDivineFile);
 
-    if (!(await CheckForPath(pathToDivineFile))) return DEFAULT_FKNODE_YAML;
+    if (!(await CheckForPath(pathToDivineFile))) {
+        DEBUG_LOG("\nRESORTING TO DEFAULTS\n");
+        return DEFAULT_FKNODE_YAML;
+    }
     const divineContent = parseYaml(await Deno.readTextFile(pathToDivineFile));
-
+    DEBUG_LOG("RAW DIVINE CONTENT", divineContent);
     if (!ValidateFkNodeYaml(divineContent)) {
-        await LogStuff(`${await NameProject(path)} has an invalid ${IGNORE_FILE}!`, "warn");
+        await LogStuff(`${await NameProject(path)} has an invalid fknode.yaml!`, "warn");
         await Deno.writeTextFile(
             pathToDivineFile,
             `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to ${APP_URLs.WEBSITE} to learn about how fknode.yaml works.]\n`,
@@ -186,6 +191,8 @@ async function GetProjectSettings(
         );
         return DEFAULT_FKNODE_YAML;
     }
+
+    DEBUG_LOG("DEEP MERGE", deepMerge(DEFAULT_FKNODE_YAML, divineContent));
 
     // now with this setting keys should be always present, i think?
     // idk, but im honestly considering re-doing the system from scratch
@@ -380,7 +387,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
 
     const trash = await JoinPaths(workingPath, "node_modules");
-    const workspaces = await GetWorkspaces(workingPath) || [];
+    const workspaces = await GetWorkspaces(workingPath);
 
     const paths = {
         deno: {
@@ -474,6 +481,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
 
     const mainString: string = await Deno.readTextFile(mainPath);
     const settings: FullFkNodeYaml = await GetProjectSettings(workingPath);
+    DEBUG_LOG("SETTINGS OF", workingPath);
+    DEBUG_LOG("ARE EQUAL TO", settings);
 
     const { PackageFileParsers } = FkNodeInterop;
 

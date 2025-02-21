@@ -5,6 +5,7 @@ import type { CF_FKNODE_SCHEDULE, CF_FKNODE_SETTINGS, FullFkNodeYaml } from "./t
 import * as DenoJson from "../deno.json" with { type: "json" };
 import { GetDateNow } from "./functions/date.ts";
 import type { FnCPF } from "./types/platform.ts";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 
 /**
  * Current app version as a SemVer object. **Change it from `deno.json`.**
@@ -118,13 +119,6 @@ export const I_LIKE_JS: HE_LIKES_JS = {
 };
 
 /**
- * Name of the ignore file.
- *
- * @type {string}
- */
-export const IGNORE_FILE: string = "fknode.yaml";
-
-/**
  * GitHub REST API URL from where releases are obtained.
  *
  * @type {tURL}
@@ -188,3 +182,13 @@ export const DEFAULT_FKNODE_YAML: FullFkNodeYaml = {
     releaseAlwaysDry: false,
     releaseCmd: "__DISABLE",
 };
+
+/** Checks if a given command is __USE_DEFAULT */
+export function isDef(str: UnknownString): boolean {
+    return StringUtils.normalize(str ?? "", true, true) === "usedefault";
+}
+
+/** Checks if a given command is __DISABLE */
+export function isDis(str: UnknownString): boolean {
+    return StringUtils.normalize(str ?? "", true, true) === "disable";
+}

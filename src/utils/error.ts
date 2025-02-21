@@ -3,6 +3,8 @@ import { APP_NAME, I_LIKE_JS } from "../constants.ts";
 import { ColorString } from "../functions/io.ts";
 import type { GLOBAL_ERROR_CODES } from "../types/errors.ts";
 import { GetDateNow } from "../functions/date.ts";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
+import { __FKNODE_SHALL_WE_DEBUG } from "../main.ts";
 
 /**
  * Errors that we know about, or that are caused by the user.
@@ -108,7 +110,7 @@ export class FknError extends Error {
      * @param {string} debuggableContent The content to be dumped.
      * @returns {Promise<void>}
      */
-    public debug(debuggableContent: string): void {
+    public debug(debuggableContent: UnknownString): void {
         const base = Deno.build.os === "windows"
             ? Deno.env.get("APPDATA")
             : (Deno.env.get("XDG_CONFIG_HOME") || `${Deno.env.get("HOME") ?? ""}.config/`);
@@ -129,12 +131,12 @@ ${this.stack}
 -
 below goes the debugged content dump. this could be, for example, an entire project main file, dumped here for reviewal. it could be a sh*t ton of stuff to read
 - DEBUGGABLE CONTENT (in most cases, what the CLI command that was executed returned, in case we were able to gather it)
-${debuggableContent}
+${StringUtils.stripCliColors(debuggableContent ?? "UNKNOWN OUTPUT - No debuggableContent was provided, or it was empty.")}
 ---
 # END   FknERROR ${this.code} # GOOD LUCK FIXING THIS
 ---\n
         `.trim();
-        console.warn(ColorString(`For details about what happened, see last entry @ ${debugPath}.`, "orange"));
+        console.warn(ColorString(`For details about what happened, see last entry @ ${debugPath}`, "orange"));
         Deno.writeTextFileSync(
             debugPath,
             debuggableError,
@@ -170,4 +172,9 @@ export function GenericErrorHandler(e: unknown, continueExecution: boolean): voi
         console.error(`${ColorString(I_LIKE_JS.FK, "red", "bold")}! An unknown error happened: ${e}`);
         if (continueExecution === false) Deno.exit(1);
     }
+}
+
+// constant case instead of pascal case so i can better recognize this
+export function DEBUG_LOG(...a: unknown[]): void {
+    if (__FKNODE_SHALL_WE_DEBUG) console.debug(a);
 }
