@@ -18,6 +18,7 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 
 - Fixed `settings` not working at all (it was one position behind the CLI's arg array index, thus it never got to properly read commands).
 - Fixed Git not properly adding files for commit, thus failing.
+- Fixed `commit` allowing to be used without anything to commit, thus failing.
 
 ## V3 Release Candidate 1
 

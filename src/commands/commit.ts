@@ -20,6 +20,11 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
         );
     }
 
+    if (!(await Git.CanCommit(project))) {
+        await LogStuff("Nothing to commit, sir!", "tick");
+        return;
+    }
+
     const commitCmd = (!isDis(env.settings.commitCmd)) ? StringUtils.normalize(env.settings.commitCmd) : "disable";
 
     if (commitCmd !== "disable" && env.commands.run === "__UNSUPPORTED") {

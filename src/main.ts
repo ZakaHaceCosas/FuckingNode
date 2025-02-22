@@ -14,6 +14,7 @@ import TheExporter from "./commands/export.ts";
 import TheCompater from "./commands/compat.ts";
 import TheCommitter from "./commands/commit.ts";
 import TheSurrenderer from "./commands/surrender.ts";
+import TheSetuper from "./commands/setup.ts";
 // other things
 import { APP_NAME, APP_URLs, FULL_NAME } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
@@ -23,7 +24,6 @@ import type { TheCleanerConstructedParams } from "./commands/constructors/comman
 import { RunScheduledTasks } from "./functions/schedules.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { CleanupProjects } from "./functions/projects.ts";
-import TheSetuper from "./commands/setup.ts";
 
 // error handler for v2 -> v3 migration
 // NOTE: remove when we get to 3.1 or so

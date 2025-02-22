@@ -6,6 +6,38 @@ import { FULL_NAME } from "../constants.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { DEBUG_LOG, FknError } from "./error.ts";
 
+async function __isRepo(path: string) {
+    try {
+        const resolvedPath = await SpotProject(path);
+
+        // make sure we're in a repo
+        const output = await Commander(
+            "git",
+            [
+                "-C",
+                resolvedPath,
+                "rev-parse",
+                "--is-inside-work-tree",
+            ],
+            false,
+        );
+        if (
+            !output.success ||
+            StringUtils.normalize(output.stdout ?? "", true, true) !== "true"
+        ) return false; // anything unsuccessful means uncommitted changes
+
+        DEBUG_LOG(output);
+
+        return true;
+    } catch (e) {
+        new FknError(
+            "Git__IsRepoError",
+            `An error happened validating if ${await ParsePath(path)} is a Git repo: ${e}`,
+        );
+        return false;
+    }
+}
+
 export const Git = {
     /**
      * Checks if a given project is a Git repository.
@@ -16,29 +48,7 @@ export const Git = {
      * @returns {Promise<boolean>}
      */
     IsRepo: async (path: string): Promise<boolean> => {
-        try {
-            const resolvedPath = await SpotProject(path);
-
-            const output = await Commander(
-                "git",
-                ["-C", resolvedPath, "status"],
-                false,
-            );
-
-            DEBUG_LOG(output);
-            if ((!StringUtils.validate(output.stdout))) return false;
-            if (StringUtils.normalize(output.stdout, false, true).includes("not a git repository")) {
-                return false;
-            }
-
-            return true;
-        } catch (e) {
-            new FknError(
-                "Git__IsRepoError",
-                `An error happened validating if ${await ParsePath(path)} is a Git repo: ${e}`,
-            );
-            return false;
-        }
+        return await __isRepo(path);
     },
     /**
      * Checks if a local repository has uncommitted changes or not. Returns `true` if you CAN commit (there are no uncommitted changes) and `false` if otherwise.
@@ -53,22 +63,7 @@ export const Git = {
             const resolvedPath = await SpotProject(path);
 
             // make sure we're in a repo
-            const isRepo = await Commander(
-                "git",
-                [
-                    "-C",
-                    resolvedPath,
-                    "rev-parse",
-                    "--is-inside-work-tree",
-                ],
-                false,
-            );
-            if (
-                !isRepo.success ||
-                isRepo.stdout!.trim() !== "true"
-            ) {
-                return false;
-            }
+            if (!(await __isRepo(path))) return false;
 
             // check for uncommitted changes
             const localChanges = await Commander(
@@ -77,15 +72,14 @@ export const Git = {
                     "-C",
                     resolvedPath,
                     "status",
-                    "--porcelain",
+                    // "--porcelain" - this gave issues because of a stupid "\n"
                 ],
                 false,
             );
             if (
-                !localChanges.success || localChanges.stdout!.trim().length !== 0 // anything that isn't 0 means something is in the tree
-            ) {
-                return false; // if anything happens we assume the tree isn't clean, just in case.
-            }
+                (/nothing to commit|working tree clean/.test(localChanges.stdout ?? "")) ||
+                !localChanges.success // anything that isn't 0 means something is in the tree
+            ) return false; // if anything happens we assume the tree isn't clean, just in case.
 
             // check if the local branch is behind the remote
             const remoteStatus = await Commander(
@@ -103,9 +97,7 @@ export const Git = {
             if (
                 remoteStatus.success &&
                 parseInt(remoteStatus.stdout!.trim(), 10) > 0
-            ) {
-                return false; // local branch is behind the remote, so we shouldn't change stuff
-            }
+            ) return false; // local branch is behind the remote, so we shouldn't change stuff
 
             return true; // clean working tree and up to date with remote, we can do whatever we want
         } catch (e) {
