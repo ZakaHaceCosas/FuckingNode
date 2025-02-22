@@ -567,6 +567,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
                 base: "bun",
                 exec: ["bunx"],
                 update: ["update", "--save-text-lockfile"],
+                // ["install", "--analyze src/**/*.ts"]
                 clean: "__UNSUPPORTED",
                 run: ["bun", "run"],
                 audit: "__UNSUPPORTED",
