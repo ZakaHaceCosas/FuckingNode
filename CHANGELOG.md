@@ -6,9 +6,9 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## V3 Release Candidate 2 (unreleased)
+## V3 Release Candidate (2)
 
-This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release).
+This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
 
 ### Changed
 
@@ -20,9 +20,9 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 - Fixed Git not properly adding files for commit, thus failing.
 - Fixed `commit` allowing to be used without anything to commit, thus failing.
 
-## V3 Release Candidate 1
+## V3 Release Candidate (1)
 
-This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release).
+This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
 
 ### Added
 
@@ -45,7 +45,7 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 
 - Removed our standard cleanup task from `commit` and `release`. Sorry, but they were for whatever reason more problematic than what they should be.
 
-## Unreleased (upcoming major release)
+## Unreleased (upcoming major release) (rc0)
 
 V3 has not received yet a stable release. However, an unstable release candidate including all of these changes (and some known issues) exists. See the Releases tab at this repository for more info.
 

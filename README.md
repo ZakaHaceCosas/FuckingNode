@@ -34,11 +34,14 @@ It's not magic, it's FuckingNode—and that name is shipping to production.
 ### Usage
 
 ```bash
-fuckingnode manager add < path >  # add a project to your project list
-fuckingnode clean                 # autoclean all of your projects
-fuckingnode release < project >   # release a project
-fuckingnode kickstart < git-url > # clones a repo, installs deps, and launches your fav editor instantly
+fkn manager add < path >  # add a project to your project list
+fkn clean                 # autoclean all of your projects
+fkn release < project >   # release a project, automatically
+fkn commit < message >    # make a commit, safely
+fkn kickstart < git-url > # clones a repo, installs deps, and launches your fav editor instantly
 ```
+
+`fkn` and `fknode` aliases are auto-added when downloading via an `.sh` or `.ps1` installer. The standard command is `fuckingnode`, though.
 
 ---
 
