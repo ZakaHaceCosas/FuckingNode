@@ -1,5 +1,5 @@
 # this is the real config for this repo
-# for an example file with everything explained open "fknode.example.yaml" instead
+# for learning about this, head to https://zakahacecosas.github.io/FuckingNode/manual/fknode-yaml
 divineProtection: ["prettifier", "linter"]
 destroy:
     intensities: ["*"]

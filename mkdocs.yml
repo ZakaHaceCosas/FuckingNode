@@ -64,6 +64,10 @@ theme:
 extra_css:
     - overrides/extra.css
 
+extra_javascript:
+    - js/math.js
+    - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
 extra:
     social:
         - icon: fontawesome/brands/youtube

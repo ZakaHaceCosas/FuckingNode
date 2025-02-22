@@ -3,18 +3,18 @@
 An attempt to make security reports easier.
 
 !!! danger "Work in Progress feature"
-    This is an **experimental** feature. It's subject to changes, full rewrites, or even removals.
+    This is an **experimental** feature. It is subject to changes, full rewrites, or even removals.
 
 !!! danger "Outdated"
     This section has not been updated for V3 yet.
 
 ## Abstract
 
-I'll give you a real life example - I, the guy who's documenting this, have got other projects besides F\*ckingNode, including a mobile React Native app, which recently became affected by a `low` severity vulnerability, which related to cookies. The thing is, fixing that implied breaking changes (as `expo-router` had a dependency that had a dependency that had a... until one that depended on the vulnerable version).
+We will explain this  with a real life example - I, the creator of F\*ckingNode, have been working on a mobile React Native app, which once became affected by a `low` severity vulnerability, related to cookies. The thing is, fixing it implied breaking changes (as `expo-router` had a dependency that had a dependency that had a... until one that depended on the vulnerable version).
 
-However, as a mobile app that never interacted with cookies and very rarely used HTTP or the web themselves, turns out the breaking changes _aren't "worth it"_.
+However, as a mobile app that never interacted with cookies and very rarely used HTTP or the web themselves, turns out the breaking changes _were not "worth it"_.
 
-**Sometimes that's the case, a vulnerability isn't really a concern.** However, it can be hard to analyze if you really should just let it go, or if it's a vuln. that can really hurt your project. _**That's what we made this feature for.**_
+**Sometimes that is the case, a vulnerability is not really a concern.** However, it can be hard to analyze if you really should just let it go, or if it is a vulnerability that can really hurt your project. _**That is what we made this feature for.**_
 
 ### TL;DR
 
@@ -55,11 +55,11 @@ graph TD
     F -- No --> B
 ```
 
-We search for keywords like `network`, `cookie`, or `console` which define "attack vectors". For each vector that's present, we return a "beginner question" for the auditing process. These "beginner questions" are the entry point of each vector's auditing flow - in other words - if the `network` vector _is_ found you'll be first asked if your app does make usage of any kind of networking features, asking you more specific questions about your usage if you respond "yes", or skipping the vulnerability if otherwise, considering it's probably a vulnerable dependency _of a dependency of a dependency..._ that does not really affect you.
+We search for keywords like `network`, `cookie`, or `console` which define "attack vectors". For each vector that is present, we return a "beginner question" for the auditing process. These "beginner questions" are the entry point of each vector's auditing flow - in other words - if the `network` vector _is_ found you will be first asked if your app does make usage of any kind of networking features, asking you more specific questions about your usage if you respond "yes", or skipping the vulnerability if otherwise, considering it is probably a vulnerable dependency _of a dependency of a dependency..._ that does not really affect you.
 
 ### Step two: interrogation
 
-As noted above, we will "interrogate" your usage of features. It's a simple YES/NO flow, like in this illustrated example:
+As noted above, we will "interrogate" your usage of features. It is a simple YES/NO flow, like in this illustrated example:
 
 ```mermaid
 graph TD
@@ -77,17 +77,15 @@ Your questions are evaluated using a straightforward positive-negative system: r
 
 These counts are used to compute the RF, based on the following formula:
 
-```typescript
-(positives / (positives + negatives)) * 100;
-```
+$$
+RF = \left( \frac{\text{positives}}{\text{positives} + \text{negatives}} \right) \times 100
+$$
 
-There's a `--strict` flag that can be passed to the audit command that adds an additional **risk bump**, based on the severity of the most-severe identified vulnerability, as follows:
+There is a `--strict` flag that can be passed to the audit command that adds an additional **risk bump**, based on the severity of the most-severe identified vulnerability, as follows:
 
-```typescript
-(RF + (RB * 100)) / 2;
-// RF = Risk Factor
-// RB = Risk Bump
-```
+$$
+\frac{RF + (RB \times 100)}{2}
+$$
 
 RB values are as follows:
 
@@ -110,9 +108,10 @@ F\*ckingNode audit should not be allowed to have the final say over whether brea
 
 Where `EXP` indicates experimental, `CAVEAT` indicates partial support / support with known flaws, and `YES` and `NO` indicate the obvious.
 
-| Support    | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun |
-| :--------- | ---------- | ----------- | ----------- | ---- | --- |
-| **v2.1.0** | EXP        | NO          | NO          | NO   | NO  |
+| Support    | NodeJS npm | NodeJS pnpm | NodeJS yarn | Deno | Bun | Go | Cargo |
+| :--------- | ---------- | ----------- | ----------- | ---- | --- | -- | ----- |
+| **v3.0.0** | EXP        | EXP         | EXP         | NO   | NO  | NO | NO    |
+| v2.1.0     | EXP        | NO          | NO          | NO   | NO  | NO | NO    |
 
 *[RF]: Risk Factor; a percentage computed by us to estimate the joint impact of all vulnerabilities of a NodeJS project.
 *[RB]: Risk Bump; a 0.25-1 number that's used to bump the RF based on the highest severity (as in low/moderate/high/critical) of a found vulnerability within a project.

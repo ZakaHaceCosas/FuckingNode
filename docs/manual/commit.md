@@ -9,10 +9,10 @@ The `commit` command in F\*ckingNode allows you to run maintenance tasks and any
 To commit changes to your project, use the following command:
 
 ```bash
-fuckingnode commit <MESSAGE> [BRANCH] [--push]
+fuckingnode commit <message> [branch] [--push]
 ```
 
-`MESSAGE` is obvious and mandatory, `BRANCH` is optional is the branch to commit to. If not given, the branch you were currently on will be used. `--push` is optional too, and if passed, the commit will be pushed to the remote repository.
+`message` is obvious and mandatory, `branch` is optional is the branch to commit to. If not given, the branch you were currently on will be used. `--push` is optional too, and if passed, the commit will be pushed to the remote repository.
 
 ### Configuring the task to be executed
 

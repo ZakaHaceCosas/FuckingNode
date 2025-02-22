@@ -42,10 +42,11 @@ If everything went alright, we'll exit with code `0`.
 
 ## Summary
 
-We basically run the CLI commands you'd run by yourself in order to clone and get started a project, saving you time.
+We basically run in order the CLI commands you would run by yourself, to clone and get started a project, saving you time.
 
 ---
 
 ## Availability
 
-This feature has been released and is available since `v2.0.0`. It's fully available everywhere. _No table as it's not runtime dependant._
+This feature has been released and is available since `v2.0.0`. It's fully available everywhere.
+_No compatibility table here, as it is not runtime dependant feature._
