@@ -450,6 +450,21 @@ export interface FnCPF {
      */
     rm: "npm" | "pnpm" | "yarn" | "deno" | "bun" | "cargo" | "golang";
     /**
+     * Per platform props.
+     *
+     * @type {{
+     *         cargo: {
+     *             edition: string;
+     *         };
+     *     }}
+     */
+    perPlatProps: {
+        cargo: {
+            /** Rust edition. "__NTP" (Not This Platform) on other runtimes. */
+            edition: string | undefined | "__NTP";
+        };
+    };
+    /**
      * Dependencies.
      *
      * @type {FnCPFDependency[]}

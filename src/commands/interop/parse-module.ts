@@ -193,8 +193,13 @@ export const Parsers = {
                     name: parsedContent.module,
                     version: version === undefined ? "Unknown" : version,
                     rm: "golang",
-                    deps: dedupeDependencies(deps),
+                    perPlatProps: {
+                        cargo: {
+                            edition: "__NTP",
+                        },
+                    },
                     ws,
+                    deps: dedupeDependencies(deps),
                     internal: FnCPFInternal,
                 };
             } catch (e) {
@@ -232,6 +237,11 @@ export const Parsers = {
                 name: parsedContent.package.name,
                 version: parsedContent.package.version,
                 rm: "cargo",
+                perPlatProps: {
+                    cargo: {
+                        edition: parsedContent.package.edition,
+                    },
+                },
                 deps: dedupeDependencies(deps),
                 ws,
                 internal: FnCPFInternal,
@@ -265,6 +275,11 @@ export const Parsers = {
                 name: parsedContent.name,
                 version: parsedContent.version ?? "0.0.0",
                 rm: rt,
+                perPlatProps: {
+                    cargo: {
+                        edition: "__NTP",
+                    },
+                },
                 deps: dedupeDependencies(deps),
                 ws,
                 internal: FnCPFInternal,
@@ -286,12 +301,12 @@ export const Parsers = {
                     const t = v.match(denoImportRegex); // Directly use the match result
                     if (
                         t && t.groups && t.groups["package"] && t.groups["version"] &&
-                        ["npm", "jsr"].includes(t.groups["source"] ?? "")
+                        StringUtils.validateAgainst(t.groups["source"], ["npm", "jsr"])
                     ) {
                         deps.push({
                             name: t.groups["package"], // Scope/package
                             ver: t.groups["version"], // Version
-                            src: t.groups["source"] as "npm" | "jsr", // Platform
+                            src: t.groups["source"], // Platform
                             rel: "univ:dep",
                         });
                     }
@@ -301,6 +316,11 @@ export const Parsers = {
                     name: parsedContent.name ?? "__ERROR_NOT_PROVIDED",
                     version: parsedContent.version ?? "0.0.0",
                     rm: "deno",
+                    perPlatProps: {
+                        cargo: {
+                            edition: "__NTP",
+                        },
+                    },
                     deps: dedupeDependencies(deps),
                     ws,
                     internal: FnCPFInternal,

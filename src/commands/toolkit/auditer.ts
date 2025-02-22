@@ -364,6 +364,9 @@ const validUrl = (s: UnknownString): s is tURL => {
  *
  * _Don't tell me about npm audit --json, I know that exists, we parse bare output by design, not by mistake._
  *
+ * TODO - forgetting the stupid message above and migrating to JSON based reports
+ * ! - see "audit-v4.ts" in this folder
+ *
  * @export
  * @param {string} report
  * @returns {ParsedNodeReport}
