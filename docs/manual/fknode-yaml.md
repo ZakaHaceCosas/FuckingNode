@@ -4,6 +4,9 @@ The `fknode.yaml` file is used to configure extra settings for individual projec
 
 Below is a detailed explanation of each configuration option available in the file. They are all optional.
 
+!!! tip "Get autocomplete for VSCode"
+    While still work in progress, you can already download our Visual Studio Code extension for FuckingNode V3 [here](https://marketplace.visualstudio.com/items?itemName=ZakaHaceCosas.fknode).
+
 ## divineProtection
 
 Divine protection is what we call _ignorance_. Basically, if you run a global cleanup with the `--update` flag (so all projects get their dependencies updated) but don't want a specific project to get its dependencies updated, you'd add `"updater"` to the `divineProtection` option.
