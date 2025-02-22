@@ -1,6 +1,6 @@
 {
     "name": "@zakahacecosas/fuckingnode",
-    "version": "3.0.0-rc.0",
+    "version": "3.0.0-rc.1",
     "exports": {
         ".": "./src/main.ts"
     },
@@ -40,15 +40,15 @@
         "noImplicitOverride": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        "useUnknownInCatchVariables": true,
-        "exactOptionalPropertyTypes": true,
+        "noErrorTruncation": true,
         "noUnusedLocals": true,
         "noUncheckedIndexedAccess": true,
         "noUnusedParameters": true,
         "noPropertyAccessFromIndexSignature": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
-        "noErrorTruncation": true
+        "useUnknownInCatchVariables": true,
+        "exactOptionalPropertyTypes": true
     },
     "imports": {
         "@std/datetime": "jsr:@std/datetime@^0.225.3",
