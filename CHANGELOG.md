@@ -25,6 +25,7 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 - Fixed goddamn project validation. You'll find a slightly stricter CLI from now own (requiring you, for example, to add a `"name"` field to a project just to add it).
 - Fixed an error being thrown when trying to gitignore stuff in projects without a .gitignore file, it'll now be automatically created.
 - Fixed verbose logging making EVERYTHING hidden when running hard cleanup, instead of hiding just what should be considered verbose.
+- Fixed `release` running Git related commands without being in a Git repo (hence failing).
 
 ### Removed
 

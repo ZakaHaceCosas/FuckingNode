@@ -25,7 +25,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     const project = await SpotProject(params.project);
     const CWD = Deno.cwd();
     const env = await GetProjectEnvironment(project);
-    const { settings } = env;
+    const canUseGit = await Git.IsRepo(project);
 
     Deno.chdir(env.root);
 
@@ -42,9 +42,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     };
 
     const actions: string[] = [
-        `${ColorString(`Commit ${ColorString(params.version, "bold")} to Git`, "white")}`,
-        `Create a Git tag ${ColorString(params.version, "bold")}`,
-        `Update your ${env.main.name}'s "version" field`,
+        `${ColorString(`Update your ${ColorString(env.main.name, "bold")}'s`, "white")} "version" field`,
         `Create a ${ColorString(`${env.main.name}.bak`, "bold")} file, and add it to .gitignore`,
     ];
     if (releaseCmd !== "disable") {
@@ -57,14 +55,20 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
             }`,
         );
     }
-    if (params.push) {
+    if (canUseGit) {
         actions.push(
-            `Push one commit to GitHub ${
-                ColorString("adding ALL of your uncommitted content alongside our changes", "bold")
-            }, and push the created tag too`,
+            `${ColorString(`Commit ${ColorString(params.version, "bold")} to Git`, "white")}`,
+            `Create a Git tag ${ColorString(params.version, "bold")}`,
         );
+        if (params.push) {
+            actions.push(
+                `Push one commit to GitHub ${
+                    ColorString("adding ALL of your uncommitted content alongside our changes", "bold")
+                }, and push the created tag too`,
+            );
+        }
     }
-    if (!(params.dry === true || settings.releaseAlwaysDry === true)) {
+    if (!(params.dry === true || env.settings.releaseAlwaysDry === true)) {
         actions.push(
             ColorString(`Publish your changes to ${ColorString(env.runtime === "deno" ? "JSR" : "npm", "bold")}`, "red"),
         );
@@ -104,34 +108,36 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     }
 
     // just in case
-    await Git.Ignore(
-        project,
-        `${env.main.name}.bak`,
-    );
+    if (canUseGit) {
+        await Git.Ignore(
+            project,
+            `${env.main.name}.bak`,
+        );
 
-    await Git.Commit(
-        project,
-        `Release v${format(parsedVersion)} (automated by F*ckingNode)`,
-        [env.main.path],
-        [],
-    );
+        await Git.Commit(
+            project,
+            `Release v${format(parsedVersion)} (automated by F*ckingNode)`,
+            [env.main.path],
+            [],
+        );
 
-    await Git.Tag(
-        project,
-        format(parsedVersion),
-        params.push,
-    );
+        await Git.Tag(
+            project,
+            format(parsedVersion),
+            params.push,
+        );
 
-    if (params.push) {
-        // push stuff to git
-        const pushOutput = await Git.Push(project, false);
-        if (pushOutput === 1) {
-            throw new Error(`Git push failed unexpectedly.`);
+        if (params.push) {
+            // push stuff to git
+            const pushOutput = await Git.Push(project, false);
+            if (pushOutput === 1) {
+                throw new Error(`Git push failed unexpectedly.`);
+            }
         }
     }
 
-    if (params.dry === true || settings.releaseAlwaysDry === true) {
-        if (settings.releaseAlwaysDry === true) {
+    if (params.dry === true || env.settings.releaseAlwaysDry === true) {
+        if (env.settings.releaseAlwaysDry === true) {
             await LogStuff(
                 "Note: Package won't be published because the releaseAlwaysDry key in your fknode.yaml is set to true. If you want to publish this package, remove or unset that key.",
                 "warn",
