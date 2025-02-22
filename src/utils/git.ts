@@ -4,7 +4,7 @@ import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import { FULL_NAME } from "../constants.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { FknError } from "./error.ts";
+import { DEBUG_LOG, FknError } from "./error.ts";
 
 export const Git = {
     /**
@@ -22,8 +22,10 @@ export const Git = {
             const output = await Commander(
                 "git",
                 ["-C", resolvedPath, "status"],
+                false,
             );
 
+            DEBUG_LOG(output);
             if ((!StringUtils.validate(output.stdout))) return false;
             if (StringUtils.normalize(output.stdout, false, true).includes("not a git repository")) {
                 return false;
@@ -114,8 +116,9 @@ export const Git = {
     Commit: async (project: string, message: string, add: string[] | "all" | "none", avoid: string[]): Promise<0 | 1> => {
         try {
             const path = await SpotProject(project);
+            const toAdd = Array.isArray(add) ? add : add === "none" ? [] : add === "all" ? ["."] : [];
 
-            const toAdd = add === "none" ? [] : add === "all" ? ["-A"] : [];
+            DEBUG_LOG("Files to add:", toAdd);
 
             if (toAdd.length > 0) {
                 const addOutput = await Commander(
@@ -128,10 +131,9 @@ export const Git = {
                     ],
                     false,
                 );
-                if (!addOutput.success) {
-                    throw new Error(addOutput.stdout);
-                }
+                if (!addOutput.success) throw new Error(addOutput.stdout);
             }
+
             if (avoid.length > 0) {
                 const restoreOutput = await Commander(
                     "git",
@@ -144,10 +146,9 @@ export const Git = {
                     ],
                     false,
                 );
-                if (!restoreOutput.success) {
-                    throw new Error(restoreOutput.stdout);
-                }
+                if (!restoreOutput.success) throw new Error(restoreOutput.stdout);
             }
+
             const commitOutput = await Commander(
                 "git",
                 [
@@ -160,7 +161,7 @@ export const Git = {
                 false,
             );
             if (!commitOutput.success) {
-                if (commitOutput.stdout?.includes("working tree clean")) return 0;
+                if (/nothing to commit|working tree clean/.test(commitOutput.stdout ?? "")) return 0;
                 throw new Error(commitOutput.stdout);
             }
             return 0;
@@ -169,7 +170,6 @@ export const Git = {
                 `Error - could not create commit ${ColorString(message, "bold")} at ${ColorString(project, "bold")} because of error: ${e}`,
                 "error",
             );
-
             return 1;
         }
     },
