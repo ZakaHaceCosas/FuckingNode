@@ -6,6 +6,18 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## V3 Release Candidate 2 (unreleased)
+
+This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release).
+
+### Changed
+
+- Now `settings` will show, besides your current settings, their key name so you know what to change.
+
+### Fixed
+
+- Fixed up Git not properly adding files for commit, thus failing.
+
 ## V3 Release Candidate 1
 
 This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release).

@@ -78,9 +78,12 @@ The above would work as long as you have one added project with this package.jso
 
 Just run `fuckingnode manager list`. It'll beautifully show you all of your projects in a `name@version path` format, kinda like this (but with colors and cool stuff):
 
-```txt
-@zakahacecosas/fuckingnode@3.0.0 C:\Users\Zaka\FuckingNode
-personaplus@0.0.6-preapp.29 C:\Users\Zaka\personaplus
+```bash
+💡 Here are the m*therf*ckers you added so far:
+
+personaplus@0.0.6-preapp.29 C:\\Users\\Zaka\\personaplus
+@zakahacecosas/fuckingnode@3.0.0-rc.1 C:\\Users\\Zaka\\FuckingNode
+@zakahacecosas/string-utils@1.11.0 C:\\Users\\Zaka\\string-utils
 ...
 ```
 
@@ -95,7 +98,7 @@ Currently supported settings are the following them. Change them with `settings 
 | KEY | Value Type | Description | Notes |
 | :--- | ---: | :--- | ---: |
 | `defaultIntensity` | `normal`, `hard`, `hard-only`, `maxim`, or `maxim-only` | Changes the default intensity for the `clean` command. | / |
-| `updateFreq` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value; we don't frequently update, so save up those HTTP requests. |
+| `updateFreq` | A fixed number | Changes how frequently (in DAYS) the CLI sends an HTTP request for updates. | We recommend setting it to a high value as we don't frequently update, so you can save up those HTTP requests. |
 | `flushFreq` | A fixed number | Changes how frequently (in DAYS) the CLI removes the `.log` file to save up space. | Cannot be disabled, setting it to `0` will make it auto-flush each time. |
 | `favEditor`  | `vscode`, `sublime`, `emacs`, `atom`, `vscodium`, `notepad++` | Your favorite code editor. Used by `kickstart`. | / |
 
@@ -106,10 +109,13 @@ To view your current settings, run `fuckingnode settings` with no args. You shou
 ```bash
 💡 Your current settings are:
 ---
-Update frequency: Each 69 days.
-Default cleaner intensity: hard
-Favorite editor: vscodium
+Update frequency: Each 69 days. updateFreq
+Default cleaner intensity: hard. defaultIntensity
+Favorite editor: vscodium. favEditor
+Auto-flush log file frequency: Each 13 days. flushFreq
 ```
+
+As you can see, you're shown at the end the key used to change a setting.
 
 ### Change settings
 

@@ -248,10 +248,14 @@ export async function DisplaySettings(): Promise<void> {
     const settings = await GetSettings();
 
     const formattedSettings = [
-        `Update frequency: Each ${ColorString(settings.updateFreq, "bright-green")} days.`,
-        `Default cleaner intensity: ${ColorString(settings.defaultIntensity, "bright-green")}.`,
-        `Favorite editor: ${ColorString(settings.favEditor, "bright-green")}.`,
-        `Auto-flush log file frequency: Each ${ColorString(settings.flushFreq, "bright-green")} days.`,
+        `Update frequency: Each ${ColorString(settings.updateFreq, "bright-green")} days. ${ColorString("updateFreq", "half-opaque", "italic")}`,
+        `Default cleaner intensity: ${ColorString(settings.defaultIntensity, "bright-green")}. ${
+            ColorString("defaultIntensity", "half-opaque", "italic")
+        }`,
+        `Favorite editor: ${ColorString(settings.favEditor, "bright-green")}. ${ColorString("favEditor", "half-opaque", "italic")}`,
+        `Auto-flush log file frequency: Each ${ColorString(settings.flushFreq, "bright-green")} days. ${
+            ColorString("flushFreq", "half-opaque", "italic")
+        }`,
     ].join("\n");
 
     await LogStuff(`${ColorString("Your current settings are:", "bright-yellow")}\n---\n${formattedSettings}`, "bulb");
