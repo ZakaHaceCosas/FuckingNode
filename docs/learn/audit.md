@@ -78,13 +78,13 @@ Your questions are evaluated using a straightforward positive-negative system: r
 These counts are used to compute the RF, based on the following formula:
 
 $$
-RF = \left( \frac{\text{positives}}{\text{positives} + \text{negatives}} \right) \times 100
+R.F. = \left( \frac{\text{positives}}{\text{positives} + \text{negatives}} \right) \times 100
 $$
 
 There is a `--strict` flag that can be passed to the audit command that adds an additional **risk bump**, based on the severity of the most-severe identified vulnerability, as follows:
 
 $$
-\frac{RF + (RB \times 100)}{2}
+\frac{R.F. + (R.B. \times 100)}{2}
 $$
 
 RB values are as follows:
