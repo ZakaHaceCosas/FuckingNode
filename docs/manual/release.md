@@ -22,7 +22,7 @@ As said, you can add a task (for example your test suite) and have it run before
 releaseCmd: "publish" # "npm run publish" / "deno task publish" / ...
 ```
 
-If absent, no custom task will be executed. Keep in mind our `clean` task will always run regardless of `releaseCmd`, and release will always abort if this task fails.
+If absent, no custom task will be executed.
 
 ### What to expect
 

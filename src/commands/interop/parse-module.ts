@@ -11,32 +11,6 @@ import { parse as parseToml } from "@std/toml";
 import { parse as parseJsonc } from "@std/jsonc";
 import { FkNodeInterop } from "./interop.ts";
 
-export const internalValidators = {
-    // deno-lint-ignore no-explicit-any
-    isPkgFileCargo: (obj: any): obj is CargoPkgFile => {
-        return obj && typeof obj === "object" && obj.package && obj.package.name && StringUtils.validate(obj.package.name);
-    },
-
-    // deno-lint-ignore no-explicit-any
-    isPkgFileGolang: (obj: any): obj is GolangPkgFile => {
-        return obj && typeof obj === "object" && obj.module && StringUtils.validate(obj.module) && obj.go &&
-            StringUtils.validate(obj.go);
-    },
-
-    // TODO - JS pkg files can lack name, ver, or even both (deno init only adds a tasks field, which can also be missing)
-    // we'll have to rethink how these are validated
-
-    // deno-lint-ignore no-explicit-any
-    isPkgFileDeno: (obj: any): obj is DenoPkgFile => {
-        return obj && typeof obj === "object";
-    },
-
-    // deno-lint-ignore no-explicit-any
-    isPkgFileNodeBun: (obj: any): obj is NodePkgFile => {
-        return obj && typeof obj === "object";
-    },
-};
-
 /**
  * gets a Golang require-like string:
  * ```go
@@ -143,7 +117,7 @@ const internalParsers = {
                 require,
             };
 
-            if (!FkNodeInterop.IsPackageFileValid.Golang(toReturn)) {
+            if (!FkNodeInterop.BareValidators.Golang(toReturn)) {
                 throw new FknError("Env__UnparsableMainFile", `Given go.mod contents are unparsable.`);
             }
 
@@ -155,7 +129,7 @@ const internalParsers = {
     CargoPkgFile: (content: string): CargoPkgFile => {
         const toReturn = parseToml(content);
 
-        if (!FkNodeInterop.IsPackageFileValid.Cargo(toReturn)) {
+        if (!FkNodeInterop.BareValidators.Cargo(toReturn)) {
             throw new FknError("Env__UnparsableMainFile", `Given Cargo.toml contents are unparsable.`);
         }
 
@@ -164,7 +138,7 @@ const internalParsers = {
     NodeBunPkgFile: (content: string): NodePkgFile => {
         const toReturn = parseJsonc(content);
 
-        if (!FkNodeInterop.IsPackageFileValid.NodeBun(toReturn)) {
+        if (!FkNodeInterop.BareValidators.NodeBun(toReturn)) {
             throw new FknError("Env__UnparsableMainFile", `Given package.json contents are unparsable.`);
         }
 
@@ -173,7 +147,7 @@ const internalParsers = {
     DenoPkgFile: (content: string): DenoPkgFile => {
         const toReturn = parseJsonc(content);
 
-        if (!FkNodeInterop.IsPackageFileValid.Deno(toReturn)) {
+        if (!FkNodeInterop.BareValidators.Deno(toReturn)) {
             throw new FknError("Env__UnparsableMainFile", `Given deno.json/deno.jsonc contents are unparsable.`);
         }
 

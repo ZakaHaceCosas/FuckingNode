@@ -1,7 +1,8 @@
 import { InteropedFeatures } from "./feature-module.ts";
-import { dedupeDependencies, findDependency, internalValidators, Parsers } from "./parse-module.ts";
+import { dedupeDependencies, findDependency, Parsers } from "./parse-module.ts";
 import { Installers } from "./installer-module.ts";
 import { Generators } from "./pkggen-module.ts";
+import { BareValidators } from "./validate-module.ts";
 
 /**
  * Functions to help with interoperability.
@@ -26,12 +27,7 @@ export const FkNodeInterop = {
             STD: Parsers.NodeBun.STD,
         },
     },
-    IsPackageFileValid: {
-        Golang: internalValidators.isPkgFileGolang,
-        Cargo: internalValidators.isPkgFileCargo,
-        Deno: internalValidators.isPkgFileDeno,
-        NodeBun: internalValidators.isPkgFileNodeBun,
-    },
+    BareValidators: BareValidators,
     PackageFileUtils: {
         SpotDependency: findDependency,
         DedupeDependencies: dedupeDependencies,

@@ -3,7 +3,7 @@ import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
-import { FknError } from "../utils/error.ts";
+import { DEBUG_LOG, FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
@@ -13,13 +13,13 @@ import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
  *
  * @export
  * @async
- * @param {string} entry Path to the project.
+ * @param {UnknownString} entry Path to the project.
  * @returns {Promise<void>}
  */
 export async function AddProject(
-    entry: string | null,
+    entry: UnknownString,
 ): Promise<void> {
-    if (!entry || entry === null) {
+    if (!StringUtils.validate(entry)) {
         throw new FknError(
             "Manager__ProjectInteractionInvalidCauseNoPathProvided",
             "You didn't provide a path.",
@@ -27,12 +27,12 @@ export async function AddProject(
     }
 
     const workingEntry = await ParsePath(entry);
-
+    DEBUG_LOG("WORKING ENTRY", workingEntry);
     if (!(await CheckForPath(workingEntry))) {
         throw new FknError("Manager__NonExistingPath", `Path "${workingEntry}" doesn't exist.`);
     }
 
-    const projectName = await NameProject(workingEntry, "name-ver");
+    const projectName = await NameProject(workingEntry, "all");
 
     async function addTheEntry() {
         await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
@@ -45,13 +45,48 @@ export async function AddProject(
     }
 
     const validation = await ValidateProject(workingEntry, false);
+    DEBUG_LOG("VALIDATION", validation);
     const env = await GetProjectEnvironment(workingEntry);
 
-    if (validation === "IsDuplicate") {
-        await LogStuff(
-            `Bruh, you already added the ${projectName} ${I_LIKE_JS.MF}!`,
-            "error",
-        );
+    if (validation !== true) {
+        switch (validation) {
+            case "IsDuplicate":
+                await LogStuff(
+                    `bruh, ${projectName} is already added! No need to re-add it.`,
+                    "bruh",
+                );
+                break;
+            case "NoLockfile":
+                await LogStuff(
+                    `Error adding ${projectName}: no lockfile present!\nProject's that don't have a lockfile can't be added to the list, and if you add them manually by editing the text file we'll remove them on next launch.\nWe NEED a lockfile to work with your project!`,
+                    "error",
+                );
+                break;
+            case "NoName":
+                await LogStuff(
+                    `Error adding ${projectName}: no name!\nSee how the project's name is missing? We can't work with that, we need a name to identify the project.\nPlease set "name" in your package file to something valid.`,
+                    "error",
+                );
+                break;
+            case "NoVersion":
+                await LogStuff(
+                    `Error adding ${projectName}: no version!\nWhile not too frequently used, we internally require your project to have a version field.\nPlease set "version" in your package file to something valid.`,
+                    "error",
+                );
+                break;
+            case "NoPkgFile":
+                await LogStuff(
+                    `Error adding ${projectName}: no package file!\nIs this even the path to a JavaScript project? No package.json, no deno.json; not even go.mod or cargo.toml found.`,
+                    "error",
+                );
+                break;
+            case "NotFound":
+                await LogStuff(
+                    `The specified path was not found. Check for typos or if the project was moved.`,
+                    "error",
+                );
+                break;
+        }
         return;
     }
 
@@ -101,15 +136,8 @@ export async function AddProject(
         return;
     }
 
-    await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
-        append: true,
-    });
-
-    for (const workspace of workspaces) {
-        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workspace}\n`, {
-            append: true,
-        });
-    }
+    const allEntries = [workingEntry, ...workspaces].join("\n") + "\n";
+    await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), allEntries, { append: true });
 
     await LogStuff(
         `Added all of your projects. Many mfs less to care about!`,
@@ -189,7 +217,7 @@ async function ListProjects(
     ignore: "limit" | "exclude" | false,
 ): Promise<void> {
     const list = await GetAllProjects(ignore);
-
+    DEBUG_LOG("FULL LIST", list);
     if (list.length === 0) {
         if (ignore === "limit") {
             await LogStuff(

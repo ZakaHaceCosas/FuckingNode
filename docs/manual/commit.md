@@ -22,7 +22,7 @@ As said, you can add a task (for example your test suite) and have it run before
 commitCmd: "test" # "npm run test" / "deno task test" / ...
 ```
 
-If absent, no custom task will be executed. Keep in mind our `clean` task will always run regardless of `commitCmd`, and commit will always abort if this task fails.
+If absent, no custom task will be executed.
 
 ### What to expect
 
@@ -30,7 +30,6 @@ You'll see a confirmation like this one, showing what will be made:
 
 ```txt
 🚨 Heads up! We're about to take the following actions:
-Run our standard clean command with everything enabled
 Run deno task test
 If everything above went alright, commit 0 file(s) to branch v3 with message "test"
 

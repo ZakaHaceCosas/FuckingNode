@@ -5,8 +5,7 @@ import { Commander } from "../functions/cli.ts";
 import { Git } from "../utils/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { FknError } from "../utils/error.ts";
-import { PerformCleanup } from "./toolkit/cleaner.ts";
-import { APP_NAME, isDis } from "../constants.ts";
+import { isDis } from "../constants.ts";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
     if (!StringUtils.validate(params.message)) throw new Error("No commit message specified!");
@@ -15,9 +14,13 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
     const project = await SpotProject(CWD);
     const env = await GetProjectEnvironment(project);
 
-    const commitCmd = (StringUtils.validate(env.settings.commitCmd) && !isDis(env.settings.commitCmd))
-        ? StringUtils.normalize(env.settings.commitCmd)
-        : "disable";
+    if (!(await Git.IsRepo(project))) {
+        throw new Error(
+            "Are you serious right now? Making a commit without being on a Git repo...\nThis project isn't a Git repository. We can't commit to it.",
+        );
+    }
+
+    const commitCmd = (!isDis(env.settings.commitCmd)) ? StringUtils.normalize(env.settings.commitCmd) : "disable";
 
     if (commitCmd !== "disable" && env.commands.run === "__UNSUPPORTED") {
         throw new FknError(
@@ -45,9 +48,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
         );
     }
 
-    const actions: string[] = [
-        `${ColorString(`Run our standard clean command with everything enabled`, "white")}`,
-    ];
+    const actions: string[] = [];
 
     if (commitCmd !== "disable") {
         // otherwise TS shows TypeError for whatever reason
@@ -86,23 +87,6 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
     );
 
     if (!confirmation) return;
-
-    // run our maintenance task
-    try {
-        const output = await PerformCleanup(
-            project,
-            true,
-            true,
-            true,
-            true,
-            false,
-            "normal",
-            true,
-        );
-        if (output === false) throw new Error("(unknown)");
-    } catch (e) {
-        throw new Error(`${APP_NAME.CASED} clean failed with error: ${e}`);
-    }
 
     // run their commitCmd
     if (commitCmd !== "disable") {

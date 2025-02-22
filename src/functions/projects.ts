@@ -28,6 +28,7 @@ import { RemoveProject } from "../commands/manage.ts";
  */
 export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Promise<string[]> {
     const content = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
+    DEBUG_LOG("RAW LIST", content);
     const list = ParsePathList(content);
     const cleanList = list.filter(async (p) => await CheckForPath(p) === true);
 
@@ -250,21 +251,22 @@ export function UnderstandProjectProtection(settings: FkNodeYaml, options: {
 export async function ValidateProject(entry: string, existing: boolean): Promise<true | PROJECT_ERROR_CODES> {
     const workingEntry = await ParsePath(entry);
     if (!(await CheckForPath(workingEntry))) return "NotFound";
-
-    try {
-        await GetProjectEnvironment(workingEntry);
-    } catch {
-        return "CantDetermineEnv";
-    }
-
+    // GetProjectEnvironment() already does some validations by itself, so we can just use it here
     const env = await GetProjectEnvironment(workingEntry);
 
-    if (!(await CheckForPath(env.main.path))) return "NoPkgJson";
     const list = await GetAllProjects();
-    const isDuplicate = (list.filter((item) => item.trim() === workingEntry.trim()).length) > (existing === true ? 1 : 0);
+    const isDuplicate = list.filter(
+        (item) => StringUtils.normalize(item) === StringUtils.normalize(workingEntry),
+    ).length > (existing ? 1 : 0);
 
     if (isDuplicate) return "IsDuplicate";
+
+    if (!(await CheckForPath(env.main.path))) return "NoPkgFile";
     if (!(await CheckForPath(env.lockfile.path))) return "NoLockfile";
+
+    if (!env.main.cpfContent.name) return "NoName";
+    if (!env.main.cpfContent.version) return "NoVersion";
+
     return true;
 }
 
@@ -751,8 +753,8 @@ export async function SpotProject(name: UnknownString): Promise<string> {
 
     if (await CheckForPath(workingProject)) {
         throw new FknError(
-            "Generic__NonFoundProject",
-            `'${name.trim()}' (=> '${toSpot}') exists but is not an added project.`,
+            "Generic__NonAddedProject",
+            `'${name.trim()}' (=> '${workingProject}') exists but is not an added project.`,
         );
     } else {
         throw new FknError("Generic__NonFoundProject", `'${name.trim()}' (=> '${toSpot}') does not exist.`);
@@ -764,14 +766,22 @@ export async function SpotProject(name: UnknownString): Promise<string> {
  *
  * @export
  * @async
- * @returns {Promise<0 | 1 | 2>} 0 if success, 1 if no projects to remove, ~~2 if the user doesn't remove them~~.
+ * @returns {Promise<0 | 1>} 0 if success, 1 if no projects to remove.
  */
 export async function CleanupProjects(): Promise<0 | 1> {
     const listOfRemovals: { project: string; issue: PROJECT_ERROR_CODES }[] = [];
 
-    for (const project of (await GetAllProjects())) {
+    const allProjects = await GetAllProjects();
+
+    for (const project of allProjects) {
         const validation = await ValidateProject(project, true);
-        if (validation !== true) listOfRemovals.push({ project: project, issue: validation });
+
+        if (validation !== true) {
+            listOfRemovals.push({
+                project,
+                issue: validation,
+            });
+        }
     }
 
     // remove duplicates

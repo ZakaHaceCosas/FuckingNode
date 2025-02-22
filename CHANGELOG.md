@@ -6,6 +6,30 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## V3 Release Candidate 1
+
+This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release).
+
+### Added
+
+- Hard cleanup for Go and Cargo.
+
+### Changed
+
+- Now error messages when adding a project & when spotting a project are much more detailed.
+- Now when bulk adding workspaces from `manager add`, only one call to `writeTextFile` will be made.
+
+### Fixed
+
+- Fixed me forgetting to update the `help` command before releasing Release Candidate 0 (my bad).
+- Fixed goddamn project validation. You'll find a slightly stricter CLI from now own (requiring you, for example, to add a `"name"` field to a project just to add it).
+- Fixed an error being thrown when trying to gitignore stuff in projects without a .gitignore file, it'll now be automatically created.
+- Fixed verbose logging making EVERYTHING hidden when running hard cleanup, instead of hiding just what should be considered verbose.
+
+### Removed
+
+- Removed our standard cleanup task from `commit` and `release`. Sorry, but they were for whatever reason more problematic than what they should be.
+
 ## Unreleased (upcoming major release)
 
 V3 has not received yet a stable release. However, an unstable release candidate including all of these changes (and some known issues) exists. See the Releases tab at this repository for more info.

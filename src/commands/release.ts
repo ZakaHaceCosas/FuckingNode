@@ -4,10 +4,9 @@ import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/pr
 import type { TheReleaserConstructedParams } from "./constructors/command.ts";
 import type { DenoPkgFile, NodePkgFile } from "../types/platform.ts";
 import { Commander } from "../functions/cli.ts";
-import { PerformCleanup } from "./toolkit/cleaner.ts";
 import { Git } from "../utils/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { APP_NAME, isDis } from "../constants.ts";
+import { isDis } from "../constants.ts";
 
 export default async function TheReleaser(params: TheReleaserConstructedParams) {
     if (!StringUtils.validate(params.version)) {
@@ -34,9 +33,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         throw new Error(`Platform ${env.runtime} doesn't support publishing. Aborting.`);
     }
 
-    const releaseCmd = (StringUtils.validate(env.settings.releaseCmd) && !isDis(env.settings.releaseCmd))
-        ? StringUtils.normalize(env.settings.releaseCmd)
-        : "disable";
+    const releaseCmd = (!isDis(env.settings.releaseCmd)) ? StringUtils.normalize(env.settings.releaseCmd) : "disable";
 
     // bump version from pkg json first
     const newPackageFile: NodePkgFile | DenoPkgFile = {
@@ -104,24 +101,6 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
                 `Release command failed (${releaseCmd}): ${releaseOutput.stdout}`,
             );
         }
-    }
-
-    // run our maintenance task
-    try {
-        const output = await PerformCleanup(
-            project,
-            true,
-            true,
-            true,
-            true,
-            false,
-            "normal",
-            true,
-        );
-
-        if (output === false) throw new Error("(unknown)");
-    } catch (e) {
-        throw new Error(`${APP_NAME.CASED} clean failed with error: ${e}`);
     }
 
     // just in case

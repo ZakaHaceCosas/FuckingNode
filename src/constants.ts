@@ -184,11 +184,11 @@ export const DEFAULT_FKNODE_YAML: FullFkNodeYaml = {
 };
 
 /** Checks if a given command is __USE_DEFAULT */
-export function isDef(str: UnknownString): boolean {
+export function isDef(str: UnknownString): str is "usedefault" {
     return StringUtils.normalize(str ?? "", true, true) === "usedefault";
 }
 
 /** Checks if a given command is __DISABLE */
-export function isDis(str: UnknownString): boolean {
+export function isDis(str: UnknownString): str is "disable" {
     return StringUtils.normalize(str ?? "", true, true) === "disable";
 }

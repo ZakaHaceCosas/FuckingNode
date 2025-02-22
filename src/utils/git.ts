@@ -1,11 +1,43 @@
 import { Commander } from "../functions/cli.ts";
-import { JoinPaths } from "../functions/filesystem.ts";
+import { CheckForPath, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import { FULL_NAME } from "../constants.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
+import { FknError } from "./error.ts";
 
 export const Git = {
+    /**
+     * Checks if a given project is a Git repository.
+     *
+     * @export
+     * @async
+     * @param {string} path Path to the repo, or project name.
+     * @returns {Promise<boolean>}
+     */
+    IsRepo: async (path: string): Promise<boolean> => {
+        try {
+            const resolvedPath = await SpotProject(path);
+
+            const output = await Commander(
+                "git",
+                ["-C", resolvedPath, "status"],
+            );
+
+            if ((!StringUtils.validate(output.stdout))) return false;
+            if (StringUtils.normalize(output.stdout, false, true).includes("not a git repository")) {
+                return false;
+            }
+
+            return true;
+        } catch (e) {
+            new FknError(
+                "Git__IsRepoError",
+                `An error happened validating if ${await ParsePath(path)} is a Git repo: ${e}`,
+            );
+            return false;
+        }
+    },
     /**
      * Checks if a local repository has uncommitted changes or not. Returns `true` if you CAN commit (there are no uncommitted changes) and `false` if otherwise.
      *
@@ -177,6 +209,15 @@ export const Git = {
             const path = await SpotProject(project);
             const env = await GetProjectEnvironment(path);
             const gitIgnoreFile = await JoinPaths(env.root, ".gitignore");
+            if (!(await CheckForPath(gitIgnoreFile))) {
+                await Deno.writeTextFile(gitIgnoreFile, "");
+                await LogStuff(
+                    `Ignored ${toBeIgnored} successfully`,
+                    "tick",
+                );
+
+                return 0;
+            }
             const gitIgnoreContent = await Deno.readTextFile(gitIgnoreFile);
 
             if (gitIgnoreContent.includes(toBeIgnored)) return 0;

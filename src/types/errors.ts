@@ -16,9 +16,11 @@ export type GLOBAL_ERROR_CODES =
     | "Unknown__CleanerTask__Lint"
     | "Unknown__CleanerTask__Pretty"
     | "Unknown__CleanerTask__Update"
-    | "Commit__Fail__CommitCmd";
+    | "Commit__Fail__CommitCmd"
+    | "Generic__NonAddedProject"
+    | "Git__IsRepoError";
 
 /**
  * All possible project validation error codes.
  */
-export type PROJECT_ERROR_CODES = "IsDuplicate" | "NoPkgJson" | "NotFound" | "NoLockfile" | "CantDetermineEnv";
+export type PROJECT_ERROR_CODES = "IsDuplicate" | "NoPkgFile" | "NotFound" | "NoLockfile" | "NoName" | "NoVersion";
