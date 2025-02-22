@@ -2,6 +2,7 @@ import { LogStuff, ParseFlag } from "../functions/io.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 import { ChangeSetting, DisplaySettings, FlushConfigFiles, FreshSetup, VALID_SETTINGS } from "../functions/config.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
+import { DEBUG_LOG } from "../utils/error.ts";
 
 async function ResetSettings() {
     const confirmation = await LogStuff(
@@ -20,6 +21,7 @@ async function ResetSettings() {
 
 export default async function TheSettings(params: TheSettingsConstructedParams) {
     const args = StringUtils.normalizeArray(params.args);
+    DEBUG_LOG("TAKEN", args[0])
 
     if (!args || args.length === 0) {
         await DisplaySettings();

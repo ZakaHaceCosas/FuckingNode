@@ -220,7 +220,7 @@ async function main(command: string) {
                 });
                 break;
             case "settings":
-                await TheSettings({ args: flags });
+                await TheSettings({ args: flags.slice(1) });
                 break;
             case "migrate":
                 await TheMigrator({ projectPath: flags[1], wantedManager: flags[2] });
