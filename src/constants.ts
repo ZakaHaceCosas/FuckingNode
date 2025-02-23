@@ -192,3 +192,29 @@ export function isDef(str: UnknownString): str is "usedefault" {
 export function isDis(str: UnknownString): str is "disable" {
     return StringUtils.normalize(str ?? "", true, true) === "disable";
 }
+
+// deno-lint-ignore no-explicit-any
+type shutUpAny = any;
+
+/** Info on the user's platform. */
+export const LOCAL_PLATFORM: {
+    /** What system platform we're on. `"chad"` = POSIX, `"windows"` = WINDOWS. */
+    SYSTEM: "windows" | "chad";
+    /** Local user's username. */
+    USER: string | undefined;
+    /** APPDATA or whatever it is equivalent to on Linux & macOS. */
+    APPDATA: string;
+} = {
+    SYSTEM: (Deno.build.os === "windows" ||
+            (globalThis as shutUpAny).Deno?.build.os === "windows" ||
+            (globalThis as shutUpAny).navigator?.platform?.startsWith("Win") ||
+            (globalThis as shutUpAny).process?.platform?.startsWith("win"))
+        ? "windows"
+        : "chad",
+    USER: (Deno.env.get("USERNAME") || Deno.env.get("USER")),
+    APPDATA: (
+        Deno.env.get("APPDATA") ||
+        Deno.env.get("XDG_CONFIG_HOME") ||
+        `${Deno.env.get("HOME") ?? ""}/.config/` // this is a fallback
+    ),
+};

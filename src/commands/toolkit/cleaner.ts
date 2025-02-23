@@ -1,4 +1,4 @@
-import { FULL_NAME, I_LIKE_JS, isDef } from "../../constants.ts";
+import { FULL_NAME, I_LIKE_JS, isDef, LOCAL_PLATFORM } from "../../constants.ts";
 import { Commander, CommandExists } from "../../functions/cli.ts";
 import { GetSettings } from "../../functions/config.ts";
 import { BulkRemoveFiles, CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
@@ -414,7 +414,7 @@ export async function PerformHardCleanup(
     if (CommandExists("cargo")) {
         try {
             const paths: string[] = [];
-            if (Deno.build.os === "windows") {
+            if (LOCAL_PLATFORM.SYSTEM === "windows") {
                 const envPath = Deno.env.get("USERPROFILE");
                 if (!envPath) throw "lmao";
                 paths.push(

@@ -37,7 +37,7 @@ inputs = {
 Then, add this to your system packages:
 
 ```nix
-inputs.fuckingnode.packages."${system}".default
+inputs.fuckingnode.packages."${pkgs.system}".default
 ```
 
 ## Compile from source

@@ -1,4 +1,4 @@
-import { APP_NAME, DEFAULT_SCHEDULE_FILE, DEFAULT_SETTINGS, I_LIKE_JS } from "../constants.ts";
+import { APP_NAME, DEFAULT_SCHEDULE_FILE, DEFAULT_SETTINGS, I_LIKE_JS, LOCAL_PLATFORM } from "../constants.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { FknError, GenericErrorHandler } from "../utils/error.ts";
 import { BulkRemoveFiles, CheckForPath, JoinPaths } from "./filesystem.ts";
@@ -18,22 +18,14 @@ export function GetAppPath(
     path: "BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS",
 ): string {
     try {
-        const envPaths = {
-            windows: "APPDATA",
-            linux: "XDG_CONFIG_HOME",
-            linuxFallback: JoinPaths(Deno.env.get("HOME") ?? "", ".config"),
-        };
+        const appDataPath: string = LOCAL_PLATFORM.APPDATA;
 
-        const appDataPath = Deno.build.os === "windows"
-            ? Deno.env.get(envPaths.windows)
-            : (Deno.env.get(envPaths.linux) || envPaths.linuxFallback);
-
-        if (!appDataPath) {
+        if (!StringUtils.validate(appDataPath) || !CheckForPath(appDataPath)) {
             throw new FknError(
                 "Internal__NoEnvForConfigPath",
                 `We searched for ${
-                    Deno.build.os === "windows" ? "APPDATA" : "XDG_CONFIG_HOME and HOME"
-                } in env, but couldn't find it. Please report this on GitHub.`,
+                    LOCAL_PLATFORM.SYSTEM === "windows" ? "APPDATA" : "XDG_CONFIG_HOME and HOME"
+                } in your environment variables, but nothing was found.\nThis breaks the entire CLI, please report this on GitHub.`,
             );
         }
 

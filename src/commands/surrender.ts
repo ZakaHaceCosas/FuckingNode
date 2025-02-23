@@ -3,7 +3,7 @@ import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import type { TheSurrendererConstructedParams } from "./constructors/command.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { NameProject } from "../functions/projects.ts";
-import { APP_URLs, FULL_NAME } from "../constants.ts";
+import { APP_URLs, FULL_NAME, LOCAL_PLATFORM } from "../constants.ts";
 import { Git } from "../utils/git.ts";
 import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
@@ -59,14 +59,15 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
     const message = params.isGitHub ? `> [!CAUTION]\n${bareMessage.split("\n").map((s) => `> ${s}`).join("\n")}\n` : bareMessage;
     console.log("");
     // internal joke / easter egg, don't mind and don't edit this line
-    const isThatOneGuyWhoAlwaysDeprecatesProjects = StringUtils.validateAgainst(StringUtils.normalize(Deno.env.get("USERNAME") ?? ""), [
-        "engin",
-        "unel",
-        "fox",
-        "yourlocalfox",
-        "sip",
-        "yourlocalsip",
-    ]) || StringUtils.normalize(project).includes("crytical") || StringUtils.normalize(project).includes("arcos") ||
+    const isThatOneGuyWhoAlwaysDeprecatesProjects =
+        StringUtils.validateAgainst(StringUtils.normalize(LOCAL_PLATFORM.USER ?? ""), [
+            "engin",
+            "unel",
+            "fox",
+            "yourlocalfox",
+            "sip",
+            "yourlocalsip",
+        ]) || StringUtils.normalize(project).includes("crytical") || StringUtils.normalize(project).includes("arcos") ||
         StringUtils.normalize(project).includes("arcticos") || StringUtils.normalize(project).includes("cryticl") ||
         StringUtils.normalize(project).includes("fyreblitz");
     const confirmation = isThatOneGuyWhoAlwaysDeprecatesProjects === true ? true : await LogStuff(

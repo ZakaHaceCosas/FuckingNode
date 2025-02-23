@@ -6,6 +6,15 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## V3 Release Candidate (4) (unreleased)
+
+This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
+
+### Changed
+
+- Now internal ENV-related checks (what your system is and whether if internal files are present or not) are more reliable.
+- Now error message for non specified project is more clear and up to date.
+
 ## V3 Release Candidate (3)
 
 This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).

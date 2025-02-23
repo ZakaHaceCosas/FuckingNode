@@ -1,3 +1,4 @@
+import { LOCAL_PLATFORM } from "../src/constants.ts";
 import { Commander, CommandExists } from "../src/functions/cli.ts";
 import { assertEquals } from "@std/assert";
 
@@ -27,7 +28,7 @@ Deno.test({
 Deno.test({
     name: "commander returns output",
     fn: async () => {
-        if (Deno.build.os === "windows") {
+        if (LOCAL_PLATFORM.SYSTEM === "windows") {
             const out = await Commander("powershell", ["echo", "hi"], false);
             assertEquals(out, { success: true, stdout: "hi\r\n\n" });
         }

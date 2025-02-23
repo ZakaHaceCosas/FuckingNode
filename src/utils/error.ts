@@ -1,5 +1,5 @@
 import { join } from "@std/path/join";
-import { APP_NAME, I_LIKE_JS } from "../constants.ts";
+import { APP_NAME, I_LIKE_JS, LOCAL_PLATFORM } from "../constants.ts";
 import { ColorString } from "../functions/io.ts";
 import type { GLOBAL_ERROR_CODES } from "../types/errors.ts";
 import { GetDateNow } from "../functions/date.ts";
@@ -31,7 +31,7 @@ export class FknError extends Error {
         switch (this.code) {
             case "Manager__ProjectInteractionInvalidCauseNoPathProvided":
                 this.hint =
-                    'Provide the path to the project.\n    It can be relative (../node-project),\n    absolute (C:\\Users\\coolDev\\node-project),\n    or you can type "--self" to use the current working DIR.';
+                    `Provide the project's path or name to the project.\n    It can be a file path ("../node-project" OR "C:\\Users\\coolDev\\node-project"),\n    It can be "--self" to use the current working DIR (${Deno.cwd()}).\n    Or it can be a project's name (type the exact name as it is on package.json's "name" field).`;
                 break;
             case "Manager__IgnoreFile__InvalidLevel":
                 this.hint =
@@ -52,7 +52,7 @@ export class FknError extends Error {
             case "Internal__NoEnvForConfigPath":
                 this.hint = `We tried to find ${
                     ColorString(
-                        Deno.build.os === "windows" ? "APPDATA env variable" : "XDG_CONFIG_HOME and HOME env variables",
+                        LOCAL_PLATFORM.SYSTEM === "windows" ? "APPDATA env variable" : "XDG_CONFIG_HOME and HOME env variables",
                         "bold",
                     )
                 } but failed, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong. If these aren't the right environment variables for your system's config path (currently using APPDATA on Windows, /home/user/.config on macOS and Linux), please raise an issue on GitHub.`;
@@ -117,12 +117,9 @@ export class FknError extends Error {
      * @returns {Promise<void>}
      */
     public debug(debuggableContent: UnknownString): void {
-        const base = Deno.build.os === "windows"
-            ? Deno.env.get("APPDATA")
-            : (Deno.env.get("XDG_CONFIG_HOME") || `${Deno.env.get("HOME") ?? ""}.config/`);
         // base! because if we're already debugging stuff we assume the CLI got to run
         // meaning that path does exist
-        const debugPath = join(base!, APP_NAME.CLI, `${APP_NAME.CLI}-errors.log`);
+        const debugPath = join(LOCAL_PLATFORM.APPDATA, APP_NAME.CLI, `${APP_NAME.CLI}-errors.log`);
         const debuggableError = `\n
 ---
 # BEGIN FknERROR ${this.code} @ ${new Date().toISOString()}
