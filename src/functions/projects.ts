@@ -176,19 +176,22 @@ async function GetProjectSettings(path: string): Promise<FullFkNodeYaml> {
         return DEFAULT_FKNODE_YAML;
     }
 
-    const divineContent = parseYaml(await Deno.readTextFile(pathToDivineFile));
+    const content = await Deno.readTextFile(pathToDivineFile);
+    const divineContent = parseYaml(content);
     DEBUG_LOG("RAW DIVINE CONTENT", divineContent);
 
     if (!ValidateFkNodeYaml(divineContent)) {
         DEBUG_LOG("\nRESORTING TO DEFAULTS 2\n");
         await LogStuff(`${pathToDivineFile} is an invalid fknode.yaml!`, "warn");
-        await Deno.writeTextFile(
-            pathToDivineFile,
-            `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to ${APP_URLs.WEBSITE} to learn about how fknode.yaml works.]\n`,
-            {
-                append: true,
-            },
-        );
+        if (!content.includes("UPON INTERACTING")) {
+            await Deno.writeTextFile(
+                pathToDivineFile,
+                `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to ${APP_URLs.WEBSITE} to learn about how fknode.yaml works.]\n`,
+                {
+                    append: true,
+                },
+            );
+        }
         return DEFAULT_FKNODE_YAML;
     }
 
