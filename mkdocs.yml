@@ -85,6 +85,9 @@ extra:
           link: https://discord.gg/AA2jYAFNmq
           name: Chat us on Discord
 
+    analytics:
+        provider: custom
+
 plugins:
     - social
     - redirects:

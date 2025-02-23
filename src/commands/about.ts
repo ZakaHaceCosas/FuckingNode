@@ -43,7 +43,7 @@ const coolStrings = {
 
 export default async function TheAbouter() {
     await LogStuff(colorizeText(ASCII));
-    console.log("-".repeat(35))
+    console.log("-".repeat(35));
     await LogStuff(`${ColorString(VERSIONING.APP, "bright-yellow")} · ${getRandomPhrase()}\n`);
     await LogStuff(
         `Written in ${coolStrings.ts}. Running in ${coolStrings.deno}.\nDeveloped in ${coolStrings.spain} by ${coolStrings.zakaOne} (${coolStrings.zakaTwo} in spanish).\n`,
