@@ -1,25 +1,27 @@
 /*
-Bun color: #FBF0E1
-Orange cl: #FCA737
+Bun    color: #FBF0E1
+Orange color: #FCA737
+Deno   color: #79feb4
 */
+:root > *,
 *,
 [data-md-color-scheme="slate"] {
     scroll-behavior: smooth;
-    --md-primary-fg-color: #fbf0e1 !important;
-    --md-primary-fg-color--light: #f0e5d7 !important;
-    --md-primary-fg-color--dark: #dad0c2 !important;
-    --md-accent-fg-color: #fbf0e1 !important;
-    --md-accent-fg-color--transparent: #fbf0e13a !important;
+    --md-primary-fg-color: #79feb4 !important;
+    --md-primary-fg-color--light: #77f1ae !important;
+    --md-primary-fg-color--dark: #75e4a7 !important;
+    --md-accent-fg-color: #79feb4 !important;
+    --md-accent-fg-color--transparent: #79feb43a !important;
     --md-primary-bg-color: #000 !important;
     --md-accent-bg-color: #000 !important;
     --md-accent-bg-color--light: #000000b3 !important;
 }
 :root,
 [data-md-color-scheme="slate"] {
-    --md-hue: 35deg !important;
+    --md-hue: 195deg !important;
 }
 .md-typeset [type="checkbox"]:checked + .task-list-indicator:before {
-    background-color: #fbf0e1 !important;
+    background-color: #79feb4 !important;
 }
 .md-typeset .md-button:focus,
 .md-typeset .md-button:hover {
