@@ -20,6 +20,7 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 - Fixed a newly introduced issue that caused an infinite loop, hanging the app (`GetProjectEnvironment()` calls `GetProjectSettings()` which calls `NameProject()` which calls `GetProjectEnvironment()` again, infinitely looping).
 - Fixed useless path-related and settings-related function calls, minimally increasing performance.
 - Fixed the CLI adding "NOTE: Invalid fknode.yaml" to files that _already_ have the note.
+- Fixed the `fknode.yaml` validator having a wrong value set (for whatever unknown reason) for intensities, marking valid config files as invalid and ignoring them.
 
 ## V3 Release Candidate (2)
 

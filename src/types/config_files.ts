@@ -229,7 +229,7 @@ export function ValidateFkNodeYaml(
                     obj.destroy.intensities.every(
                         // deno-lint-ignore no-explicit-any
                         (intensity: any) => {
-                            return ["low", "medium", "high", "*"].includes(intensity);
+                            return ["normal", "hard", "hard-only", "maxim", "maxim-only", "*"].includes(intensity);
                         },
                     ))
             )
