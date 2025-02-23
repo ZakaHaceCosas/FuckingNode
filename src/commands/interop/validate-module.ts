@@ -7,13 +7,13 @@ import { isObject } from "../../functions/projects.ts";
 export const BareValidators = {
     // deno-lint-ignore no-explicit-any
     Cargo: (obj: any): obj is CargoPkgFile => {
-        return obj && isObject(obj) && obj.package && obj.package.name && StringUtils.validate(obj.package.name);
+        return isObject(obj) && obj["package"] && StringUtils.validate(obj["package"]["name"]);
     },
 
     // deno-lint-ignore no-explicit-any
     Golang: (obj: any): obj is GolangPkgFile => {
-        return obj && isObject(obj) && obj.module && StringUtils.validate(obj.module) && obj.go &&
-            StringUtils.validate(obj.go);
+        return isObject(obj) && StringUtils.validate(obj["module"]) &&
+            StringUtils.validate(obj["go"]);
     },
 
     // deno-lint-ignore no-explicit-any
@@ -24,7 +24,7 @@ export const BareValidators = {
             return false;
         }
 
-        return obj && isObject(obj) && obj.name && StringUtils.validate(obj.name) && obj.version && StringUtils.validate(obj.version);
+        return isObject(obj) && StringUtils.validate(obj["name"]) && StringUtils.validate(obj["version"]);
     },
 
     // deno-lint-ignore no-explicit-any
@@ -35,6 +35,6 @@ export const BareValidators = {
             return false;
         }
 
-        return obj && isObject(obj) && obj.name && StringUtils.validate(obj.name) && obj.version && StringUtils.validate(obj.version);
+        return isObject(obj) && StringUtils.validate(obj["name"]) && StringUtils.validate(obj["version"]);
     },
 };
