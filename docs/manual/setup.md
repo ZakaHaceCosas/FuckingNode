@@ -15,6 +15,23 @@ To list available setups, run:
 fuckingnode setup
 ```
 
+You'll see something like the following:
+
+```txt
+┌───────────────────────┬───────────────────────────────────────────────────────────────────────┐
+│ Name                  │ Description                                                           │
+├───────────────────────┼───────────────────────────────────────────────────────────────────────┤
+│ fknode-basic          │ A very basic fknode.yaml file.                                        │
+│ fknode-allow-all      │ An fknode.yaml file that allows every feature to run (commits too!).  │
+│ gitignore-js          │ A gitignore file for JavaScript projects.                             │
+│ gitignore-js-nolock   │ A gitignore file for JavaScript projects (also ignores lockfiles).    │
+│ ts-strictest          │ Strictest way of TypeScripting, ensuring cleanest code.               │
+│ ts-library            │ Recommended config for libraries.                                     │
+│ editorconfig-default  │ A basic .editorconfig file that works for everyone.                   │
+└───────────────────────┴───────────────────────────────────────────────────────────────────────┘
+You either didn't provide a project / target setup or provided invalid ones, so up here are all possible setups.
+```
+
 Then, to apply a setup, run:
 
 ```bash

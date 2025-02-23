@@ -9,18 +9,18 @@ These are links to individual pages. For the full manual, click the first one, t
 - [Install the CLI](install.md)
 - [Configuration](configuration.md)
 - [Main usage guide](usage.md)
-- [Individual project config](fknode-yaml.md)
+- [Individual project config (fknode.yaml)](fknode-yaml.md)
 - [Extra - Kickstart](kickstart.md)
 - [Extra - Commit](commit.md)
 - [Extra - Release](release.md)
+- [Extra - Surrender](surrender.md)
 - [Extra - Setup](setup.md)
 - [Extra - Stats](stats.md)
-- [Extra - Stats](surrender.md)
 - [What's next?](whats-next.md)
 
 For further learning:
 
-- [Cross-runtime support](cross-runtime.md)
+- [Cross-runtime support](../learn/cross-runtime-support.md)
 
 ## TL;DR for getting started as soon as possible
 
