@@ -92,14 +92,9 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
 
     const env = await GetProjectEnvironment(project);
 
-    const README = await JoinPaths(env.root, "README.md");
+    const README = JoinPaths(env.root, "README.md");
 
-    if (await CheckForPath(README)) {
-        await Deno.writeTextFile(
-            README,
-            `${message}\n${await Deno.readTextFile(README)}`,
-        );
-    }
+    if (CheckForPath(README)) await Deno.writeTextFile(README, `${message}\n${await Deno.readTextFile(README)}`);
 
     const commitTwo = await Git.Commit(
         project,
@@ -144,7 +139,7 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
                 true,
             ))
         ) return;
-        if (!(await CheckForPath(env.root))) throw new Error(`Turns out the CLI cannot find the path to ${env.root}?`);
+        if (!CheckForPath(env.root)) throw new Error(`Turns out the CLI cannot find the path to ${env.root}?`);
         Deno.removeSync(env.root, { recursive: true });
     }
 

@@ -1,7 +1,7 @@
 import { I_LIKE_JS } from "../constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
 import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
-import { GetAllProjects, GetWorkspaces, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
+import { GetAllProjects, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
 import { DEBUG_LOG, FknError } from "../utils/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
@@ -26,16 +26,14 @@ export async function AddProject(
         );
     }
 
-    const workingEntry = await ParsePath(entry);
-    DEBUG_LOG("WORKING ENTRY", workingEntry);
-    if (!(await CheckForPath(workingEntry))) {
-        throw new FknError("Manager__NonExistingPath", `Path "${workingEntry}" doesn't exist.`);
-    }
+    const workingEntry = ParsePath(entry);
+
+    if (!CheckForPath(workingEntry)) throw new FknError("Manager__NonExistingPath", `Path "${workingEntry}" doesn't exist.`);
 
     const projectName = await NameProject(workingEntry, "all");
 
     async function addTheEntry() {
-        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
+        await Deno.writeTextFile(GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
             append: true,
         });
         await LogStuff(
@@ -45,7 +43,7 @@ export async function AddProject(
     }
 
     const validation = await ValidateProject(workingEntry, false);
-    DEBUG_LOG("VALIDATION", validation);
+    DEBUG_LOG("VALIDATION", validation, "AT", workingEntry);
     const env = await GetProjectEnvironment(workingEntry);
 
     if (validation !== true) {
@@ -107,9 +105,7 @@ export async function AddProject(
         );
     }
 
-    const workspaces = await GetWorkspaces(
-        env.root,
-    );
+    const workspaces = env.workspaces;
 
     if (!workspaces || workspaces.length === 0) {
         await addTheEntry();
@@ -137,7 +133,7 @@ export async function AddProject(
     }
 
     const allEntries = [workingEntry, ...workspaces].join("\n") + "\n";
-    await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), allEntries, { append: true });
+    await Deno.writeTextFile(GetAppPath("MOTHERFKRS"), allEntries, { append: true });
 
     await LogStuff(
         `Added all of your projects. Many mfs less to care about!`,
@@ -172,7 +168,7 @@ export async function RemoveProject(
         }
 
         if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
-        await Deno.writeTextFile(await GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
+        await Deno.writeTextFile(GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
 
         if (list.length > 0 && showOutput === true) {
             await LogStuff(
@@ -196,7 +192,7 @@ export async function RemoveProject(
     } catch (e) {
         if (e instanceof FknError && e.code === "Generic__NonFoundProject") {
             await LogStuff(
-                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${entry} (=> ${entry ? await ParsePath(entry) : "undefined?"})`,
+                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${entry} (=> ${entry ? ParsePath(entry) : "undefined?"})`,
                 "error",
             );
             return;

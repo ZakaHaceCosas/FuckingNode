@@ -55,7 +55,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         // start time of each cleanup
         const startTime = new Date();
 
-        if (!(await CheckForPath(project))) {
+        if (!CheckForPath(project)) {
             await LogStuff(
                 `Path not found: ${project}. You might want to update your list of ${I_LIKE_JS.MFS}.`,
                 "error",
@@ -72,7 +72,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
         try {
             Deno.chdir(project);
 
-            const lockfiles = await ResolveLockfiles(project);
+            const lockfiles = ResolveLockfiles(project);
 
             // TODO - readd preliminary status (basically showing '... # * protected' in report and a log warning for the user)
 
@@ -105,7 +105,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
                     });
                     continue;
                 }
-            } else if (await CheckForPath("package.json")) {
+            } else if (CheckForPath("package.json")) {
                 await LogStuff(
                     `${project} has a package.json but not a lockfile. Can't ${I_LIKE_JS.FKN} clean.`,
                     "warn",

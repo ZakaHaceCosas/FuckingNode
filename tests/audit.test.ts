@@ -124,7 +124,7 @@ Deno.test({
         assertEquals(
             ParsePnpmYarnReport(
                 await Deno.readTextFile(
-                    await JoinPaths(Deno.cwd(), "tests/environment/test-three/audits/audit-pnpm.txt"),
+                    JoinPaths(Deno.cwd(), "tests/environment/test-three/audits/audit-pnpm.txt"),
                 ),
                 "pnpm",
             ),
@@ -139,7 +139,7 @@ Deno.test({
         assertEquals(
             ParseNpmReport(
                 await Deno.readTextFile(
-                    await JoinPaths(Deno.cwd(), "tests/environment/test-three/audits/audit-npm.txt"),
+                    JoinPaths(Deno.cwd(), "tests/environment/test-three/audits/audit-npm.txt"),
                 ),
             ),
             expected,
@@ -153,7 +153,7 @@ Deno.test({
         assertEquals(
             ParsePnpmYarnReport(
                 await Deno.readTextFile(
-                    await JoinPaths(Deno.cwd(), "tests/environment/test-three/audits/audit-yarn.txt"),
+                    JoinPaths(Deno.cwd(), "tests/environment/test-three/audits/audit-yarn.txt"),
                 ),
                 "yarn",
             ),

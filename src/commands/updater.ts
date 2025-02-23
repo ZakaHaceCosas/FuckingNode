@@ -23,7 +23,7 @@ async function TellAboutUpdate(newVer: string): Promise<void> {
  * @returns {Promise<void>}
  */
 export default async function TheUpdater(params: TheUpdaterConstructedParams): Promise<void> {
-    const scheduleFilePath = await GetAppPath("SCHEDULE");
+    const scheduleFilePath = GetAppPath("SCHEDULE");
     const scheduleFileContents = parseYaml(await Deno.readTextFile(scheduleFilePath)) as CF_FKNODE_SCHEDULE;
 
     const IsUpToDate: (tag: string) => boolean = (tag: string) => compare(parse(VERSIONING.APP), parse(tag)) >= 0;

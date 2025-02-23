@@ -21,7 +21,7 @@ async function ResetSettings() {
 
 export default async function TheSettings(params: TheSettingsConstructedParams) {
     const args = StringUtils.normalizeArray(params.args);
-    DEBUG_LOG("TAKEN", args[0]);
+    DEBUG_LOG("SETTINGS TOOK", args[0]);
 
     if (!args || args.length === 0) {
         await DisplaySettings();

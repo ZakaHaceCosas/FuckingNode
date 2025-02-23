@@ -21,7 +21,7 @@ export default async function TheExporter(params: TheExporterConstructedParams) 
     const commentString = params.json === true ? comment.replaceAll("#", "//") : comment;
 
     await Deno.writeTextFile(
-        await JoinPaths(env.root, outFileName),
+        JoinPaths(env.root, outFileName),
         `${commentString}\n${cpfString}`,
     );
 

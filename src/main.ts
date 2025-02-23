@@ -19,7 +19,7 @@ import TheSetuper from "./commands/setup.ts";
 import { APP_NAME, APP_URLs, FULL_NAME } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetAppPath, GetSettings } from "./functions/config.ts";
-import { GenericErrorHandler } from "./utils/error.ts";
+import { DEBUG_LOG, GenericErrorHandler } from "./utils/error.ts";
 import type { TheCleanerConstructedParams } from "./commands/constructors/command.ts";
 import { RunScheduledTasks } from "./functions/schedules.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
@@ -27,7 +27,15 @@ import { CleanupProjects } from "./functions/projects.ts";
 
 // error handler for v2 -> v3 migration
 // NOTE: remove when we get to 3.1 or so
+let errorHandled = false;
+
 async function HandleErr(e: unknown) {
+    if (errorHandled) {
+        console.error("Unhandled repeating error:", e);
+        Deno.exit(1);
+    }
+    errorHandled = true; // avoid stupid loops
+
     const isV2error = e instanceof TypeError && e.message.trim().toLowerCase().includes("right_now_date regular expression");
     const isV3error = e instanceof Error && e.message.trim().toLowerCase().includes('literal "-"');
 
@@ -39,10 +47,10 @@ async function HandleErr(e: unknown) {
         );
 
         const paths = [
-            await GetAppPath("SCHEDULE"),
-            await GetAppPath("SETTINGS"),
-            await GetAppPath("ERRORS"),
-            await GetAppPath("LOGS"),
+            GetAppPath("SCHEDULE"),
+            GetAppPath("SETTINGS"),
+            GetAppPath("ERRORS"),
+            GetAppPath("LOGS"),
         ];
 
         for (const path of paths) {
@@ -66,10 +74,10 @@ if (StringUtils.normalize(Deno.args[0] ?? "") === "something-fucked-up") {
     );
     if (c === true) {
         const paths = [
-            await GetAppPath("SCHEDULE"),
-            await GetAppPath("SETTINGS"),
-            await GetAppPath("ERRORS"),
-            await GetAppPath("LOGS"),
+            GetAppPath("SCHEDULE"),
+            GetAppPath("SETTINGS"),
+            GetAppPath("ERRORS"),
+            GetAppPath("LOGS"),
         ];
 
         for (const path of paths) {
@@ -93,6 +101,7 @@ async function init() {
 const flags = Deno.args.map((arg) => StringUtils.normalize(arg));
 
 export const __FKNODE_SHALL_WE_DEBUG = hasFlag("FKN-DBG", true) ? true : false;
+DEBUG_LOG("Initialized __FKNODE_SHALL_WE_DEBUG constant (ENTRY POINT)");
 
 if (!StringUtils.validate(flags[0])) {
     try {

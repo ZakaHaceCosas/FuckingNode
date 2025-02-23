@@ -20,7 +20,7 @@ export const mocks = {
             // here goes the specific logic
             const resolvedPath = typeof path === "string" ? path : path.toString();
             switch (resolvedPath) {
-                case await GetAppPath("MOTHERFKRS"):
+                case GetAppPath("MOTHERFKRS"):
                     return `${CONSTANTS.ENV_PATH}/test-one`;
                 default:
                     return await Deno.readTextFile(path); // (path: string | URL): Promise<string>

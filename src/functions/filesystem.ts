@@ -5,13 +5,12 @@ import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
  * Returns `true` if a given path exists, `false` if otherwise.
  *
  * @export
- * @async
  * @param {string} path Path to check for
- * @returns {Promise<boolean>}
+ * @returns {boolean}
  */
-export async function CheckForPath(path: string): Promise<boolean> {
+export function CheckForPath(path: string): boolean {
     try {
-        await Deno.stat(path);
+        Deno.statSync(path);
         return true;
     } catch {
         return false;
@@ -49,11 +48,10 @@ export async function CheckForDir(path: string): Promise<
  * Parses a string path, to ensure string cleanness and handle things like relative paths or `--self`.
  *
  * @export
- * @async Because of stuff like `realPath`.
  * @param {UnknownString} target The string to parse.
  * @returns {Promise<string>} A string with the parsed path.
  */
-export async function ParsePath(target: UnknownString): Promise<string> {
+export function ParsePath(target: UnknownString): string {
     try {
         if (!StringUtils.validate(target)) throw new Error("Target must be (obviously) a string.");
 
@@ -62,7 +60,7 @@ export async function ParsePath(target: UnknownString): Promise<string> {
             workingTarget = Deno.cwd();
         } else {
             try {
-                workingTarget = await Deno.realPath(workingTarget);
+                workingTarget = Deno.realPathSync(workingTarget);
             } catch {
                 // this NEEDS to be here for it to work
             }
@@ -110,9 +108,9 @@ export function ParsePathList(target: string): string[] {
  * @param {string} pathB Second part, e.g. "my/end.txt".
  * @returns {string} Result, e.g. "./my/beginning/my/end.txt".
  */
-export async function JoinPaths(pathA: string, pathB: string): Promise<string> {
+export function JoinPaths(pathA: string, pathB: string): string {
     try {
-        const firstPart = await ParsePath(pathA);
+        const firstPart = ParsePath(pathA);
         const secondPath = pathB.trim();
         return join(firstPart, secondPath);
     } catch {
@@ -130,7 +128,7 @@ export async function JoinPaths(pathA: string, pathB: string): Promise<string> {
  */
 export async function BulkRemoveFiles(files: string[]): Promise<void> {
     await Promise.all(files.map(async (file) => {
-        await Deno.remove(await ParsePath(file), {
+        await Deno.remove(ParsePath(file), {
             recursive: true,
         });
     }));

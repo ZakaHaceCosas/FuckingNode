@@ -8,7 +8,7 @@ import { VERSIONING } from "../constants.ts";
 
 export async function RunScheduledTasks() {
     const { updateFreq, flushFreq } = await GetSettings();
-    const scheduleFilePath: string = await GetAppPath("SCHEDULE");
+    const scheduleFilePath: string = GetAppPath("SCHEDULE");
     const scheduleFile: CF_FKNODE_SCHEDULE = parseYaml(await Deno.readTextFile(scheduleFilePath)) as CF_FKNODE_SCHEDULE;
 
     const currentDate: Date = new Date();

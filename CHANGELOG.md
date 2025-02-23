@@ -6,6 +6,20 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## V3 Release Candidate (3)
+
+This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
+
+### Changed
+
+- Now some base path-related methods (path existence checking, path parsing, internal path getting, project lockfile resolving...) are synchronous. This should not affect performance as the CLI works in a linear way anyways, and makes code shorter and less boilerplate-ish.
+- Now the `FnCPF` includes a `perPlatProps` field for platform-specific properties that are important enough to preserve. Currently it only includes the `edition` field of `Cargo.toml > [package]`
+
+### Fixed
+
+- Fixed a newly introduced issue that caused an infinite loop, hanging the app (`GetProjectEnvironment()` calls `GetProjectSettings()` which calls `NameProject()` which calls `GetProjectEnvironment()` again, infinitely looping).
+- Fixed useless path-related and settings-related function calls, minimally increasing performance.
+
 ## V3 Release Candidate (2)
 
 This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).

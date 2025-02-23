@@ -61,7 +61,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
     if (!projectName) throw new Error(`RegEx Error: Can't spot the project name in ${gitUrl}`);
 
     const cwd = Deno.cwd();
-    const clonePath: string = StringUtils.validate(path) ? await ParsePath(path) : await ParsePath(await JoinPaths(cwd, projectName));
+    const clonePath: string = ParsePath(StringUtils.validate(path) ? path : JoinPaths(cwd, projectName));
 
     const clonePathValidator = await CheckForDir(clonePath);
     if (clonePathValidator === "ValidButNotEmpty") {
@@ -78,13 +78,13 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
 
     Deno.chdir(clonePath);
 
-    const lockfiles = await ResolveLockfiles(Deno.cwd());
+    const lockfiles = ResolveLockfiles(Deno.cwd());
 
     if (lockfiles.length === 0) {
         if (["npm", "pnpm", "yarn", "deno", "bun", "cargo", "go"].includes(StringUtils.normalize(manager ?? ""))) {
             await LogStuff(`This project lacks a lockfile. We'll generate it right away!`, "warn");
             await Deno.writeTextFile(
-                await JoinPaths(Deno.cwd(), NameLockfile(manager as "npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo")),
+                JoinPaths(Deno.cwd(), NameLockfile(manager as "npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo")),
                 "",
             ); // fix Internal__CantDetermineEnv by adding a fake lockfile
             // the pkg manager SHOULD BE smart enough to ignore and overwrite it

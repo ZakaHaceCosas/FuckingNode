@@ -26,13 +26,11 @@ async function __isRepo(path: string) {
             StringUtils.normalize(output.stdout ?? "", true, true) !== "true"
         ) return false; // anything unsuccessful means uncommitted changes
 
-        DEBUG_LOG(output);
-
         return true;
     } catch (e) {
         new FknError(
             "Git__IsRepoError",
-            `An error happened validating if ${await ParsePath(path)} is a Git repo: ${e}`,
+            `An error happened validating if ${ParsePath(path)} is a Git repo: ${e}`,
         );
         return false;
     }
@@ -200,8 +198,8 @@ export const Git = {
         try {
             const path = await SpotProject(project);
             const env = await GetProjectEnvironment(path);
-            const gitIgnoreFile = await JoinPaths(env.root, ".gitignore");
-            if (!(await CheckForPath(gitIgnoreFile))) {
+            const gitIgnoreFile = JoinPaths(env.root, ".gitignore");
+            if (!CheckForPath(gitIgnoreFile)) {
                 await Deno.writeTextFile(gitIgnoreFile, "");
                 await LogStuff(
                     `Ignored ${toBeIgnored} successfully`,

@@ -7,7 +7,7 @@ console.log(ColorString("we making this good", "bright-blue"));
 const dir = Deno.cwd(); // as the CWD from where you'll run deno task will always be the root of the project
 
 async function GetAllTsFiles(): Promise<string[]> {
-    const exclude = [await ParsePath(await JoinPaths(dir, "tests/environment"))];
+    const exclude = [ParsePath(JoinPaths(dir, "tests/environment"))];
     const tsFiles: string[] = [];
 
     for await (
@@ -47,10 +47,10 @@ new Deno.Command("deno", {
 }).spawn(); // ensure deps are on latest
 
 await Deno.copyFile(
-    await JoinPaths(dir, "scripts/install.ps1"),
-    await JoinPaths(dir, "docs/install.ps1"),
+    JoinPaths(dir, "scripts/install.ps1"),
+    JoinPaths(dir, "docs/install.ps1"),
 );
 await Deno.copyFile(
-    await JoinPaths(dir, "scripts/install.sh"),
-    await JoinPaths(dir, "docs/install.sh"),
+    JoinPaths(dir, "scripts/install.sh"),
+    JoinPaths(dir, "docs/install.sh"),
 );

@@ -9,7 +9,7 @@ Deno.test({
     name: "interop layer manages cargo pkg file",
     fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Cargo.CPF(
-            await Deno.readTextFile(await JoinPaths(CONSTANTS.INTEROP_PATH, "cargo.toml")),
+            await Deno.readTextFile(JoinPaths(CONSTANTS.INTEROP_PATH, "cargo.toml")),
             [],
         );
 
@@ -19,6 +19,11 @@ Deno.test({
                 name: "my_project",
                 version: "0.1.0",
                 rm: "cargo",
+                perPlatProps: {
+                    cargo: {
+                        edition: "2021",
+                    },
+                },
                 deps: [
                     { name: "serde", ver: "1.0", rel: "univ:dep", src: "crates.io" },
                     { name: "reqwest", ver: "0.11", rel: "univ:dep", src: "crates.io" },
@@ -42,7 +47,7 @@ Deno.test({
     name: "interop layer manages golang pkg file",
     fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Golang.CPF(
-            await Deno.readTextFile(await JoinPaths(CONSTANTS.INTEROP_PATH, "go.mod")),
+            await Deno.readTextFile(JoinPaths(CONSTANTS.INTEROP_PATH, "go.mod")),
             "v1.1.0",
             [],
         );
@@ -53,6 +58,7 @@ Deno.test({
                 name: "vuelto.pp.ua",
                 version: "v1.1.0",
                 rm: "golang",
+                perPlatProps: { cargo: { edition: undefined } },
                 deps: [
                     {
                         name: "github.com/faiface/beep",
@@ -124,7 +130,7 @@ Deno.test({
     name: "interop layer manages node/bun CPF",
     fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.NodeBun.CPF(
-            await Deno.readTextFile(await JoinPaths(CONSTANTS.INTEROP_PATH, "package.json")),
+            await Deno.readTextFile(JoinPaths(CONSTANTS.INTEROP_PATH, "package.json")),
             "pnpm",
             [],
         );
@@ -135,6 +141,7 @@ Deno.test({
                 name: "test",
                 version: "0.59.123",
                 rm: "pnpm",
+                perPlatProps: { cargo: { edition: undefined } },
                 deps: [
                     {
                         name: "eslint",
@@ -170,7 +177,7 @@ Deno.test({
     name: "interop layer manages deno CPF",
     fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Deno.CPF(
-            await Deno.readTextFile(await JoinPaths(CONSTANTS.INTEROP_PATH, "_deno.json")),
+            await Deno.readTextFile(JoinPaths(CONSTANTS.INTEROP_PATH, "_deno.json")),
             [],
         );
 
@@ -180,6 +187,7 @@ Deno.test({
                 name: "@zakahacecosas/string-utils",
                 version: "1.7.0",
                 rm: "deno",
+                perPlatProps: { cargo: { edition: undefined } },
                 deps: [
                     {
                         name: "@std/fs",
@@ -203,6 +211,11 @@ const PKGGEN_TEST_FNCPF: FnCPF = {
     name: "test",
     version: "0.59.123",
     rm: "npm",
+    perPlatProps: {
+        cargo: {
+            edition: undefined,
+        },
+    },
     deps: [
         {
             name: "eslint",

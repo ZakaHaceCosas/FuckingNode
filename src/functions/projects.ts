@@ -27,10 +27,10 @@ import { RemoveProject } from "../commands/manage.ts";
  * @returns {Promise<string[]>} The list of projects.
  */
 export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Promise<string[]> {
-    const content = await Deno.readTextFile(await GetAppPath("MOTHERFKRS"));
+    const content = await Deno.readTextFile(GetAppPath("MOTHERFKRS"));
     DEBUG_LOG("RAW LIST", content);
     const list = ParsePathList(content);
-    const cleanList = list.filter(async (p) => await CheckForPath(p) === true);
+    const cleanList = list.filter((p) => CheckForPath(p) === true);
 
     if (!ignored) return cleanList;
 
@@ -38,7 +38,7 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
     const aliveReturn: string[] = [];
 
     for (const entry of cleanList) {
-        const protection = (await GetProjectSettings(entry)).divineProtection;
+        const protection = (await GetProjectEnvironment(entry)).settings.divineProtection;
         if (!protection || protection === "disabled") {
             if (ignored === "exclude") aliveReturn.push(entry);
             continue;
@@ -64,12 +64,11 @@ export async function NameProject(
     path: UnknownString,
     wanted?: "name" | "name-colorless" | "path" | "name-ver" | "all",
 ): Promise<string> {
-    const workingPath = await ParsePath(path);
+    const workingPath = ParsePath(path);
     const formattedPath = ColorString(workingPath, "italic", "half-opaque");
 
     try {
-        const exists = await CheckForPath(workingPath);
-        if (!exists) throw new Error("(path doesn't exist, this won't be shown and the formatted path will be returned instead)");
+        if (!CheckForPath(workingPath)) throw new Error("(this won't be shown and formatted path will be returned instead)");
         const env = await GetProjectEnvironment(workingPath);
 
         let runtimeColor: tValidColors;
@@ -129,7 +128,8 @@ export async function NameProject(
 export function isObject(
     // deno-lint-ignore no-explicit-any
     item: any,
-): boolean {
+    // deno-lint-ignore no-explicit-any
+): item is Record<string, any> {
     return (item && typeof item === "object" && !Array.isArray(item));
 }
 
@@ -164,25 +164,24 @@ export function deepMerge(
  *
  * @export
  * @async
- * @param {UnknownString} path Path to the project
+ * @param {string} path Path to the project. Expects an already parsed path.
  * @returns {Promise<FullFkNodeYaml>} A FullFkNodeYaml object.
  */
-async function GetProjectSettings(
-    path: UnknownString,
-): Promise<FullFkNodeYaml> {
-    const workingPath = await ParsePath(path);
-    DEBUG_LOG("FETCHING FROM", workingPath);
-    const pathToDivineFile = await JoinPaths(workingPath, "fknode.yaml");
-    DEBUG_LOG("CONCRETELY FROM", pathToDivineFile);
+async function GetProjectSettings(path: string): Promise<FullFkNodeYaml> {
+    const pathToDivineFile = JoinPaths(path, "fknode.yaml");
+    DEBUG_LOG("READING", pathToDivineFile);
 
-    if (!(await CheckForPath(pathToDivineFile))) {
-        DEBUG_LOG("\nRESORTING TO DEFAULTS\n");
+    if (!CheckForPath(pathToDivineFile)) {
+        DEBUG_LOG("\nRESORTING TO DEFAULTS 1\n");
         return DEFAULT_FKNODE_YAML;
     }
+
     const divineContent = parseYaml(await Deno.readTextFile(pathToDivineFile));
     DEBUG_LOG("RAW DIVINE CONTENT", divineContent);
+
     if (!ValidateFkNodeYaml(divineContent)) {
-        await LogStuff(`${await NameProject(path)} has an invalid fknode.yaml!`, "warn");
+        DEBUG_LOG("\nRESORTING TO DEFAULTS 2\n");
+        await LogStuff(`${pathToDivineFile} is an invalid fknode.yaml!`, "warn");
         await Deno.writeTextFile(
             pathToDivineFile,
             `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to ${APP_URLs.WEBSITE} to learn about how fknode.yaml works.]\n`,
@@ -193,11 +192,10 @@ async function GetProjectSettings(
         return DEFAULT_FKNODE_YAML;
     }
 
-    DEBUG_LOG("DEEP MERGE", deepMerge(DEFAULT_FKNODE_YAML, divineContent));
+    const mergedSettings = deepMerge(DEFAULT_FKNODE_YAML, divineContent);
+    DEBUG_LOG("DEEP MERGE", mergedSettings);
 
-    // now with this setting keys should be always present, i think?
-    // idk, but im honestly considering re-doing the system from scratch
-    return deepMerge(DEFAULT_FKNODE_YAML, divineContent);
+    return mergedSettings;
 }
 
 /**
@@ -249,8 +247,8 @@ export function UnderstandProjectProtection(settings: FkNodeYaml, options: {
  * @returns {Promise<true | PROJECT_ERROR_CODES>} True if it's valid, a `PROJECT_ERROR_CODES` otherwise.
  */
 export async function ValidateProject(entry: string, existing: boolean): Promise<true | PROJECT_ERROR_CODES> {
-    const workingEntry = await ParsePath(entry);
-    if (!(await CheckForPath(workingEntry))) return "NotFound";
+    const workingEntry = ParsePath(entry);
+    if (!CheckForPath(workingEntry)) return "NotFound";
     // GetProjectEnvironment() already does some validations by itself, so we can just use it here
     const env = await GetProjectEnvironment(workingEntry);
 
@@ -261,8 +259,8 @@ export async function ValidateProject(entry: string, existing: boolean): Promise
 
     if (isDuplicate) return "IsDuplicate";
 
-    if (!(await CheckForPath(env.main.path))) return "NoPkgFile";
-    if (!(await CheckForPath(env.lockfile.path))) return "NoLockfile";
+    if (!CheckForPath(env.main.path)) return "NoPkgFile";
+    if (!CheckForPath(env.lockfile.path)) return "NoLockfile";
 
     if (!env.main.cpfContent.name) return "NoName";
     if (!env.main.cpfContent.version) return "NoVersion";
@@ -274,20 +272,16 @@ export async function ValidateProject(entry: string, existing: boolean): Promise
  * Checks for workspaces within a Node, Bun, or Deno project, supporting package.json, pnpm-workspace.yaml, .yarnrc.yml, and bunfig.toml.
  *
  * @async
- * @param {string} path Path to the root of the project.
+ * @param {string} path Path to the root of the project. Expects an already parsed path.
  * @returns {Promise<string[]>}
  */
 export async function GetWorkspaces(path: string): Promise<string[]> {
     try {
-        const workingPath: string = await ParsePath(path);
-
-        if (!(await CheckForPath(workingPath))) throw new Error("Requested path doesn't exist.");
-
         const workspacePaths: string[] = [];
 
         // Check package.json for Node, npm, and yarn (and Bun workspaces).
-        const packageJsonPath = await JoinPaths(workingPath, "package.json");
-        if (await CheckForPath(packageJsonPath)) {
+        const packageJsonPath = JoinPaths(path, "package.json");
+        if (CheckForPath(packageJsonPath)) {
             const pkgJson: NodePkgFile = JSON.parse(await Deno.readTextFile(packageJsonPath));
             if (pkgJson.workspaces) {
                 const pkgWorkspaces = Array.isArray(pkgJson.workspaces) ? pkgJson.workspaces : pkgJson.workspaces?.packages || [];
@@ -296,46 +290,46 @@ export async function GetWorkspaces(path: string): Promise<string[]> {
         }
 
         // Check pnpm-workspace.yaml for pnpm workspaces
-        const pnpmWorkspacePath = await JoinPaths(workingPath, "pnpm-workspace.yaml");
-        if (await CheckForPath(pnpmWorkspacePath)) {
+        const pnpmWorkspacePath = JoinPaths(path, "pnpm-workspace.yaml");
+        if (CheckForPath(pnpmWorkspacePath)) {
             const pnpmConfig = parseYaml(await Deno.readTextFile(pnpmWorkspacePath)) as { packages: string[] };
             if (pnpmConfig.packages && Array.isArray(pnpmConfig.packages)) workspacePaths.push(...pnpmConfig.packages);
         }
 
         // Check .yarnrc.yml for Yarn workspaces
-        const yarnRcPath = await JoinPaths(workingPath, ".yarnrc.yml");
-        if (await CheckForPath(yarnRcPath)) {
+        const yarnRcPath = JoinPaths(path, ".yarnrc.yml");
+        if (CheckForPath(yarnRcPath)) {
             const yarnConfig = parseYaml(await Deno.readTextFile(yarnRcPath)) as { workspaces?: string[] };
             if (yarnConfig.workspaces && Array.isArray(yarnConfig.workspaces)) workspacePaths.push(...yarnConfig.workspaces);
         }
 
         // Check bunfig.toml for Bun workspaces
-        const bunfigTomlPath = await JoinPaths(workingPath, "bunfig.toml");
-        if (await CheckForPath(bunfigTomlPath)) {
+        const bunfigTomlPath = JoinPaths(path, "bunfig.toml");
+        if (CheckForPath(bunfigTomlPath)) {
             const bunConfig = parseToml(await Deno.readTextFile(bunfigTomlPath)) as { workspace?: string[] };
             if (bunConfig.workspace && Array.isArray(bunConfig.workspace)) workspacePaths.push(...bunConfig.workspace);
         }
 
         // Check for Deno configuration (deno.json or deno.jsonc)
-        const denoJsonPath = await JoinPaths(workingPath, "deno.json");
-        const denoJsoncPath = await JoinPaths(workingPath, "deno.jsonc");
-        if ((await CheckForPath(denoJsonPath)) || (await CheckForPath(denoJsoncPath))) {
-            const denoConfig = (await CheckForPath(denoJsoncPath)) ? parseJsonc(await Deno.readTextFile(denoJsoncPath)) : JSON.parse(
+        const denoJsonPath = JoinPaths(path, "deno.json");
+        const denoJsoncPath = JoinPaths(path, "deno.jsonc");
+        if (CheckForPath(denoJsonPath) || CheckForPath(denoJsoncPath)) {
+            const denoConfig = CheckForPath(denoJsoncPath) ? parseJsonc(await Deno.readTextFile(denoJsoncPath)) : JSON.parse(
                 await Deno.readTextFile(
                     denoJsonPath,
                 ),
             );
             if (denoConfig.workspace && Array.isArray(denoConfig.workspace)) {
                 for (const member of denoConfig.workspace) {
-                    const memberPath = await JoinPaths(workingPath, member);
+                    const memberPath = JoinPaths(path, member);
                     workspacePaths.push(memberPath);
                 }
             }
         }
 
         // Check for Cargo configuration (cargo.toml)
-        const cargoTomlPath = await JoinPaths(workingPath, "cargo.toml");
-        if (await CheckForPath(cargoTomlPath)) {
+        const cargoTomlPath = JoinPaths(path, "cargo.toml");
+        if (CheckForPath(cargoTomlPath)) {
             const cargoToml = parseToml(await Deno.readTextFile(cargoTomlPath)) as unknown as CargoPkgFile;
             if (cargoToml.workspace && Array.isArray(cargoToml.workspace.members)) {
                 workspacePaths.push(...cargoToml.workspace.members);
@@ -343,8 +337,8 @@ export async function GetWorkspaces(path: string): Promise<string[]> {
         }
 
         // Check for Golang configuration (go.work)
-        const goWorkPath = await JoinPaths(workingPath, "go.work");
-        if (await CheckForPath(goWorkPath)) {
+        const goWorkPath = JoinPaths(path, "go.work");
+        if (CheckForPath(goWorkPath)) {
             const goWork = internalGolangRequireLikeStringParser((await Deno.readTextFile(goWorkPath)).split("\n"), "use");
             if (goWork.length > 0) workspacePaths.push(...goWork.filter((s) => !["(", ")"].includes(StringUtils.normalize(s))));
         }
@@ -354,8 +348,8 @@ export async function GetWorkspaces(path: string): Promise<string[]> {
         const absoluteWorkspaces: string[] = [];
 
         for (const workspacePath of workspacePaths) {
-            const fullPath = await JoinPaths(workingPath, workspacePath);
-            if (!(await CheckForPath(fullPath))) continue;
+            const fullPath = JoinPaths(path, workspacePath);
+            if (!CheckForPath(fullPath)) continue;
             for await (const dir of expandGlob(fullPath)) {
                 if (dir.isDirectory) {
                     absoluteWorkspaces.push(dir.path);
@@ -371,78 +365,74 @@ export async function GetWorkspaces(path: string): Promise<string[]> {
 }
 
 /**
- * Returns a project's environment (package manager, JS runtime, and paths to lockfile and `node_modules`).
+ * Returns a project's environment (package manager, runtime, settings, paths to lockfile and `node_modules`, etc...).
  *
  * @export
  * @async
- * @param {string} path Path to the project's root.
+ * @param {UnknownString} path Path to the project's root.
  * @returns {Promise<ProjectEnvironment>}
  */
-export async function GetProjectEnvironment(path: string): Promise<ProjectEnvironment> {
-    const workingPath = await ParsePath(path);
+export async function GetProjectEnvironment(path: UnknownString): Promise<ProjectEnvironment> {
+    const root = await SpotProject(path);
 
-    if (!(await CheckForPath(workingPath))) {
-        throw new FknError(
-            "Internal__Projects__CantDetermineEnv",
-            `Path ${workingPath} doesn't exist.`,
-        );
-    }
+    if (!CheckForPath(root)) throw new FknError("Internal__Projects__CantDetermineEnv", `Path ${root} doesn't exist.`);
 
-    const trash = await JoinPaths(workingPath, "node_modules");
-    const workspaces = await GetWorkspaces(workingPath);
+    const hall_of_trash = JoinPaths(root, "node_modules");
+    const workspaces = await GetWorkspaces(root);
 
     const paths = {
         deno: {
-            json: await JoinPaths(workingPath, "deno.json"),
-            jsonc: await JoinPaths(workingPath, "deno.jsonc"),
-            lock: await JoinPaths(workingPath, "deno.lock"),
+            json: JoinPaths(root, "deno.json"),
+            jsonc: JoinPaths(root, "deno.jsonc"),
+            lock: JoinPaths(root, "deno.lock"),
         },
         bun: {
-            toml: await JoinPaths(workingPath, "bunfig.toml"),
-            lock: await JoinPaths(workingPath, "bun.lock"),
-            lockb: await JoinPaths(workingPath, "bun.lockb"),
+            toml: JoinPaths(root, "bunfig.toml"),
+            lock: JoinPaths(root, "bun.lock"),
+            lockb: JoinPaths(root, "bun.lockb"),
         },
         node: {
-            json: await JoinPaths(workingPath, "package.json"),
-            lockNpm: await JoinPaths(workingPath, "package-lock.json"),
-            lockPnpm: await JoinPaths(workingPath, "pnpm-lock.yaml"),
-            lockYarn: await JoinPaths(workingPath, "yarn.lock"),
+            json: JoinPaths(root, "package.json"),
+            lockNpm: JoinPaths(root, "package-lock.json"),
+            lockPnpm: JoinPaths(root, "pnpm-lock.yaml"),
+            lockYarn: JoinPaths(root, "yarn.lock"),
         },
         golang: {
-            pkg: await JoinPaths(workingPath, "go.mod"),
-            lock: await JoinPaths(workingPath, "go.sum"),
+            pkg: JoinPaths(root, "go.mod"),
+            lock: JoinPaths(root, "go.sum"),
         },
         rust: {
-            pkg: await JoinPaths(workingPath, "cargo.toml"),
-            lock: await JoinPaths(workingPath, "cargo.lock"),
+            pkg: JoinPaths(root, "cargo.toml"),
+            lock: JoinPaths(root, "cargo.lock"),
         },
     };
 
     const pathChecks = {
-        deno: {
-            json: await CheckForPath(paths.deno.json),
-            jsonc: await CheckForPath(paths.deno.jsonc),
-            lock: await CheckForPath(paths.deno.lock),
-        },
-        bun: {
-            toml: await CheckForPath(paths.bun.toml),
-            lock: await CheckForPath(paths.bun.lock),
-            lockb: await CheckForPath(paths.bun.lockb),
-        },
-        node: {
-            json: await CheckForPath(paths.node.json),
-            lockNpm: await CheckForPath(paths.node.lockNpm),
-            lockPnpm: await CheckForPath(paths.node.lockPnpm),
-            lockYarn: await CheckForPath(paths.node.lockYarn),
-        },
-        golang: {
-            pkg: await CheckForPath(paths.golang.pkg),
-            lock: await CheckForPath(paths.golang.lock),
-        },
-        rust: {
-            pkg: await CheckForPath(paths.rust.pkg),
-            lock: await CheckForPath(paths.rust.lock),
-        },
+        deno: Object.fromEntries(
+            await Promise.all(
+                Object.entries(paths.deno).map(([key, path]) => [key, CheckForPath(path)]),
+            ),
+        ),
+        bun: Object.fromEntries(
+            await Promise.all(
+                Object.entries(paths.bun).map(([key, path]) => [key, CheckForPath(path)]),
+            ),
+        ),
+        node: Object.fromEntries(
+            await Promise.all(
+                Object.entries(paths.node).map(([key, path]) => [key, CheckForPath(path)]),
+            ),
+        ),
+        golang: Object.fromEntries(
+            await Promise.all(
+                Object.entries(paths.golang).map(([key, path]) => [key, CheckForPath(path)]),
+            ),
+        ),
+        rust: Object.fromEntries(
+            await Promise.all(
+                Object.entries(paths.rust).map(([key, path]) => [key, CheckForPath(path)]),
+            ),
+        ),
     };
 
     const isGolang = pathChecks.golang.pkg || pathChecks.golang.lock;
@@ -455,21 +445,22 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
         pathChecks.bun.toml;
     const isNode = pathChecks.node.lockNpm ||
         pathChecks.node.lockPnpm ||
-        pathChecks.node.lockYarn;
+        pathChecks.node.lockYarn ||
+        pathChecks.node.json;
 
     if (
         !pathChecks.node.json && !pathChecks.deno.json && !pathChecks.bun.toml && !pathChecks.golang.pkg && !pathChecks.rust.pkg
     ) {
         throw new FknError(
             "Internal__Projects__CantDetermineEnv",
-            `No main file present (package.json, deno.json, cargo.toml...) at ${ColorString(path, "bold")}.`,
+            `No main file present (package.json, deno.json, cargo.toml...) at ${ColorString(root, "bold")}.`,
         );
     }
 
     if (!isNode && !isBun && !isDeno && !isGolang && !isRust) {
         throw new FknError(
             "Internal__Projects__CantDetermineEnv",
-            `No lockfile present (required for the project to work) at ${ColorString(path, "bold")}.`,
+            `No lockfile present (required for the project to work) at ${ColorString(root, "bold")}.`,
         );
     }
 
@@ -482,21 +473,19 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
         : paths.node.json;
 
     const mainString: string = await Deno.readTextFile(mainPath);
-    const settings: FullFkNodeYaml = await GetProjectSettings(workingPath);
-    DEBUG_LOG("SETTINGS OF", workingPath);
-    DEBUG_LOG("ARE EQUAL TO", settings);
+    const settings: FullFkNodeYaml = await GetProjectSettings(root);
 
     const { PackageFileParsers } = FkNodeInterop;
 
     if (isGolang) {
         return {
-            root: workingPath,
+            root,
             settings,
             main: {
                 path: mainPath,
                 name: "go.mod",
                 stdContent: PackageFileParsers.Golang.STD(mainString),
-                cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetLatestTag(workingPath), workspaces),
+                cpfContent: PackageFileParsers.Golang.CPF(mainString, await Git.GetLatestTag(root), workspaces),
             },
             lockfile: {
                 name: "go.sum",
@@ -518,9 +507,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (isRust) {
         return {
-            root: workingPath,
+            root,
             settings,
-
             main: {
                 path: mainPath,
                 name: "cargo.toml",
@@ -547,9 +535,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (isBun) {
         return {
-            root: workingPath,
+            root,
             settings,
-
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -562,7 +549,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             },
             runtime: "bun",
             manager: "bun",
-            hall_of_trash: trash,
+            hall_of_trash,
             commands: {
                 base: "bun",
                 exec: ["bunx"],
@@ -578,7 +565,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (isDeno) {
         return {
-            root: workingPath,
+            root,
             settings,
             main: {
                 path: mainPath,
@@ -592,7 +579,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             },
             runtime: "deno",
             manager: "deno",
-            hall_of_trash: trash,
+            hall_of_trash,
             commands: {
                 base: "deno",
                 exec: ["deno", "run"],
@@ -607,9 +594,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (pathChecks.node.lockYarn) {
         return {
-            root: workingPath,
+            root,
             settings,
-
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -622,7 +608,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             },
             runtime: "node",
             manager: "yarn",
-            hall_of_trash: trash,
+            hall_of_trash,
             commands: {
                 base: "yarn",
                 exec: ["yarn", "dlx"],
@@ -637,8 +623,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (pathChecks.node.lockPnpm) {
         return {
-            root: workingPath,
-            settings: await GetProjectSettings(workingPath),
+            root,
+            settings,
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -651,7 +637,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             },
             runtime: "node",
             manager: "pnpm",
-            hall_of_trash: trash,
+            hall_of_trash,
             commands: {
                 base: "pnpm",
                 exec: ["pnpm", "dlx"],
@@ -666,8 +652,8 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
     }
     if (pathChecks.node.lockNpm) {
         return {
-            root: workingPath,
-            settings: await GetProjectSettings(workingPath),
+            root,
+            settings,
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -680,7 +666,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
             },
             runtime: "node",
             manager: "npm",
-            hall_of_trash: trash,
+            hall_of_trash,
             commands: {
                 base: "npm",
                 exec: ["npx"],
@@ -696,7 +682,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
 
     throw new FknError(
         "Internal__Projects__CantDetermineEnv",
-        `Unknown reason. Happened with ${ColorString(path, "bold")}.`,
+        `Unknown reason. Happened with ${ColorString(root, "bold")}.`,
     );
 }
 
@@ -709,7 +695,7 @@ export async function GetProjectEnvironment(path: string): Promise<ProjectEnviro
  * @returns {Promise<unknown>} Whatever the file returns :)
  */
 export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
-    const file = await Deno.readTextFile(await ParsePath(lockfilePath));
+    const file = await Deno.readTextFile(ParsePath(lockfilePath));
     if (lockfilePath.includes(".yaml") || lockfilePath.includes(".lock")) {
         return parseYaml(file);
     } else {
@@ -733,7 +719,7 @@ export async function SpotProject(name: UnknownString): Promise<string> {
         );
     }
 
-    const workingProject = await ParsePath(name);
+    const workingProject = ParsePath(name);
     const allProjects = await GetAllProjects();
     if (allProjects.includes(workingProject)) {
         return workingProject;
@@ -752,7 +738,7 @@ export async function SpotProject(name: UnknownString): Promise<string> {
         }
     }
 
-    if (await CheckForPath(workingProject)) {
+    if (CheckForPath(workingProject)) {
         throw new FknError(
             "Generic__NonAddedProject",
             `'${name.trim()}' (=> '${workingProject}') exists but is not an added project.`,

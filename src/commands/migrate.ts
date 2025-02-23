@@ -52,7 +52,7 @@ async function handler(
                 env.main.stdContent,
             );
         await Deno.writeTextFile(
-            await JoinPaths(env.root, `${env.main.name}.jsonc.bak`),
+            JoinPaths(env.root, `${env.main.name}.jsonc.bak`),
             `// This is a backup of your previous project file. We (${FULL_NAME}) overwrote it at ${GetDateNow()}.\n${
                 JSON.stringify(env.main.stdContent)
             }`,
@@ -63,9 +63,9 @@ async function handler(
         );
 
         await LogStuff("Making a backup of your previous lockfile (4/5)...", "working");
-        if (env.lockfile.name === "bun.lockb" && await CheckForPath(await JoinPaths(env.root, "bun.lock"))) {
+        if (env.lockfile.name === "bun.lockb" && CheckForPath(JoinPaths(env.root, "bun.lock"))) {
             // handle case where bun.lockb was replaced with bun.lock
-            rename(env.lockfile.path, await JoinPaths(env.root, "bun.lockb.bak"), async (e) => {
+            rename(env.lockfile.path, JoinPaths(env.root, "bun.lockb.bak"), async (e) => {
                 if (e) throw e;
                 await LogStuff(
                     "Your bun.lockb file will be backed up and replaced with a text-based lockfile (bun.lock).",
@@ -75,7 +75,7 @@ async function handler(
             await Deno.remove(env.lockfile.path);
         } else {
             await Deno.writeTextFile(
-                await JoinPaths(env.root, `${env.lockfile.name}.bak`),
+                JoinPaths(env.root, `${env.lockfile.name}.bak`),
                 await Deno.readTextFile(env.lockfile.path),
             );
             await Deno.remove(env.lockfile.path);
@@ -114,7 +114,7 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
         );
     }
 
-    if (!(await CheckForPath(workingEnv.main.path))) {
+    if (!CheckForPath(workingEnv.main.path)) {
         throw new Error(
             "No package.json/deno.json(c) file found, cannot migrate. How will we install your modules without that file?",
         );

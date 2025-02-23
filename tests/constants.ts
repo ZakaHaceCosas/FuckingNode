@@ -5,23 +5,24 @@ import type { ProjectEnvironment } from "../src/types/platform.ts";
 // CONSTANTS
 export const CONSTANTS = {
     CWD: Deno.cwd(),
-    ENV_PATH: await JoinPaths(Deno.cwd(), "tests/environment"),
-    INTEROP_PATH: await JoinPaths(Deno.cwd(), "tests/interop"),
+    ENV_PATH: JoinPaths(Deno.cwd(), "tests/environment"),
+    INTEROP_PATH: JoinPaths(Deno.cwd(), "tests/interop"),
 };
 
 // (naming things is fr the hardest)
 const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
     ONE: {
-        root: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one`),
+        root: ParsePath(`${CONSTANTS.ENV_PATH}/test-one`),
         settings: DEFAULT_FKNODE_YAML,
         main: {
-            path: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`),
+            path: ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`),
             name: "package.json",
-            stdContent: JSON.parse(await Deno.readTextFile(await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`))),
+            stdContent: JSON.parse(await Deno.readTextFile(ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`))),
             cpfContent: {
                 name: "uwu.js",
                 version: "1.0.0",
                 rm: "npm",
+                perPlatProps: { cargo: { edition: undefined } },
                 deps: [
                     {
                         name: "tslib",
@@ -31,7 +32,7 @@ const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
                     },
                 ],
                 ws: [
-                    await ParsePath(`${CONSTANTS.ENV_PATH}/test-two`),
+                    ParsePath(`${CONSTANTS.ENV_PATH}/test-two`),
                 ],
                 internal: {
                     fknode: VERSIONING.APP,
@@ -66,10 +67,10 @@ const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
         manager: "npm",
         lockfile: {
             name: "package-lock.json",
-            path: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package-lock.json`),
+            path: ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package-lock.json`),
         },
-        hall_of_trash: await ParsePath(`${CONSTANTS.ENV_PATH}/test-one/node_modules`),
-        workspaces: [await ParsePath(`${CONSTANTS.ENV_PATH}/test-two`)],
+        hall_of_trash: ParsePath(`${CONSTANTS.ENV_PATH}/test-one/node_modules`),
+        workspaces: [ParsePath(`${CONSTANTS.ENV_PATH}/test-two`)],
     },
 };
 

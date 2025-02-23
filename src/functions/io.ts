@@ -102,7 +102,7 @@ export async function LogStuff(
         }
 
         await Deno.writeTextFile(
-            await GetAppPath("LOGS"),
+            GetAppPath("LOGS"),
             formattedMessage,
             { append: true },
         );

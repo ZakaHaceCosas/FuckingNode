@@ -14,14 +14,14 @@ import { format } from "@std/fmt/bytes";
  * @param {("BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS")} path What path you want.
  * @returns {string} The path as a string.
  */
-export async function GetAppPath(
+export function GetAppPath(
     path: "BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS",
-): Promise<string> {
+): string {
     try {
         const envPaths = {
             windows: "APPDATA",
             linux: "XDG_CONFIG_HOME",
-            linuxFallback: await JoinPaths(Deno.env.get("HOME") ?? "", ".config"),
+            linuxFallback: JoinPaths(Deno.env.get("HOME") ?? "", ".config"),
         };
 
         const appDataPath = Deno.build.os === "windows"
@@ -39,12 +39,12 @@ export async function GetAppPath(
 
         const funny = I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u");
 
-        const BASE_DIR = await JoinPaths(appDataPath, APP_NAME.CLI);
-        const PROJECTS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-${funny}.txt`);
-        const LOGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-logs.log`);
-        const SCHEDULE = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-schedule.yaml`);
-        const SETTINGS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-settings.yaml`);
-        const ERRORS = await JoinPaths(BASE_DIR, `${APP_NAME.CLI}-errors.log`);
+        const BASE_DIR = JoinPaths(appDataPath, APP_NAME.CLI);
+        const PROJECTS = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-${funny}.txt`);
+        const LOGS = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-logs.log`);
+        const SCHEDULE = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-schedule.yaml`);
+        const SETTINGS = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-settings.yaml`);
+        const ERRORS = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-errors.log`);
 
         switch (path) {
             case "BASE":
@@ -76,41 +76,41 @@ export async function GetAppPath(
  */
 export async function FreshSetup(repairSetts?: boolean): Promise<void> {
     try {
-        const basePath = await GetAppPath("BASE");
-        if (!(await CheckForPath(basePath))) {
+        const basePath = GetAppPath("BASE");
+        if (!CheckForPath(basePath)) {
             await Deno.mkdir(basePath, { recursive: true });
         }
 
-        const projectPath = await GetAppPath("MOTHERFKRS");
-        if (!(await CheckForPath(projectPath))) {
+        const projectPath = GetAppPath("MOTHERFKRS");
+        if (!CheckForPath(projectPath)) {
             await Deno.writeTextFile(projectPath, "", {
                 create: true,
             });
         }
 
-        const logsPath = await GetAppPath("LOGS");
-        if (!(await CheckForPath(logsPath))) {
+        const logsPath = GetAppPath("LOGS");
+        if (!CheckForPath(logsPath)) {
             await Deno.writeTextFile(logsPath, "", {
                 create: true,
             });
         }
 
-        const errorLogsPath = await GetAppPath("ERRORS");
-        if (!(await CheckForPath(errorLogsPath))) {
+        const errorLogsPath = GetAppPath("ERRORS");
+        if (!CheckForPath(errorLogsPath)) {
             await Deno.writeTextFile(errorLogsPath, "", {
                 create: true,
             });
         }
 
-        const settingsPath = await GetAppPath("SETTINGS");
-        if ((!(await CheckForPath(settingsPath))) || repairSetts === true) {
+        const settingsPath = GetAppPath("SETTINGS");
+        if ((!CheckForPath(settingsPath) || repairSetts === true)) {
             await Deno.writeTextFile(settingsPath, StringifyYaml(DEFAULT_SETTINGS), {
                 create: true,
             });
         }
 
-        const schedulePath = await GetAppPath("SCHEDULE");
-        if (!(await CheckForPath(schedulePath))) {
+        const schedulePath = GetAppPath("SCHEDULE");
+        if (!CheckForPath(schedulePath)) {
             await Deno.writeTextFile(schedulePath, StringifyYaml(DEFAULT_SCHEDULE_FILE), {
                 create: true,
             });
@@ -131,7 +131,7 @@ export async function FreshSetup(repairSetts?: boolean): Promise<void> {
  * @returns {Promise<FKNODE_SETTINGS>}
  */
 export async function GetSettings(): Promise<CF_FKNODE_SETTINGS> {
-    const path = await GetAppPath("SETTINGS");
+    const path = GetAppPath("SETTINGS");
     const stuff: CF_FKNODE_SETTINGS = await parseYaml(await Deno.readTextFile(path)) as CF_FKNODE_SETTINGS;
     if (!stuff.flushFreq || !stuff.defaultIntensity || !stuff.favEditor || !stuff.updateFreq) {
         const newStuff: CF_FKNODE_SETTINGS = {
@@ -163,7 +163,7 @@ export async function ChangeSetting(
     setting: setting,
     value: UnknownString,
 ): Promise<void> {
-    const settingsPath = await GetAppPath("SETTINGS");
+    const settingsPath = GetAppPath("SETTINGS");
     const currentSettings = await GetSettings();
 
     switch (setting) {
@@ -284,23 +284,23 @@ export async function FlushConfigFiles(target: UnknownString, force: boolean, si
 
     switch (target) {
         case "logs":
-            file = [await GetAppPath("LOGS")];
+            file = [GetAppPath("LOGS")];
             break;
         case "projects":
-            file = [await GetAppPath("MOTHERFKRS")];
+            file = [GetAppPath("MOTHERFKRS")];
             break;
         case "schedules":
-            file = [await GetAppPath("SCHEDULE")];
+            file = [GetAppPath("SCHEDULE")];
             break;
         case "errors":
-            file = [await GetAppPath("ERRORS")];
+            file = [GetAppPath("ERRORS")];
             break;
         case "all":
             file = [
-                await GetAppPath("LOGS"),
-                await GetAppPath("MOTHERFKRS"),
-                await GetAppPath("SCHEDULE"),
-                await GetAppPath("ERRORS"),
+                GetAppPath("LOGS"),
+                GetAppPath("MOTHERFKRS"),
+                GetAppPath("SCHEDULE"),
+                GetAppPath("ERRORS"),
             ];
             break;
     }

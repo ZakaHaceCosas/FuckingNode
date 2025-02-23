@@ -25,8 +25,8 @@ export default async function TheSetuper(params: TheSetuperConstructedParams) {
         !setupToUse
     ) throw new Error(`Given setup ${params.setup} is not valid! Choose from the list ${SETUPS.map((s) => s.name)}.`);
 
-    const path = await JoinPaths(env.root, setupToUse.seek);
-    const exists = await CheckForPath(path);
+    const path = JoinPaths(env.root, setupToUse.seek);
+    const exists = CheckForPath(path);
 
     if (
         !(await LogStuff(
