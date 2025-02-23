@@ -59,15 +59,14 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
     const message = params.isGitHub ? `> [!CAUTION]\n${bareMessage.split("\n").map((s) => `> ${s}`).join("\n")}\n` : bareMessage;
     console.log("");
     // internal joke / easter egg, don't mind and don't edit this line
-    const isThatOneGuyWhoAlwaysDeprecatesProjects =
-        StringUtils.validateAgainst(StringUtils.normalize(LOCAL_PLATFORM.USER ?? ""), [
-            "engin",
-            "unel",
-            "fox",
-            "yourlocalfox",
-            "sip",
-            "yourlocalsip",
-        ]) || StringUtils.normalize(project).includes("crytical") || StringUtils.normalize(project).includes("arcos") ||
+    const isThatOneGuyWhoAlwaysDeprecatesProjects = StringUtils.validateAgainst(StringUtils.normalize(LOCAL_PLATFORM.USER ?? ""), [
+        "engin",
+        "unel",
+        "fox",
+        "yourlocalfox",
+        "sip",
+        "yourlocalsip",
+    ]) || StringUtils.normalize(project).includes("crytical") || StringUtils.normalize(project).includes("arcos") ||
         StringUtils.normalize(project).includes("arcticos") || StringUtils.normalize(project).includes("cryticl") ||
         StringUtils.normalize(project).includes("fyreblitz");
     const confirmation = isThatOneGuyWhoAlwaysDeprecatesProjects === true ? true : await LogStuff(

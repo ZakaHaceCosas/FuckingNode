@@ -23,13 +23,6 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 - [x] Cross-runtime migration.
   - [x] Bun. Implies generating `bun.lock` in `bun.lockb` projects.
   - [x] Deno.
-- [ ] Stabilize `audit` feature and support it everywhere NodeJS.
-  - [ ] Stabilize it
-    - [ ] Fix known issues (see TODO.md at repository's `v3` branch).
-    - [ ] Expand vector string lists.
-  - [x] Support it
-    - [x] pnpm
-    - [x] yarn
 - [x] Shorter commands.
   - [x] Shorter core command, `fknode (args)`.
     - [x] :fontawesome-brands-windows: Windows support
@@ -55,15 +48,24 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
       - [x] Base support (Recognition, package file parsing...)
       - [x] Operations (Cleanup, lint, pretty...) (_May be limited_)
       - [x] Extras (Kickstart, stats...) (_May be limited_)
-- [ ] FkNode Interop Layer
+- [x] Create a FuckingNode Interop Layer
   - [x] Linter
   - [x] Prettifier
-  - [ ] Auditer (this is a bit special, you'll see later on)
+  - [x] Updater
 
 ### Version 3.1
 
 - [ ] Better migration feature.
   - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
+- [ ] Stabilize `audit` feature and support it everywhere NodeJS.
+  - [ ] Stabilize it
+    - [ ] Fix known issues (see TODO.md at repository's `v3` branch).
+    - [ ] Expand vector string lists.
+  - [x] Support it
+    - [x] pnpm
+    - [x] yarn
+- [ ] Extend the FuckingNode Interop Layer
+  - [ ] Auditer (this is a bit special, you'll see what we mean soon).
 
 ---
 

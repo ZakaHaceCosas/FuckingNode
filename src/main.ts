@@ -318,7 +318,7 @@ async function main(command: string) {
                 break;
             case "audit":
                 await LogStuff(
-                    "The Audit feature is experimental and only available for NodeJS projects. Run '--experimental-audit' to use it.",
+                    "The Audit feature is experimental and only available for NodeJS projects. Run '--experimental-audit' to use it.\nImportant: We did not update this feature for V3, it's planned to be fully rewritten for V3.1. Do not use it as of now, it is very broken and mostly useless (AS OF NOW).",
                     "warn",
                     "bright-yellow",
                 );
