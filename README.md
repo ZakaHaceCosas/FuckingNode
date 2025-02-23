@@ -4,11 +4,13 @@
     <img src="LOGO HERE WHEN WE HAVE IT" alt="Logo" height=100>
     </a>
 </p> -->
-<h1 align="center">The f*cking chaos ends here</h1>
+<h1 align="center">The f*cking chaos of maintaining JavaScript projects ends here</h1>
 <h3 align="center">Because dev life is messy enough</h3>
 
 <div align="center">
-    <img src="https://img.shields.io/github/stars/ZakaHaceCosas/FuckingNode" alt="stars">
+
+[![stars](https://img.shields.io/github/stars/ZakaHaceCosas/FuckingNode)](https://github.com/ZakaHaceCosas/FuckingNode/stargazers) [![twitter](https://img.shields.io/twitter/follow/FuckingNode)](https://x.com/FuckingNode)
+
 </div>
 
 <div align="center">
@@ -36,6 +38,7 @@ It's not magic, it's FuckingNode—and that name is shipping to production.
 ```bash
 fkn manager add < path >  # add a project to your project list
 fkn clean                 # autoclean all of your projects
+fkn clean < project >     # autoclean a specific project
 fkn release < project >   # release a project, automatically
 fkn commit < message >    # make a commit, safely
 fkn kickstart < git-url > # clones a repo, installs deps, and launches your fav editor instantly

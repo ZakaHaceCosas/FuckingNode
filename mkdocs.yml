@@ -1,5 +1,5 @@
-site_name: F*ckingNode
-site_description: The fucking chaos of maintaining NodeJS projects ends here.
+site_name: FuckingNode
+site_description: The fucking chaos of maintaining JavaScript projects ends here.
 site_url: https://zakahacecosas.github.io/FuckingNode/
 site_author: ZakaHaceCosas
 copyright: Copyright &copy; 2024 - 2025 ZakaHaceCosas
@@ -11,6 +11,8 @@ docs_dir: "docs"
 
 nav:
     - Home: "index.md"
+
+    - "Why FuckingNode?": "about/why.md"
 
     - Manual:
           - Home: "manual/index.md"
