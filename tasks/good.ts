@@ -1,10 +1,20 @@
 import { walk } from "@std/fs/walk";
-import { ColorString } from "../src/functions/io.ts";
 import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
 
-console.log(ColorString("we making this good", "bright-blue"));
+console.log("we making this good");
 
 const dir = Deno.cwd(); // as the CWD from where you'll run deno task will always be the root of the project
+
+function Run(...args: string[]) {
+    const output = new Deno.Command("deno", {
+        args,
+    }).outputSync();
+
+    const e = new TextDecoder();
+
+    if (!output.success) throw new Error(e.decode(output.stderr) + "\n" + e.decode(output.stdout));
+    console.log(args, "went right");
+}
 
 async function GetAllTsFiles(): Promise<string[]> {
     const exclude = [ParsePath(JoinPaths(dir, "tests/environment"))];
@@ -28,29 +38,19 @@ async function GetAllTsFiles(): Promise<string[]> {
 
 const toPrepare: string[] = await GetAllTsFiles();
 
-for (const unprepared of toPrepare) {
-    new Deno.Command("deno", {
-        args: ["check", unprepared],
-    }).spawn();
-}
+for (const unprepared of toPrepare) Run("check", unprepared); // ensure code is right
 
-new Deno.Command("deno", {
-    args: ["fmt"],
-}).spawn(); // ensure code is formatted
+Run("fmt"); // ensure code is formatted
 
-new Deno.Command("deno", {
-    args: ["upgrade"],
-}).spawn(); // ensure we're on latest
+Run("upgrade"); // ensure we're on latest
 
-new Deno.Command("deno", {
-    args: ["outdated", "--update", "--latest"],
-}).spawn(); // ensure deps are on latest
+Run("outdated", "--update", "--latest"); // ensure deps are on latest
 
 await Deno.copyFile(
     JoinPaths(dir, "scripts/install.ps1"),
     JoinPaths(dir, "docs/install.ps1"),
-);
+); // ensure Windows install is on latest
 await Deno.copyFile(
     JoinPaths(dir, "scripts/install.sh"),
     JoinPaths(dir, "docs/install.sh"),
-);
+); // ensure macOS and Linux install are on latest

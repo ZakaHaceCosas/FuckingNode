@@ -9,7 +9,7 @@
 
 import { StringUtils } from "@zakahacecosas/string-utils";
 
-function ParseNodeReport(report: string, platform: "npm" | "pnpm" | "yarn") {
+export function ParseNodeReport(report: string, platform: "npm" | "pnpm" | "yarn") {
     /**
      * `yarn audit --json` returns something like THIS:
      * ```json

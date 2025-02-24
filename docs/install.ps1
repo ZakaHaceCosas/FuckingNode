@@ -42,55 +42,39 @@ Function Get-LatestReleaseUrl {
 }
 
 # creates a .bat shortcut to allow for fknode to exist alongside fuckingnode in the CLI
-Function New-Shortcut {
-    param (
-        [string]$installDir,
-        [string]$appName
-    )
+Function New-Shortcuts {
     try {
         Write-Host "Creating shortcuts for CLI..."
 
-        # fknode (any args)
-        $batContent = "@echo off`n%~dp0$($appName).exe %*"
-        $batPath = Join-Path -Path $installDir -ChildPath "fknode.bat"
-        Set-Content -Path $batPath -Value $batContent -Encoding ASCII
-        Write-Host "Shortcut created successfully at $batPath"
+        # all aliases should be
+        # (appName).exe <a command> [ANY ARGS PASSED]
+        # so e.g. fkclean "b" = (appName).exe <command> "b"
 
-        # fkn (any args)
-        $batContent = "@echo off`n%~dp0$($appName).exe %*"
-        $batPath = Join-Path -Path $installDir -ChildPath "fkn.bat"
-        Set-Content -Path $batPath -Value $batContent -Encoding ASCII
-        Write-Host "Shortcut created successfully at $batPath"
+        $appName = $APP_NAME.CLI
 
-        # fkclean (no args)
-        $cleanContent = "@echo off`n%~dp0$($appName).exe clean %*"
-        $cleanPath = Join-Path -Path $installDir -ChildPath "fkclean.bat"
-        Set-Content -Path $cleanPath -Value $cleanContent -Encoding ASCII
-        Write-Host "Shortcut created successfully at $cleanPath"
+        if (-not (Test-Path $installDir -PathType Container)) {
+            Throw "Error: Install directory '$installDir' does not exist."
+        }
 
-        # fkstart (1-3 string args)
-        $kickstartContent = "@echo off`nif ""%~1""=="""" (echo Error: No Git URL provided! & exit /b) else ( %~dp0$($appName).exe kickstart ""%~1"" ""%~2"" ""%~3"" )"
-        $kickstartPath = Join-Path -Path $installDir -ChildPath "fkstart.bat"
-        Set-Content -Path $kickstartPath -Value $kickstartContent -Encoding ASCII
-        Write-Host "Shortcut created successfully at $kickstartPath"
+        $commands = @{
+            "fknode"      = ""
+            "fkn"         = ""
+            "fkclean"     = "clean"
+            "fkstart"     = "kickstart"
+            "fkcommit"    = "commit"
+            "fkrelease"   = "release"
+            "fksurrender" = "surrender"
+            "fkadd"       = "manager add"
+            "fkrem"       = "manager remove"
+        }
 
-        # fkcommit (1 string arg)
-        $commitContent = "@echo off`nif ""%~1""=="""" (echo Error: No commit message provided! & exit /b) else ( %~dp0$($appName).exe commit ""%~1"" )"
-        $commitPath = Join-Path -Path $installDir -ChildPath "fkcommit.bat"
-        Set-Content -Path $commitPath -Value $commitContent -Encoding ASCII
-        Write-Host "Shortcut created successfully at $commitPath"
-
-        # fkadd (1 string arg)
-        $addContent = "@echo off`nif ""%~1""=="""" (echo Error: No argument provided! & exit /b) else ( %~dp0$($appName).exe manager add ""%~1"" )"
-        $addPath = Join-Path -Path $installDir -ChildPath "fkadd.bat"
-        Set-Content -Path $addPath -Value $addContent -Encoding ASCII
-        Write-Host "Shortcut created successfully at $addPath"
-
-        # fkrem (1 string arg)
-        $remContent = "@echo off`nif ""%~1""=="""" (echo Error: No argument provided! & exit /b) else ( %~dp0$($appName).exe manager remove ""%~1"" )"
-        $remPath = Join-Path -Path $installDir -ChildPath "fkrem.bat"
-        Set-Content -Path $remPath -Value $remContent -Encoding ASCII
-        Write-Host "Shortcut created successfully at $remPath"
+        foreach ($name in $commands.Keys) {
+            $cmd = $commands[$name]
+            $batContent = "@echo off`n%~dp0$($appName).exe $cmd %*"
+            $batPath = Join-Path -Path $installDir -ChildPath "$name.bat"
+            Set-Content -Path $batPath -Value $batContent -Encoding ASCII
+            Write-Host "Shortcut created successfully at $batPath"
+        }
     }
     catch {
         Write-Error "Failed to create .bat shortcuts for the CLI: $_"
@@ -209,7 +193,7 @@ Function Installer {
         $url = Get-LatestReleaseUrl
         Install-App -url $url
         Add-AppToPath
-        New-Shortcut -installDir $installDir -appName $APP_NAME.CLI
+        New-Shortcuts
         Write-Host "Installed successfully! Restart your terminal for it to work."
     }
     catch {

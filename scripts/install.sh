@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# i'll clarify - i didn't write nearly any of this, i just copied stuff from places
-# i'm no sh-er
-# if it doesn't work i accept any bonk (and any PR too)
+# i'll clarify - i didn't write most of this, i just copied stuff from places
+# i'm no sh-er. if it doesn't work i accept any bonk (and any PR too)
 
 # constants
 APP_NAME="FuckingNode"
@@ -55,7 +54,9 @@ get_latest_release_url() {
     platform_arch=$(get_platform_arch)
     echo "Fetching latest release for $platform_arch from GitHub..."
     URL=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" |
-        jq -r ".assets[] | select(.name | contains(\"$platform_arch\")) | .browser_download_url")
+        grep -o '"browser_download_url": "[^"]*' |
+        grep "$platform_arch" |
+        sed 's/"browser_download_url": "//')
 
     if [ -z "$URL" ]; then
         echo "No matching file found for $platform_arch."
@@ -76,45 +77,41 @@ install_app() {
 
 # make shortcuts
 create_shortcuts() {
-    installDir=$1
-    appName=$2
 
-    echo "Creating shortcuts for the CLI..."
+    echo "Creating shortcuts for CLI..."
 
-    # fknode (any args)
-    echo -e "#!/bin/bash\n$installDir/$appName \"\$@\"" > "$installDir/fknode"
-    chmod +x "$installDir/fknode"
-    echo "Shortcut created successfully at $installDir/fknode"
+    if [[ -z "$INSTALL_DIR" || ! -d "$INSTALL_DIR" ]]; then
+        echo "Error: Install directory '$INSTALL_DIR' does not exist or is not defined."
+        exit 1
+    fi
 
-    # fkn (any args)
-    echo -e "#!/bin/bash\n$installDir/$appName \"\$@\"" > "$installDir/fknode"
-    chmod +x "$installDir/fknode"
-    echo "Shortcut created successfully at $installDir/fkn"
+    # all aliases should be
+    # (appName).exe <a command> [ANY ARGS PASSED]
+    # so e.g. fkclean "b" = (appName) <command> "b"
 
-    # fkclean (no args)
-    echo -e "#!/bin/bash\n$installDir/$appName clean \"\$@\"" > "$installDir/fkclean"
-    chmod +x "$installDir/fkclean"
-    echo "Shortcut created successfully at $installDir/fkclean"
+    declare -A commands=(
+        ["fknode"]=""
+        ["fkn"]=""
+        ["fkclean"]="clean"
+        ["fkstart"]="kickstart"
+        ["fkcommit"]="commit"
+        ["fkrelease"]="release"
+        ["fksurrender"]="surrender"
+        ["fkadd"]="manager add"
+        ["fkrem"]="manager remove"
+    )
 
-    # fkstart (1-3 string args)
-    echo -e "#!/bin/bash\nif [ -z \"\$1\" ]; then echo \"Error: No Git URL provided!\"; exit 1; else $installDir/$appName kickstart \"\$1\" \"\$2\" \"\$3\"; fi" > "$installDir/fkstart"
-    chmod +x "$installDir/fkstart"
-    echo "Shortcut created successfully at $installDir/fkstart"
+    for name in "${!commands[@]}"; do
+        cmd=${commands[$name]}
+        script_path="$INSTALL_DIR/$name.sh"
 
-    # fkcommit (1 string arg)
-    echo -e "#!/bin/bash\nif [ -z \"\$1\" ]; then echo \"Error: No commit message provided!\"; exit 1; else $installDir/$appName commit \"\$1\"; fi" > "$installDir/fkcommit"
-    chmod +x "$installDir/fkcommit"
-    echo "Shortcut created successfully at $installDir/fkcommit"
+        echo "#!/bin/bash" >"$script_path"
+        echo "\"\$(dirname \"\$0\")/$CLI_NAME\" $cmd \"\$@\"" >>"$script_path"
 
-    # fkadd (1 string arg)
-    echo -e "#!/bin/bash\nif [ -z \"\$1\" ]; then echo \"Error: No argument provided!\"; exit 1; else $installDir/$appName manager add \"\$1\"; fi" > "$installDir/fkadd"
-    chmod +x "$installDir/fkadd"
-    echo "Shortcut created successfully at $installDir/fkadd"
+        chmod +x "$script_path"
 
-    # fkrem (1 string arg)
-    echo -e "#!/bin/bash\nif [ -z \"\$1\" ]; then echo \"Error: No argument provided!\"; exit 1; else $installDir/$appName manager remove \"\$1\"; fi" > "$installDir/fkrem"
-    chmod +x "$installDir/fkrem"
-    echo "Shortcut created successfully at $installDir/fkrem"
+        echo "Shortcut created successfully at $script_path"
+    done
 }
 
 # add app to path
@@ -136,6 +133,9 @@ add_app_to_path() {
     echo "export PATH=\"$INSTALL_DIR:\$PATH\"" >>~/.bash_profile
     # ensure the new PATH is applied immediately
     source ~/.bash_profile
+    # do the same with bashrc
+    echo "export PATH=\"$INSTALL_DIR:\$PATH\"" >>~/.bashrc
+    source ~/.bashrc
     echo "Successfully added $INSTALL_DIR to PATH."
 }
 
