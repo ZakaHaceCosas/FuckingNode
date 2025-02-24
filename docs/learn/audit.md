@@ -85,7 +85,7 @@ $$
 There is a `--strict` flag that can be passed to the audit command that adds an additional **risk bump**, based on the severity of the most-severe identified vulnerability, as follows:
 
 $$
-\frac{R.F. + (R.B. \times 100)}{2}
+Strict R.B. = \frac{R.F. + (R.B. \times 100)}{2}
 $$
 
 RB values are as follows:

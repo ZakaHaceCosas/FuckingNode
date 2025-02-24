@@ -2,7 +2,7 @@
 
 Some changes for V3 were made in RCs, so to avoid messing up / missing things, this is the _full_ V3 changelog:
 
-## Unreleased (upcoming major release) (rc0)
+## Unreleased (upcoming major release)
 
 V3 has not received yet a stable release. However, an unstable release candidate including all of these changes (and some known issues) exists. See the Releases tab at this repository for more info.
 

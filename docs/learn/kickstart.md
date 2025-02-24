@@ -13,7 +13,7 @@ graph TD
     B --> C["cd {something}"]
     C --> D["pnpm install"]
     D --> E["code ."]
-    E -->|Optionally| F["fuckingnode manager add --self"]
+    E -->|Optionally| F["fkadd --self"]
 ```
 
 For a VSCode user that wants to clone a simple NodeJS project, it takes 4 CLI commands (3 assuming they'll waste more time by clicking the UI icon). 5 commands if they also add the project to F\*ckingNode's project list.

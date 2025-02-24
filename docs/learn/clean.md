@@ -42,12 +42,11 @@ This workflow can be simplified into the following:
 
 ```mermaid
 graph TD
-    A["fuckingnode manager add ../project1"]
-    B["fuckingnode manager add ../project2"]
-    C["fuckingnode manager add /home/me/work/some-app"]
+    A["fkadd ../project1"]
+    B["fkadd ../project2"]
+    C["fkadd /home/me/work/some-app"]
 
-    D["fuckingnode clean --
-    --update --lint --destroy --commit"]
+    D["fkclean -- -- -u -l -d -p -"]
 
     A --> D
     B --> D

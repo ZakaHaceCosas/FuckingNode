@@ -15,7 +15,7 @@ nav:
     - "Why FuckingNode?": "about/why.md"
 
     - Manual:
-          - Home: "manual/index.md"
+          - User manual: "manual/index.md"
           - Installation: "manual/install.md"
           - Configuration: "manual/configuration.md"
           - Main usage guide: "manual/usage.md"
@@ -30,7 +30,7 @@ nav:
           - "What's next?": "manual/whats-next.md"
 
     - Learn:
-          - Home: "learn/index.md"
+          - Learn: "learn/index.md"
           - How does cleanup work under the hood: "learn/clean.md"
           - How does kickstart work under the hood: "learn/kickstart.md"
           - How does audit work under the hood: "learn/audit.md"
