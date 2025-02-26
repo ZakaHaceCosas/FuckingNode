@@ -79,25 +79,23 @@ export function ParsePath(target: UnknownString): string {
 }
 
 /**
- * Parses a string of a lot of file paths separated by commas, and returns them as an array of individual paths.
+ * Parses a string of a lot of file paths separated by newlines or commas, and returns them as an array of individual paths.
  *
  * @export
- * @param {string} target The string to parse.
+ * @param {UnknownString} target The string to parse.
  * @returns {string[]} Your `string[]`.
  */
-export function ParsePathList(target: string): string[] {
-    if (typeof target !== "string") {
-        throw new Error("Target must be (obviously) a string.");
-    }
+export function ParsePathList(target: UnknownString): string[] {
+    if (!StringUtils.validate(target)) throw new Error("Target string for ParsePathList() must be (obviously) a string. Got something invalid.");
 
-    const workingTarget: string = target.trim();
-    const allTargets: string[] = workingTarget
-        .split("\n")
-        .map((line) => line.trim().replace(/,$/, ""))
-        .filter((line) => line.length > 0);
-    const normalizedTargets: string[] = allTargets.map(normalize);
-
-    return StringUtils.sortAlphabetically(normalizedTargets);
+    return StringUtils
+        .sortAlphabetically(
+            StringUtils
+                .kominator(target, "\n")
+                .map((line) => line.trim().replace(/,$/, ""))
+                .filter((line) => line.length > 0)
+                .map(ParsePath),
+        );
 }
 
 /**

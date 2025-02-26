@@ -6,6 +6,14 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## V3 Release Candidate (5)
+
+This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
+
+### Fixed
+
+- Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
+
 ## V3 Release Candidate (4)
 
 This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).

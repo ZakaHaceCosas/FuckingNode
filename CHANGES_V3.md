@@ -103,6 +103,7 @@ V3 has not received yet a stable release. However, an unstable release candidate
 - Fixed goddamn project validation. You'll find a slightly stricter CLI from now own (requiring you, for example, to add a `"name"` field to a project just to add it).
 - Fixed an error being thrown when trying to gitignore stuff in projects without a .gitignore file, it'll now be automatically created.
 - Fixed verbose logging making EVERYTHING hidden when running hard cleanup, instead of hiding just what should be considered verbose.
+- Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
 
 ### Removed
 

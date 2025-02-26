@@ -22,7 +22,7 @@ function formatCmd(obj: helpThing): string {
 
 async function pathReminder() {
     await LogStuff(
-        `---\nNote: <project-path> refers to either a file path (../somewhere or/home/users/me/somewhere), OR the "--self" flag which uses the Current Working Directory. For example, 'manager add --self' here equals 'manager add ${Deno.cwd()}'.\n\nAdditionally, in some places (like clean or manager) where we assume the project already exists, you can pass the project's name as it appears in your package file's 'name' field and it should work as well.`,
+        `----\nNote: <project-path> is either a file path OR the "--self" flag which uses the Current Working Directory.\nE.g., running 'fkadd --self' here equals 'fkadd ${Deno.cwd()}'.\n\nAdditionally, in some places where we assume the project is already added (like clean or stats),\nyou can pass the project's name (as it appears in the package file) and it'll work as well.`,
         undefined,
         "italic",
     );

@@ -97,8 +97,15 @@ async function init() {
     await CleanupProjects();
 }
 
+// TODO - update string-utils to add a preserveCase param for normalize()
 /** Normalized Deno.args */
-const flags = Deno.args.map((arg) => StringUtils.normalize(arg));
+const flags = Deno.args.map((arg) =>
+    arg
+        .normalize("NFD") // normalize á, é, etc.
+        .replace(/[\u0300-\u036f]/g, "") // remove accentuation
+        .replace(/\s+/g, " ") // turn "my      search  query" into "my search query"
+        .trim()
+);
 
 export const __FKNODE_SHALL_WE_DEBUG = hasFlag("FKN-DBG", true) ? true : false;
 DEBUG_LOG("Initialized __FKNODE_SHALL_WE_DEBUG constant (ENTRY POINT)");
@@ -159,40 +166,36 @@ if (hasFlag("version", true, true) && !flags[1]) {
 async function main(command: string) {
     try {
         await init();
-    } catch (e) {
-        HandleErr(e);
-    }
 
-    /* this is a bit unreadable, i admit */
-    const projectArg = (
-            flags[1] &&
-            flags[1].trim() !== "" &&
-            (((!flags[1].trim().startsWith("--") && !flags[1].trim().startsWith("-")) &&
-                !ParseFlag("self", false).includes(flags[1])) || ParseFlag("self", false).includes(flags[1]))
-        )
-        ? flags[1]
-        : 0 as const;
+        /* this is a bit unreadable, i admit */
+        const projectArg = (
+                flags[1] &&
+                flags[1].trim() !== "" &&
+                (((!flags[1].trim().startsWith("--") && !flags[1].trim().startsWith("-")) &&
+                    !ParseFlag("self", false).includes(flags[1])) || ParseFlag("self", false).includes(flags[1]))
+            )
+            ? flags[1]
+            : 0 as const;
 
-    const intensityArg = (flags[2] && flags[2].trim() !== "" && !flags[2].trim().includes("--"))
-        ? flags[2]
-        : (await GetSettings()).defaultIntensity;
+        const intensityArg = (flags[2] && flags[2].trim() !== "" && !flags[2].trim().includes("--"))
+            ? flags[2]
+            : (await GetSettings()).defaultIntensity;
 
-    const cleanerArgs: TheCleanerConstructedParams = {
-        flags: {
-            verbose: hasFlag("verbose", true),
-            update: hasFlag("update", true),
-            lint: hasFlag("lint", true),
-            prettify: hasFlag("pretty", true),
-            commit: hasFlag("commit", true),
-            destroy: hasFlag("destroy", true),
-        },
-        parameters: {
-            intensity: intensityArg,
-            project: projectArg,
-        },
-    };
+        const cleanerArgs: TheCleanerConstructedParams = {
+            flags: {
+                verbose: hasFlag("verbose", true),
+                update: hasFlag("update", true),
+                lint: hasFlag("lint", true),
+                prettify: hasFlag("pretty", true),
+                commit: hasFlag("commit", true),
+                destroy: hasFlag("destroy", true),
+            },
+            parameters: {
+                intensity: intensityArg,
+                project: projectArg,
+            },
+        };
 
-    try {
         switch (StringUtils.normalize(command, false, true)) {
             case "clean":
                 await TheCleaner(cleanerArgs);
