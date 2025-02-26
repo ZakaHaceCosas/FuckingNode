@@ -43,8 +43,8 @@ theme:
     name: material
     custom_dir: docs/overrides
 
-    logo: /fkn_logo.png
-    favicon: /fkn_favicon.png
+    logo: fkn_logo.png
+    favicon: fkn_favicon.png
 
     features:
         - navigation.path
