@@ -1,14 +1,12 @@
 import { Commander, CommandExists } from "../functions/cli.ts";
-import { GetSettings } from "../functions/config.ts";
+import { GetAppPath, GetSettings } from "../functions/config.ts";
 import { CheckForDir, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject } from "../functions/projects.ts";
 import type { TheKickstarterConstructedParams } from "./constructors/command.ts";
-import { AddProject } from "./manage.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { APP_NAME } from "../constants.ts";
 import { NameLockfile, ResolveLockfiles } from "./toolkit/cleaner.ts";
 
 async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favEditor"]) {
@@ -105,6 +103,12 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
         }
     }
 
+    // glue fix
+    // TODO - use AddProject() (implies, probably, making it sync)
+    Deno.writeTextFileSync(GetAppPath("MOTHERFKRS"), `${ParsePath(Deno.cwd())}\n`, {
+        append: true,
+    });
+
     // assume we skipped error
     const typedProvidedManager = manager?.trim() as "npm" | "pnpm" | "yarn" | "deno" | "bun" | "cargo" | "go" || "";
     const env = await GetProjectEnvironment(Deno.cwd());
@@ -146,13 +150,6 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
         }
     } catch (e) {
         throw new Error(`Error installing dependencies: ${e}`);
-    }
-
-    // lol
-    try {
-        await AddProject(Deno.cwd());
-    } catch (e) {
-        throw new Error(`Error setting up your favorite CLI tool (${APP_NAME.CLI}) in this project! ${e}`);
     }
 
     const favEditor = (await GetSettings()).favEditor;

@@ -4,13 +4,13 @@
  * @export
  */
 export type GLOBAL_ERROR_CODES =
-    | "Manager__ProjectInteractionInvalidCauseNoPathProvided"
+    | "Generic__InteractionInvalidCauseNoPathProvided"
     | "Manager__IgnoreFile__InvalidLevel"
     | "Cleaner__InvalidCleanerIntensity"
     | "Internal__Projects__CantDetermineEnv"
-    | "Manager__NonExistingPath"
+    | "Generic__NonExistingPath"
     | "Internal__NoEnvForConfigPath"
-    | "Generic__NonFoundProject"
+    | "Project__NonFoundProject"
     | "Env__UnparsableMainFile"
     | "Interop__CannotRunJsLike"
     | "Unknown__CleanerTask__Lint"

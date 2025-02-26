@@ -715,9 +715,9 @@ export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
  * @returns {Promise<string>}
  */
 export async function SpotProject(name: UnknownString): Promise<string> {
-    if (!StringUtils.validate(name) || !name) {
+    if (!StringUtils.validate(name)) {
         throw new FknError(
-            "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+            "Generic__InteractionInvalidCauseNoPathProvided",
             `Either didn't provide a project name / path or the CLI failed internally somewhere`,
         );
     }
@@ -747,7 +747,7 @@ export async function SpotProject(name: UnknownString): Promise<string> {
             `'${name.trim()}' (=> '${workingProject}') exists but is not an added project.`,
         );
     } else {
-        throw new FknError("Generic__NonFoundProject", `'${name.trim()}' (=> '${toSpot}') does not exist.`);
+        throw new FknError("Project__NonFoundProject", `'${name.trim()}' (=> '${toSpot}') does not exist.`);
     }
 }
 

@@ -13,6 +13,7 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 ### Fixed
 
 - Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
+- Fixed a regression that made kickstart crash after cloning because of stricter "x is not an added project" check.
 
 ## V3 Release Candidate (4)
 

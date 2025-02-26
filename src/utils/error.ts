@@ -29,7 +29,7 @@ export class FknError extends Error {
         this.name = "FknError";
         this.code = code;
         switch (this.code) {
-            case "Manager__ProjectInteractionInvalidCauseNoPathProvided":
+            case "Generic__InteractionInvalidCauseNoPathProvided":
                 this.hint =
                     `Provide the project's path or name to the project.\n    It can be a file path ("../node-project" OR "C:\\Users\\coolDev\\node-project"),\n    It can be "--self" to use the current working DIR (${Deno.cwd()}).\n    Or it can be a project's name (type the exact name as it is on package.json's "name" field).`;
                 break;
@@ -45,7 +45,7 @@ export class FknError extends Error {
                 this.hint =
                     "This is an internal error regarding determination of a project's environment, there's not much that you can do. 'Thrown message' might help out, otherwise you might want to simply try again, or open up an issue on GitHub if it doesn't work.";
                 break;
-            case "Manager__NonExistingPath":
+            case "Generic__NonExistingPath":
                 this.hint =
                     "Check for typos - the path you provided wasn't found in the filesystem. If you're sure the path is right, maybe it's a permission issue. If not, open an issue on GitHub so we can fix our tool that fixes NodeJS ;).";
                 break;
@@ -57,7 +57,7 @@ export class FknError extends Error {
                     )
                 } but failed, meaning config files cannot be created and the CLI can't work. Something seriously went ${I_LIKE_JS.MFLY} wrong. If these aren't the right environment variables for your system's config path (currently using APPDATA on Windows, /home/user/.config on macOS and Linux), please raise an issue on GitHub.`;
                 break;
-            case "Generic__NonFoundProject":
+            case "Project__NonFoundProject":
                 this.hint = `Check for typos or a wrong name. Given input (either a project's name or a file path) wasn't found.`;
                 break;
             case "Env__UnparsableMainFile":
@@ -65,7 +65,7 @@ export class FknError extends Error {
                     `Your project's main file (package.json, deno.json, go.mod, etc.) is unparsable, or is missing basic fields ("name" and "version" on JS/Cargo, "go" and "module" on Golang).\nCheck for typos or syntax errors. If you're sure the file is correct, please open an issue on GitHub (if everything's right, it might be a bug with our interop layer).`;
                 break;
             case "Generic__NonAddedProject":
-                this.hint = `A project must be added to your list (add it via 'manager add <path>') so we can work with it.`;
+                this.hint = `A project must be added to your list (via 'manager add <path>' or 'fkadd <path>') so we can work with it.`;
                 break;
             case "Interop__CannotRunJsLike":
                 this.hint =

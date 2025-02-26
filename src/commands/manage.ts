@@ -21,14 +21,14 @@ export async function AddProject(
 ): Promise<void> {
     if (!StringUtils.validate(entry)) {
         throw new FknError(
-            "Manager__ProjectInteractionInvalidCauseNoPathProvided",
+            "Generic__InteractionInvalidCauseNoPathProvided",
             "You didn't provide a path.",
         );
     }
 
     const workingEntry = ParsePath(entry);
 
-    if (!CheckForPath(workingEntry)) throw new FknError("Manager__NonExistingPath", `Path "${workingEntry}" doesn't exist.`);
+    if (!CheckForPath(workingEntry)) throw new FknError("Generic__NonExistingPath", `Path "${workingEntry}" doesn't exist.`);
 
     const projectName = await NameProject(workingEntry, "all");
 
@@ -190,7 +190,7 @@ export async function RemoveProject(
             }
         }
     } catch (e) {
-        if (e instanceof FknError && e.code === "Generic__NonFoundProject") {
+        if (e instanceof FknError && e.code === "Project__NonFoundProject") {
             await LogStuff(
                 `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${entry} (=> ${entry ? ParsePath(entry) : "undefined?"})`,
                 "error",
