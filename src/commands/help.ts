@@ -254,7 +254,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "about",
             null,
-            "Shows a simple (but cool looking!) about screen. Includes random quotes below the logo.",
+            "Shows a simple (but cool looking!) about screen. Includes random quotes.",
         ],
     ]);
     const HELP_OPTIONS = formatCmd([

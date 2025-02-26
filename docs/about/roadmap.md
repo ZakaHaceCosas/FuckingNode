@@ -10,7 +10,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 ### Upcoming Version 3.0
 
-- [ ] Make a proper logo for the project.
+- [x] Make a proper logo for the project.
 - [x] New features
     - [x] `fuckingnode commit "message"` to automatically run our maintenance task and custom commands before making a Git commit and only committing if they all succeed. With the "Shorter commands" goal, it could be something like `fkcommit "message"`.
     - [x] `fuckingnode release "version"` to automatically run commands before releasing, then bumping the version number from `package.json` (or equivalent), and then running the manager's specified publish command (unless overridden).

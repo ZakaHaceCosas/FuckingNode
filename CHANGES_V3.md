@@ -8,19 +8,19 @@ V3 has not received yet a stable release. However, an unstable release candidate
 
 ### Breaking changes for v3
 
-- **Schedule and update files won't work:** We now use a different date format.
 - **Order of `clean` arguments swapped:** It's now `clean <project | "--"> <intensity | "--"> [...flags]` instead of `clean <intensity | "--"> <project | "--"> [...flags]`. This was made so the command makes more sense. E.g., `clean my-project hard`.
-- **User settings will be reset once:** Some internal breaking changes force us to do this. This'll only happen once and won't reset your project list.
+- **User settings, schedules, and update timestamps will reset once:** Some internal breaking changes force us to do this. This'll only happen once and won't reset your project list.
 
 ### Added
 
-- **Cross-platform support** - Golang and Rust projects can now benefit from FuckingNode (just as with Deno/Bun, unbridgeable features won't work but won't interrupt the flow either). While compatibility is more limited, it's better than nothing.
+- Added a new logo.
+- Added **cross-platform support** - Golang and Rust projects can now benefit from FuckingNode (just as with Deno/Bun, unbridgeable features won't work but won't interrupt the flow either). While compatibility is more limited, it's better than nothing.
   - Added a new `export <project>` command to export a project's FnCPF (an internal "file" used for interoperability purposes). If something's not working, it _might_ help out, as it'll show whether we're correctly reading your project's info or not.
 - Added a **new command** `release`. Automatically runs a task of your choice, bumps SemVer version from your package file, commits your changes, creates a Git tag, pushes to mainstream, and **automatically publishes to `npm` or `jsr`**, from a single command.
   - `dry-run` and other options are available to prevent Git commit and npm/jsr publish tasks from running, if desired.
-  - The process is 90-100% automated, however you'll have to move your hands in some cases (we still save you some time with this addition :wink:):
+  - While the process is fully automated you'll still have to move your hands in these cases (we still save you time with this addition :wink:):
     - Always when publishing to JSR, as you're required to click once in their web UI to authorize the publishing.
-    - When publishing to npm and have 2FA enabled and required for publishing.
+    - When publishing to npm having 2FA enabled and required for publishing.
   - `publish` is allowed as an alias to the command.
 - Added a **new command** `commit (message) [branch] [--push]` to run any task of your choice before committing, and making the Got commit only if that tasks succeeds.
 - Added a **new command** `surrender (project) [message] [alternative] [learn-more-url] [--github]` to deprecate a project (automatically add a deprecation notice, update dependencies one last time, commit and push all changes, and once the project's pushed, remove locally).

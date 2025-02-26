@@ -69,7 +69,7 @@ const appRelatedJokes = [
     `question: how do you end up downloading a CLI tool literally called '${APP_NAME.STYLED}'?`,
     "fun fact: this started as a .ps1 script i used to automate cleaning of my own node_modules",
     "fun fact: it's not made in node",
-    "(we need a logo)",
+    "(we need a better logo)",
 ];
 
 const brandingJokes = [

@@ -1,9 +1,9 @@
 <!-- markdownlint-disable md033 md041-->
-<!-- <p align="center">
+<p align="center">
   <a href="https://zakahacecosas.github.io/FuckingNode">
-    <img src="LOGO HERE WHEN WE HAVE IT" alt="Logo" height=100>
+    <img src="https://raw.githubusercontent.com/ZakaHaceCosas/FuckingNode/refs/heads/master/logo.png" alt="Logo" height=150>
     </a>
-</p> -->
+</p>
 <h1 align="center">The f*cking chaos of maintaining JavaScript projects ends here</h1>
 <h3 align="center">Because dev life is messy enough</h3>
 
