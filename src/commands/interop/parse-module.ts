@@ -6,7 +6,7 @@
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 import type { CargoPkgFile, DenoPkgFile, FnCPF, GolangPkgFile, NodePkgFile } from "../../types/platform.ts";
 import { FnCPFInternal } from "../../constants.ts";
-import { FknError } from "../../utils/error.ts";
+import { FknError } from "../../functions/error.ts";
 import { parse as parseToml } from "@std/toml";
 import { parse as parseJsonc } from "@std/jsonc";
 import { FkNodeInterop } from "./interop.ts";
@@ -36,7 +36,7 @@ export function internalGolangRequireLikeStringParser(content: string[], kw: str
 
     content.map((line) => {
         const l = StringUtils.normalize(line);
-        if (l === `${StringUtils.normalize(kw, true, true)} (`) {
+        if (l === `${StringUtils.normalize(kw, { strict: true, stripCliColors: true })} (`) {
             if (requireCount === 0) toReturn.push(l);
             requireCount++;
         } else if (l === ")") {
@@ -160,7 +160,10 @@ export const dedupeDependencies = (deps: FnCPF["deps"]) => {
 };
 
 export const findDependency = (target: string, deps: FnCPF["deps"]): FnCPF["deps"][0] | undefined => {
-    return deps.find((dep) => StringUtils.normalize(dep.name, true, true) === StringUtils.normalize(target, true, true));
+    return deps.find((dep) =>
+        StringUtils.normalize(dep.name, { strict: true, preserveCase: true, stripCliColors: true }) ===
+            StringUtils.normalize(target, { strict: true, preserveCase: true, stripCliColors: true })
+    );
 };
 
 // * ###

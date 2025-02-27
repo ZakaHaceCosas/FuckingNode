@@ -1,5 +1,5 @@
 import { compare, parse } from "@std/semver";
-import { FetchGitHub } from "../utils/fetch.ts";
+import { FetchGitHub } from "../functions/fetch.ts";
 import { RELEASE_URL, VERSIONING } from "../constants.ts";
 import type { GITHUB_RELEASE } from "../types/misc.ts";
 import { GetDateNow } from "../functions/date.ts";

@@ -1,8 +1,8 @@
-import { LogStuff, ParseFlag } from "../functions/io.ts";
+import { LogStuff } from "../functions/io.ts";
 import type { TheSettingsConstructedParams } from "./constructors/command.ts";
 import { ChangeSetting, DisplaySettings, FlushConfigFiles, FreshSetup, VALID_SETTINGS } from "../functions/config.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { DEBUG_LOG } from "../utils/error.ts";
+import { DEBUG_LOG } from "../functions/error.ts";
 
 async function ResetSettings() {
     const confirmation = await LogStuff(
@@ -35,7 +35,7 @@ export default async function TheSettings(params: TheSettingsConstructedParams) 
 
     switch (args[0]) {
         case "flush":
-            await FlushConfigFiles(args[1], ParseFlag("force", false).includes(args[2] ?? ""));
+            await FlushConfigFiles(args[1], StringUtils.testFlag(args[2] ?? "", "force"));
             break;
         case "repair":
         case "reset":

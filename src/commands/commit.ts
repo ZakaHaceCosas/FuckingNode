@@ -1,10 +1,10 @@
-import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
+import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheCommitterConstructedParams } from "./constructors/command.ts";
 import { Commander } from "../functions/cli.ts";
-import { Git } from "../utils/git.ts";
+import { Git } from "../functions/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { FknError } from "../utils/error.ts";
+import { FknError } from "../functions/error.ts";
 import { isDis } from "../constants.ts";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
@@ -38,7 +38,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
 
     const gitProps = {
         fileCount: (await Git.GetFilesReadyForCommit(project)).length,
-        branch: (params.branch && !ParseFlag("push", true).includes(params.branch))
+        branch: (params.branch && !StringUtils.testFlag(params.branch, "push", { allowQuickFlag: true, allowSingleDash: true }))
             ? branches.all.includes(StringUtils.normalize(params.branch)) ? params.branch : "__ERROR"
             : branches.current,
     };

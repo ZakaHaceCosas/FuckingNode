@@ -18,8 +18,8 @@ export default async function TheSetuper(params: TheSetuperConstructedParams) {
 
     const project = await SpotProject(params.project);
     const env = await GetProjectEnvironment(project);
-    const desiredSetup = StringUtils.normalize(params.setup, true);
-    const setupToUse = SETUPS.find((s) => (StringUtils.normalize(s.name, true)) === desiredSetup);
+    const desiredSetup = StringUtils.normalize(params.setup, { strict: true });
+    const setupToUse = SETUPS.find((s) => (StringUtils.normalize(s.name, { strict: true })) === desiredSetup);
 
     if (
         !setupToUse

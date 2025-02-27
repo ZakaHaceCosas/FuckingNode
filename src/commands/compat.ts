@@ -71,7 +71,7 @@ export default async function TheCompater(params: TheCompaterConstructedParams) 
         return;
     }
 
-    switch (StringUtils.normalize(params.target, true)) {
+    switch (StringUtils.normalize(params.target, { strict: true })) {
         case "cleaner":
         case "advanced":
             await LogStuff("ADVANCED CLEANER FEATURES SUPPORT ---");

@@ -4,7 +4,7 @@ import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/pr
 import type { TheReleaserConstructedParams } from "./constructors/command.ts";
 import type { DenoPkgFile, NodePkgFile } from "../types/platform.ts";
 import { Commander } from "../functions/cli.ts";
-import { Git } from "../utils/git.ts";
+import { Git } from "../functions/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { isDis } from "../constants.ts";
 

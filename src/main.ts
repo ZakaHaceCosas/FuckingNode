@@ -19,7 +19,7 @@ import TheSetuper from "./commands/setup.ts";
 import { APP_NAME, APP_URLs, FULL_NAME } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
 import { FreshSetup, GetAppPath, GetSettings } from "./functions/config.ts";
-import { DEBUG_LOG, GenericErrorHandler } from "./utils/error.ts";
+import { DEBUG_LOG, GenericErrorHandler } from "./functions/error.ts";
 import type { TheCleanerConstructedParams } from "./commands/constructors/command.ts";
 import { RunScheduledTasks } from "./functions/schedules.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
@@ -97,14 +97,13 @@ async function init() {
     await CleanupProjects();
 }
 
-// TODO - update string-utils to add a preserveCase param for normalize()
 /** Normalized Deno.args */
 const flags = Deno.args.map((arg) =>
-    arg
-        .normalize("NFD") // normalize á, é, etc.
-        .replace(/[\u0300-\u036f]/g, "") // remove accentuation
-        .replace(/\s+/g, " ") // turn "my      search  query" into "my search query"
-        .trim()
+    StringUtils.normalize(arg, {
+        preserveCase: true,
+        strict: true,
+        stripCliColors: true,
+    })
 );
 
 export const __FKNODE_SHALL_WE_DEBUG = hasFlag("FKN-DBG", true) ? true : false;
@@ -120,11 +119,12 @@ if (!StringUtils.validate(flags[0])) {
     }
 }
 
-function hasFlag(flag: string, allowShort: boolean, firstOnly: boolean = false): boolean {
+function hasFlag(flag: string, allowQuickFlag: boolean, firstOnly: boolean = false): boolean {
     if (firstOnly === true) {
-        return ParseFlag(flag, allowShort).includes(StringUtils.normalize(flags[0] ?? ""));
+        return StringUtils.testFlag(StringUtils.normalize(flags[0] ?? ""), flag, { allowQuickFlag });
     }
-    return ParseFlag(flag, allowShort).some((f) => flags.includes(StringUtils.normalize(f)));
+    // TODO - make StringUtils.testFlag capable of testing string arrays
+    return ParseFlag(flag, allowQuickFlag).some((f) => flags.includes(StringUtils.normalize(f)));
 }
 
 if (hasFlag("help", true)) {
@@ -196,7 +196,13 @@ async function main(command: string) {
             },
         };
 
-        switch (StringUtils.normalize(command, false, true)) {
+        switch (
+            StringUtils.normalize(command, {
+                strict: true,
+                preserveCase: true,
+                stripCliColors: true,
+            })
+        ) {
             case "clean":
                 await TheCleaner(cleanerArgs);
                 break;

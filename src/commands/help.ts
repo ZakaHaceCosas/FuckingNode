@@ -265,7 +265,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         ],
     ]);
 
-    switch (StringUtils.normalize(query ?? "", true)) {
+    switch (StringUtils.normalize(query ?? "", { strict: true })) {
         case "clean":
             await LogStuff(
                 `'clean' will clean your added projects. Options and flags:\n${CLEAN_OPTIONS}`,

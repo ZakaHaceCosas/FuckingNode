@@ -2,7 +2,7 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 import { Commander } from "../../functions/cli.ts";
 import { LogStuff } from "../../functions/io.ts";
 import type { ProjectEnvironment } from "../../types/platform.ts";
-import { FknError } from "../../utils/error.ts";
+import { FknError } from "../../functions/error.ts";
 import { FkNodeInterop } from "./interop.ts";
 import { isDef } from "../../constants.ts";
 

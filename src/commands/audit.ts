@@ -1,5 +1,5 @@
 import { APP_NAME } from "../constants.ts";
-import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
+import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetAllProjects, NameProject } from "../functions/projects.ts";
 import { PerformAuditing } from "./toolkit/auditer.ts";
 import type { FkNodeSecurityAudit } from "../types/audit.ts";
@@ -9,7 +9,9 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 export default async function TheAuditer(params: TheAuditerConstructedParams) {
     const { project, strict } = params;
 
-    const shouldAuditAll = !StringUtils.validate(project) || ParseFlag("all", true).includes(project) || StringUtils.normalize(project) === "--";
+    const shouldAuditAll = !StringUtils.validate(project) ||
+        StringUtils.testFlag(project, "all", { allowQuickFlag: true, allowSingleDash: true, normalize: true }) ||
+        StringUtils.normalize(project) === "--";
 
     if (shouldAuditAll) {
         const projects = await GetAllProjects();

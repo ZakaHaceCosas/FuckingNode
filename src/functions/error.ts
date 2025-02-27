@@ -1,8 +1,8 @@
 import { join } from "@std/path/join";
 import { APP_NAME, I_LIKE_JS, LOCAL_PLATFORM } from "../constants.ts";
-import { ColorString } from "../functions/io.ts";
+import { ColorString } from "./io.ts";
 import type { GLOBAL_ERROR_CODES } from "../types/errors.ts";
-import { GetDateNow } from "../functions/date.ts";
+import { GetDateNow } from "./date.ts";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 import { __FKNODE_SHALL_WE_DEBUG } from "../main.ts";
 

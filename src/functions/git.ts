@@ -23,7 +23,7 @@ async function __isRepo(path: string) {
         );
         if (
             !output.success ||
-            StringUtils.normalize(output.stdout ?? "", true, true) !== "true"
+            StringUtils.normalize(output.stdout ?? "", { strict: true, stripCliColors: true }) !== "true"
         ) return false; // anything unsuccessful means uncommitted changes
 
         return true;

@@ -5,8 +5,8 @@ import type { tURL } from "../types/misc.ts";
  *
  * @export
  * @async
- * @param{tURL}url
- * @returns{Promise<Response>}
+ * @param {tURL} url
+ * @returns {Promise<Response>}
  */
 
 export async function FetchGitHub(url: tURL): Promise<Response> {

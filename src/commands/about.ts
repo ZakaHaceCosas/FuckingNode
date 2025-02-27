@@ -2,8 +2,8 @@ import { APP_NAME, APP_URLs, I_LIKE_JS, VERSIONING } from "../constants.ts";
 import { ColorString } from "../functions/io.ts";
 import { LogStuff } from "../functions/io.ts";
 import type { tValidColors } from "../types/misc.ts";
-import { ASCII } from "../utils/ascii.ts";
-import { phrases } from "../utils/phrases.ts";
+import { ASCII } from "../functions/ascii.ts";
+import { phrases } from "../functions/phrases.ts";
 
 function getRandomPhrase(): string {
     const randomIndex = Math.floor(Math.random() * phrases.length);

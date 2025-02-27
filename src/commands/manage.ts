@@ -1,9 +1,9 @@
 import { I_LIKE_JS } from "../constants.ts";
-import { ColorString, LogStuff, ParseFlag } from "../functions/io.ts";
+import { ColorString, LogStuff } from "../functions/io.ts";
 import { CheckForPath, ParsePath } from "../functions/filesystem.ts";
 import { GetAllProjects, NameProject, SpotProject, ValidateProject } from "../functions/projects.ts";
 import TheHelper from "./help.ts";
-import { DEBUG_LOG, FknError } from "../utils/error.ts";
+import { DEBUG_LOG, FknError } from "../functions/error.ts";
 import { GetProjectEnvironment } from "../functions/projects.ts";
 import { GetAppPath } from "../functions/config.ts";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
@@ -301,9 +301,9 @@ export default async function TheManager(args: string[]) {
         case "list":
             if (secondArg) {
                 let ignoreParam: false | "limit" | "exclude" = false;
-                if (ParseFlag("ignored", false).includes(secondArg)) {
+                if (StringUtils.testFlag(secondArg, "ignored")) {
                     ignoreParam = "limit";
-                } else if (ParseFlag("alive", false).includes(secondArg)) {
+                } else if (StringUtils.testFlag(secondArg, "alive")) {
                     ignoreParam = "exclude";
                 }
                 await ListProjects(

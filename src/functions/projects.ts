@@ -6,14 +6,14 @@ import { APP_NAME, APP_URLs, DEFAULT_FKNODE_YAML, I_LIKE_JS } from "../constants
 import type { CargoPkgFile, NodePkgFile, ProjectEnvironment, UnderstoodProjectProtection } from "../types/platform.ts";
 import { CheckForPath, JoinPaths, ParsePath, ParsePathList } from "./filesystem.ts";
 import { ColorString, LogStuff } from "./io.ts";
-import { DEBUG_LOG, FknError } from "../utils/error.ts";
+import { DEBUG_LOG, FknError } from "../functions/error.ts";
 import { type FkNodeYaml, type FullFkNodeYaml, ValidateFkNodeYaml } from "../types/config_files.ts";
 import { GetAppPath } from "./config.ts";
 import { GetDateNow } from "./date.ts";
 import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
 import { FkNodeInterop } from "../commands/interop/interop.ts";
 import type { tValidColors } from "../types/misc.ts";
-import { Git } from "../utils/git.ts";
+import { Git } from "../functions/git.ts";
 import { internalGolangRequireLikeStringParser } from "../commands/interop/parse-module.ts";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 import { RemoveProject } from "../commands/manage.ts";
@@ -728,13 +728,12 @@ export async function SpotProject(name: UnknownString): Promise<string> {
         return workingProject;
     }
 
-    const toSpot = StringUtils.normalize(name, false, true);
+    const toSpot = StringUtils.normalize(name, { strict: false, preserveCase: true, stripCliColors: true });
 
     for (const project of allProjects) {
         const projectName = StringUtils.normalize(
             await NameProject(project, "name-colorless"),
-            false,
-            true,
+            { strict: false, preserveCase: true, stripCliColors: true },
         );
         if (toSpot === projectName) {
             return project;

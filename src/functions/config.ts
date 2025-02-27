@@ -1,6 +1,6 @@
 import { APP_NAME, DEFAULT_SCHEDULE_FILE, DEFAULT_SETTINGS, I_LIKE_JS, LOCAL_PLATFORM } from "../constants.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
-import { FknError, GenericErrorHandler } from "../utils/error.ts";
+import { FknError, GenericErrorHandler } from "./error.ts";
 import { BulkRemoveFiles, CheckForPath, JoinPaths } from "./filesystem.ts";
 import { parse as parseYaml } from "@std/yaml";
 import { ColorString, LogStuff, StringifyYaml } from "./io.ts";
