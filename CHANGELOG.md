@@ -10,10 +10,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
 
+### Changed
+
+- Now the `something-fucked-up` command is entirely independent from the CLI's functions.
+
 ### Fixed
 
 - Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
 - Fixed a regression that made kickstart crash after cloning because of stricter "x is not an added project" check.
+- Fixed temp DIR used for hard cleanup not being removed.
 
 ## V3 Release Candidate (4)
 

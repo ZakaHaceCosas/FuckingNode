@@ -6,8 +6,8 @@
 ## Known issues
 
 - [x] (V3) Somehow there's now a f\*\*kng loop somewhere causing the entire app to hang infinitely
-- [ ] (V3) In some random moments the CLI uses project's _A_ `fknode.yaml` for project _B_, causing issues because of "non existing scripts".
-- [ ] (V3) TMP dir not removed never because it's being used (we gotta schedule it somehow)
+- [ ] (Impossible to re-reproduce) (V3) In some random moments the CLI uses project's _A_ `fknode.yaml` for project _B_, causing issues because of "non existing scripts".
+- [x] (V3) TMP dir not removed never because it's being used (we gotta schedule it somehow)
 - [ ] (V3 or later) Audit tags indirect vulnerabilities as direct (not priority)
   - [ ] Because of this, fixed version of the _vulnerable_ package is sometimes set to the fixed version of a _different_ package (for example, a vulnerability in `body-parser` gets the fixed version of `express` set as _it's own_ fixed version). **Not a problem as of now, but for future (v3) plans I have, this needs to get resolved.**
 - [ ] (V3 or later) Most `TODO` comments out there.

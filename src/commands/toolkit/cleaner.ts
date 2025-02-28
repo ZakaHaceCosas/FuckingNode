@@ -1,6 +1,6 @@
 import { FULL_NAME, I_LIKE_JS, isDef, LOCAL_PLATFORM } from "../../constants.ts";
 import { Commander, CommandExists } from "../../functions/cli.ts";
-import { GetSettings } from "../../functions/config.ts";
+import { GetAppPath, GetSettings } from "../../functions/config.ts";
 import { BulkRemoveFiles, CheckForPath, JoinPaths, ParsePath } from "../../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject, UnderstandProjectProtection } from "../../functions/projects.ts";
@@ -441,16 +441,14 @@ export async function PerformHardCleanup(
         }
     }
 
-    try {
-        await Deno.remove(tmp, {
-            recursive: true,
-        }); // free the user's space
-    } catch (e) {
-        await LogStuff(
-            `[ERROR] Due to an unknown error, a temporal DIR wasn't deleted. DIR path:\n${tmp}\nError:\n${e}`,
-            "error",
-        );
-    }
+    // free the user's space
+    await Deno.writeTextFile(
+        GetAppPath("REM"),
+        `${tmp}\n`,
+        {
+            append: true,
+        },
+    );
 
     return;
 }

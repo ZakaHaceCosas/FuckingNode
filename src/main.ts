@@ -26,7 +26,7 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 import { CleanupProjects } from "./functions/projects.ts";
 
 // error handler for v2 -> v3 migration
-// NOTE: remove when we get to 3.1 or so
+// TODO: remove when we get to 3.1
 let errorHandled = false;
 
 async function HandleErr(e: unknown) {
@@ -58,35 +58,36 @@ async function HandleErr(e: unknown) {
         }
         Deno.exit(1);
     } else {
-        GenericErrorHandler(e, true);
+        GenericErrorHandler(e);
     }
 }
 
 // this is outside the main loop so it can be executed
 // without depending on other modules
 // yes i added this feature because of a breaking change i wasn't expecting
+
+// ps. i don't use LogStuff because if something broke, well, it might not work
 if (StringUtils.normalize(Deno.args[0] ?? "") === "something-fucked-up") {
-    const c = await LogStuff(
+    console.log(
         `This command will reset ${APP_NAME.CASED}'s settings, logs, and configs ENTIRELY (except for project list). Are you sure things fucked up that much?`,
-        "what",
-        "bold",
-        true,
     );
+    const c = confirm("Confirm reset?");
     if (c === true) {
         const paths = [
             GetAppPath("SCHEDULE"),
             GetAppPath("SETTINGS"),
             GetAppPath("ERRORS"),
             GetAppPath("LOGS"),
+            GetAppPath("REM"),
         ];
 
         for (const path of paths) {
-            await Deno.remove(path, { recursive: true });
+            Deno.removeSync(path, { recursive: true });
         }
 
-        await LogStuff("Done. Don't fuck up again this time!", "tick");
+        console.log("Done. Don't fuck up again this time!");
     } else {
-        await LogStuff("I knew it wasn't that bad...");
+        console.log("I knew it wasn't that bad...");
     }
     Deno.exit(0);
 }
@@ -121,10 +122,9 @@ if (!StringUtils.validate(flags[0])) {
 
 function hasFlag(flag: string, allowQuickFlag: boolean, firstOnly: boolean = false): boolean {
     if (firstOnly === true) {
-        return StringUtils.testFlag(StringUtils.normalize(flags[0] ?? ""), flag, { allowQuickFlag });
+        return StringUtils.testFlag(flags[0] ?? "", flag, { allowQuickFlag, normalize: true });
     }
-    // TODO - make StringUtils.testFlag capable of testing string arrays
-    return ParseFlag(flag, allowQuickFlag).some((f) => flags.includes(StringUtils.normalize(f)));
+    return StringUtils.testFlags(flags, flag, { allowQuickFlag, normalize: true });
 }
 
 if (hasFlag("help", true)) {

@@ -150,11 +150,11 @@ ${StringUtils.stripCliColors(debuggableContent ?? "UNKNOWN OUTPUT - No debuggabl
     }
 
     /**
-     * handles and exits the CLI. you should always call this immediately after throwing.
+     * Handles the error and exits the CLI. Don't use this directly, use {@linkcode GenericErrorHandler} instead.
      */
-    public exit(currentErr?: string, continueFlow: boolean = true): void | never {
-        this.handleMessage(currentErr);
-        if (continueFlow === false) Deno.exit(1);
+    public exit(): never {
+        this.handleMessage(this.message);
+        Deno.exit(1);
     }
 }
 
@@ -163,17 +163,15 @@ ${StringUtils.stripCliColors(debuggableContent ?? "UNKNOWN OUTPUT - No debuggabl
  *
  * @export
  * @param {unknown} e The error.
- * @param {boolean} continueExecution If true, return changes up from never to void.
- * @returns {never | void} _Below any call to this function nothing can happen. It exits the CLI with code 1._
+ * @returns {never} _Below any call to this function nothing can happen. It exits the CLI with code 1._
  */
-export function GenericErrorHandler(e: unknown, continueExecution: true): void;
-export function GenericErrorHandler(e: unknown, continueExecution: false): never;
-export function GenericErrorHandler(e: unknown, continueExecution: boolean): void | never {
+export function GenericErrorHandler(e: unknown): never {
     if (e instanceof FknError) {
-        e.exit(e.message, continueExecution);
+        e.exit();
+        Deno.exit(1); // (never reached, but without this line typescript doesn't shut up)
     } else {
         console.error(`${ColorString(I_LIKE_JS.FK, "red", "bold")}! An unknown error happened: ${e}`);
-        if (continueExecution === false) Deno.exit(1);
+        Deno.exit(1);
     }
 }
 

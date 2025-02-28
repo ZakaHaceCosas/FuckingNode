@@ -1,7 +1,7 @@
 import { APP_NAME, DEFAULT_SCHEDULE_FILE, DEFAULT_SETTINGS, I_LIKE_JS, LOCAL_PLATFORM } from "../constants.ts";
 import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
-import { FknError, GenericErrorHandler } from "./error.ts";
-import { BulkRemoveFiles, CheckForPath, JoinPaths } from "./filesystem.ts";
+import { FknError } from "./error.ts";
+import { BulkRemoveFiles, CheckForPath, JoinPaths, ParsePathList } from "./filesystem.ts";
 import { parse as parseYaml } from "@std/yaml";
 import { ColorString, LogStuff, StringifyYaml } from "./io.ts";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
@@ -11,51 +11,52 @@ import { format } from "@std/fmt/bytes";
  * Returns file paths for all config files the app uses.
  *
  * @export
- * @param {("BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS")} path What path you want.
+ * @param {("BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS" | "REM")} path What path you want.
  * @returns {string} The path as a string.
  */
 export function GetAppPath(
-    path: "BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS",
+    path: "BASE" | "MOTHERFKRS" | "LOGS" | "SCHEDULE" | "SETTINGS" | "ERRORS" | "REM",
 ): string {
-    try {
-        const appDataPath: string = LOCAL_PLATFORM.APPDATA;
+    const appDataPath: string = LOCAL_PLATFORM.APPDATA;
 
-        if (!StringUtils.validate(appDataPath) || !CheckForPath(appDataPath)) {
-            throw new FknError(
-                "Internal__NoEnvForConfigPath",
-                `We searched for ${
-                    LOCAL_PLATFORM.SYSTEM === "windows" ? "APPDATA" : "XDG_CONFIG_HOME and HOME"
-                } in your environment variables, but nothing was found.\nThis breaks the entire CLI, please report this on GitHub.`,
-            );
-        }
+    if (!StringUtils.validate(appDataPath) || !CheckForPath(appDataPath)) {
+        throw new FknError(
+            "Internal__NoEnvForConfigPath",
+            `We searched for ${
+                LOCAL_PLATFORM.SYSTEM === "windows" ? "APPDATA" : "XDG_CONFIG_HOME and HOME"
+            } in your environment variables, but nothing was found.\nThis breaks the entire CLI, please report this on GitHub.`,
+        );
+    }
 
-        const funny = I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u");
+    const funny = I_LIKE_JS.MFS.toLowerCase().replace("*", "o").replace("*", "u");
 
-        const BASE_DIR = JoinPaths(appDataPath, APP_NAME.CLI);
-        const PROJECTS = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-${funny}.txt`);
-        const LOGS = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-logs.log`);
-        const SCHEDULE = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-schedule.yaml`);
-        const SETTINGS = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-settings.yaml`);
-        const ERRORS = JoinPaths(BASE_DIR, `${APP_NAME.CLI}-errors.log`);
+    const formatDir = (name: string) => JoinPaths(BASE_DIR, `${APP_NAME.CLI}-${name}`);
 
-        switch (path) {
-            case "BASE":
-                return BASE_DIR;
-            case "MOTHERFKRS":
-                return PROJECTS;
-            case "LOGS":
-                return LOGS;
-            case "SCHEDULE":
-                return SCHEDULE;
-            case "SETTINGS":
-                return SETTINGS;
-            case "ERRORS":
-                return ERRORS;
-            default:
-                throw new Error(`Invalid config path ${path} requested.`);
-        }
-    } catch (e) {
-        GenericErrorHandler(e, false);
+    const BASE_DIR = JoinPaths(appDataPath, APP_NAME.CLI);
+    const PROJECTS = formatDir(`${funny}.txt`);
+    const LOGS = formatDir("logs.log");
+    const SCHEDULE = formatDir("schedule.yaml");
+    const SETTINGS = formatDir("settings.yaml");
+    const ERRORS = formatDir("errors.log");
+    const REM = formatDir("rem.txt");
+
+    switch (path) {
+        case "BASE":
+            return BASE_DIR;
+        case "MOTHERFKRS":
+            return PROJECTS;
+        case "LOGS":
+            return LOGS;
+        case "SCHEDULE":
+            return SCHEDULE;
+        case "SETTINGS":
+            return SETTINGS;
+        case "ERRORS":
+            return ERRORS;
+        case "REM":
+            return REM;
+        default:
+            throw new Error(`Invalid config path ${path} requested.`);
     }
 }
 
@@ -67,52 +68,60 @@ export function GetAppPath(
  * @returns {Promise<void>}
  */
 export async function FreshSetup(repairSetts?: boolean): Promise<void> {
-    try {
-        const basePath = GetAppPath("BASE");
-        if (!CheckForPath(basePath)) {
-            await Deno.mkdir(basePath, { recursive: true });
-        }
-
-        const projectPath = GetAppPath("MOTHERFKRS");
-        if (!CheckForPath(projectPath)) {
-            await Deno.writeTextFile(projectPath, "", {
-                create: true,
-            });
-        }
-
-        const logsPath = GetAppPath("LOGS");
-        if (!CheckForPath(logsPath)) {
-            await Deno.writeTextFile(logsPath, "", {
-                create: true,
-            });
-        }
-
-        const errorLogsPath = GetAppPath("ERRORS");
-        if (!CheckForPath(errorLogsPath)) {
-            await Deno.writeTextFile(errorLogsPath, "", {
-                create: true,
-            });
-        }
-
-        const settingsPath = GetAppPath("SETTINGS");
-        if ((!CheckForPath(settingsPath) || repairSetts === true)) {
-            await Deno.writeTextFile(settingsPath, StringifyYaml(DEFAULT_SETTINGS), {
-                create: true,
-            });
-        }
-
-        const schedulePath = GetAppPath("SCHEDULE");
-        if (!CheckForPath(schedulePath)) {
-            await Deno.writeTextFile(schedulePath, StringifyYaml(DEFAULT_SCHEDULE_FILE), {
-                create: true,
-            });
-        }
-
-        return;
-    } catch (e) {
-        console.error(`Some ${I_LIKE_JS.MFN} error happened trying to setup config files: ${e}`);
-        Deno.exit(1);
+    const basePath = GetAppPath("BASE");
+    if (!CheckForPath(basePath)) {
+        await Deno.mkdir(basePath, { recursive: true });
     }
+
+    const projectPath = GetAppPath("MOTHERFKRS");
+    if (!CheckForPath(projectPath)) {
+        await Deno.writeTextFile(projectPath, "", {
+            create: true,
+        });
+    }
+
+    const logsPath = GetAppPath("LOGS");
+    if (!CheckForPath(logsPath)) {
+        await Deno.writeTextFile(logsPath, "", {
+            create: true,
+        });
+    }
+
+    const errorLogsPath = GetAppPath("ERRORS");
+    if (!CheckForPath(errorLogsPath)) {
+        await Deno.writeTextFile(errorLogsPath, "", {
+            create: true,
+        });
+    }
+
+    const settingsPath = GetAppPath("SETTINGS");
+    if ((!CheckForPath(settingsPath) || repairSetts === true)) {
+        await Deno.writeTextFile(settingsPath, StringifyYaml(DEFAULT_SETTINGS), {
+            create: true,
+        });
+    }
+
+    const schedulePath = GetAppPath("SCHEDULE");
+    if (!CheckForPath(schedulePath)) {
+        await Deno.writeTextFile(schedulePath, StringifyYaml(DEFAULT_SCHEDULE_FILE), {
+            create: true,
+        });
+    }
+
+    const remPath = GetAppPath("REM");
+    if (!CheckForPath(remPath)) {
+        await Deno.writeTextFile(remPath, "", {
+            create: true,
+        });
+    }
+
+    const toBeRemoved = ParsePathList(await Deno.readTextFile(remPath));
+
+    if (toBeRemoved.length === 0) return;
+
+    await BulkRemoveFiles(toBeRemoved);
+
+    return;
 }
 
 /**
