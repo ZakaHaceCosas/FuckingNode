@@ -1,5 +1,6 @@
 import { join, normalize } from "@std/path";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
+import { DEBUG_LOG } from "./error.ts";
 
 /**
  * Returns `true` if a given path exists, `false` if otherwise.
@@ -86,7 +87,8 @@ export function ParsePath(target: UnknownString): string {
  * @returns {string[]} Your `string[]`.
  */
 export function ParsePathList(target: UnknownString): string[] {
-    if (!StringUtils.validate(target)) throw new Error("Target string for ParsePathList() must be (obviously) a string. Got something invalid.");
+    DEBUG_LOG(target);
+    if (!StringUtils.validate(target)) return [];
 
     return StringUtils
         .sortAlphabetically(
@@ -125,6 +127,7 @@ export function JoinPaths(pathA: string, pathB: string): string {
  * @returns {Promise<void>}
  */
 export async function BulkRemoveFiles(files: string[]): Promise<void> {
+    if (files.length === 0) return;
     await Promise.all(files.map(async (file) => {
         await Deno.remove(ParsePath(file), {
             recursive: true,

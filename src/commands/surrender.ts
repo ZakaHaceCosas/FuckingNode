@@ -1,5 +1,5 @@
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
-import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
+import { GetProjectEnvironment, RemoveProject, SpotProject } from "../functions/projects.ts";
 import type { TheSurrendererConstructedParams } from "./constructors/command.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { NameProject } from "../functions/projects.ts";
@@ -7,7 +7,6 @@ import { APP_URLs, FULL_NAME, LOCAL_PLATFORM } from "../constants.ts";
 import { Git } from "../functions/git.ts";
 import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
-import { RemoveProject } from "./manage.ts";
 
 const deprecationNotices = [
     "# This project is no longer maintained\n\nThis repository is archived and will not receive updates or bug fixes.",

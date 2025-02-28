@@ -107,7 +107,7 @@ const flags = Deno.args.map((arg) =>
     })
 );
 
-export const __FKNODE_SHALL_WE_DEBUG = hasFlag("FKN-DBG", true) ? true : false;
+export const __FKNODE_SHALL_WE_DEBUG = flags.some((s) => StringUtils.normalize(s) === "fkndbg");
 DEBUG_LOG("Initialized __FKNODE_SHALL_WE_DEBUG constant (ENTRY POINT)");
 
 if (!StringUtils.validate(flags[0])) {

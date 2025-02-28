@@ -12,13 +12,19 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 
 ### Changed
 
+- (REQUIRES TESTING) Now you can use features like commit without adding a project.
 - Now the `something-fucked-up` command is entirely independent from the CLI's functions.
+- Now the `--fkn-dbg` flag is just `fkndbg` and does not need to be a flag at all.
 
 ### Fixed
 
 - Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
 - Fixed a regression that made kickstart crash after cloning because of stricter "x is not an added project" check.
 - Fixed temp DIR used for hard cleanup not being removed.
+- Fixed Git's error messages being messed up.
+- Fixed Git utility unable to handle newly created repositories (`GetBranches()`).
+- Fixed Git utility unable to handle repos with no files added for commit.
+- Fixed `fkadd` unable to add a project because of a regression (validate project before adding -> `GetProjectEnvironment` -> project's not added -> error).
 
 ## V3 Release Candidate (4)
 

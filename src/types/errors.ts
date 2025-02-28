@@ -17,7 +17,6 @@ export type GLOBAL_ERROR_CODES =
     | "Unknown__CleanerTask__Pretty"
     | "Unknown__CleanerTask__Update"
     | "Commit__Fail__CommitCmd"
-    | "Generic__NonAddedProject"
     | "Git__IsRepoError";
 
 /**

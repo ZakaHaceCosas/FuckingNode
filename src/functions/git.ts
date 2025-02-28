@@ -321,16 +321,12 @@ export const Git = {
                 ],
                 false,
             );
-            if (!getFilesOutput.success) {
-                throw new Error(getFilesOutput.stdout);
-            }
-            if (!getFilesOutput.stdout) {
-                throw new Error(`git diff --cached --name-only returned an undefined output for ${path}`);
-            }
+            if (!getFilesOutput.success) throw new Error(getFilesOutput.stdout);
+            if (!StringUtils.validate(getFilesOutput.stdout)) return [];
             return StringUtils.softlyNormalizeArray(getFilesOutput.stdout.split("\n"));
         } catch (e) {
             await LogStuff(
-                `Error - could not get staged files at ${ColorString(project, "bold")} because of error: ${e}`,
+                `Error - could not get files ready for commit (staged) at ${ColorString(project, "bold")} because of error: ${e}`,
                 "error",
             );
             return [];
@@ -351,8 +347,26 @@ export const Git = {
             if (!getBranchesOutput.success) {
                 throw new Error(getBranchesOutput.stdout);
             }
-            if (!getBranchesOutput.stdout) {
-                throw new Error(`git diff --cached --name-only returned an undefined output for ${path}`);
+            if (!StringUtils.validate(getBranchesOutput.stdout)) {
+                // fallback to status
+                // this is an edge case for newly made repositories
+                const statusOutput = await Commander(
+                    "git",
+                    [
+                        "-C",
+                        path,
+                        "status",
+                    ],
+                    false,
+                );
+                if (!statusOutput.success) throw new Error(`${statusOutput.stdout}`);
+                console.debug(statusOutput);
+                const currentBranch = statusOutput.stdout?.split("\n")[0]?.split(" ")[2]?.trim();
+                if (!currentBranch) throw new Error("unable to get branch");
+                return {
+                    current: currentBranch,
+                    all: [currentBranch],
+                };
             }
             const current = getBranchesOutput.stdout.match(/^\* (.+)$/m)![1]!;
             return {
@@ -363,7 +377,7 @@ export const Git = {
             };
         } catch (e) {
             await LogStuff(
-                `Error - could not get staged files at ${ColorString(project, "bold")} because of error: ${e}`,
+                `Error - could not get branches at ${ColorString(project, "bold")} because of error: ${e}`,
                 "error",
             );
 

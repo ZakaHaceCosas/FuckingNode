@@ -16,7 +16,6 @@ import type { tValidColors } from "../types/misc.ts";
 import { Git } from "../functions/git.ts";
 import { internalGolangRequireLikeStringParser } from "../commands/interop/parse-module.ts";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
-import { RemoveProject } from "../commands/manage.ts";
 
 /**
  * Gets all the users projects and returns their absolute root paths as a `string[]`.
@@ -50,6 +49,195 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
     if (ignored === "exclude") return aliveReturn;
 
     return cleanList;
+}
+
+/**
+ * Adds a new project.
+ *
+ * @export
+ * @async
+ * @param {UnknownString} entry Path to the project.
+ * @returns {Promise<void>}
+ */
+export async function AddProject(
+    entry: UnknownString,
+): Promise<void> {
+    if (!StringUtils.validate(entry)) {
+        throw new FknError(
+            "Generic__InteractionInvalidCauseNoPathProvided",
+            "You didn't provide a path.",
+        );
+    }
+
+    const workingEntry = ParsePath(entry);
+
+    if (!CheckForPath(workingEntry)) throw new FknError("Generic__NonExistingPath", `Path "${workingEntry}" doesn't exist.`);
+
+    const env = await GetProjectEnvironment(workingEntry);
+    const projectName = await NameProject(workingEntry, "all");
+
+    async function addTheEntry() {
+        await Deno.writeTextFile(GetAppPath("MOTHERFKRS"), `${workingEntry}\n`, {
+            append: true,
+        });
+        await LogStuff(
+            `Congrats! ${projectName} was added to your list. One mf less to care about!`,
+            "tick-clear",
+        );
+    }
+
+    const validation = await ValidateProject(workingEntry, false);
+
+    if (validation !== true) {
+        switch (validation) {
+            case "IsDuplicate":
+                await LogStuff(
+                    `bruh, ${projectName} is already added! No need to re-add it.`,
+                    "bruh",
+                );
+                break;
+            case "NoLockfile":
+                await LogStuff(
+                    `Error adding ${projectName}: no lockfile present!\nProject's that don't have a lockfile can't be added to the list, and if you add them manually by editing the text file we'll remove them on next launch.\nWe NEED a lockfile to work with your project!`,
+                    "error",
+                );
+                break;
+            case "NoName":
+                await LogStuff(
+                    `Error adding ${projectName}: no name!\nSee how the project's name is missing? We can't work with that, we need a name to identify the project.\nPlease set "name" in your package file to something valid.`,
+                    "error",
+                );
+                break;
+            case "NoVersion":
+                await LogStuff(
+                    `Error adding ${projectName}: no version!\nWhile not too frequently used, we internally require your project to have a version field.\nPlease set "version" in your package file to something valid.`,
+                    "error",
+                );
+                break;
+            case "NoPkgFile":
+                await LogStuff(
+                    `Error adding ${projectName}: no package file!\nIs this even the path to a JavaScript project? No package.json, no deno.json; not even go.mod or cargo.toml found.`,
+                    "error",
+                );
+                break;
+            case "NotFound":
+                await LogStuff(
+                    `The specified path was not found. Check for typos or if the project was moved.`,
+                    "error",
+                );
+                break;
+        }
+        return;
+    }
+
+    if (env.runtime === "deno") {
+        await LogStuff(
+            // says 'good choice' because it's the same runtime as F*ckingNode. its not a real opinion lmao
+            // idk whats better, deno or bun. i have both installed, i could try. one day, maybe.
+            `This project uses the Deno runtime (good choice btw). Keep in mind it's not *fully* supported *yet*.`,
+            "bruh",
+            "italic",
+        );
+    }
+    if (env.runtime === "bun") {
+        await LogStuff(
+            `This project uses the Bun runtime. Keep in mind it's not *fully* supported *yet*.`,
+            "what",
+            "italic",
+        );
+    }
+
+    const workspaces = env.workspaces;
+
+    if (!workspaces || workspaces.length === 0) {
+        await addTheEntry();
+        return;
+    }
+
+    const workspaceString: string[] = [];
+
+    for (const ws of workspaces) {
+        workspaceString.push(await NameProject(ws, "all"));
+    }
+
+    const addWorkspaces = await LogStuff(
+        `Hey! This looks like a ${I_LIKE_JS.FKN} monorepo. We've found these workspaces:\n\n${
+            workspaceString.join("\n")
+        }.\n\nShould we add them to your list as well, so they're all cleaned?`,
+        "bulb",
+        undefined,
+        true,
+    );
+
+    if (!addWorkspaces) {
+        await addTheEntry();
+        return;
+    }
+
+    const allEntries = [workingEntry, ...workspaces].join("\n") + "\n";
+    await Deno.writeTextFile(GetAppPath("MOTHERFKRS"), allEntries, { append: true });
+
+    await LogStuff(
+        `Added all of your projects. Many mfs less to care about!`,
+        "tick-clear",
+    );
+    return;
+}
+
+/**
+ * Removes a project.
+ *
+ * @async
+ * @param {UnknownString} entry Path to the project.
+ * @returns {Promise<void>}
+ */
+export async function RemoveProject(
+    entry: UnknownString,
+    showOutput: boolean = true,
+): Promise<void> {
+    const workingEntry = await SpotProject(entry).catch(async (e) => {
+        if (e instanceof FknError && e.code === "Project__NonFoundProject") {
+            await LogStuff(
+                `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${entry} (=> ${entry ? ParsePath(entry) : "undefined?"})`,
+                "error",
+            );
+            return null;
+        } else {
+            throw e;
+        }
+    });
+
+    if (!workingEntry) return;
+
+    const list = await GetAllProjects(false);
+    const index = list.indexOf(workingEntry);
+    const name = await NameProject(workingEntry, "name");
+
+    if (!list.includes(workingEntry)) {
+        await LogStuff(
+            `Bruh, that mf doesn't exist yet.\nAnother typo? We took: ${workingEntry}`,
+            "error",
+        );
+        return;
+    }
+
+    if (index !== -1) list.splice(index, 1); // remove only 1st coincidence, to avoid issues
+    await Deno.writeTextFile(GetAppPath("MOTHERFKRS"), list.join("\n") + "\n");
+
+    if (list.length > 0 && showOutput === true) {
+        await LogStuff(
+            `I guess ${name} was another "revolutionary cutting edge project" that's now gone, right?`,
+            "tick-clear",
+        );
+        return;
+    } else {
+        if (!showOutput) return;
+        await LogStuff(
+            `Removed ${name}. That was your last project, the list is now empty.`,
+            "moon-face",
+        );
+        return;
+    }
 }
 
 /**
@@ -707,7 +895,7 @@ export async function ParseLockfile(lockfilePath: string): Promise<unknown> {
 }
 
 /**
- * Tries to spot the given project name inside of the project list, returning its root path. If not found, throws an error. It also works when you pass a path, parsing it to handle `--self` and relative paths.
+ * Tries to spot the given project name inside of the project list, returning its root path. If not found, returns the parsed path. It also works when you pass a path, parsing it to handle `--self` and relative paths.
  *
  * @export
  * @async
@@ -741,10 +929,7 @@ export async function SpotProject(name: UnknownString): Promise<string> {
     }
 
     if (CheckForPath(workingProject)) {
-        throw new FknError(
-            "Generic__NonAddedProject",
-            `'${name.trim()}' (=> '${workingProject}') exists but is not an added project.`,
-        );
+        return workingProject;
     } else {
         throw new FknError("Project__NonFoundProject", `'${name.trim()}' (=> '${toSpot}') does not exist.`);
     }

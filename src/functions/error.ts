@@ -64,9 +64,6 @@ export class FknError extends Error {
                 this.hint =
                     `Your project's main file (package.json, deno.json, go.mod, etc.) is unparsable, or is missing basic fields ("name" and "version" on JS/Cargo, "go" and "module" on Golang).\nCheck for typos or syntax errors. If you're sure the file is correct, please open an issue on GitHub (if everything's right, it might be a bug with our interop layer).`;
                 break;
-            case "Generic__NonAddedProject":
-                this.hint = `A project must be added to your list (via 'manager add <path>' or 'fkadd <path>') so we can work with it.`;
-                break;
             case "Interop__CannotRunJsLike":
                 this.hint =
                     `Non-JS environments do not have an equivalent to "npm run" or "yarn run" tasks, so we can't execute that task. To avoid undesired behavior, we stopped execution. Please remove the setting key from this fknode.yaml that's causing the error.`;
