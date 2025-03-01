@@ -1,10 +1,7 @@
 # stuff i don't want to commit
-.command
 **.ignore.*
 # compiled executable
 dist/**
-# .ps1 and .sh installers
-scripts/new/**
 # NixOS builds
 result/
 result
