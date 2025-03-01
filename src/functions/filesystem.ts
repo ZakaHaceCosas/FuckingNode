@@ -1,6 +1,5 @@
 import { join, normalize } from "@std/path";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
-import { DEBUG_LOG } from "./error.ts";
 
 /**
  * Returns `true` if a given path exists, `false` if otherwise.
@@ -87,7 +86,6 @@ export function ParsePath(target: UnknownString): string {
  * @returns {string[]} Your `string[]`.
  */
 export function ParsePathList(target: UnknownString): string[] {
-    DEBUG_LOG(target);
     if (!StringUtils.validate(target)) return [];
 
     return StringUtils

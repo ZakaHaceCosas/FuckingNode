@@ -25,6 +25,7 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 - Fixed Git utility unable to handle newly created repositories (`GetBranches()`).
 - Fixed Git utility unable to handle repos with no files added for commit.
 - Fixed `fkadd` unable to add a project because of a regression (validate project before adding -> `GetProjectEnvironment` -> project's not added -> error).
+- Fixed `-v` and other flags not working.
 
 ## V3 Release Candidate (4)
 

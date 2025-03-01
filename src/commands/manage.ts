@@ -16,7 +16,7 @@ async function ListProjects(
     ignore: "limit" | "exclude" | false,
 ): Promise<void> {
     const list = await GetAllProjects(ignore);
-    DEBUG_LOG("FULL LIST", list);
+    DEBUG_LOG("FULL PROJECT LIST", list);
     if (list.length === 0) {
         if (ignore === "limit") {
             await LogStuff(

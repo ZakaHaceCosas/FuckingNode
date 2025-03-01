@@ -6,7 +6,7 @@ import { ColorString, LogStuff } from "../../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject, UnderstandProjectProtection } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
 import type { ProjectEnvironment, SUPPORTED_GLOBAL_LOCKFILE } from "../../types/platform.ts";
-import { DEBUG_LOG, FknError } from "../../functions/error.ts";
+import { FknError } from "../../functions/error.ts";
 import { Git } from "../../functions/git.ts";
 import type { tRESULT } from "../clean.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
@@ -226,8 +226,6 @@ export async function PerformCleanup(
     const motherfuckerInQuestion = ParsePath(projectInQuestion);
     const projectName = ColorString(await NameProject(motherfuckerInQuestion, "name"), "bold");
     const workingEnv = await GetProjectEnvironment(motherfuckerInQuestion);
-
-    DEBUG_LOG("ENV @@ PerformCleanup", workingEnv);
 
     const { doClean, doDestroy, doLint, doPrettify, doUpdate } = UnderstandProjectProtection(workingEnv.settings, {
         update: shouldUpdate,

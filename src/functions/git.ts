@@ -4,7 +4,7 @@ import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, SpotProject } from "../functions/projects.ts";
 import { FULL_NAME } from "../constants.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { DEBUG_LOG, FknError } from "./error.ts";
+import { FknError } from "./error.ts";
 
 async function __isRepo(path: string) {
     try {
@@ -107,8 +107,6 @@ export const Git = {
         try {
             const path = await SpotProject(project);
             const toAdd = Array.isArray(add) ? add : add === "none" ? [] : add === "all" ? ["."] : [];
-
-            DEBUG_LOG("Files to add:", toAdd);
 
             if (toAdd.length > 0) {
                 const addOutput = await Commander(

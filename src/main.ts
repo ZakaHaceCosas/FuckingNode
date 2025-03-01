@@ -102,13 +102,14 @@ async function init() {
 const flags = Deno.args.map((arg) =>
     StringUtils.normalize(arg, {
         preserveCase: true,
-        strict: true,
+        strict: false,
         stripCliColors: true,
     })
 );
 
 export const __FKNODE_SHALL_WE_DEBUG = flags.some((s) => StringUtils.normalize(s) === "fkndbg");
 DEBUG_LOG("Initialized __FKNODE_SHALL_WE_DEBUG constant (ENTRY POINT)");
+DEBUG_LOG("ARGS", flags)
 
 if (!StringUtils.validate(flags[0])) {
     try {
