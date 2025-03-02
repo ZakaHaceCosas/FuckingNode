@@ -59,10 +59,11 @@ get_latest_release_url() {
         sed 's/"browser_download_url": "//')
 
     if [ -z "$URL" ]; then
-        echo "No matching file found for $platform_arch."
+        echo "No matching file found for $platform_arch. This is likely our fault for not properly naming executables, please raise an issue."
         exit 1
     fi
-    echo "Fetched."
+
+    echo "Fetched successfully."
     echo "$URL"
 }
 
@@ -70,7 +71,7 @@ get_latest_release_url() {
 install_app() {
     local url=$1
     echo "Downloading..."
-    mkdir -p "$INSTALL_DIR"
+    sudo mkdir -p "$INSTALL_DIR"
     curl -L "$url" -o "$EXE_PATH"
     echo "Downloaded successfully to $EXE_PATH"
 }
@@ -105,10 +106,10 @@ create_shortcuts() {
         cmd=${commands[$name]}
         script_path="$INSTALL_DIR/$name.sh"
 
-        echo "#!/bin/bash" >"$script_path"
-        echo "\"\$(dirname \"\$0\")/$CLI_NAME\" $cmd \"\$@\"" >>"$script_path"
+        echo "#!/bin/bash" | sudo tee "$script_path" >/dev/null
+        echo "\"\$(dirname \"\$0\")/$CLI_NAME\" $cmd \"\$@\"" | sudo tee -a "$script_path" >/dev/null
 
-        chmod +x "$script_path"
+        sudo chmod +x "$script_path"
 
         echo "Shortcut created successfully at $script_path"
     done
@@ -124,24 +125,42 @@ add_app_to_path() {
     fi
 
     # check if it's already in PATH
-    if echo "$PATH" | grep -q "$INSTALL_DIR"; then
+    if [[ ":$PATH:" == *":$INSTALL_DIR:"* ]]; then
         echo "$INSTALL_DIR is already in PATH."
         return
     fi
 
-    # add to PATH
-    echo "export PATH=\"$INSTALL_DIR:\$PATH\"" >>~/.bash_profile
-    # ensure the new PATH is applied immediately
-    source ~/.bash_profile
-    # do the same with bashrc
-    echo "export PATH=\"$INSTALL_DIR:\$PATH\"" >>~/.bashrc
-    source ~/.bashrc
-    echo "Successfully added $INSTALL_DIR to PATH."
+    # define target files
+    FILES=("$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.profile")
+
+    # append to each file if it exists and doesn't already contain the entry
+    for file in "${FILES[@]}"; do
+        if [ -f "$file" ]; then
+            if ! grep -q "export PATH=\"$INSTALL_DIR:\$PATH\"" "$file"; then
+                echo "export PATH=\"$INSTALL_DIR:\$PATH\"" >>"$file"
+                MODIFIED=true
+            else
+                echo "$INSTALL_DIR is already in $file."
+            fi
+        fi
+    done
+
+    # apply changes if any file was modified
+    if [ "$MODIFIED" = true ]; then
+        source "$HOME/.profile" 2>/dev/null
+        source "$HOME/.bashrc" 2>/dev/null
+        source "$HOME/.bash_profile" 2>/dev/null
+        echo "Successfully added $INSTALL_DIR to PATH."
+    else
+        echo "No config files were modified."
+    fi
 }
 
 # installer itself
 installer() {
     echo "Hi! We'll install $STYLED_NAME for you. Just a sec!"
+    echo "Please note we'll use sudo a lot (many files to be created)"
+    echo "They're all found at $INSTALL_DIR."
     URL=$(get_latest_release_url)
     install_app "$URL"
     create_shortcuts
