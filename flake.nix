@@ -8,9 +8,9 @@
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      version = "2.2.1";
+      version = "3.0.0";
       downloadUrl = "https://github.com/ZakaHaceCosas/FuckingNode/releases/download/${version}/FuckingNode-linux_x86_64";
-      sha256 = "16k9q2wq3j5qwk3dpbs1059wrd017wcbxbh7p7a6yzlg50apxc5v";
+      sha256 = "0ic450gla6zhbprnjxx5dfqrgd9xn4adkwvfzr95z7139wzv5xb0";
 
       pkgs = import nixpkgs {
         inherit system;

@@ -6,6 +6,12 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] (Unreleased)
+
+### Fixed
+
+- Fixed the app not letting you add projects with a `bun.lockb` instead of a `bun.lock` lockfile.
+
 ## [3.0.0] (02-03-2025)
 
 This release officially elevates the status of FuckingNode from "cool side project" to "main project". A lot of new features were added, a lot of bugs were fixed, and the CLI feels overall more polished.
