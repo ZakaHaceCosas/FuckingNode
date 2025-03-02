@@ -54,7 +54,7 @@ ARCH=$(get_platform_arch)
 
 # get url
 get_latest_release_url() {
-    echo "Fetching latest release for $ARCH from GitHub..."
+
     URL=$(curl -s $BASE_URL |
         grep -o '"browser_download_url": "[^"]*' |
         grep "$ARCH" |
@@ -65,16 +65,18 @@ get_latest_release_url() {
         exit 1
     fi
 
-    echo "Fetched successfully."
     echo "$URL"
 }
 
 # install
 install_app() {
+    echo "Fetching latest release for $ARCH from GitHub..."
     local url=$(get_latest_release_url)
+    echo "Fetched successfully."
     echo "Downloading..."
     sudo mkdir -p "$INSTALL_DIR"
-    curl -L "$url" -o "$EXE_PATH"
+    sudo curl -L "$url" -o "$EXE_PATH"
+    sudo chmod +x $EXE_PATH
     echo "Downloaded successfully to $EXE_PATH"
 }
 
@@ -106,7 +108,7 @@ create_shortcuts() {
 
     for name in "${!commands[@]}"; do
         cmd=${commands[$name]}
-        script_path="$INSTALL_DIR/$name.sh"
+        script_path="$INSTALL_DIR/$name" # (.sh)
 
         echo "#!/bin/bash" | sudo tee "$script_path" >/dev/null
         echo "\"\$(dirname \"\$0\")/$CLI_NAME\" $cmd \"\$@\"" | sudo tee -a "$script_path" >/dev/null
