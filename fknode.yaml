@@ -1,10 +1,9 @@
 # this is the real config for this repo
 # for learning about this, head to https://zakahacecosas.github.io/FuckingNode/manual/fknode-yaml
-divineProtection: ["prettifier", "linter"]
 destroy:
     intensities: ["*"]
     targets:
         - "dist"
 commitActions: true
 commitMessage: "Maintenance tasks (automated by FuckingNode itself)" # lol
-commitCmd: "test"
+commitCmd: "good"

@@ -8,9 +8,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [3.0.1] (Unreleased)
 
+### Changed
+
+- Now some error messages were made more descriptive.
+- Now `commitCmd` shows its output.
+
 ### Fixed
 
 - Fixed the app not letting you add projects with a `bun.lockb` instead of a `bun.lock` lockfile.
+- Fixed `fkcommit` allowing to commit when no files are added.
+- Fixed installation attempts that fail because of a missing package manager not explaining what's up.
+
+### Removed
+
+- Removed (as expected) V2 to V3 config migrator, for the codebase to be cleaner.
 
 ## [3.0.0] (02-03-2025)
 

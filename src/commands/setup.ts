@@ -8,10 +8,10 @@ import { parse as parseJsonc } from "@std/jsonc";
 import { SETUPS, VISIBLE_SETUPS } from "./toolkit/setups.ts";
 
 export default async function TheSetuper(params: TheSetuperConstructedParams) {
-    if (!StringUtils.validate(params.setup)) {
+    if (!StringUtils.validate(params.setup) || !StringUtils.validate(params.project)) {
         await LogStuff(StringUtils.table(VISIBLE_SETUPS));
         await LogStuff(
-            "You either didn't provide a project / target setup or provided invalid ones, so up here are all possible setups.",
+            `You didn't provide a ${params.setup ? "project" : "target setup"} or provided an invalid one, so up here are all possible setups.`,
         );
         return;
     }

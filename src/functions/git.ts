@@ -54,9 +54,9 @@ export const Git = {
      * @export
      * @async
      * @param {string} path Path to the repo, or project name.
-     * @returns {Promise<boolean>}
+     * @returns {Promise<boolean | "nonAdded">}
      */
-    CanCommit: async (path: string): Promise<boolean> => {
+    CanCommit: async (path: string): Promise<boolean | "nonAdded"> => {
         try {
             const resolvedPath = await SpotProject(path);
 
@@ -74,6 +74,11 @@ export const Git = {
                 ],
                 false,
             );
+
+            if (
+                (/nothing added to to commit but untracked files present|no changes added to commit/.test(localChanges.stdout ?? ""))
+            ) return "nonAdded";
+
             if (
                 (/nothing to commit|working tree clean/.test(localChanges.stdout ?? "")) ||
                 !localChanges.success // anything that isn't 0 means something is in the tree

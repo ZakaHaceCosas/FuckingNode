@@ -40,12 +40,12 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "manager",
             "add <project path> | remove <project path> | list",
-            "Manages your projects.",
+            "Manages your added projects.",
         ],
         [
             "kickstart",
             "<git-url> [path] [npm | pnpm | yarn | deno | bun]",
-            `Quickly clones a repo inside of [path] (or current working directory/<repo-name> by default), installs deps, setups ${APP_NAME.CASED}, and launches your favorite editor.`,
+            `Quickly clones a repo inside of [path], installs deps, setups ${APP_NAME.CASED}, and launches your favorite editor.`,
         ],
         [
             "commit",

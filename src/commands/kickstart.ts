@@ -34,17 +34,13 @@ async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favEditor"]) {
             break;
     }
 
-    try {
-        await Commander(executionCommand, ["."], false)
-            .then((res) => {
-                if (res.success === false) throw new Error(res.stdout);
-            })
-            .catch((e) => {
-                throw e;
-            });
-    } catch (e) {
-        throw new Error(`Error launching ${IDE}: ${e}`);
-    }
+    await Commander(executionCommand, ["."], false)
+        .then((res) => {
+            if (res.success === false) throw new Error(res.stdout);
+        })
+        .catch((e) => {
+            throw e;
+        });
 }
 
 export default async function TheKickstarter(params: TheKickstarterConstructedParams) {
@@ -133,24 +129,20 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
         "tick-clear",
     );
 
-    try {
-        switch (managerToUse) {
-            case "go":
-                await FkNodeInterop.Installers.Golang(Deno.cwd());
-                break;
-            case "cargo":
-                await FkNodeInterop.Installers.Cargo(Deno.cwd());
-                break;
-            case "bun":
-            case "deno":
-            case "npm":
-            case "pnpm":
-            case "yarn":
-                await FkNodeInterop.Installers.UniJs(Deno.cwd(), managerToUse);
-                break;
-        }
-    } catch (e) {
-        throw new Error(`Error installing dependencies: ${e}`);
+    switch (managerToUse) {
+        case "go":
+            await FkNodeInterop.Installers.Golang(Deno.cwd());
+            break;
+        case "cargo":
+            await FkNodeInterop.Installers.Cargo(Deno.cwd());
+            break;
+        case "bun":
+        case "deno":
+        case "npm":
+        case "pnpm":
+        case "yarn":
+            await FkNodeInterop.Installers.UniJs(Deno.cwd(), managerToUse);
+            break;
     }
 
     const favEditor = (await GetSettings()).favEditor;

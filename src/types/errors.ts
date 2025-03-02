@@ -18,7 +18,8 @@ export type GLOBAL_ERROR_CODES =
     | "Unknown__CleanerTask__Update"
     | "Commit__Fail__CommitCmd"
     | "Git__IsRepoError"
-    | "Internal__UnparsablePath";
+    | "Internal__UnparsablePath"
+    | "Generic__MissingRuntime";
 
 /**
  * All possible project validation error codes.

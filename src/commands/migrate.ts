@@ -82,11 +82,7 @@ async function handler(
         }
 
         await LogStuff("Installing modules with the desired manager (5/5)...", "working");
-        try {
-            await FkNodeInterop.Installers.UniJs(env.root, to);
-        } catch (e) {
-            throw new Error(`New installation threw an error: ${e}`);
-        }
+        await FkNodeInterop.Installers.UniJs(env.root, to);
     } catch (e) {
         await LogStuff(`Migration threw an: ${e}`, "error");
     }

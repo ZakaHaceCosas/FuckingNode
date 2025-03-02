@@ -4,7 +4,7 @@ import type { TheCommitterConstructedParams } from "./constructors/command.ts";
 import { Commander } from "../functions/cli.ts";
 import { Git } from "../functions/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { FknError } from "../functions/error.ts";
+import { DEBUG_LOG, FknError } from "../functions/error.ts";
 import { isDis } from "../constants.ts";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
@@ -20,7 +20,12 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
         );
     }
 
-    if (!(await Git.CanCommit(project))) {
+    const canCommit = await Git.CanCommit(project);
+
+    if (canCommit !== true) {
+        if (canCommit === "nonAdded") {
+            await LogStuff('There are changes, but none of them is added. Use "git add <file>" for that.', "what");
+        }
         await LogStuff("Nothing to commit, sir!", "tick");
         return;
     }
@@ -93,12 +98,14 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
 
     if (!confirmation) return;
 
+    DEBUG_LOG(commitCmd);
+
     // run their commitCmd
     if (commitCmd !== "disable") {
         const commitCmdOutput = await Commander(
             env.commands.run[0],
             [env.commands.run[1], commitCmd],
-            false,
+            true,
         );
 
         if (!commitCmdOutput.success) {
