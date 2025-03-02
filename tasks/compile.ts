@@ -6,9 +6,9 @@ function CompileApp(): void {
         [string, string]
     > = {
         win64: ["x86_64-pc-windows-msvc", "win64"],
-        darwinArm: ["aarch64-apple-darwin", "macOs_arm"],
+        darwinArm: ["aarch64-apple-darwin", "mac_os_arm"],
         linuxArm: ["aarch64-unknown-linux-gnu", "linux_arm"],
-        darwin64: ["x86_64-apple-darwin", "macOs_x86_64"],
+        darwin64: ["x86_64-apple-darwin", "mac_os_x86_64"],
         linux64: ["x86_64-unknown-linux-gnu", "linux_x86_64"],
     };
 

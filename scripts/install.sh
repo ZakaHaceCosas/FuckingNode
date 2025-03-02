@@ -10,6 +10,7 @@ STYLED_NAME="F*ckingNode"
 REPO="ZakaHaceCosas/$APP_NAME"
 INSTALL_DIR="/usr/local/$APP_NAME"
 EXE_PATH="$INSTALL_DIR/$CLI_NAME"
+BASE_URL="https://api.github.com/repos/$REPO/releases/latest"
 
 # get where we are so it knows what to use
 get_platform_arch() {
@@ -17,10 +18,10 @@ get_platform_arch() {
     Darwin)
         case "$(uname -m)" in
         arm64)
-            echo "darwinArm"
+            echo "mac_os_arm"
             ;;
         x86_64)
-            echo "darwin64"
+            echo "mac_os_x86_64"
             ;;
         *)
             echo "Unsupported macOS architecture."
@@ -31,10 +32,10 @@ get_platform_arch() {
     Linux)
         case "$(uname -m)" in
         armv7l)
-            echo "linuxArm"
+            echo "linux_arm"
             ;;
         x86_64)
-            echo "linux64"
+            echo "linux_x86_64"
             ;;
         *)
             echo "Unsupported Linux architecture."
@@ -49,17 +50,18 @@ get_platform_arch() {
     esac
 }
 
+ARCH=$(get_platform_arch)
+
 # get url
 get_latest_release_url() {
-    platform_arch=$(get_platform_arch)
-    echo "Fetching latest release for $platform_arch from GitHub..."
-    URL=$(curl -s "https://api.github.com/repos/$REPO/releases/latest" |
+    echo "Fetching latest release for $ARCH from GitHub..."
+    URL=$(curl -s $BASE_URL |
         grep -o '"browser_download_url": "[^"]*' |
-        grep "$platform_arch" |
+        grep "$ARCH" |
         sed 's/"browser_download_url": "//')
 
     if [ -z "$URL" ]; then
-        echo "No matching file found for $platform_arch. This is likely our fault for not properly naming executables, please raise an issue."
+        echo "No matching file found for $ARCH. This is likely our fault for not properly naming executables, please raise an issue."
         exit 1
     fi
 
@@ -69,7 +71,7 @@ get_latest_release_url() {
 
 # install
 install_app() {
-    local url=$1
+    local url=$(get_latest_release_url)
     echo "Downloading..."
     sudo mkdir -p "$INSTALL_DIR"
     curl -L "$url" -o "$EXE_PATH"
@@ -158,11 +160,10 @@ add_app_to_path() {
 
 # installer itself
 installer() {
-    echo "Hi! We'll install $STYLED_NAME for you. Just a sec!"
+    echo "Hi! We'll install $STYLED_NAME ($ARCH edition) for you. Just a sec!"
     echo "Please note we'll use sudo a lot (many files to be created)"
     echo "They're all found at $INSTALL_DIR."
-    URL=$(get_latest_release_url)
-    install_app "$URL"
+    install_app
     create_shortcuts
     add_app_to_path
     echo "Installed successfully! Restart your terminal for it to work."
