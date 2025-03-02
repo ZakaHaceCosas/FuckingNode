@@ -56,10 +56,11 @@ V3 has not received yet a stable release. However, an unstable release candidate
 - Now you can pass the `--fkn-dbg` flag to enable debug mode. It will output (in some places only) debug logs meant for developers.
 - Now internal ENV-related checks (what your system is and whether if internal files are present or not) are more reliable.
 - Now error message for non specified project is more clear and up to date.
-- Now some base path-related methods (path existence checking, path parsing, internal path getting, project lockfile resolving...) are synchronous. This should not affect performance as the CLI works in a linear way anyways, and makes code shorter and less boilerplate-ish.
+- Now some base methods (path existence checking, path parsing, internal path getting, project lockfile resolving...) are synchronous. This should not visibly affect performance as the CLI works in a linear flow anyway.
 - Now error messages when adding a project & when spotting a project are much more detailed.
 - Now when bulk adding workspaces from `manager add`, only one call to `writeTextFile` will be made.
 - Now `settings` will show, besides your current settings, their key name so you know what to change.
+- Now path handling should be a bit more reliable.
 
 ### Fixed
 
@@ -105,6 +106,7 @@ V3 has not received yet a stable release. However, an unstable release candidate
 - Fixed verbose logging making EVERYTHING hidden when running hard cleanup, instead of hiding just what should be considered verbose.
 - Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
 - Fixed temp DIR used for hard cleanup not being removed.
+- Fixed the annoying "`<project>` has an invalid fknode.yaml!" warning; now we'll silently add a comment to the file.
 
 ### Removed
 
