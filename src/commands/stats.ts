@@ -55,7 +55,7 @@ export default async function TheStatistics(target: UnknownString) {
 
     if (env.manager === "go" || env.manager === "cargo") return;
 
-    await LogStuff("Let's see how does your project compare to the recommended community standards.", "chart");
+    await LogStuff("Let's see how does your project compare to the Recommended Community Standards.", "chart");
 
     switch (env.manager) {
         case "bun":
@@ -121,7 +121,7 @@ export default async function TheStatistics(target: UnknownString) {
             return;
         }
         case "deno": {
-            await LogStuff("TODO");
+            await LogStuff("Checking deno project files isn't supported yet. It's planned to be added real soon."); // (TODO)
             return;
         }
     }

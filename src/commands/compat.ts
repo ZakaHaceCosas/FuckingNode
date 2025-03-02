@@ -41,9 +41,9 @@ const releaseCompatibility = [
 ];
 
 const migrateCompatibility = [
-    { From: "NodeJS", To: "Deno", Supported: labels.n },
+    { From: "NodeJS", To: "Deno", Supported: labels.y },
     { From: "NodeJS", To: "Bun", Supported: labels.y },
-    { From: "Deno", To: "NodeJS", Supported: labels.n },
+    { From: "Deno", To: "NodeJS", Supported: labels.y },
     { From: "Bun", To: "NodeJS", Supported: labels.y },
     { From: "---", To: "---", Supported: "---" },
     { From: "NodeJS / npm", To: "pnpm / yarn", Supported: labels.y },

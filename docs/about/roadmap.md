@@ -55,17 +55,20 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 ### Version 3.1
 
-- [ ] Better migration feature.
+- [ ] Better `migrate` feature.
     - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
 - [ ] Stabilize `audit` feature and support it everywhere NodeJS.
   - [ ] Stabilize it
-      - [ ] Fix known issues (see TODO.md at repository's `v3` branch).
+      - [ ] Fix known issues (see TODO.md at the repository).
       - [ ] Expand vector string lists.
   - [x] Support it
       - [x] pnpm
       - [x] yarn
 - [ ] Extend the FuckingNode Interop Layer
     - [ ] Auditer (this is a bit special, you'll see what we mean soon).
+- [ ] Support `stats`' Recommended Community Standards across:
+    - [ ] Deno
+    - [ ] Cargo
 
 ---
 
