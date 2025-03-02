@@ -24,6 +24,7 @@ import type { TheCleanerConstructedParams } from "./commands/constructors/comman
 import { RunScheduledTasks } from "./functions/schedules.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { CleanupProjects } from "./functions/projects.ts";
+import { LaunchWebsite } from "./functions/http.ts";
 
 // error handler for v2 -> v3 migration
 // TODO: remove when we get to 3.1
@@ -332,6 +333,9 @@ async function main(command: string) {
                     "warn",
                     "bright-yellow",
                 );
+                break;
+            case "sokoballs":
+                await LaunchWebsite("https://tenor.com/view/sokora-dunk-ice-skate-ice-dunk-balling-gif-7665972654807661282?quality=lossless");
                 break;
             default:
                 await TheHelper({ query: flags[1] });
