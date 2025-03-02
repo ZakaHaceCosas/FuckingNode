@@ -75,7 +75,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "upgrade",
             null,
-            "Checks for updates.",
+            "Checks for updates, and installs them if present.",
         ],
         [
             "about",
@@ -247,7 +247,7 @@ export default async function TheHelper(params: TheHelperConstructedParams) {
         [
             "upgrade",
             null,
-            "Checks for updates.",
+            "Checks for updates, and installs them if present.",
         ],
     ]);
     const ABOUT_OPTIONS = formatCmd([

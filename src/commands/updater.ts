@@ -1,6 +1,6 @@
 import { compare, parse } from "@std/semver";
 import { FetchGitHub } from "../functions/http.ts";
-import { RELEASE_URL, VERSIONING } from "../constants.ts";
+import { LOCAL_PLATFORM, RELEASE_URL, VERSIONING } from "../constants.ts";
 import type { GITHUB_RELEASE } from "../types/misc.ts";
 import { GetDateNow } from "../functions/date.ts";
 import type { TheUpdaterConstructedParams } from "./constructors/command.ts";
@@ -8,6 +8,8 @@ import { ColorString, LogStuff, StringifyYaml } from "../functions/io.ts";
 import { parse as parseYaml } from "@std/yaml";
 import { GetAppPath } from "../functions/config.ts";
 import type { CF_FKNODE_SCHEDULE } from "../types/config_files.ts";
+import { Commander } from "../functions/cli.ts";
+import { JoinPaths } from "../functions/filesystem.ts";
 
 async function TellAboutUpdate(newVer: string): Promise<void> {
     await LogStuff(
@@ -72,6 +74,22 @@ export default async function TheUpdater(params: TheUpdaterConstructedParams): P
         return;
     } else {
         await TellAboutUpdate(latestVer);
-        return;
+        if (!params.install) return;
+        const filename = LOCAL_PLATFORM.SYSTEM === "windows" ? "install.ps1" : "install.sh";
+        const res = await fetch(
+            LOCAL_PLATFORM.SYSTEM === "windows"
+                ? "https://zakahacecosas.github.io/FuckingNode/install.ps1"
+                : "https://zakahacecosas.github.io/FuckingNode/install.sh",
+        );
+
+        const buffer = await res.arrayBuffer();
+
+        const path = Deno.makeTempDirSync({ prefix: "UPDATE-SH" });
+        Deno.writeFileSync(JoinPaths(path, filename), new Uint8Array(buffer));
+
+        await Commander(
+            LOCAL_PLATFORM.SYSTEM === "windows" ? "iex" : "bash",
+            [JoinPaths(path, filename)],
+        );
     }
 }

@@ -249,7 +249,7 @@ async function main(command: string) {
             case "upgrade":
                 await LogStuff(`Currently using ${ColorString(FULL_NAME, "green")}`);
                 await LogStuff("Checking for updates...");
-                await TheUpdater({ silent: false });
+                await TheUpdater({ silent: false, install: true });
                 break;
             case "about":
                 await TheAbouter();

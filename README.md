@@ -94,7 +94,7 @@ You can now either:
 
 ## Updates
 
-We auto-check for updates once every few days to tell you about new versions, and have an `upgrade` command so you can manually check for them. To update the CLI, simply re-run [your platform's install script](#installation) - all your data will stay in place.
+We auto-check for updates once every few days to tell you about new versions, and have an `upgrade` command so you can update the CLI whenever you want.
 
 ## Documentation
 

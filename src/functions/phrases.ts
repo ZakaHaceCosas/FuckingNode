@@ -6,6 +6,7 @@
  */
 
 import { APP_NAME, I_LIKE_JS } from "../constants.ts";
+import { GetAppPath } from "./config.ts";
 
 const internalJokes = [
     "Dima definitely approves", // indeed he does
@@ -26,12 +27,12 @@ const internalJokes = [
 
 const internalQuotes = [
     "'You are supposed to cool it, not heat it up' - Herpes of Balkan", // i mean, he's right
-    "THE DAY OF Ws - serge", // that was a good day
-    "lmfao - serge", // such a quote is worth a book
-    "am jok - serge", // hes jok
-    "please don't kil - serge",
-    "shork thinking its smol fish crushes goose!!!! - serge",
-    "it's sokover", // from the creators of it's joever (not)
+    "'THE DAY OF Ws' - serge", // that was a good day
+    "'lmfao' - serge", // such a quote is worth a book
+    "'am jok' - serge", // hes jok
+    "'please don't kil' - serge",
+    "'shork thinking its smol fish crushes goose!!!!' - serge",
+    "'it's sokover' - serge", // from the creators of it's joever (not)
 ];
 
 const coolJokes = [
@@ -40,6 +41,7 @@ const coolJokes = [
     "i don't get paid for writing phrases... here's another one",
     `This PC has been running for ${Math.ceil(Deno.osUptime() / 60)} minutes.`,
     "Freedom for Venezuela!",
+    "Freedom for Ukraine!", // (don't misunderstand this sentence being inside a jokes array)
 ];
 
 const devJokes = [
@@ -59,6 +61,14 @@ const devJokes = [
     "rm -rf .git/",
     "rm -rf node_modules/",
     "runs faster than a Roblox server on a saturday",
+    "ALPHA -> BETA -> RELEASE CANDIDATE -> STAY LIKE THAT FOR AGES -> STABLE -> IT BREAKS -> repeat()",
+];
+
+const secretHints = [
+    "F\*ckingProTip: try running with --FKN_DBG next time",
+    "F\*ckingProTip: run 'fkn sokoballs'",
+    "F\*ckingProTip: cleanup supports a '--verbose' flag that shows CLI output in real time from tasks that are being automated",
+    `F\*ckingProTip: critical errors get logged to ${GetAppPath("ERRORS")} in a fairly readable format`,
 ];
 
 const appRelatedJokes = [
@@ -70,10 +80,13 @@ const appRelatedJokes = [
     "fun fact: this started as a .ps1 script i used to automate cleaning of my own node_modules",
     "fun fact: it's not made in node",
     "(we need a better logo)",
+    "Why Go and Rust? No clue",
+    "yes we're gonna keep our branding JS-related even tho we support Rust",
 ];
 
 const brandingJokes = [
-    "Make JS great again!",
+    "Make JavaScript great again!",
+    "Make JavaScript great again! (not like it ever was)",
     `${APP_NAME.CASED}/Deno/Bun, actually`,
     `${I_LIKE_JS.FKN}JSRuntimesInGeneral, actually`,
     `${APP_NAME.CASED}? More like ${I_LIKE_JS.FKN}Cool!`,
@@ -92,4 +105,5 @@ export const phrases = [
     ...appRelatedJokes,
     ...quotes,
     ...internalQuotes,
+    ...secretHints,
 ];

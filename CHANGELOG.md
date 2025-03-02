@@ -6,120 +6,29 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## V3 Release Candidate (5)
+## [3.0.0] (02-03-2025)
 
-This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
+This release officially elevates the status of FuckingNode from "cool side project" to "main project". A lot of new features were added, a lot of bugs were fixed, and the CLI feels overall more polished.
 
-### Changed
-
-- Now path parsing SHOULD BE more reliable. Now unparsable paths will throw a FknError.
-- Now you can use features like commit without adding a project.
-- Now the `something-fucked-up` command is entirely independent from the CLI's functions.
-- Now the `--fkn-dbg` flag is just `fkndbg` and does not need to be a flag at all.
-- Now project list fetching and project settings fetching are sync.
-- Now surrender warning is a bit shorter.
-- (Code) Now types for lockfiles and managers are simpler and make more sense.
-- (Code) Now `good` task doesn't depend on CLI code (JoinPaths, ParsePath).
-
-### Fixed
-
-- Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
-- Fixed the CLI searching for `cargo.toml` instead of `Cargo.toml`
-  - Onto this: Turns out there's no real way to fix casing mismatches in Linux. All we can do is hope for the end user not to use lowercase paths + ensure we don't use them either.
-- Fixed a regression that made kickstart crash after cloning because of stricter "x is not an added project" check.
-- Fixed temp DIR used for hard cleanup not being removed.
-- Fixed Git's error messages being messed up.
-- Fixed Git utility unable to handle newly created repositories (`GetBranches()`).
-- Fixed Git utility unable to handle repos with no files added for commit.
-- Fixed `fkadd` unable to add a project because of a regression (validate project before adding -> `GetProjectEnvironment` -> project's not added -> error).
-- Fixed `-v` and other flags not working.
-- Fixed the annoying "`<project>` has an invalid fknode.yaml!" warning; now we'll silently add a comment to the file.
-
-## V3 Release Candidate (4)
-
-This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
-
-### Changed
-
-- Now internal ENV-related checks (what your system is and whether if internal files are present or not) are more reliable.
-- Now error message for non specified project is more clear and up to date.
-
-## V3 Release Candidate (3)
-
-This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
-
-### Changed
-
-- Now some base path-related methods (path existence checking, path parsing, internal path getting, project lockfile resolving...) are synchronous. This should not affect performance as the CLI works in a linear way anyways, and makes code shorter and less boilerplate-ish.
-- Now the `FnCPF` includes a `perPlatProps` field for platform-specific properties that are important enough to preserve. Currently it only includes the `edition` field of `Cargo.toml > [package]`
-
-### Fixed
-
-- Fixed a newly introduced issue that caused an infinite loop, hanging the app (`GetProjectEnvironment()` calls `GetProjectSettings()` which calls `NameProject()` which calls `GetProjectEnvironment()` again, infinitely looping).
-- Fixed useless path-related and settings-related function calls, minimally increasing performance.
-- Fixed the CLI adding "NOTE: Invalid fknode.yaml" to files that _already_ have the note.
-- Fixed the `fknode.yaml` validator having a wrong value set (for whatever unknown reason) for intensities, marking valid config files as invalid and ignoring them.
-
-## V3 Release Candidate (2)
-
-This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
-
-### Changed
-
-- Now `settings` will show, besides your current settings, their key name so you know what to change.
-
-### Fixed
-
-- Fixed `settings` not working at all (it was one position behind the CLI's arg array index, thus it never got to properly read commands).
-- Fixed Git not properly adding files for commit, thus failing.
-- Fixed `commit` allowing to be used without anything to commit, thus failing.
-
-## V3 Release Candidate (1)
-
-This is a patch to an unstable version of V3. Full changelog is available [here](#unreleased-upcoming-major-release-rc0).
-
-### Added
-
-- Hard cleanup for Go and Cargo.
-
-### Changed
-
-- Now error messages when adding a project & when spotting a project are much more detailed.
-- Now when bulk adding workspaces from `manager add`, only one call to `writeTextFile` will be made.
-
-### Fixed
-
-- Fixed me forgetting to update the `help` command before releasing Release Candidate 0 (my bad).
-- Fixed goddamn project validation. You'll find a slightly stricter CLI from now own (requiring you, for example, to add a `"name"` field to a project just to add it).
-- Fixed an error being thrown when trying to gitignore stuff in projects without a .gitignore file, it'll now be automatically created.
-- Fixed verbose logging making EVERYTHING hidden when running hard cleanup, instead of hiding just what should be considered verbose.
-- Fixed `release` running Git related commands without being in a Git repo (hence failing).
-
-### Removed
-
-- Removed our standard cleanup task from `commit` and `release`. Sorry, but they were for whatever reason more problematic than what they should be.
-
-## Unreleased (upcoming major release) (rc0)
-
-V3 has not received yet a stable release. However, an unstable release candidate including all of these changes (and some known issues) exists. See the Releases tab at this repository for more info.
+Acknowledgements to [@MrSerge01](https://github.com/MrSerge01) and [@dimkauzh](https://github.com/dimkauzh) for helping out behind the cameras.
 
 ### Breaking changes for v3
 
-- **Schedule and update files won't work:** We now use a different date format.
 - **Order of `clean` arguments swapped:** It's now `clean <project | "--"> <intensity | "--"> [...flags]` instead of `clean <intensity | "--"> <project | "--"> [...flags]`. This was made so the command makes more sense. E.g., `clean my-project hard`.
-- **User settings will be reset once:** Some internal breaking changes force us to do this. This'll only happen once and won't reset your project list.
+- **User settings, schedules, and update timestamps will reset once:** Some internal breaking changes force us to do this. This'll only happen once and won't reset your project list.
 
 ### Added
 
-- **Cross-platform support** - Golang and Rust projects can now benefit from FuckingNode (just as with Deno/Bun, unbridgeable features won't work but won't interrupt the flow either). While compatibility is more limited, it's better than nothing.
+- Added a new logo.
+- Added **cross-platform support** - Golang and Rust projects can now benefit from FuckingNode (just as with Deno/Bun, unbridgeable features won't work but won't interrupt the flow either). While compatibility is more limited, it's better than nothing.
   - Added a new `export <project>` command to export a project's FnCPF (an internal "file" used for interoperability purposes). If something's not working, it _might_ help out, as it'll show whether we're correctly reading your project's info or not.
-- Added a **new command** `release`. Automatically runs our typical cleanup & maintenance automation, but also bumps SemVer version from your package file, commits your changes, creates a Git tag, pushes to mainstream, and **automatically publishes to `npm` or `jsr`**, from a single command.
+- Added a **new command** `release`. Automatically runs a task of your choice, bumps SemVer version from your package file, commits your changes, creates a Git tag, pushes to mainstream, and **automatically publishes to `npm` or `jsr`**, from a single command.
   - `dry-run` and other options are available to prevent Git commit and npm/jsr publish tasks from running, if desired.
-  - The process is 90-100% automated, however you'll have to move your hands in some cases (we still save you some time with this addition :wink:):
+  - While the process is fully automated you'll still have to move your hands in these cases (we still save you time with this addition :wink:):
     - Always when publishing to JSR, as you're required to click once in their web UI to authorize the publishing.
-    - When publishing to npm and have 2FA enabled and required for publishing.
+    - When publishing to npm having 2FA enabled and required for publishing.
   - `publish` is allowed as an alias to the command.
-- Added a **new command** `commit (message) [branch] [--push]` to run FuckingNode's maintenance task and any other task of your choice before committing, and making the commit only if those tasks succeed.
+- Added a **new command** `commit (message) [branch] [--push]` to run any task of your choice before committing, and making the Got commit only if that tasks succeeds.
 - Added a **new command** `surrender (project) [message] [alternative] [learn-more-url] [--github]` to deprecate a project (automatically add a deprecation notice, update dependencies one last time, commit and push all changes, and once the project's pushed, remove locally).
 - Added a **new command** `setup (project) (template)` to automatically add a template `tsconfig.json` or `.gitignore` file, with more templates to be added. `fknode.yaml` templates exist as well, of course.
 - Added a **new command** `something-fucked-up` to completely reset all internal settings except for your project list.
@@ -151,6 +60,13 @@ V3 has not received yet a stable release. However, an unstable release candidate
 - Now `settings change <key>` uses the same keys as the config file itself, so everything makes more sense.
   - Saw [breaking changes](#breaking-changes-for-v3) above? One of the reasons for the config reset is that some keys were renamed so you don't type a lot in the CLI because of this change.
 - Now you can pass the `--fkn-dbg` flag to enable debug mode. It will output (in some places only) debug logs meant for developers.
+- Now internal ENV-related checks (what your system is and whether if internal files are present or not) are more reliable.
+- Now error message for non specified project is more clear and up to date.
+- Now some base methods (path existence checking, path parsing, internal path getting, project lockfile resolving...) are synchronous. This should not visibly affect performance as the CLI works in a linear flow anyway.
+- Now error messages when adding a project & when spotting a project are much more detailed.
+- Now when bulk adding workspaces from `manager add`, only one call to `writeTextFile` will be made.
+- Now `settings` will show, besides your current settings, their key name so you know what to change.
+- Now path handling should be a bit more reliable.
 
 ### Fixed
 
@@ -186,6 +102,17 @@ V3 has not received yet a stable release. However, an unstable release candidate
 - Fixed the CLI not being able to handle projects that were missing the `name` or `version` field in a `package.json`/`deno.json` file.
 - Fixed an edge case where the CLI wouldn't work because it fetched configuration _right before_ having it setup.
 - Fixed hard cleanup not respecting verbose logging setting.
+- Fixed useless path-related and settings-related function calls, minimally increasing performance.
+- Fixed the CLI adding "NOTE: Invalid fknode.yaml" to files that _already_ have the note.
+- Fixed the `fknode.yaml` validator having a wrong value set (for whatever unknown reason) for intensities, marking valid config files as invalid and ignoring them.
+- Fixed Git not properly adding files for commit, thus failing.
+- Fixed `commit` allowing to be used without anything to commit, thus failing.
+- Fixed goddamn project validation. You'll find a slightly stricter CLI from now own (requiring you, for example, to add a `"name"` field to a project just to add it).
+- Fixed an error being thrown when trying to gitignore stuff in projects without a .gitignore file, it'll now be automatically created.
+- Fixed verbose logging making EVERYTHING hidden when running hard cleanup, instead of hiding just what should be considered verbose.
+- Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
+- Fixed temp DIR used for hard cleanup not being removed.
+- Fixed the annoying "`<project>` has an invalid fknode.yaml!" warning; now we'll silently add a comment to the file.
 
 ### Removed
 

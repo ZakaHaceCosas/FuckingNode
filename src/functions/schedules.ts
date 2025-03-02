@@ -38,7 +38,8 @@ export async function RunScheduledTasks() {
             },
         };
         await TheUpdater({
-            silent: false,
+            install: false,
+            silent: true,
         });
         await Deno.writeTextFile(scheduleFilePath, StringifyYaml(updatedScheduleFile));
     }
