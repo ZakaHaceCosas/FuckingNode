@@ -24,7 +24,7 @@ export default async function TheCleaner(params: TheCleanerConstructedParams) {
     }
 
     // read all projects
-    const projects: string[] = await GetAllProjects();
+    const projects: string[] = GetAllProjects();
 
     if (realIntensity === "maxim-only") {
         await PerformMaximCleanup(projects);

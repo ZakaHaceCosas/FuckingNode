@@ -68,6 +68,11 @@ export class FknError extends Error {
                 this.hint =
                     `Non-JS environments do not have an equivalent to "npm run" or "yarn run" tasks, so we can't execute that task. To avoid undesired behavior, we stopped execution. Please remove the setting key from this fknode.yaml that's causing the error.`;
                 break;
+            case "Internal__UnparsablePath":
+                this.hint = `The given path was not found. Check for typos${
+                    LOCAL_PLATFORM.SYSTEM === "windows" ? "." : " or casing mistakes (you're on Linux mate, paths are case-sensitive)."
+                }`;
+                break;
         }
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, FknError);

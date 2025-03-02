@@ -9,7 +9,7 @@ Deno.test({
     name: "interop layer manages cargo pkg file",
     fn: async () => {
         const commonPkgFile = FkNodeInterop.PackageFileParsers.Cargo.CPF(
-            await Deno.readTextFile(JoinPaths(CONSTANTS.INTEROP_PATH, "cargo.toml")),
+            await Deno.readTextFile(JoinPaths(CONSTANTS.INTEROP_PATH, "Cargo.toml")),
             [],
         );
 

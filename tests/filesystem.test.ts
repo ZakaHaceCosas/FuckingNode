@@ -15,7 +15,7 @@ Deno.test({
     name: "path list is parsed correctly",
     fn: () => {
         assertEquals(
-            ParsePathList(`${Deno.cwd().toLowerCase()}\n${JoinPaths(Deno.cwd(), "test")}`),
+            ParsePathList(`${Deno.cwd()}\n${JoinPaths(Deno.cwd(), "test")}\n`),
             [
                 Deno.cwd(),
                 JoinPaths(Deno.cwd(), "test"),

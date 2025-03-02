@@ -15,12 +15,12 @@ Deno.test({
 
 Deno.test({
     name: "returns all projects",
-    fn: async () => {
+    fn: () => {
         const originalReadTextFile = Deno.readTextFile;
         // mock readTextFile
         Deno.readTextFile = mocks.readTextFile();
 
-        const projects = await GetAllProjects();
+        const projects = GetAllProjects();
         assertEquals(projects, [TEST_ONE.root]);
 
         // Restore the original method

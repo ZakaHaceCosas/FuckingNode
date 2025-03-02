@@ -12,13 +12,20 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 
 ### Changed
 
-- (REQUIRES TESTING) Now you can use features like commit without adding a project.
+- Now path parsing SHOULD BE more reliable. Now unparsable paths will throw a FknError.
+- Now you can use features like commit without adding a project.
 - Now the `something-fucked-up` command is entirely independent from the CLI's functions.
 - Now the `--fkn-dbg` flag is just `fkndbg` and does not need to be a flag at all.
+- Now project list fetching and project settings fetching are sync.
+- Now surrender warning is a bit shorter.
+- (Code) Now types for lockfiles and managers are simpler and make more sense.
+- (Code) Now `good` task doesn't depend on CLI code (JoinPaths, ParsePath).
 
 ### Fixed
 
 - Fixed paths being lowercased (Linux File System is case-sensitive, so this behavior breaks the app).
+- Fixed the CLI searching for `cargo.toml` instead of `Cargo.toml`
+  - Onto this: Turns out there's no real way to fix casing mismatches in Linux. All we can do is hope for the end user not to use lowercase paths + ensure we don't use them either.
 - Fixed a regression that made kickstart crash after cloning because of stricter "x is not an added project" check.
 - Fixed temp DIR used for hard cleanup not being removed.
 - Fixed Git's error messages being messed up.
@@ -26,6 +33,7 @@ This is a patch to an unstable version of V3. Full changelog is available [here]
 - Fixed Git utility unable to handle repos with no files added for commit.
 - Fixed `fkadd` unable to add a project because of a regression (validate project before adding -> `GetProjectEnvironment` -> project's not added -> error).
 - Fixed `-v` and other flags not working.
+- Fixed the annoying "`<project>` has an invalid fknode.yaml!" warning; now we'll silently add a comment to the file.
 
 ## V3 Release Candidate (4)
 

@@ -23,10 +23,10 @@ import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
  * @export
  * @async
  * @param {false | "limit" | "exclude"} ignored If "limit", only ignored projects are returned. If "exclude", only projects that aren't ignored are returned.
- * @returns {Promise<string[]>} The list of projects.
+ * @returns {string[]} The list of projects.
  */
-export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Promise<string[]> {
-    const content = await Deno.readTextFile(GetAppPath("MOTHERFKRS"));
+export function GetAllProjects(ignored?: false | "limit" | "exclude"): string[] {
+    const content = Deno.readTextFileSync(GetAppPath("MOTHERFKRS"));
     DEBUG_LOG("RAW LIST", content);
     const list = ParsePathList(content);
     const cleanList = list.filter((p) => CheckForPath(p) === true);
@@ -37,7 +37,7 @@ export async function GetAllProjects(ignored?: false | "limit" | "exclude"): Pro
     const aliveReturn: string[] = [];
 
     for (const entry of cleanList) {
-        const protection = (await GetProjectEnvironment(entry)).settings.divineProtection;
+        const protection = GetProjectSettings(entry).divineProtection;
         if (!protection || protection === "disabled") {
             if (ignored === "exclude") aliveReturn.push(entry);
             continue;
@@ -116,7 +116,7 @@ export async function AddProject(
                 break;
             case "NoPkgFile":
                 await LogStuff(
-                    `Error adding ${projectName}: no package file!\nIs this even the path to a JavaScript project? No package.json, no deno.json; not even go.mod or cargo.toml found.`,
+                    `Error adding ${projectName}: no package file!\nIs this even the path to a JavaScript project? No package.json, no deno.json; not even go.mod or Cargo.toml found.`,
                     "error",
                 );
                 break;
@@ -209,7 +209,7 @@ export async function RemoveProject(
 
     if (!workingEntry) return;
 
-    const list = await GetAllProjects(false);
+    const list = GetAllProjects(false);
     const index = list.indexOf(workingEntry);
     const name = await NameProject(workingEntry, "name");
 
@@ -351,11 +351,10 @@ export function deepMerge(
  * Gets a project's fknode.yaml, parses it and returns it.
  *
  * @export
- * @async
  * @param {string} path Path to the project. Expects an already parsed path.
- * @returns {Promise<FullFkNodeYaml>} A FullFkNodeYaml object.
+ * @returns {FullFkNodeYaml} A `FullFkNodeYaml` object.
  */
-async function GetProjectSettings(path: string): Promise<FullFkNodeYaml> {
+function GetProjectSettings(path: string): FullFkNodeYaml {
     const pathToDivineFile = JoinPaths(path, "fknode.yaml");
     DEBUG_LOG("READING", pathToDivineFile);
 
@@ -364,15 +363,14 @@ async function GetProjectSettings(path: string): Promise<FullFkNodeYaml> {
         return DEFAULT_FKNODE_YAML;
     }
 
-    const content = await Deno.readTextFile(pathToDivineFile);
+    const content = Deno.readTextFileSync(pathToDivineFile);
     const divineContent = parseYaml(content);
     DEBUG_LOG("RAW DIVINE CONTENT", divineContent);
 
     if (!ValidateFkNodeYaml(divineContent)) {
         DEBUG_LOG("\nRESORTING TO DEFAULTS 2\n");
-        await LogStuff(`${pathToDivineFile} is an invalid fknode.yaml!`, "warn");
         if (!content.includes("UPON INTERACTING")) {
-            await Deno.writeTextFile(
+            Deno.writeTextFileSync(
                 pathToDivineFile,
                 `\n# [NOTE (${GetDateNow()}): Invalid file format! (Auto-added by ${APP_NAME.CASED}). DEFAULT SETTINGS WILL BE USED UPON INTERACTING WITH THIS ${I_LIKE_JS.MF.toUpperCase()} UNTIL YOU FIX THIS! Refer to ${APP_URLs.WEBSITE} to learn about how fknode.yaml works.]\n`,
                 {
@@ -443,7 +441,7 @@ export async function ValidateProject(entry: string, existing: boolean): Promise
     // GetProjectEnvironment() already does some validations by itself, so we can just use it here
     const env = await GetProjectEnvironment(workingEntry);
 
-    const list = await GetAllProjects();
+    const list = GetAllProjects();
     const isDuplicate = list.filter(
         (item) => StringUtils.normalize(item) === StringUtils.normalize(workingEntry),
     ).length > (existing ? 1 : 0);
@@ -518,8 +516,8 @@ export async function GetWorkspaces(path: string): Promise<string[]> {
             }
         }
 
-        // Check for Cargo configuration (cargo.toml)
-        const cargoTomlPath = JoinPaths(path, "cargo.toml");
+        // Check for Cargo configuration (Cargo.toml)
+        const cargoTomlPath = JoinPaths(path, "Cargo.toml");
         if (CheckForPath(cargoTomlPath)) {
             const cargoToml = parseToml(await Deno.readTextFile(cargoTomlPath)) as unknown as CargoPkgFile;
             if (cargoToml.workspace && Array.isArray(cargoToml.workspace.members)) {
@@ -593,8 +591,8 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
             lock: JoinPaths(root, "go.sum"),
         },
         rust: {
-            pkg: JoinPaths(root, "cargo.toml"),
-            lock: JoinPaths(root, "cargo.lock"),
+            pkg: JoinPaths(root, "Cargo.toml"),
+            lock: JoinPaths(root, "Cargo.lock"),
         },
     };
 
@@ -644,7 +642,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
     ) {
         throw new FknError(
             "Internal__Projects__CantDetermineEnv",
-            `No main file present (package.json, deno.json, cargo.toml...) at ${ColorString(root, "bold")}.`,
+            `No main file present (package.json, deno.json, Cargo.toml...) at ${ColorString(root, "bold")}.`,
         );
     }
 
@@ -702,12 +700,12 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
             settings,
             main: {
                 path: mainPath,
-                name: "cargo.toml",
+                name: "Cargo.toml",
                 stdContent: PackageFileParsers.Cargo.STD(mainString),
                 cpfContent: PackageFileParsers.Cargo.CPF(mainString, workspaces),
             },
             lockfile: {
-                name: "cargo.lock",
+                name: "Cargo.lock",
                 path: paths.rust.lock,
             },
             runtime: "rust",
@@ -911,7 +909,7 @@ export async function SpotProject(name: UnknownString): Promise<string> {
     }
 
     const workingProject = ParsePath(name);
-    const allProjects = await GetAllProjects();
+    const allProjects = GetAllProjects();
     if (allProjects.includes(workingProject)) {
         return workingProject;
     }
@@ -945,7 +943,7 @@ export async function SpotProject(name: UnknownString): Promise<string> {
 export async function CleanupProjects(): Promise<0 | 1> {
     const listOfRemovals: { project: string; issue: PROJECT_ERROR_CODES }[] = [];
 
-    const allProjects = await GetAllProjects();
+    const allProjects = GetAllProjects();
 
     for (const project of allProjects) {
         const validation = await ValidateProject(project, true);

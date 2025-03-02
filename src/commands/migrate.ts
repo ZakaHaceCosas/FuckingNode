@@ -4,14 +4,14 @@ import { GetDateNow } from "../functions/date.ts";
 import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
-import type { ProjectEnvironment, SUPPORTED_JAVASCRIPT_MANAGER } from "../types/platform.ts";
+import type { MANAGER_JS, ProjectEnvironment } from "../types/platform.ts";
 import type { TheMigratorConstructedParams } from "./constructors/command.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
 import { rename } from "node:fs";
 
 async function handler(
-    from: SUPPORTED_JAVASCRIPT_MANAGER,
-    to: SUPPORTED_JAVASCRIPT_MANAGER,
+    from: MANAGER_JS,
+    to: MANAGER_JS,
     env: ProjectEnvironment,
 ) {
     try {
@@ -131,8 +131,8 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
     ) return;
 
     await handler(
-        workingEnv.manager as SUPPORTED_JAVASCRIPT_MANAGER,
-        desiredManager as SUPPORTED_JAVASCRIPT_MANAGER,
+        workingEnv.manager as MANAGER_JS,
+        desiredManager as MANAGER_JS,
         workingEnv,
     );
 

@@ -3,7 +3,7 @@ import { GetProjectEnvironment, RemoveProject, SpotProject } from "../functions/
 import type { TheSurrendererConstructedParams } from "./constructors/command.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { NameProject } from "../functions/projects.ts";
-import { APP_URLs, FULL_NAME, LOCAL_PLATFORM } from "../constants.ts";
+import { APP_URLs, FULL_NAME } from "../constants.ts";
 import { Git } from "../functions/git.ts";
 import { CheckForPath, JoinPaths } from "../functions/filesystem.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
@@ -57,19 +57,8 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
 
     const message = params.isGitHub ? `> [!CAUTION]\n${bareMessage.split("\n").map((s) => `> ${s}`).join("\n")}\n` : bareMessage;
     console.log("");
-    // internal joke / easter egg, don't mind and don't edit this line
-    const isThatOneGuyWhoAlwaysDeprecatesProjects = StringUtils.validateAgainst(StringUtils.normalize(LOCAL_PLATFORM.USER ?? ""), [
-        "engin",
-        "unel",
-        "fox",
-        "yourlocalfox",
-        "sip",
-        "yourlocalsip",
-    ]) || StringUtils.normalize(project).includes("crytical") || StringUtils.normalize(project).includes("arcos") ||
-        StringUtils.normalize(project).includes("arcticos") || StringUtils.normalize(project).includes("cryticl") ||
-        StringUtils.normalize(project).includes("fyreblitz");
-    const confirmation = isThatOneGuyWhoAlwaysDeprecatesProjects === true ? true : await LogStuff(
-        `(READ BEFORE PROCEEDING) Here's what we'll do:\n- Add anything you didn't commit before into a single commit and push it to the CURRENTLY SELECTED branch\n- Add a note to your project's README (see below) and push that as well\n- Once we're sure all your code is in the repo's upstream, we'll locally delete the code AND node_modules\n${
+    const confirmation = await LogStuff(
+        `(IMPORTANT) Here's what we'll do:\n- Commit ALL UNCOMMITTED changes to the CURRENTLY SELECTED branch AND PUSH them\n- Add a note to your project's README (see below)\n- Once we're sure all your code is pushed, locally DELETE ALL THE PROJECT's FILES\n${
             ColorString("Please confirm one last time that you wish to proceed", "bright-yellow")
         }.\n\n--- MESSAGE TO BE PREPENDED TO README.md ---\n${message}`,
         "heads-up",

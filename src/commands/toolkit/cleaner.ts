@@ -5,7 +5,7 @@ import { BulkRemoveFiles, CheckForPath, JoinPaths, ParsePath } from "../../funct
 import { ColorString, LogStuff } from "../../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject, UnderstandProjectProtection } from "../../functions/projects.ts";
 import type { CleanerIntensity } from "../../types/config_params.ts";
-import type { ProjectEnvironment, SUPPORTED_GLOBAL_LOCKFILE } from "../../types/platform.ts";
+import type { LOCKFILE_GLOBAL, MANAGER_GLOBAL, ProjectEnvironment } from "../../types/platform.ts";
 import { FknError } from "../../functions/error.ts";
 import { Git } from "../../functions/git.ts";
 import type { tRESULT } from "../clean.ts";
@@ -576,11 +576,11 @@ export async function ShowReport(results: tRESULT[]): Promise<void> {
  * @export
  * @async
  * @param {string} path
- * @returns {Promise<SUPPORTED_GLOBAL_LOCKFILE[]>} All lockfiles
+ * @returns {Promise<LOCKFILE_GLOBAL[]>} All lockfiles
  */
-export function ResolveLockfiles(path: string): SUPPORTED_GLOBAL_LOCKFILE[] {
-    const lockfiles: SUPPORTED_GLOBAL_LOCKFILE[] = [];
-    const possibleLockfiles: SUPPORTED_GLOBAL_LOCKFILE[] = [
+export function ResolveLockfiles(path: string): LOCKFILE_GLOBAL[] {
+    const lockfiles: LOCKFILE_GLOBAL[] = [];
+    const possibleLockfiles: LOCKFILE_GLOBAL[] = [
         "pnpm-lock.yaml",
         "package-lock.json",
         "yarn.lock",
@@ -588,7 +588,7 @@ export function ResolveLockfiles(path: string): SUPPORTED_GLOBAL_LOCKFILE[] {
         "bun.lock",
         "deno.lock",
         "go.sum",
-        "cargo.lock",
+        "Cargo.lock",
     ];
     for (const lockfile of possibleLockfiles) {
         if (CheckForPath(JoinPaths(path, lockfile))) lockfiles.push(lockfile);
@@ -600,12 +600,12 @@ export function ResolveLockfiles(path: string): SUPPORTED_GLOBAL_LOCKFILE[] {
  * Names a lockfile using a manager name.
  *
  * @export
- * @param {("npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo")} manager Manager to name
- * @returns {("package-lock.json" | "pnpm-lock.yaml" | "yarn.lock" | "bun.lock" | "deno.lock" | "go.sum" | "cargo.lock")} Lockfile name
+ * @param {MANAGER_GLOBAL} manager Manager to name
+ * @returns {LOCKFILE_GLOBAL} Lockfile name
  */
 export function NameLockfile(
-    manager: "npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo",
-): "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock" | "bun.lock" | "deno.lock" | "go.sum" | "cargo.lock" {
+    manager: MANAGER_GLOBAL,
+): LOCKFILE_GLOBAL {
     switch (manager) {
         case "npm":
             return "package-lock.json";
@@ -620,6 +620,6 @@ export function NameLockfile(
         case "go":
             return "go.sum";
         case "cargo":
-            return "cargo.lock";
+            return "Cargo.lock";
     }
 }

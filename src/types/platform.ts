@@ -55,7 +55,7 @@ export interface DenoPkgFile extends GenericJsPkgFile {
 }
 
 /**
- * Rust `cargo.toml` props, only the ones we need.
+ * Rust `Cargo.toml` props, only the ones we need.
  *
  * @export
  * @interface CargoPkgFile
@@ -104,7 +104,7 @@ interface GenericProjectEnvironment {
      */
     settings: FullFkNodeYaml;
     /**
-     * Main file (`package.json`, `deno.json`, `cargo.toml`...)
+     * Main file (`package.json`, `deno.json`, `Cargo.toml`...)
      */
     main: {
         /**
@@ -116,9 +116,9 @@ interface GenericProjectEnvironment {
         /**
          * Name of the main file.
          *
-         * @type {("package.json" | "deno.json" | "deno.jsonc" | "cargo.toml" | "go.mod")}
+         * @type {("package.json" | "deno.json" | "deno.jsonc" | "Cargo.toml" | "go.mod")}
          */
-        name: "package.json" | "deno.json" | "deno.jsonc" | "cargo.toml" | "go.mod";
+        name: "package.json" | "deno.json" | "deno.jsonc" | "Cargo.toml" | "go.mod";
         /**
          * Contents of the main file (**standard format**).
          *
@@ -145,9 +145,9 @@ interface GenericProjectEnvironment {
         /**
          * Bare name of the lockfile (`package-lock.json`, `deno.lock`, `go.sum`...)
          *
-         * @type {SUPPORTED_GLOBAL_LOCKFILE}
+         * @type {LOCKFILE_GLOBAL}
          */
-        name: SUPPORTED_GLOBAL_LOCKFILE;
+        name: LOCKFILE_GLOBAL;
     };
     /**
      * Where this project is running it, named after the so called JS runtimes.
@@ -158,9 +158,9 @@ interface GenericProjectEnvironment {
     /**
      * Package manager. For Deno and Bun it just says "deno" and "bun" instead of JSR or NPM (afaik Bun uses NPM) to avoid confusion.
      *
-     * @type {SUPPORTED_GLOBAL_MANAGER}
+     * @type {MANAGER_GLOBAL}
      */
-    manager: SUPPORTED_GLOBAL_MANAGER;
+    manager: MANAGER_GLOBAL;
     /**
      * CLI commands for this project.
      */
@@ -168,7 +168,7 @@ interface GenericProjectEnvironment {
         /**
          * Base command.
          */
-        base: "npm" | "pnpm" | "yarn" | "deno" | "bun" | "go" | "cargo";
+        base: MANAGER_GLOBAL;
         /**
          * Exec command(s). `string[]` because it can be, e.g., `pnpm dlx`. Includes base.
          */
@@ -282,7 +282,7 @@ interface DenoEnvironment extends GenericProjectEnvironment {
 interface CargoEnvironment extends GenericProjectEnvironment {
     runtime: "rust";
     manager: "cargo";
-    main: GenericProjectEnvironment["main"] & { name: "cargo.toml" };
+    main: GenericProjectEnvironment["main"] & { name: "Cargo.toml" };
     commands: {
         base: "cargo";
         exec: ["cargo", "run"];
@@ -321,77 +321,19 @@ export type ProjectEnvironment =
     | CargoEnvironment
     | GolangEnvironment;
 
-/**
- * Supported lockfile type that the app recognizes as JS and NodeJS. Full platform support.
- *
- * @export
- */
-export type SUPPORTED_JS_NODE_LOCKFILE =
-    | "package-lock.json"
-    | "pnpm-lock.yaml"
-    | "yarn.lock";
+// lockfile types
+export type LOCKFILE_NODE = "package-lock.json" | "pnpm-lock.yaml" | "yarn.lock";
+export type LOCKFILE_ANTINODE = "deno.lock" | "bun.lockb" | "bun.lock";
+export type LOCKFILE_NON_JS = "Cargo.lock" | "go.sum";
 
-/**
- * Supported lockfile type that the app recognizes as JS but not NodeJS. Partial (high) platform support.
- *
- * @export
- */
-export type SUPPORTED_JS_ANTINODE_LOCKFILE =
-    | "deno.lock"
-    | "bun.lockb"
-    | "bun.lock";
+export type LOCKFILE_JS = LOCKFILE_NODE | LOCKFILE_ANTINODE;
+export type LOCKFILE_GLOBAL = LOCKFILE_JS | LOCKFILE_NON_JS;
 
-/**
- * Supported lockfile type that the app recognizes as not JS. Partial (low) platform support.
- *
- * @export
- */
-export type SUPPORTED_NJS_LOCKFILE =
-    | "cargo.lock"
-    | "go.sum";
-
-/**
- * All supported JavaScript lockfiles. Mid to full platform support.
- *
- * @export
- */
-export type SUPPORTED_JAVASCRIPT_LOCKFILE = SUPPORTED_JS_NODE_LOCKFILE | SUPPORTED_JS_ANTINODE_LOCKFILE;
-
-/**
- * All supported lockfiles. Low to full platform support.
- *
- * @export
- */
-export type SUPPORTED_GLOBAL_LOCKFILE = SUPPORTED_JAVASCRIPT_LOCKFILE | SUPPORTED_NJS_LOCKFILE;
-
-/**
- * Type guard to check if the lockfile is a SUPPORTED_NODE_LOCKFILE.
- *
- * @param lockfile The lockfile to check.
- * @returns True if lockfile is a SUPPORTED_NODE_LOCKFILE, false otherwise.
- */
-export function IsLockfileNodeLockfile(lockfile: string): lockfile is SUPPORTED_JS_NODE_LOCKFILE {
-    return (
-        lockfile === "package-lock.json" ||
-        lockfile === "pnpm-lock.yaml" ||
-        lockfile === "yarn.lock"
-    );
-}
-
-export type NODE_PKG_MANAGERS = "pnpm" | "npm" | "yarn";
-
-export type ANTINODE_PKG_MANAGERS = "deno" | "bun";
-
-export type SUPPORTED_JAVASCRIPT_MANAGER = ANTINODE_PKG_MANAGERS | NODE_PKG_MANAGERS;
-
-/**
- * Package manager commands for supported managers.
- *
- * @export
- */
-export type SUPPORTED_GLOBAL_MANAGER = SUPPORTED_JAVASCRIPT_MANAGER | "cargo" | "go";
-
-// * #### space lol #### * //
+// pkg manager types
+export type MANAGER_NODE = "pnpm" | "npm" | "yarn";
+export type MANAGER_ANTINODE = "deno" | "bun";
+export type MANAGER_JS = MANAGER_NODE | MANAGER_ANTINODE;
+export type MANAGER_GLOBAL = MANAGER_JS | "cargo" | "go";
 
 /**
  * FnCPF dependency.

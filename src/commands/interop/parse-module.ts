@@ -4,7 +4,7 @@
  */
 
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
-import type { CargoPkgFile, DenoPkgFile, FnCPF, GolangPkgFile, NodePkgFile } from "../../types/platform.ts";
+import type { CargoPkgFile, DenoPkgFile, FnCPF, GolangPkgFile, MANAGER_JS, NodePkgFile } from "../../types/platform.ts";
 import { FnCPFInternal } from "../../constants.ts";
 import { FknError } from "../../functions/error.ts";
 import { parse as parseToml } from "@std/toml";
@@ -253,7 +253,7 @@ export const Parsers = {
     },
     NodeBun: {
         STD: internalParsers.NodeBunPkgFile,
-        CPF: (content: string, rt: "npm" | "pnpm" | "yarn" | "bun", ws: string[]): FnCPF => {
+        CPF: (content: string, rt: Exclude<MANAGER_JS, "deno">, ws: string[]): FnCPF => {
             const parsedContent = internalParsers.NodeBunPkgFile(content);
 
             if (!parsedContent.name) {

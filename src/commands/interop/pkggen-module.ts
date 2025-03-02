@@ -74,7 +74,7 @@ export const Generators: {
     Golang: () => {
         throw new Error("Not done yet! (interop/pkg-gen/golang)");
     },
-    /** Generates a `cargo.toml` from a FnCPF. */
+    /** Generates a `Cargo.toml` from a FnCPF. */
     Cargo: (cpf: FnCPF, additionalParams?: object): ExtraProps<CargoPkgFile> => {
         const generatedPkgFile: ExtraProps<CargoPkgFile> = {
             package: {

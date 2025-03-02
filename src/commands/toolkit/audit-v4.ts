@@ -8,8 +8,9 @@
  */
 
 import { StringUtils } from "@zakahacecosas/string-utils";
+import type { MANAGER_NODE } from "../../types/platform.ts";
 
-export function ParseNodeReport(report: string, platform: "npm" | "pnpm" | "yarn") {
+export function ParseNodeReport(report: string, platform: MANAGER_NODE) {
     /**
      * `yarn audit --json` returns something like THIS:
      * ```json

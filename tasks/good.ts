@@ -1,5 +1,5 @@
 import { walk } from "@std/fs/walk";
-import { JoinPaths, ParsePath } from "../src/functions/filesystem.ts";
+import { join } from "@std/path";
 
 console.log("we making this good");
 
@@ -17,7 +17,7 @@ function Run(...args: string[]) {
 }
 
 async function GetAllTsFiles(): Promise<string[]> {
-    const exclude = [ParsePath(JoinPaths(dir, "tests/environment"))];
+    const exclude = [join(dir, "tests/environment")];
     const tsFiles: string[] = [];
 
     for await (
@@ -47,10 +47,10 @@ Run("upgrade"); // ensure we're on latest
 Run("outdated", "--update", "--latest"); // ensure deps are on latest
 
 await Deno.copyFile(
-    JoinPaths(dir, "scripts/install.ps1"),
-    JoinPaths(dir, "docs/install.ps1"),
+    join(dir, "scripts/install.ps1"),
+    join(dir, "docs/install.ps1"),
 ); // ensure Windows install is on latest
 await Deno.copyFile(
-    JoinPaths(dir, "scripts/install.sh"),
-    JoinPaths(dir, "docs/install.sh"),
+    join(dir, "scripts/install.sh"),
+    join(dir, "docs/install.sh"),
 ); // ensure macOS and Linux install are on latest

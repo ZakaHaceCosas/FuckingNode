@@ -8,6 +8,7 @@ import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { NameLockfile, ResolveLockfiles } from "./toolkit/cleaner.ts";
+import type { MANAGER_GLOBAL } from "../types/platform.ts";
 
 async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favEditor"]) {
     let executionCommand: "subl" | "code" | "emacs" | "notepad++" | "codium" | "atom";
@@ -79,10 +80,10 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
     const lockfiles = ResolveLockfiles(Deno.cwd());
 
     if (lockfiles.length === 0) {
-        if (["npm", "pnpm", "yarn", "deno", "bun", "cargo", "go"].includes(StringUtils.normalize(manager ?? ""))) {
+        if (StringUtils.validateAgainst(manager, ["npm", "pnpm", "yarn", "bun", "deno", "cargo", "go"])) {
             await LogStuff(`This project lacks a lockfile. We'll generate it right away!`, "warn");
             await Deno.writeTextFile(
-                JoinPaths(Deno.cwd(), NameLockfile(manager as "npm" | "pnpm" | "yarn" | "bun" | "deno" | "go" | "cargo")),
+                JoinPaths(Deno.cwd(), NameLockfile(manager)),
                 "",
             ); // fix Internal__CantDetermineEnv by adding a fake lockfile
             // the pkg manager SHOULD BE smart enough to ignore and overwrite it
@@ -110,15 +111,15 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
     });
 
     // assume we skipped error
-    const typedProvidedManager = manager?.trim() as "npm" | "pnpm" | "yarn" | "deno" | "bun" | "cargo" | "go" || "";
+    const typedProvidedManager = manager?.trim() as MANAGER_GLOBAL || "";
     const env = await GetProjectEnvironment(Deno.cwd());
 
     const fallbackNodeManager: "pnpm" | "npm" = CommandExists("pnpm") ? "pnpm" : "npm";
 
-    const isNodeManager = (manager: string): manager is "npm" | "pnpm" | "yarn" => ["npm", "pnpm", "yarn"].includes(manager);
+    const isNodeManager = (manager: string) => StringUtils.validateAgainst(manager, ["npm", "pnpm", "yarn"]);
 
     // deno-fmt-ignore
-    const managerToUse: "npm" | "pnpm" | "yarn" | "deno" | "bun" | "go" | "cargo" =
+    const managerToUse: MANAGER_GLOBAL =
             StringUtils.validate(manager)
                 ? (isNodeManager(env.manager) && isNodeManager(typedProvidedManager))
                     ? typedProvidedManager

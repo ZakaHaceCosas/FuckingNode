@@ -15,7 +15,7 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 async function ListProjects(
     ignore: "limit" | "exclude" | false,
 ): Promise<void> {
-    const list = await GetAllProjects(ignore);
+    const list = GetAllProjects(ignore);
     DEBUG_LOG("FULL PROJECT LIST", list);
     if (list.length === 0) {
         if (ignore === "limit") {

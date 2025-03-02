@@ -41,7 +41,7 @@ Deno.test("cool test!!", async () => {
     Deno.readTextFile = mocks.readTextFile();
 
     // do your stuff
-    const projects = await GetAllProjects();
+    const projects = GetAllProjects();
     assertEquals(projects, [TEST_PROJECTS.ONE.ROOT]);
 
     // restore the original implementation at the end

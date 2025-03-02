@@ -14,7 +14,7 @@ export default async function TheAuditer(params: TheAuditerConstructedParams) {
         StringUtils.normalize(project) === "--";
 
     if (shouldAuditAll) {
-        const projects = await GetAllProjects();
+        const projects = GetAllProjects();
         await LogStuff(
             `${APP_NAME.CASED} Audit is only supported for NodeJS projects as of now.`,
             "heads-up",

@@ -1,5 +1,6 @@
 import { join, normalize } from "@std/path";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
+import { FknError } from "./error.ts";
 
 /**
  * Returns `true` if a given path exists, `false` if otherwise.
@@ -49,32 +50,47 @@ export async function CheckForDir(path: string): Promise<
  *
  * @export
  * @param {UnknownString} target The string to parse.
- * @returns {Promise<string>} A string with the parsed path.
+ * @returns {string} A string with the parsed path.
  */
 export function ParsePath(target: UnknownString): string {
     try {
         if (!StringUtils.validate(target)) throw new Error("Target must be (obviously) a string.");
 
-        let workingTarget = target.trim();
-        if (workingTarget.toLowerCase() === "--self") {
-            workingTarget = Deno.cwd();
-        } else {
-            try {
-                workingTarget = Deno.realPathSync(workingTarget);
-            } catch {
-                // this NEEDS to be here for it to work
-            }
+        if (StringUtils.normalize(target) === "--self") {
+            return Deno.cwd();
         }
+
+        let workingTarget: string;
+
+        // if (LOCAL_PLATFORM.SYSTEM === "chad") {
+        //     let unification = `${parse(target).dir}/${parse(target).name}`;
+        //     for (const entry of Deno.readDirSync(parse(target).dir)) {
+        //         if (!(StringUtils.normalize(entry.name) === StringUtils.normalize(parse(target).dir))) continue;
+        //         unification = `${entry}/${parse(target).name}`;
+        //     }
+
+        //     try {
+        //         workingTarget = Deno.realPathSync(unification);
+        //     } catch {
+        //         // fallback
+        //         workingTarget = unification;
+        //     }
+        // } else {
+        try {
+            workingTarget = Deno.realPathSync(target.trim());
+        } catch {
+            // fallback
+            workingTarget = target.trim();
+        }
+        // }
 
         const cleanEntry = normalize(workingTarget);
 
-        if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) {
-            return cleanEntry.slice(0, -1);
-        }
+        if (cleanEntry.endsWith("/") || cleanEntry.endsWith("\\")) return cleanEntry.slice(0, -1);
 
-        return cleanEntry;
+        return cleanEntry.trim();
     } catch (e) {
-        throw new Error(`Error parsing ${target}: ${e}`);
+        throw new FknError("Internal__UnparsablePath", `Error parsing ${target}: ${e}`);
     }
 }
 
