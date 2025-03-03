@@ -1,3 +1,5 @@
+import type { MANAGER_GLOBAL } from "../types/platform.ts";
+
 /**
  * Output of a CLI command called using Commander.
  *
@@ -75,10 +77,10 @@ export async function Commander(
  * Validates if a command exists. Useful to check if the user has some tool installed before running anything. Uses `-v` and `--version` as an arg to whatever command you pass.
  *
  * @export
- * @param {string} cmd
+ * @param {MANAGER_GLOBAL} cmd
  * @returns {boolean}
  */
-export function CommandExists(cmd: string): boolean {
+export function CommandExists(cmd: MANAGER_GLOBAL): boolean {
     try {
         const process = new Deno.Command(cmd, {
             args: ["-v"], // this single line fixed a bug that has been present for at least two months 😭

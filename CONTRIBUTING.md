@@ -66,6 +66,14 @@ async function StartUp() {
 
 Got the idea? Use any method you can think of to ensure your code can be read like a normal text, with the least nesting possible.
 
+### Know where to `switch` and where to `if`
+
+Both statements do the same with one difference: `switch`es are more readable, `if`s are nested one level less. So, which one do we recommend?
+
+The answer is simple: both, depending on (1) the amount of cases that can appear and (2) what makes more sense to use.
+
+Places where _not too many_ cases are possible and/or an `else`/`default` statement would be used, should use `if else` directives, while cases where A LOT of options are possible and/or there isn't a "default" one, should use `switch`.
+
 > Other than that, as long as your code doesn't suck, anything will do.
 
 Thank you so much for contributing. Happy coding!

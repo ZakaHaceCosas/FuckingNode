@@ -152,12 +152,8 @@ function AnalyzeVulnerabilities(vulnerabilities: ApiFetchedIndividualSecurityVul
 async function askQuestion(question: string, isFollowUp: boolean, isReversed: boolean): Promise<"true" | "false"> {
     const formattedQuestion = ColorString(question, isFollowUp ? "bright-blue" : "bright-yellow", "italic");
     const response = await LogStuff(formattedQuestion, undefined, undefined, true);
-    switch (response) {
-        case true:
-            return isReversed ? "false" : "true";
-        case false:
-            return isReversed ? "true" : "false";
-    }
+    if (response) return isReversed ? "false" : "true";
+    return isReversed ? "true" : "false";
 }
 
 /**

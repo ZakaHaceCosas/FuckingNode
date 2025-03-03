@@ -606,20 +606,11 @@ export function ResolveLockfiles(path: string): LOCKFILE_GLOBAL[] {
 export function NameLockfile(
     manager: MANAGER_GLOBAL,
 ): LOCKFILE_GLOBAL {
-    switch (manager) {
-        case "npm":
-            return "package-lock.json";
-        case "pnpm":
-            return "pnpm-lock.yaml";
-        case "yarn":
-            return "yarn.lock";
-        case "bun":
-            return "bun.lock";
-        case "deno":
-            return "deno.lock";
-        case "go":
-            return "go.sum";
-        case "cargo":
-            return "Cargo.lock";
-    }
+    if (manager === "npm") return "package-lock.json";
+    if (manager === "pnpm") return "pnpm-lock.yaml";
+    if (manager === "yarn") return "yarn.lock";
+    if (manager === "bun") return "bun.lock";
+    if (manager === "deno") return "deno.lock";
+    if (manager === "go") return "go.sum";
+    return "Cargo.lock";
 }

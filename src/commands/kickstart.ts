@@ -82,8 +82,11 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
     // TODO: make this into a user setting
     const fallbackNodeManager: "pnpm" | "npm" | null = CommandExists("pnpm") ? "pnpm" : CommandExists("npm") ? "npm" : null;
 
-    // deno-fmt-ignore
-    const managerToUse: MANAGER_GLOBAL | null = CommandExists(initialManager) ? initialManager : CommandExists(env.manager) ? env.manager : fallbackNodeManager;
+    const managerToUse: MANAGER_GLOBAL | null = CommandExists(initialManager)
+        ? initialManager
+        : CommandExists(env.manager)
+        ? env.manager
+        : fallbackNodeManager;
 
     if (!managerToUse) {
         throw new FknError(
@@ -95,24 +98,18 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
     }
 
     await LogStuff(
-        `Installation began using ${managerToUse}. Have a coffee meanwhile!`,
+        `Installation began using ${ColorString(managerToUse, "bold")}. Have a coffee meanwhile!`,
         "tick-clear",
     );
 
-    switch (managerToUse) {
-        case "go":
-            await FkNodeInterop.Installers.Golang(Deno.cwd());
-            break;
-        case "cargo":
-            await FkNodeInterop.Installers.Cargo(Deno.cwd());
-            break;
-        case "bun":
-        case "deno":
-        case "npm":
-        case "pnpm":
-        case "yarn":
-            await FkNodeInterop.Installers.UniJs(Deno.cwd(), managerToUse);
-            break;
+    if (managerToUse === "go") {
+        await FkNodeInterop.Installers.Golang(Deno.cwd());
+    } else if (managerToUse === "cargo") {
+        await FkNodeInterop.Installers.Cargo(Deno.cwd());
+    } else if (
+        StringUtils.validateAgainst(managerToUse, ["bun", "deno", "npm", "pnpm", "yarn"])
+    ) {
+        await FkNodeInterop.Installers.UniJs(Deno.cwd(), managerToUse);
     }
 
     await LaunchUserIDE();

@@ -12,7 +12,6 @@ import { GetAppPath } from "./config.ts";
 import { GetDateNow } from "./date.ts";
 import type { PROJECT_ERROR_CODES } from "../types/errors.ts";
 import { FkNodeInterop } from "../commands/interop/interop.ts";
-import type { tValidColors } from "../types/misc.ts";
 import { Git } from "../functions/git.ts";
 import { internalGolangRequireLikeStringParser } from "../commands/interop/parse-module.ts";
 import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
@@ -89,43 +88,33 @@ export async function AddProject(
     const validation = await ValidateProject(workingEntry, false);
 
     if (validation !== true) {
-        switch (validation) {
-            case "IsDuplicate":
-                await LogStuff(
-                    `bruh, ${projectName} is already added! No need to re-add it.`,
-                    "bruh",
-                );
-                break;
-            case "NoLockfile":
-                await LogStuff(
-                    `Error adding ${projectName}: no lockfile present!\nProject's that don't have a lockfile can't be added to the list, and if you add them manually by editing the text file we'll remove them on next launch.\nWe NEED a lockfile to work with your project!`,
-                    "error",
-                );
-                break;
-            case "NoName":
-                await LogStuff(
-                    `Error adding ${projectName}: no name!\nSee how the project's name is missing? We can't work with that, we need a name to identify the project.\nPlease set "name" in your package file to something valid.`,
-                    "error",
-                );
-                break;
-            case "NoVersion":
-                await LogStuff(
-                    `Error adding ${projectName}: no version!\nWhile not too frequently used, we internally require your project to have a version field.\nPlease set "version" in your package file to something valid.`,
-                    "error",
-                );
-                break;
-            case "NoPkgFile":
-                await LogStuff(
-                    `Error adding ${projectName}: no package file!\nIs this even the path to a JavaScript project? No package.json, no deno.json; not even go.mod or Cargo.toml found.`,
-                    "error",
-                );
-                break;
-            case "NotFound":
-                await LogStuff(
-                    `The specified path was not found. Check for typos or if the project was moved.`,
-                    "error",
-                );
-                break;
+        if (validation === "IsDuplicate") {
+            await LogStuff(`bruh, ${projectName} is already added! No need to re-add it.`, "bruh");
+        } else if (validation === "NoLockfile") {
+            await LogStuff(
+                `Error adding ${projectName}: no lockfile present!\nProject's that don't have a lockfile can't be added to the list, and if you add them manually by editing the text file we'll remove them on next launch.\nWe NEED a lockfile to work with your project!`,
+                "error",
+            );
+        } else if (validation === "NoName") {
+            await LogStuff(
+                `Error adding ${projectName}: no name!\nSee how the project's name is missing? We can't work with that, we need a name to identify the project.\nPlease set "name" in your package file to something valid.`,
+                "error",
+            );
+        } else if (validation === "NoVersion") {
+            await LogStuff(
+                `Error adding ${projectName}: no version!\nWhile not too frequently used, we internally require your project to have a version field.\nPlease set "version" in your package file to something valid.`,
+                "error",
+            );
+        } else if (validation === "NoPkgFile") {
+            await LogStuff(
+                `Error adding ${projectName}: no package file!\nIs this even the path to a JavaScript project? No package.json, no deno.json; not even go.mod or Cargo.toml found.`,
+                "error",
+            );
+        } else if (validation === "NotFound") {
+            await LogStuff(
+                `The specified path was not found. Check for typos or if the project was moved.`,
+                "error",
+            );
         }
         return;
     }
@@ -259,25 +248,6 @@ export async function NameProject(
         if (!CheckForPath(workingPath)) throw new Error("(this won't be shown and formatted path will be returned instead)");
         const env = await GetProjectEnvironment(workingPath);
 
-        let runtimeColor: tValidColors;
-        switch (env.runtime) {
-            case "bun":
-                runtimeColor = "pink";
-                break;
-            case "node":
-                runtimeColor = "bright-green";
-                break;
-            case "deno":
-                runtimeColor = "bright-blue";
-                break;
-            case "rust":
-                runtimeColor = "orange";
-                break;
-            case "golang":
-                runtimeColor = "cyan";
-                break;
-        }
-
         const pkgFile = env.main.cpfContent;
 
         if (!pkgFile.name) return formattedPath;
@@ -286,23 +256,15 @@ export async function NameProject(
 
         const formattedVersion = pkgFile.version ? `@${ColorString(pkgFile.version, "purple")}` : "";
 
-        const formattedNameVer = `${ColorString(formattedName, runtimeColor)}${formattedVersion}`;
+        const formattedNameVer = `${ColorString(formattedName, env.runtimeColor)}${formattedVersion}`;
 
         const fullNamedProject = `${formattedNameVer} ${formattedPath}`;
 
-        switch (wanted) {
-            case "all":
-                return fullNamedProject;
-            case "name":
-                return formattedName;
-            case "name-colorless":
-                return pkgFile.name;
-            case "path":
-                return formattedPath;
-            case "name-ver":
-            default:
-                return formattedNameVer;
-        }
+        if (wanted === "all") return fullNamedProject;
+        else if (wanted === "name") return formattedName;
+        else if (wanted === "name-colorless") return pkgFile.name;
+        else if (wanted === "path") return formattedPath;
+        else return formattedNameVer;
     } catch {
         return formattedPath; // if it's not possible to name it, just give it the raw path
     }
@@ -667,7 +629,9 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
         : paths.node.json;
 
     const mainString: string = await Deno.readTextFile(mainPath);
-    const settings: FullFkNodeYaml = await GetProjectSettings(root);
+    const settings: FullFkNodeYaml = GetProjectSettings(root);
+
+    const runtimeColor = isBun ? "pink" : isNode ? "bright-green" : isDeno ? "bright-blue" : isRust ? "orange" : "cyan";
 
     const { PackageFileParsers } = FkNodeInterop;
 
@@ -675,6 +639,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
         return {
             root,
             settings,
+            runtimeColor,
             main: {
                 path: mainPath,
                 name: "go.mod",
@@ -703,6 +668,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
         return {
             root,
             settings,
+            runtimeColor,
             main: {
                 path: mainPath,
                 name: "Cargo.toml",
@@ -731,6 +697,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
         return {
             root,
             settings,
+            runtimeColor,
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -760,7 +727,9 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
     if (isDeno) {
         return {
             root,
+
             settings,
+            runtimeColor,
             main: {
                 path: mainPath,
                 name: pathChecks.deno.jsonc ? "deno.jsonc" : "deno.json",
@@ -789,7 +758,9 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
     if (pathChecks.node.lockYarn) {
         return {
             root,
+
             settings,
+            runtimeColor,
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -818,7 +789,9 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
     if (pathChecks.node.lockPnpm) {
         return {
             root,
+
             settings,
+            runtimeColor,
             main: {
                 path: mainPath,
                 name: "package.json",
@@ -847,7 +820,9 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
     if (pathChecks.node.lockNpm) {
         return {
             root,
+
             settings,
+            runtimeColor,
             main: {
                 path: mainPath,
                 name: "package.json",

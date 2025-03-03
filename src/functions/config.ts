@@ -40,24 +40,14 @@ export function GetAppPath(
     const ERRORS = formatDir("errors.log");
     const REM = formatDir("rem.txt");
 
-    switch (path) {
-        case "BASE":
-            return BASE_DIR;
-        case "MOTHERFKRS":
-            return PROJECTS;
-        case "LOGS":
-            return LOGS;
-        case "SCHEDULE":
-            return SCHEDULE;
-        case "SETTINGS":
-            return SETTINGS;
-        case "ERRORS":
-            return ERRORS;
-        case "REM":
-            return REM;
-        default:
-            throw new Error(`Invalid config path ${path} requested.`);
-    }
+    if (path === "BASE") return BASE_DIR;
+    if (path === "MOTHERFKRS") return PROJECTS;
+    if (path === "LOGS") return LOGS;
+    if (path === "SCHEDULE") return SCHEDULE;
+    if (path === "SETTINGS") return SETTINGS;
+    if (path === "ERRORS") return ERRORS;
+    if (path === "REM") return REM;
+    throw new Error(`Invalid config path ${path} requested.`);
 }
 
 /**
@@ -167,71 +157,62 @@ export async function ChangeSetting(
     const settingsPath = GetAppPath("SETTINGS");
     const currentSettings = await GetSettings();
 
-    switch (setting) {
-        case "defaultIntensity": {
-            if (!StringUtils.validateAgainst(value, ["normal", "hard", "hard-only", "maxim", "maxim-only"])) {
-                await LogStuff(`${value} is not valid. Enter either 'normal', 'hard', 'hard-only', or 'maxim'.`);
-                return;
-            }
-            const newSettings: CF_FKNODE_SETTINGS = {
-                ...currentSettings,
-                defaultIntensity: value,
-            };
-            await Deno.writeTextFile(
-                settingsPath,
-                StringifyYaml(newSettings),
-            );
-            break;
+    if (setting === "defaultIntensity") {
+        if (!StringUtils.validateAgainst(value, ["normal", "hard", "hard-only", "maxim", "maxim-only"])) {
+            await LogStuff(`${value} is not valid. Enter either 'normal', 'hard', 'hard-only', or 'maxim'.`);
+            return;
         }
-        case "updateFreq": {
-            const newValue = Math.ceil(Number(value));
-            if (typeof newValue !== "number" || isNaN(newValue) || newValue <= 0) {
-                await LogStuff(`${value} is not valid. Enter a valid number greater than 0.`);
-                return;
-            }
-            const newSettings: CF_FKNODE_SETTINGS = {
-                ...currentSettings,
-                updateFreq: Math.ceil(newValue),
-            };
-            await Deno.writeTextFile(
-                settingsPath,
-                StringifyYaml(newSettings),
-            );
-            break;
+        const newSettings: CF_FKNODE_SETTINGS = {
+            ...currentSettings,
+            defaultIntensity: value,
+        };
+        await Deno.writeTextFile(
+            settingsPath,
+            StringifyYaml(newSettings),
+        );
+    } else if (setting === "updateFreq") {
+        const newValue = Math.ceil(Number(value));
+        if (typeof newValue !== "number" || isNaN(newValue) || newValue <= 0) {
+            await LogStuff(`${value} is not valid. Enter a valid number greater than 0.`);
+            return;
         }
-        case "favEditor": {
-            if (!StringUtils.validateAgainst(value, ["vscode", "sublime", "emacs", "atom", "notepad++", "vscodium"])) {
-                await LogStuff(
-                    `${value} is not valid. Enter either:\n'vscode', 'sublime', 'emacs', 'atom', 'notepad++', or 'vscodium'.`,
-                );
-                return;
-            }
-            const newSettings: CF_FKNODE_SETTINGS = {
-                ...currentSettings,
-                favEditor: value,
-            };
-            await Deno.writeTextFile(
-                settingsPath,
-                StringifyYaml(newSettings),
+        const newSettings: CF_FKNODE_SETTINGS = {
+            ...currentSettings,
+            updateFreq: Math.ceil(newValue),
+        };
+        await Deno.writeTextFile(
+            settingsPath,
+            StringifyYaml(newSettings),
+        );
+    } else if (setting === "favEditor") {
+        if (!StringUtils.validateAgainst(value, ["vscode", "sublime", "emacs", "atom", "notepad++", "vscodium"])) {
+            await LogStuff(
+                `${value} is not valid. Enter either:\n'vscode', 'sublime', 'emacs', 'atom', 'notepad++', or 'vscodium'.`,
             );
-            break;
+            return;
         }
-        case "flushFreq": {
-            const newValue = Math.ceil(Number(value));
-            if (typeof newValue !== "number" || isNaN(newValue) || newValue <= 0) {
-                await LogStuff(`${value} is not valid. Enter a valid number greater than 0.`);
-                return;
-            }
-            const newSettings: CF_FKNODE_SETTINGS = {
-                ...currentSettings,
-                flushFreq: newValue,
-            };
-            await Deno.writeTextFile(
-                settingsPath,
-                StringifyYaml(newSettings),
-            );
-            break;
+        const newSettings: CF_FKNODE_SETTINGS = {
+            ...currentSettings,
+            favEditor: value,
+        };
+        await Deno.writeTextFile(
+            settingsPath,
+            StringifyYaml(newSettings),
+        );
+    } else {
+        const newValue = Math.ceil(Number(value));
+        if (typeof newValue !== "number" || isNaN(newValue) || newValue <= 0) {
+            await LogStuff(`${value} is not valid. Enter a valid number greater than 0.`);
+            return;
         }
+        const newSettings: CF_FKNODE_SETTINGS = {
+            ...currentSettings,
+            flushFreq: newValue,
+        };
+        await Deno.writeTextFile(
+            settingsPath,
+            StringifyYaml(newSettings),
+        );
     }
 
     await LogStuff(`Settings successfully updated! ${setting} is now ${value}`, "tick-clear");
@@ -283,27 +264,17 @@ export async function FlushConfigFiles(target: UnknownString, force: boolean, si
 
     let file: string[];
 
-    switch (target) {
-        case "logs":
-            file = [GetAppPath("LOGS")];
-            break;
-        case "projects":
-            file = [GetAppPath("MOTHERFKRS")];
-            break;
-        case "schedules":
-            file = [GetAppPath("SCHEDULE")];
-            break;
-        case "errors":
-            file = [GetAppPath("ERRORS")];
-            break;
-        case "all":
-            file = [
-                GetAppPath("LOGS"),
-                GetAppPath("MOTHERFKRS"),
-                GetAppPath("SCHEDULE"),
-                GetAppPath("ERRORS"),
-            ];
-            break;
+    if (target === "logs") file = [GetAppPath("LOGS")];
+    else if (target === "projects") file = [GetAppPath("MOTHERFKRS")];
+    else if (target === "schedules") file = [GetAppPath("SCHEDULE")];
+    else if (target === "errors") file = [GetAppPath("ERRORS")];
+    else {
+        file = [
+            GetAppPath("LOGS"),
+            GetAppPath("MOTHERFKRS"),
+            GetAppPath("SCHEDULE"),
+            GetAppPath("ERRORS"),
+        ];
     }
 
     const fileSize = typeof file === "string"
