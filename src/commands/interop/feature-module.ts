@@ -1,10 +1,25 @@
-import { StringUtils } from "@zakahacecosas/string-utils";
+import { StringUtils, type UnknownString } from "@zakahacecosas/string-utils";
 import { Commander } from "../../functions/cli.ts";
 import { LogStuff } from "../../functions/io.ts";
 import type { ProjectEnvironment } from "../../types/platform.ts";
-import { FknError } from "../../functions/error.ts";
+import { DebugFknErr, FknError } from "../../functions/error.ts";
 import { FkNodeInterop } from "./interop.ts";
 import { isDef } from "../../constants.ts";
+
+function HandleError(
+    err:
+        | "Unknown__CleanerTask__Update"
+        | "Unknown__CleanerTask__Lint"
+        | "Unknown__CleanerTask__Pretty",
+    stdout: UnknownString,
+): never {
+    DebugFknErr(
+        err,
+        "Something went wrong and we don't know what",
+        stdout ??
+            "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
+    );
+}
 
 interface InteropedFeatureParams {
     /** Project's environment. */
@@ -51,15 +66,7 @@ export const InteropedFeatures = {
                         verbose,
                     );
 
-                    if (!output.success) {
-                        throw new FknError(
-                            "Unknown__CleanerTask__Lint",
-                            "Something went wrong and we don't know what",
-                        ).debug(
-                            output.stdout ??
-                                "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
-                        );
-                    }
+                    if (!output.success) HandleError("Unknown__CleanerTask__Lint", output.stdout);
 
                     return true;
                 } else {
@@ -69,15 +76,7 @@ export const InteropedFeatures = {
                         verbose,
                     );
 
-                    if (!output.success) {
-                        throw new FknError(
-                            "Unknown__CleanerTask__Lint",
-                            "Something went wrong and we don't know what",
-                        ).debug(
-                            output.stdout ??
-                                "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
-                        );
-                    }
+                    if (!output.success) HandleError("Unknown__CleanerTask__Lint", output.stdout);
 
                     return true;
                 }
@@ -96,15 +95,7 @@ export const InteropedFeatures = {
                     verbose,
                 );
 
-                if (!output.success) {
-                    throw new FknError(
-                        "Unknown__CleanerTask__Lint",
-                        "Something went wrong and we don't know what",
-                    ).debug(
-                        output.stdout ??
-                            "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
-                    );
-                }
+                if (!output.success) HandleError("Unknown__CleanerTask__Lint", output.stdout);
 
                 return true;
             }
@@ -142,15 +133,7 @@ export const InteropedFeatures = {
                         verbose,
                     );
 
-                    if (!output.success) {
-                        throw new FknError(
-                            "Unknown__CleanerTask__Pretty",
-                            "Something went wrong and we don't know what",
-                        ).debug(
-                            output.stdout ??
-                                "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
-                        );
-                    }
+                    if (!output.success) HandleError("Unknown__CleanerTask__Pretty", output.stdout);
 
                     return true;
                 } else {
@@ -160,15 +143,7 @@ export const InteropedFeatures = {
                         verbose,
                     );
 
-                    if (!output.success) {
-                        throw new FknError(
-                            "Unknown__CleanerTask__Pretty",
-                            "Something went wrong and we don't know what",
-                        ).debug(
-                            output.stdout ??
-                                "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
-                        );
-                    }
+                    if (!output.success) HandleError("Unknown__CleanerTask__Pretty", output.stdout);
 
                     return true;
                 }
@@ -183,15 +158,7 @@ export const InteropedFeatures = {
                     verbose,
                 );
 
-                if (!output.success) {
-                    throw new FknError(
-                        "Unknown__CleanerTask__Pretty",
-                        "Something went wrong and we don't know what",
-                    ).debug(
-                        output.stdout ??
-                            "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
-                    );
-                }
+                if (!output.success) HandleError("Unknown__CleanerTask__Pretty", output.stdout);
 
                 return true;
             }
@@ -207,15 +174,7 @@ export const InteropedFeatures = {
                 verbose,
             );
 
-            if (!output.success) {
-                throw new FknError(
-                    "Unknown__CleanerTask__Update",
-                    "Something went wrong and we don't know what",
-                ).debug(
-                    output.stdout ??
-                        "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
-                );
-            }
+            if (!output.success) HandleError("Unknown__CleanerTask__Update", output.stdout);
 
             return true;
         }
@@ -236,15 +195,7 @@ export const InteropedFeatures = {
                     verbose,
                 );
 
-                if (!output.success) {
-                    throw new FknError(
-                        "Unknown__CleanerTask__Update",
-                        "Something went wrong and we don't know what",
-                    ).debug(
-                        output.stdout ??
-                            "UNDEFINED COMMAND STDOUT/STDERR - Check above, command output is likely to be present in your terminal session.",
-                    );
-                }
+                if (!output.success) HandleError("Unknown__CleanerTask__Update", output.stdout);
 
                 return true;
             }

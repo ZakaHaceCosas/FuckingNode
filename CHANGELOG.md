@@ -11,13 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - Now some error messages were made more descriptive.
-- Now `commitCmd` shows its output.
+- Now `commitCmd` and `releaseCmd` show their output.
 
 ### Fixed
 
 - Fixed the app not letting you add projects with a `bun.lockb` instead of a `bun.lock` lockfile.
 - Fixed `fkcommit` allowing to commit when no files are added.
 - Fixed installation attempts that fail because of a missing package manager not explaining what's up.
+- Fixed a theoretically possible point where a `FknErr` stops execution before running its debug function, preventing it from dumping the error log to the `errors.log` file
 
 ### Removed
 

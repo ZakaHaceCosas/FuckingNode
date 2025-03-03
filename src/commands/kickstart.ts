@@ -1,47 +1,14 @@
 import { Commander, CommandExists } from "../functions/cli.ts";
-import { GetAppPath, GetSettings } from "../functions/config.ts";
+import { GetAppPath } from "../functions/config.ts";
 import { CheckForDir, JoinPaths, ParsePath } from "../functions/filesystem.ts";
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject } from "../functions/projects.ts";
 import type { TheKickstarterConstructedParams } from "./constructors/command.ts";
-import type { CF_FKNODE_SETTINGS } from "../types/config_files.ts";
 import { FkNodeInterop } from "./interop/interop.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
 import { NameLockfile, ResolveLockfiles } from "./toolkit/cleaner.ts";
 import type { MANAGER_GLOBAL } from "../types/platform.ts";
-
-async function LaunchIDE(IDE: CF_FKNODE_SETTINGS["favEditor"]) {
-    let executionCommand: "subl" | "code" | "emacs" | "notepad++" | "codium" | "atom";
-
-    switch (IDE) {
-        case "sublime":
-            executionCommand = "subl";
-            break;
-        case "vscode":
-            executionCommand = "code";
-            break;
-        case "vscodium":
-            executionCommand = "codium";
-            break;
-        case "notepad++":
-            executionCommand = "notepad++";
-            break;
-        case "emacs":
-            executionCommand = "emacs";
-            break;
-        case "atom":
-            executionCommand = "atom";
-            break;
-    }
-
-    await Commander(executionCommand, ["."], false)
-        .then((res) => {
-            if (res.success === false) throw new Error(res.stdout);
-        })
-        .catch((e) => {
-            throw e;
-        });
-}
+import { LaunchUserIDE } from "../functions/user.ts";
 
 export default async function TheKickstarter(params: TheKickstarterConstructedParams) {
     const { gitUrl, path, manager } = params;
@@ -145,13 +112,7 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
             break;
     }
 
-    const favEditor = (await GetSettings()).favEditor;
-
-    if (!(["vscode", "sublime", "emacs", "notepad++", "atom", "vscodium"].includes(favEditor))) {
-        await LogStuff(`Error: ${favEditor} is not a supported editor!`, "error");
-    }
-
-    await LaunchIDE(favEditor);
+    await LaunchUserIDE();
 
     await LogStuff(`Great! ${await NameProject(Deno.cwd(), "name-ver")} is now setup. Enjoy!`, "tick-clear");
 

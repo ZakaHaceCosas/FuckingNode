@@ -6,7 +6,7 @@ import type { DenoPkgFile, NodePkgFile } from "../types/platform.ts";
 import { Commander } from "../functions/cli.ts";
 import { Git } from "../functions/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { isDis } from "../constants.ts";
+import { RunUserCmd, ValidateUserCmd } from "../functions/user.ts";
 
 export default async function TheReleaser(params: TheReleaserConstructedParams) {
     if (!StringUtils.validate(params.version)) {
@@ -33,7 +33,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         throw new Error(`Platform ${env.runtime} doesn't support publishing. Aborting.`);
     }
 
-    const releaseCmd = (!isDis(env.settings.releaseCmd)) ? StringUtils.normalize(env.settings.releaseCmd) : "disable";
+    const releaseCmd = ValidateUserCmd(env, "releaseCmd");
 
     // bump version from pkg json first
     const newPackageFile: NodePkgFile | DenoPkgFile = {
@@ -45,6 +45,7 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
         `${ColorString(`Update your ${ColorString(env.main.name, "bold")}'s`, "white")} "version" field`,
         `Create a ${ColorString(`${env.main.name}.bak`, "bold")} file, and add it to .gitignore`,
     ];
+
     if (releaseCmd !== "disable") {
         actions.push(
             `Run ${
@@ -94,18 +95,10 @@ export default async function TheReleaser(params: TheReleaserConstructedParams) 
     }
 
     // run their releaseCmd
-    if (releaseCmd !== "disable") {
-        const releaseOutput = await Commander(
-            env.commands.run[0],
-            [env.commands.run[1], releaseCmd],
-        );
-
-        if (!releaseOutput.success) {
-            throw new Error(
-                `Release command failed (${releaseCmd}): ${releaseOutput.stdout}`,
-            );
-        }
-    }
+    await RunUserCmd({
+        key: "releaseCmd",
+        env,
+    });
 
     // just in case
     if (canUseGit) {

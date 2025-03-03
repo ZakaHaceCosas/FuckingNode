@@ -1,11 +1,9 @@
 import { ColorString, LogStuff } from "../functions/io.ts";
 import { GetProjectEnvironment, NameProject, SpotProject } from "../functions/projects.ts";
 import type { TheCommitterConstructedParams } from "./constructors/command.ts";
-import { Commander } from "../functions/cli.ts";
 import { Git } from "../functions/git.ts";
 import { StringUtils } from "@zakahacecosas/string-utils";
-import { DEBUG_LOG, FknError } from "../functions/error.ts";
-import { isDis } from "../constants.ts";
+import { RunUserCmd, ValidateUserCmd } from "../functions/user.ts";
 
 export default async function TheCommitter(params: TheCommitterConstructedParams) {
     if (!StringUtils.validate(params.message)) throw new Error("No commit message specified!");
@@ -30,14 +28,7 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
         return;
     }
 
-    const commitCmd = (!isDis(env.settings.commitCmd)) ? StringUtils.normalize(env.settings.commitCmd) : "disable";
-
-    if (commitCmd !== "disable" && env.commands.run === "__UNSUPPORTED") {
-        throw new FknError(
-            "Interop__CannotRunJsLike",
-            `Your fknode.yaml file has a commitCmd key, but ${env.manager} doesn't support JS-like "run" tasks, so we can't execute that task. To avoid undesired behavior, we stopped execution. Please remove the commitCmd key from this fknode.yaml. Sorry!`,
-        );
-    }
+    const commitCmd = ValidateUserCmd(env, "commitCmd");
 
     const branches = await Git.GetBranches(project);
 
@@ -98,23 +89,11 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
 
     if (!confirmation) return;
 
-    DEBUG_LOG(commitCmd);
-
     // run their commitCmd
-    if (commitCmd !== "disable") {
-        const commitCmdOutput = await Commander(
-            env.commands.run[0],
-            [env.commands.run[1], commitCmd],
-            true,
-        );
-
-        if (!commitCmdOutput.success) {
-            throw new FknError(
-                "Commit__Fail__CommitCmd",
-                `Commit command (${commitCmd}) exited with a non-0 exit code. Check what's up!`,
-            ).debug(commitCmdOutput.stdout);
-        }
-    }
+    await RunUserCmd({
+        key: "commitCmd",
+        env,
+    });
 
     // by this point we assume prev task succeeded
     await Git.Commit(

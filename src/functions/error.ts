@@ -175,7 +175,7 @@ export function GenericErrorHandler(e: unknown): never {
         e.exit();
         Deno.exit(1); // (never reached, but without this line typescript doesn't shut up)
     } else {
-        console.error(`${ColorString(I_LIKE_JS.FK, "red", "bold")}! An unknown error happened: ${e}`);
+        console.error(`${ColorString(I_LIKE_JS.FK, "red", "bold")}! Something happened: ${e}`);
         Deno.exit(1);
     }
 }
@@ -183,4 +183,12 @@ export function GenericErrorHandler(e: unknown): never {
 // constant case instead of pascal case so i can better recognize this
 export function DEBUG_LOG(...a: unknown[]): void {
     if (__FKNODE_SHALL_WE_DEBUG) console.debug(a);
+}
+
+export function DebugFknErr(code: GLOBAL_ERROR_CODES, message: UnknownString, debuggableContent: UnknownString): never {
+    const err = new FknError(code, StringUtils.validate(message) ? message : undefined);
+    err.debug(
+        debuggableContent,
+    );
+    throw err;
 }
