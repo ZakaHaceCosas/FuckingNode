@@ -6,6 +6,16 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.2] (Unreleased)
+
+### Changed
+
+- Now even more error messages are more descriptive.
+
+### Fixed
+
+- Fixed `kickstart` forcing you into NodeJS package managers + not properly detecting if a manager is installed or not.
+
 ## [3.0.1] (03-03-2025)
 
 ### Changed

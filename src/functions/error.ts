@@ -21,8 +21,8 @@ export class FknError extends Error {
      * Creates an instance of FknError.
      *
      * @constructor
-     * @param {GLOBAL_ERROR_CODES} code
-     * @param {?string} [message]
+     * @param {GLOBAL_ERROR_CODES} code Error code. (TODO: add a documentation page for them).
+     * @param {?string} [message] An optional error message.
      */
     constructor(code: GLOBAL_ERROR_CODES, message?: string) {
         super(message);
@@ -33,17 +33,13 @@ export class FknError extends Error {
                 this.hint =
                     `Provide the project's path or name to the project.\n    It can be a file path ("../node-project" OR "C:\\Users\\coolDev\\node-project"),\n    It can be "--self" to use the current working DIR (${Deno.cwd()}).\n    Or it can be a project's name (type the exact name as it is on package.json's "name" field).`;
                 break;
-            case "Manager__IgnoreFile__InvalidLevel":
-                this.hint =
-                    "Valid ignore file levels are '*' for everything, 'cleaner' for project cleanup, and 'updater' for project updating.";
-                break;
             case "Cleaner__InvalidCleanerIntensity":
                 this.hint =
-                    "Valid intensity levels are 'normal', 'hard', 'hard-only', and 'maxim'. If you want to use flags without providing an intensity (e.g. 'clean --verbose'), add -- before ('clean -- -verbose'). Run 'help clean' for more info onto what does each level do.";
+                    "Valid intensity levels are 'normal', 'hard', 'hard-only', 'maxim', and 'maxim-only'.\nIf you want to use flags without providing an intensity (e.g. 'clean --verbose'), prepend '-- --' to the command ('clean -- -- -verbose'). Run 'help clean' for more info onto what does each level do.";
                 break;
             case "Internal__Projects__CantDetermineEnv":
                 this.hint =
-                    "This is an internal error regarding determination of a project's environment, there's not much that you can do. 'Thrown message' might help out, otherwise you might want to simply try again, or open up an issue on GitHub if it doesn't work.";
+                    "Check 'Thrown message' as that might help you. If not present, or it didn't help you, you should open up an issue on GitHub.";
                 break;
             case "Generic__NonExistingPath":
                 this.hint =
@@ -69,7 +65,8 @@ export class FknError extends Error {
                     `Non-JS environments do not have an equivalent to "npm run" or "yarn run" tasks, so we can't execute that task. To avoid undesired behavior, we stopped execution. Please remove the setting key from this fknode.yaml that's causing the error.`;
                 break;
             case "Generic__MissingRuntime":
-                this.hint = "The specified runtime is not installed on your machine! Please install it for this task to work.";
+                this.hint =
+                    "The specified runtime / package manager is not installed on your machine! Please install it for this task to work. If it is installed and you still got this error, please raise an issue on GitHub.";
                 break;
             case "Internal__UnparsablePath":
                 this.hint = `The given path was not found. Check for typos${
@@ -77,29 +74,17 @@ export class FknError extends Error {
                 }`;
                 break;
         }
-        if (Error.captureStackTrace) {
-            Error.captureStackTrace(this, FknError);
-        }
+        if (Error.captureStackTrace) Error.captureStackTrace(this, FknError);
     }
 
-    /**
-     * @param {string} [currentErr] Additional error details (optional).
-     */
-    private handleMessage(currentErr?: string): void {
+    private handleMessage(): void {
         const messageParts: string[] = [
-            ColorString(`A FknError happened! CODE: ${ColorString(this.code, "bold")}`, "red"),
+            "----------",
+            ColorString(`A FknError happened! ${ColorString(this.code, "bold")}`, "red"),
         ];
         if (this.message) {
             messageParts.push(
-                `Thrown message:            ${ColorString(this.message, "bright-yellow")}`,
-            );
-        }
-        // i completely forgot what currentErr is for, but keep it in there i guess...
-        if (currentErr !== undefined && currentErr !== this.message) {
-            messageParts.push(
-                "----------",
-                "CurrentErr: " + ColorString(currentErr, "italic"),
-                "----------",
+                `Thrown message:      ${ColorString(this.message, "bright-yellow")}`,
             );
         }
         if (this.hint !== undefined) {
@@ -158,7 +143,7 @@ ${StringUtils.stripCliColors(debuggableContent ?? "UNKNOWN OUTPUT - No debuggabl
      * Handles the error and exits the CLI. Don't use this directly, use {@linkcode GenericErrorHandler} instead.
      */
     public exit(): never {
-        this.handleMessage(this.message);
+        this.handleMessage();
         Deno.exit(1);
     }
 }
@@ -174,8 +159,11 @@ export function GenericErrorHandler(e: unknown): never {
     if (e instanceof FknError) {
         e.exit();
         Deno.exit(1); // (never reached, but without this line typescript doesn't shut up)
+    } else if (e instanceof Error) {
+        console.error(`${ColorString(I_LIKE_JS.FK, "red", "bold")}! Something happened: ${e.message}`);
+        Deno.exit(1);
     } else {
-        console.error(`${ColorString(I_LIKE_JS.FK, "red", "bold")}! Something happened: ${e}`);
+        console.error(`${ColorString(I_LIKE_JS.FK, "red", "bold")}! Something strange happened: ${e}`);
         Deno.exit(1);
     }
 }

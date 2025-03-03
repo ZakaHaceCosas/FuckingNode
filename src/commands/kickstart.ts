@@ -9,6 +9,7 @@ import { StringUtils } from "@zakahacecosas/string-utils";
 import { NameLockfile, ResolveLockfiles } from "./toolkit/cleaner.ts";
 import type { MANAGER_GLOBAL } from "../types/platform.ts";
 import { LaunchUserIDE } from "../functions/user.ts";
+import { FknError } from "../functions/error.ts";
 
 export default async function TheKickstarter(params: TheKickstarterConstructedParams) {
     const { gitUrl, path, manager } = params;
@@ -74,22 +75,24 @@ export default async function TheKickstarter(params: TheKickstarterConstructedPa
     });
 
     // assume we skipped error
-    const typedProvidedManager = manager?.trim() as MANAGER_GLOBAL || "";
     const env = await GetProjectEnvironment(Deno.cwd());
 
-    const fallbackNodeManager: "pnpm" | "npm" = CommandExists("pnpm") ? "pnpm" : "npm";
-
-    const isNodeManager = (manager: string) => StringUtils.validateAgainst(manager, ["npm", "pnpm", "yarn"]);
+    const initialManager = StringUtils.validateAgainst(manager, ["npm", "pnpm", "yarn", "deno", "bun"]) ? manager : env.manager;
+    // if pnpm exists, prefer that over npm for fallback
+    // TODO: make this into a user setting
+    const fallbackNodeManager: "pnpm" | "npm" | null = CommandExists("pnpm") ? "pnpm" : CommandExists("npm") ? "npm" : null;
 
     // deno-fmt-ignore
-    const managerToUse: MANAGER_GLOBAL =
+    const managerToUse: MANAGER_GLOBAL | null = CommandExists(initialManager) ? initialManager : CommandExists(env.manager) ? env.manager : fallbackNodeManager;
+
+    if (!managerToUse) {
+        throw new FknError(
+            "Generic__MissingRuntime",
             StringUtils.validate(manager)
-                ? (isNodeManager(env.manager) && isNodeManager(typedProvidedManager))
-                    ? typedProvidedManager
-                    : env.manager
-                : isNodeManager(env.manager)
-                    ? fallbackNodeManager
-                    : env.manager;
+                ? `Neither your specified manager (${manager}) nor the repo's runtime (${env.manager}) are installed on this system. What the heck?`
+                : `This repo uses ${env.manager} as a package manager, but it isn't installed locally.`,
+        );
+    }
 
     await LogStuff(
         `Installation began using ${managerToUse}. Have a coffee meanwhile!`,

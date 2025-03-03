@@ -5,7 +5,6 @@
  */
 export type GLOBAL_ERROR_CODES =
     | "Generic__InteractionInvalidCauseNoPathProvided"
-    | "Manager__IgnoreFile__InvalidLevel"
     | "Cleaner__InvalidCleanerIntensity"
     | "Internal__Projects__CantDetermineEnv"
     | "Generic__NonExistingPath"
