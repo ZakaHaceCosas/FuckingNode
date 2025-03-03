@@ -169,6 +169,18 @@ export interface FullFkNodeYaml {
      * @type {string}
      */
     commitCmd: string;
+    /**
+     * A task (run) to be executed upon running the launch command.
+     *
+     * @type {string}
+     */
+    launchCmd: string;
+    /**
+     * A file to be executed when `launchCmd` is invoked.
+     *
+     * @type {string}
+     */
+    launchFile: string;
 }
 
 /**
@@ -278,6 +290,10 @@ export function ValidateFkNodeYaml(
     }
 
     if (obj.commitCmd !== undefined && typeof obj.commitCmd !== "string") {
+        return false;
+    }
+
+    if (obj.launchCmd !== undefined && typeof obj.launchCmd !== "string") {
         return false;
     }
 

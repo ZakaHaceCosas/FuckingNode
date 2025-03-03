@@ -4,9 +4,13 @@
 
 All notable changes will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Dates are in the DD-MM-YYYY format.
 
-## [3.0.2] (Unreleased)
+## [3.1.0] (03-03-2025)
+
+### Added
+
+- Added new command **launch**, to auto-launch a project by its name & update its dependencies instantly.
 
 ### Changed
 
@@ -15,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fixed `kickstart` forcing you into NodeJS package managers + not properly detecting if a manager is installed or not.
+- Fixed `surrender` not respecting `updateCmdOverride` when updating.
+- Fixed documentation issues (wrong references to upcoming pages, wrong links, broken mermaid...).
 
 ## [3.0.1] (03-03-2025)
 

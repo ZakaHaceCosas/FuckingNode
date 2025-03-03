@@ -14,6 +14,7 @@ const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
     ONE: {
         root: ParsePath(`${CONSTANTS.ENV_PATH}/test-one`),
         settings: DEFAULT_FKNODE_YAML,
+        runtimeColor: "green",
         main: {
             path: ParsePath(`${CONSTANTS.ENV_PATH}/test-one/package.json`),
             name: "package.json",
@@ -62,6 +63,7 @@ const TEST_PROJECTS: Record<string, ProjectEnvironment> = {
             ],
             run: ["npm", "run"],
             publish: ["publish"],
+            start: "start",
         },
         runtime: "node",
         manager: "npm",

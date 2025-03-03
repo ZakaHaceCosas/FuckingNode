@@ -61,6 +61,7 @@ Function New-Shortcuts {
             "fkn"         = ""
             "fkclean"     = "clean"
             "fkstart"     = "kickstart"
+            "fklaunch"    = "launch"
             "fkcommit"    = "commit"
             "fkrelease"   = "release"
             "fksurrender" = "surrender"

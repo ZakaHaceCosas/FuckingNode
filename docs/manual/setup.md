@@ -44,4 +44,4 @@ fuckingnode setup <project-path> [setup]
 
 You've now learnt how to quickly get your text-config files ready.
 
-Next: Stats (can't think of a description for this one).
+Next: Stats - (can't think of a description for this one).

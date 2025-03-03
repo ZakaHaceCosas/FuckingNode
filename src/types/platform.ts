@@ -205,6 +205,10 @@ interface GenericProjectEnvironment {
          * Package publish commands.
          */
         publish: ["publish"] | ["publish", "--non-interactive"] | ["publish", "--check=all"] | "__UNSUPPORTED";
+        /**
+         * Project startup commands.
+         */
+        start: "run" | "start";
     };
     /**
      * File paths to valid workspaces.
@@ -234,6 +238,7 @@ interface NodeEnvironment extends GenericProjectEnvironment {
             | ["audit", "--recursive", "--all"]
             | "__UNSUPPORTED";
         publish: ["publish"] | ["publish", "--non-interactive"];
+        start: "start";
     };
     /**
      * Path to `node_modules`.
@@ -247,7 +252,6 @@ interface BunEnvironment extends GenericProjectEnvironment {
     runtime: "bun";
     manager: "bun";
     main: GenericProjectEnvironment["main"] & { name: "package.json" };
-
     commands: {
         base: "bun";
         exec: ["bunx"];
@@ -256,6 +260,7 @@ interface BunEnvironment extends GenericProjectEnvironment {
         clean: "__UNSUPPORTED";
         audit: "__UNSUPPORTED";
         publish: ["publish"];
+        start: "start";
     };
     /**
      * Path to `node_modules`.
@@ -277,6 +282,7 @@ interface DenoEnvironment extends GenericProjectEnvironment {
         clean: "__UNSUPPORTED";
         audit: "__UNSUPPORTED";
         publish: ["publish", "--check=all"];
+        start: "run";
     };
     /**
      * Path to `node_modules`.
@@ -298,6 +304,7 @@ interface CargoEnvironment extends GenericProjectEnvironment {
         clean: [["clean"]];
         audit: "__UNSUPPORTED";
         publish: "__UNSUPPORTED";
+        start: "run";
     };
 }
 
@@ -313,6 +320,7 @@ interface GolangEnvironment extends GenericProjectEnvironment {
         clean: [["clean"], ["mod", "tidy"]];
         audit: "__UNSUPPORTED";
         publish: "__UNSUPPORTED";
+        start: "run";
     };
 }
 

@@ -331,3 +331,19 @@ export interface TheAuditerConstructedParams {
      */
     strict: boolean;
 }
+
+/**
+ * The Launcher
+ * @author ZakaHaceCosas
+ *
+ * @export
+ * @interface TheLauncherConstructedParams
+ */
+export interface TheLauncherConstructedParams {
+    /**
+     * Project to be launched.
+     *
+     * @type {UnknownString}
+     */
+    project: UnknownString;
+}

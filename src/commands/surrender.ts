@@ -93,7 +93,7 @@ export default async function TheSurrenderer(params: TheSurrendererConstructedPa
 
     if (commitTwo === 1) throw new Error("Error committing README changes.");
 
-    await FkNodeInterop.Features.Update({ env, verbose: true, script: "__USE_DEFAULT" });
+    await FkNodeInterop.Features.Update({ env, verbose: true });
 
     const commitThree = await Git.Commit(
         project,

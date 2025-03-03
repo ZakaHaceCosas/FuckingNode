@@ -29,7 +29,6 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Update({
                 env,
                 verbose,
-                script: env.settings.updateCmdOverride,
             });
             if (output === true) await LogStuff(`Updated dependencies for ${projectName}!`, "tick");
             return;
@@ -77,7 +76,6 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Lint({
                 env,
                 verbose,
-                script: env.settings.lintCmd,
             });
             if (output === true) await LogStuff(`Linted ${projectName}!`, "tick");
             return;
@@ -99,7 +97,6 @@ const ProjectCleaningFeatures = {
             const output = await FkNodeInterop.Features.Pretty({
                 env,
                 verbose,
-                script: env.settings.prettyCmd,
             });
             if (output === true) await LogStuff(`Prettified ${projectName}!`, "tick");
             return;

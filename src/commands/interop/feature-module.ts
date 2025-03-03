@@ -10,7 +10,8 @@ function HandleError(
     err:
         | "Unknown__CleanerTask__Update"
         | "Unknown__CleanerTask__Lint"
-        | "Unknown__CleanerTask__Pretty",
+        | "Unknown__CleanerTask__Pretty"
+        | "Unknown__CleanerTask__Launch",
     stdout: UnknownString,
 ): never {
     DebugFknErr(
@@ -24,8 +25,6 @@ function HandleError(
 interface InteropedFeatureParams {
     /** Project's environment. */
     env: ProjectEnvironment;
-    /** If given, a custom script to be used, or `__USE_DEFAULT` otherwise. */
-    script: string | "__USE_DEFAULT";
     /** Whether to use verbose logging for this or not. */
     verbose: boolean;
 }
@@ -35,7 +34,8 @@ interface InteropedFeatureParams {
  */
 export const InteropedFeatures = {
     Lint: async (params: InteropedFeatureParams): Promise<boolean> => {
-        const { env, verbose, script } = params;
+        const { env, verbose } = params;
+        const script = env.settings.lintCmd;
 
         if (StringUtils.validateAgainst(env.runtime, ["bun", "node"])) {
             if (isDef(script)) {
@@ -98,7 +98,8 @@ export const InteropedFeatures = {
         }
     },
     Pretty: async (params: InteropedFeatureParams): Promise<boolean> => {
-        const { env, verbose, script } = params;
+        const { env, verbose } = params;
+        const script = env.settings.prettyCmd;
 
         if (StringUtils.validateAgainst(env.runtime, ["bun", "node"])) {
             if (isDef(script)) {
@@ -156,7 +157,8 @@ export const InteropedFeatures = {
         }
     },
     Update: async (params: InteropedFeatureParams): Promise<boolean> => {
-        const { env, verbose, script } = params;
+        const { env, verbose } = params;
+        const script = env.settings.updateCmdOverride;
 
         if (isDef(script)) {
             const output = await Commander(

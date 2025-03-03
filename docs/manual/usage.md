@@ -36,8 +36,8 @@ graph LR
     D[MAXIM]
     I[MAXIM-ONLY]
 
-	E[Per-project cleanup (dedupe, prune...)]
-	F[Global cleanup (cache clean...)]
+	E[Per-project cleanup commands]
+	F[Global cleanup commands]
 	G[Removal of node_modules]
 
 	A-->E
@@ -247,6 +247,6 @@ There's a `--verbose` flag that can be passed to `fuckingnode clean`. It'll show
 
 ---
 
-You've now learn how to use the base cleaner ends here.
+You've now learnt how to use the base cleaner.
 
-Next: Kickstart - Now proceed a bunch of extra features from the CLI to enhance productivity; kickstart is the first one.
+Next: The `fknode.yaml` - How to configure each project individually for the best experience.

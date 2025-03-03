@@ -23,10 +23,11 @@ nav:
           - Extra - Kickstart: "manual/kickstart.md"
           - Extra - Commit: "manual/commit.md"
           - Extra - Release: "manual/release.md"
+          - Extra - Launch: "manual/launch.md"
           - Extra - Setup: "manual/setup.md"
           - Extra - Stats: "manual/stats.md"
           - Extra - Surrender: "manual/surrender.md"
-          - Learn - Cross-runtime support: "learn/cross-runtime.md"
+          - Learn - Cross-runtime support: "learn/cross-runtime-support.md"
           - "What's next?": "manual/whats-next.md"
 
     - Learn:

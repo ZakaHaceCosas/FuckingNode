@@ -135,3 +135,5 @@ There's another settings command, `settings repair`. It simply resets settings t
 ---
 
 You're now fully setup and ready to put those f*cking JavaScript projects in place!
+
+Next: Usage - How to actually put those f*cking JavaScript projects in place?

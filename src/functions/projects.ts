@@ -660,6 +660,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
                 run: "__UNSUPPORTED",
                 audit: "__UNSUPPORTED", // i thought it was vet
                 publish: "__UNSUPPORTED", // ["test", "./..."]
+                start: "run",
             },
             workspaces,
         };
@@ -689,6 +690,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
                 run: "__UNSUPPORTED",
                 audit: "__UNSUPPORTED", // ["audit"]
                 publish: "__UNSUPPORTED", // ["publish"],
+                start: "run",
             },
             workspaces,
         };
@@ -720,6 +722,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
                 run: ["bun", "run"],
                 audit: "__UNSUPPORTED",
                 publish: ["publish"],
+                start: "start",
             },
             workspaces,
         };
@@ -751,6 +754,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
                 run: ["deno", "task"],
                 audit: "__UNSUPPORTED",
                 publish: ["publish", "--check=all"],
+                start: "run",
             },
             workspaces,
         };
@@ -782,6 +786,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
                 run: ["yarn", "run"],
                 audit: ["audit", "--recursive", "--all"],
                 publish: ["publish", "--non-interactive"],
+                start: "start",
             },
             workspaces,
         };
@@ -813,6 +818,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
                 run: ["pnpm", "run"],
                 audit: ["audit", "--ignore-registry-errors"],
                 publish: ["publish"],
+                start: "start",
             },
             workspaces,
         };
@@ -844,6 +850,7 @@ export async function GetProjectEnvironment(path: UnknownString): Promise<Projec
                 run: ["npm", "run"],
                 audit: ["audit"],
                 publish: ["publish"],
+                start: "start",
             },
             workspaces,
         };

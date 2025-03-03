@@ -178,3 +178,9 @@ releaseCmd: "release"
 releaseAlwaysDry: true
 commitCmd: "commit"
 ```
+
+---
+
+You've now learn how to configure each project to your liking.
+
+Next: Kickstart - Now proceed a bunch of extra features from the CLI to enhance productivity; kickstart is the first one.

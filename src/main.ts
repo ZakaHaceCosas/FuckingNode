@@ -15,6 +15,7 @@ import TheCompater from "./commands/compat.ts";
 import TheCommitter from "./commands/commit.ts";
 import TheSurrenderer from "./commands/surrender.ts";
 import TheSetuper from "./commands/setup.ts";
+import TheLauncher from "./commands/launch.ts";
 // other things
 import { APP_NAME, APP_URLs, FULL_NAME } from "./constants.ts";
 import { ColorString, LogStuff, ParseFlag } from "./functions/io.ts";
@@ -243,6 +244,11 @@ async function main(command: string) {
             await TheSetuper({
                 project: flags[1],
                 setup: flags[2],
+            });
+            break;
+        case "launch":
+            await TheLauncher({
+                project: flags[1],
             });
             break;
         case "export":

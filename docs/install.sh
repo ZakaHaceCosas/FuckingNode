@@ -99,6 +99,7 @@ create_shortcuts() {
         ["fkn"]=""
         ["fkclean"]="clean"
         ["fkstart"]="kickstart"
+        ["fklaunch"]="launch"
         ["fkcommit"]="commit"
         ["fkrelease"]="release"
         ["fksurrender"]="surrender"

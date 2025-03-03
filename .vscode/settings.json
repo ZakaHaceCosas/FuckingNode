@@ -28,6 +28,7 @@
         "fkadd",
         "fkclean",
         "fkcommit",
+        "fklaunch",
         "fkndbg",
         "FKNODE",
         "fknodeignore",
