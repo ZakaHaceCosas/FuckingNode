@@ -6,7 +6,7 @@ All notable changes will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.1] (Unreleased)
+## [3.0.1] (03-03-2025)
 
 ### Changed
 
@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Fixed the app not letting you add projects with a `bun.lockb` instead of a `bun.lock` lockfile.
 - Fixed `fkcommit` allowing to commit when no files are added.
+- Fixed `fkcommit` throwing an unrelated error when trying to commit outside of a repo.
 - Fixed installation attempts that fail because of a missing package manager not explaining what's up.
 - Fixed a theoretically possible point where a `FknErr` stops execution before running its debug function, preventing it from dumping the error log to the `errors.log` file
 

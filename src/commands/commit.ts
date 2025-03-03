@@ -10,13 +10,16 @@ export default async function TheCommitter(params: TheCommitterConstructedParams
 
     const CWD = Deno.cwd();
     const project = await SpotProject(CWD);
-    const env = await GetProjectEnvironment(project);
 
     if (!(await Git.IsRepo(project))) {
-        throw new Error(
+        await LogStuff(
             "Are you serious right now? Making a commit without being on a Git repo...\nThis project isn't a Git repository. We can't commit to it.",
+            "error",
         );
+        return;
     }
+
+    const env = await GetProjectEnvironment(project);
 
     const canCommit = await Git.CanCommit(project);
 
