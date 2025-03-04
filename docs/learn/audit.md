@@ -3,7 +3,7 @@
 An attempt to make security reports easier.
 
 !!! danger "Outdated"
-    **This section will not be updated until V3.1.** To prevent V3 from taking ages, as we've recently planned a full rewrite of this feature, we will not waste our time on fixing a feature that is not considered stable for use anyway.
+    **This section will not be updated until V3.3.** To prevent updates from taking ages, as we've recently planned a full rewrite of this feature, we will not waste our time on fixing a feature that is not considered stable for use anyway.
     **Avoid using audit as of now.**
 
 !!! danger "Work in Progress feature"

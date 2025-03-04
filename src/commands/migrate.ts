@@ -117,7 +117,7 @@ export default async function TheMigrator(params: TheMigratorConstructedParams):
     }
 
     if (
-        // TODO - replace validation with a non-blocking warning once we start using lockfile for this (by v3.1 i guess?)
+        // TODO - replace validation with a non-blocking warning once we start using lockfile for this (by v3.2)
         await LogStuff(
             `Are you sure?\nMigrating ${workingProject} to ${desiredManager} will remove your current lockfile, so versions could be potentially messed up.`,
             "what",

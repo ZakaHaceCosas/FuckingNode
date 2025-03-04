@@ -8,7 +8,7 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
 
 ## 3.X
 
-### Upcoming Version 3.0
+### Version 3.0 (released)
 
 - [x] Make a proper logo for the project.
 - [x] New features
@@ -53,10 +53,21 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
     - [x] Prettifier
     - [x] Updater
 
-### Version 3.1
+### Version 3.1 (Released)
+
+- [X] New features
+    - [X] `fuckingnode launch <project>` to immediatly launch user's favorite IDE with the given project and update its dependencies.
+
+### Version 3.2 (Upcoming)
 
 - [ ] Better `migrate` feature.
     - [ ] Manually migrate projects, copying exact versions from one lockfile and creating (by us) a new one where everything'll be added. (Sounds difficult, but some package managers AFAIK are capable of this, so we should try at least too.)
+- [ ] Support `stats`' Recommended Community Standards across:
+    - [ ] Deno
+    - [ ] Cargo
+
+### Version 3.3
+
 - [ ] Stabilize `audit` feature and support it everywhere NodeJS.
   - [ ] Stabilize it
       - [ ] Fix known issues (see TODO.md at the repository).
@@ -66,9 +77,6 @@ We'll expand (and rarely, but not impossibly, shrink) this roadmap as we make pr
       - [x] yarn
 - [ ] Extend the FuckingNode Interop Layer
     - [ ] Auditer (this is a bit special, you'll see what we mean soon).
-- [ ] Support `stats`' Recommended Community Standards across:
-    - [ ] Deno
-    - [ ] Cargo
 
 ---
 
