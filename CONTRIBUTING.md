@@ -1,5 +1,7 @@
 # Contributing
 
+These are basic guidelines & info we hope you'll find useful for contributing to the project. For documentation-related contributions, head to [this repository instead](https://github.com/FuckingNode/fuckingnode.github.io).
+
 ## Dev tools
 
 1. Install [Deno (latest version)](https://deno.com) if you haven't. ~~Your welcome for not choosing that one JS runtime that we're trying to fix and that would fill up your disk with `node_modules/`~~.
